@@ -32,7 +32,7 @@ export default function NewThreadPage() {
     content: "",
     summary: "",
     tags: "",
-    author: account?.address, // Use the authenticated user's address
+    author: account?.address || "", // Ensure author is always a string
   });
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
@@ -59,12 +59,12 @@ export default function NewThreadPage() {
       });
       return;
     }
-
+    console.log(account);
     try {
       // Use the Lens group address for thread creation
       if (!communityDetails) throw new Error("Community details not loaded");
       if (!account?.address) throw new Error("User address not found");
-      await createThread(communityDetails.id, { ...formData }, () => {
+      await createThread(communityDetails.id, { ...formData, author: account.address }, () => {
         setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
         setUploadedImages([]);
       });

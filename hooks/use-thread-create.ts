@@ -80,7 +80,7 @@ export function useThreadCreation() {
       const { uri } = await storageClient.uploadAsJson(metadata, { acl });
       const result = await post(sessionClient.data, {
         contentUri: uri,
-        feed: evmAddress(communityAddress),
+        feed: evmAddress(data.lens_feed_address),
       }).andThen(handleOperationWith(walletClient.data));
 
       if (result.isErr()) {
