@@ -56,7 +56,7 @@ export type Database = {
           created_at: string;
           id: string;
           lens_feed_address: string;
-          root_post_id: string;
+          root_post_id: string | null;
           updated_at: string;
         };
         Insert: {
@@ -65,7 +65,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           lens_feed_address: string;
-          root_post_id: string;
+          root_post_id?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -74,7 +74,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           lens_feed_address?: string;
-          root_post_id?: string;
+          root_post_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
