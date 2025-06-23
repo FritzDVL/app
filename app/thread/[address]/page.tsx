@@ -4,7 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
+import { ThreadNestedReplyCard } from "@/components/thread-nested-reply-card";
 import { ThreadReplyBox } from "@/components/thread-reply-box";
+import { ThreadReplyCard } from "@/components/thread-reply-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
@@ -248,147 +250,30 @@ export default function ThreadPage() {
           <h3 className="text-xl font-bold text-gray-900">{replies.length} Replies</h3>
 
           {replies.map(reply => (
-            <div key={reply.id} className="space-y-4">
-              <Card className="gradient-card border border-brand-200/50">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="flex flex-col items-center space-y-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="rounded-full p-1 hover:bg-green-100 hover:text-green-600"
-                      >
-                        <ArrowUp className="h-4 w-4" />
-                      </Button>
-                      <span className="text-sm font-medium text-gray-600">{reply.upvotes - reply.downvotes}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="rounded-full p-1 hover:bg-red-100 hover:text-red-600"
-                      >
-                        <ArrowDown className="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="mb-3 flex items-center space-x-2">
-                        <Link
-                          href={`/u/${reply.author.username}`}
-                          className="flex items-center space-x-2 hover:text-brand-600"
-                        >
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={reply.author.avatar || "/placeholder.svg"} />
-                            <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-xs text-white">
-                              {reply.author.name[0].toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium text-gray-900">{reply.author.name}</span>
-                        </Link>
-                        <span className="text-sm text-gray-500">{reply.timeAgo}</span>
-                      </div>
-
-                      <p className="mb-3 text-gray-700">{reply.content}</p>
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-brand-600 hover:text-brand-700"
-                        onClick={() => setReplyingTo(reply.id)}
-                      >
-                        <Reply className="mr-2 h-4 w-4" />
-                        Reply
-                      </Button>
-                      {replyingTo === reply.id && (
-                        <ThreadReplyBox
-                          value={replyContent[reply.id] || ""}
-                          onChange={e =>
-                            setReplyContent(c => ({
-                              ...c,
-                              [reply.id]: e.target.value,
-                            }))
-                          }
-                          onCancel={() => {
-                            setReplyingTo(null);
-                            setReplyContent(c => ({ ...c, [reply.id]: "" }));
-                          }}
-                          onSubmit={() => {
-                            // Here you would add the reply to this reply (mock only)
-                            setReplyingTo(null);
-                            setReplyContent(c => ({ ...c, [reply.id]: "" }));
-                          }}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            <ThreadReplyCard
+              key={reply.id}
+              reply={reply}
+              replyingTo={replyingTo}
+              replyContent={replyContent}
+              setReplyingTo={setReplyingTo}
+              setReplyContent={setReplyContent}
+            >
               {/* Nested Replies */}
               {reply.replies && reply.replies.length > 0 && (
                 <div className="ml-12 space-y-4">
                   {reply.replies.map(nestedReply => (
-                    <Card key={nestedReply.id} className="gradient-card border border-brand-200/30 bg-brand-50/30">
-                      <CardContent className="p-4">
-                        <div className="flex items-start space-x-3">
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={nestedReply.author.avatar || "/placeholder.svg"} />
-                            <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-xs text-white">
-                              {nestedReply.author.name[0].toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="mb-2 flex items-center space-x-2">
-                              <Link
-                                href={`/u/${nestedReply.author.username}`}
-                                className="font-medium text-gray-900 hover:text-brand-600"
-                              >
-                                {nestedReply.author.name}
-                              </Link>
-                              <span className="text-sm text-gray-500">{nestedReply.timeAgo}</span>
-                            </div>
-                            <p className="text-sm text-gray-700">{nestedReply.content}</p>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="mt-2 text-brand-600 hover:text-brand-700"
-                              onClick={() => setReplyingTo(nestedReply.id)}
-                            >
-                              <Reply className="mr-2 h-4 w-4" />
-                              Reply
-                            </Button>
-                            {replyingTo === nestedReply.id && (
-                              <ThreadReplyBox
-                                value={replyContent[nestedReply.id] || ""}
-                                onChange={e =>
-                                  setReplyContent(c => ({
-                                    ...c,
-                                    [nestedReply.id]: e.target.value,
-                                  }))
-                                }
-                                onCancel={() => {
-                                  setReplyingTo(null);
-                                  setReplyContent(c => ({
-                                    ...c,
-                                    [nestedReply.id]: "",
-                                  }));
-                                }}
-                                onSubmit={() => {
-                                  // Here you would add the reply to this nested reply (mock only)
-                                  setReplyingTo(null);
-                                  setReplyContent(c => ({
-                                    ...c,
-                                    [nestedReply.id]: "",
-                                  }));
-                                }}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <ThreadNestedReplyCard
+                      key={nestedReply.id}
+                      nestedReply={nestedReply}
+                      replyingTo={replyingTo}
+                      replyContent={replyContent}
+                      setReplyingTo={setReplyingTo}
+                      setReplyContent={setReplyContent}
+                    />
                   ))}
                 </div>
               )}
-            </div>
+            </ThreadReplyCard>
           ))}
         </div>
       </div>
