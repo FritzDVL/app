@@ -1,8 +1,8 @@
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
-import { Feed, evmAddress } from "@lens-protocol/client";
-import { fetchAccount } from "@lens-protocol/client/actions";
+import { Feed, Post, evmAddress } from "@lens-protocol/client";
+import { fetchAccount, fetchPost } from "@lens-protocol/client/actions";
 
 /**
  * Transform a Lens Feed object and thread record to a Thread object
@@ -21,6 +21,18 @@ export async function transformFeedToThread(feed: Feed, threadRecord: CommunityT
     throw new Error(`Account not found for address: ${feed.owner}`);
   }
 
+  let rootPost: Post | null = null;
+  if (threadRecord.root_post_id) {
+    // Fetch the root post details if available
+    const rootPostRequest = await fetchPost(client, {
+      post: evmAddress(threadRecord.root_post_id),
+    });
+    if (rootPostRequest.isErr()) {
+      throw new Error(`Failed to fetch root post: ${rootPostRequest.error.message}`);
+    }
+    rootPost = rootPostRequest.value as Post;
+  }
+
   return {
     id: feed.address,
     title: feed.metadata?.name || `Thread ${feed.address.slice(-6)}`,
@@ -31,6 +43,7 @@ export async function transformFeedToThread(feed: Feed, threadRecord: CommunityT
       avatar: author.metadata?.picture || "",
       reputation: author.score || 0,
     },
+    rootPost,
     upvotes: Math.floor(Math.random() * 100) + 10, // TODO: Get real voting data
     downvotes: Math.floor(Math.random() * 10),
     replies: Math.floor(Math.random() * 50), // TODO: Get real reply count
@@ -64,6 +77,18 @@ export async function transformFormDataToThread(
     throw new Error(`Account not found for address: ${formData.author}`);
   }
 
+  let rootPost: Post | null = null;
+  if (threadRecord.root_post_id) {
+    // Fetch the root post details if available
+    const rootPostRequest = await fetchPost(client, {
+      post: evmAddress(threadRecord.root_post_id),
+    });
+    if (rootPostRequest.isErr()) {
+      throw new Error(`Failed to fetch root post: ${rootPostRequest.error.message}`);
+    }
+    rootPost = rootPostRequest.value as Post;
+  }
+
   return {
     id: threadRecord.lens_feed_address,
     title: formData.title,
@@ -74,6 +99,7 @@ export async function transformFormDataToThread(
       avatar: author.metadata?.picture || "",
       reputation: author.score || 0,
     },
+    rootPost,
     upvotes: 0, // New thread starts with 0 votes
     downvotes: 0,
     replies: 0, // New thread starts with 0 replies

@@ -225,6 +225,7 @@ export interface CommunityThreadSupabase {
   id: string;
   community: CommunitySupabase;
   lens_feed_address: string;
+  root_post_id: string | null;
   author: string;
   created_at: string;
   updated_at: string;
