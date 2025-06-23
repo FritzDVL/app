@@ -56,6 +56,7 @@ export type Database = {
           created_at: string;
           id: string;
           lens_feed_address: string;
+          root_post_address: string | null;
           updated_at: string;
         };
         Insert: {
@@ -64,6 +65,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           lens_feed_address: string;
+          root_post_address?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -72,6 +74,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           lens_feed_address?: string;
+          root_post_address?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -114,7 +117,7 @@ export type Tables<
   }
     ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never,
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
   ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
       Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
