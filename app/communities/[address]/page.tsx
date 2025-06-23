@@ -370,13 +370,13 @@ export default function CommunityPage() {
                                           <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
                                         </Avatar>
                                         <span>{thread.author.name}</span>
-                                        <div className="ml-2 flex items-center space-x-1">
-                                          <Award className="h-3 w-3 text-yellow-500" />
-                                          <span className="text-xs">{thread.author.reputation}</span>
-                                        </div>
                                       </Link>
                                     )}
-                                    <span>{thread.timeAgo}</span>
+                                    <span>
+                                      {new Date(thread.timeAgo).toLocaleString("en-US", {
+                                        dateStyle: "long",
+                                      })}
+                                    </span>
                                   </div>
                                   <div className="flex items-center space-x-2">
                                     <div className="flex items-center">
