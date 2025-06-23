@@ -16,7 +16,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
 import { useThread } from "@/hooks/use-thread";
 import type { Address, Reply as ReplyType } from "@/types/common";
-import { ArrowDown, ArrowUp, Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
+import { ArrowDown, ArrowUp, Award, Bookmark, Flag, Pin, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
   const params = useParams();
@@ -73,118 +73,114 @@ export default function ThreadPage() {
 
         {/* Main Thread */}
         {thread && (
-          <Card className="gradient-card overflow-hidden border border-brand-200/50">
-            <CardContent className="p-0">
-              {/* Thread Header */}
-              <div className="border-b border-brand-200/50 p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="flex flex-col items-center space-y-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`rounded-full p-2 transition-colors ${
-                        userVote === "up" ? "bg-green-100 text-green-600" : "hover:bg-green-100 hover:text-green-600"
-                      }`}
-                      onClick={() => setUserVote(userVote === "up" ? null : "up")}
-                    >
-                      <ArrowUp className="h-5 w-5" />
-                    </Button>
-                    <span className="text-lg font-bold text-gray-700">
-                      {thread.upvotes - thread.downvotes + (userVote === "up" ? 1 : userVote === "down" ? -1 : 0)}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`rounded-full p-2 transition-colors ${
-                        userVote === "down" ? "bg-red-100 text-red-600" : "hover:bg-red-100 hover:text-red-600"
-                      }`}
-                      onClick={() => setUserVote(userVote === "down" ? null : "down")}
-                    >
-                      <ArrowDown className="h-5 w-5" />
-                    </Button>
+          <Card className="border border-slate-200/60 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-300/60 hover:shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                {/* Thread Icon/Letter */}
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-xl font-bold text-white shadow-lg">
+                  {thread.title.charAt(0).toUpperCase()}
+                </div>
+                {/* Main Content */}
+                <div className="min-w-0 flex-1">
+                  <div className="mb-1 flex items-start justify-between">
+                    <div>
+                      <h1 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-brand-600">
+                        {thread.title}
+                      </h1>
+                      {thread.content && (
+                        <p className="mt-1 max-w-2xl text-base font-medium italic text-brand-700/90">
+                          {thread.content}
+                        </p>
+                      )}
+                    </div>
+                    <div className="ml-4 flex items-center gap-2 text-sm text-slate-500">
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
+                        <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-xs text-white">
+                          {thread.author.name[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium">{thread.author.name}</span>
+                    </div>
                   </div>
-
-                  <div className="flex-1">
-                    <div className="mb-3 flex flex-wrap items-center gap-2">
-                      {thread.tags.map(tag => (
+                  {thread.rootPost &&
+                    typeof thread.rootPost.metadata === "object" &&
+                    "content" in thread.rootPost.metadata &&
+                    thread.rootPost.metadata.content && (
+                      <div className="my-6 flex flex-col gap-2">
+                        <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+                          <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-brand-400"></span>
+                          <span>
+                            Posted on{" "}
+                            {thread.rootPost.timestamp
+                              ? new Date(thread.rootPost.timestamp).toLocaleString("en-US", {
+                                  dateStyle: "long",
+                                  timeStyle: "short",
+                                })
+                              : "Unknown date"}
+                          </span>
+                        </div>
+                        <div className="prose prose-lg max-w-none whitespace-pre-line rounded-xl p-5 text-gray-800">
+                          {thread.rootPost.metadata.content}
+                        </div>
+                      </div>
+                    )}
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
+                    {Array.isArray(thread.tags) &&
+                      thread.tags.length > 0 &&
+                      thread.tags.map((tag: string) => (
                         <Badge key={tag} variant="outline" className="text-xs">
                           #{tag}
                         </Badge>
                       ))}
-                    </div>
-
-                    <h1 className="mb-4 text-2xl font-bold text-gray-900 md:text-3xl">{thread.title}</h1>
-
-                    <div className="mb-4 flex items-center space-x-4">
-                      <Link
-                        href={`/u/${thread.author.username}`}
-                        className="flex items-center space-x-2 hover:text-brand-600"
-                      >
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                          <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-white">
-                            {thread.author.name}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <span className="font-medium text-gray-900">{thread.author.name}</span>
-                        </div>
-                      </Link>
-                      <span className="text-sm text-gray-500">{thread.timeAgo}</span>
-                    </div>
                   </div>
                 </div>
               </div>
-
-              {/* Thread Content */}
-              <div className="p-6">
-                <div className="prose prose-lg mb-6 max-w-none text-gray-700">
-                  <p>{thread.content}</p>
-                </div>
-
-                {/* Reactions and Actions */}
-                <div className="flex items-center justify-between border-t border-brand-200/50 pt-4">
-                  <div className="flex items-center space-x-4">{/* No reactions in simplified mock data */}</div>
-
-                  <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm" className="rounded-full">
-                      <Share className="mr-2 h-4 w-4" />
-                      Share
-                    </Button>
-                    <Button variant="ghost" size="sm" className="rounded-full">
-                      <Bookmark className="mr-2 h-4 w-4" />
-                      Save
-                    </Button>
-                    <Button variant="ghost" size="sm" className="rounded-full text-red-500 hover:text-red-600">
-                      <Flag className="mr-2 h-4 w-4" />
-                      Report
-                    </Button>
+              {/* Actions */}
+              <div className="mt-6 flex items-center justify-between border-t border-brand-200/50 pt-4">
+                <div className="flex items-center gap-4 text-slate-500">
+                  <div className="flex items-center gap-1">
+                    <ReplyIcon className="h-4 w-4" />
+                    <span className="text-sm">{replies.length}</span>
                   </div>
                 </div>
-
-                {/* Main thread reply button and contextual reply box */}
-                <div className="mt-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-brand-600 hover:text-brand-700"
-                    onClick={() => setReplyingTo("main")}
-                  >
-                    <ReplyIcon className="mr-2 h-4 w-4" />
-                    Reply
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm" className="rounded-full">
+                    <Share className="mr-2 h-4 w-4" />
+                    Share
                   </Button>
-                  {replyingTo === "main" && (
-                    <ThreadReplyBox
-                      value={replyContent["main"] || ""}
-                      onChange={e => setReplyContent(c => ({ ...c, main: e.target.value }))}
-                      onCancel={() => {
-                        setReplyingTo(null);
-                        setReplyContent(c => ({ ...c, main: "" }));
-                      }}
-                      onSubmit={handleReply}
-                    />
-                  )}
+                  <Button variant="ghost" size="sm" className="rounded-full">
+                    <Bookmark className="mr-2 h-4 w-4" />
+                    Save
+                  </Button>
+                  <Button variant="ghost" size="sm" className="rounded-full text-red-500 hover:text-red-600">
+                    <Flag className="mr-2 h-4 w-4" />
+                    Report
+                  </Button>
                 </div>
+              </div>
+              {/* Main thread reply button and contextual reply box */}
+              <div className="mt-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-brand-600 hover:text-brand-700"
+                  onClick={() => setReplyingTo("main")}
+                >
+                  <ReplyIcon className="mr-2 h-4 w-4" />
+                  Reply
+                </Button>
+                {replyingTo === "main" && (
+                  <ThreadReplyBox
+                    value={replyContent["main"] || ""}
+                    onChange={e => setReplyContent(c => ({ ...c, main: e.target.value }))}
+                    onCancel={() => {
+                      setReplyingTo(null);
+                      setReplyContent(c => ({ ...c, main: "" }));
+                    }}
+                    onSubmit={handleReply}
+                  />
+                )}
               </div>
             </CardContent>
           </Card>
