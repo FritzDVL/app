@@ -59,7 +59,7 @@ export default function NewThreadPage() {
       });
       return;
     }
-    console.log(account);
+
     try {
       // Use the Lens group address for thread creation
       if (!communityDetails) throw new Error("Community details not loaded");

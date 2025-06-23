@@ -218,13 +218,13 @@ export async function fetchCommunity(lensGroupAddress: string): Promise<Communit
 /**
  * Persists the root post address for a thread in the community_threads table
  * @param threadId - The thread's id (primary key)
- * @param rootPostAddress - The root post address to persist
+ * @param rootPostId - The root post id to persist
  * @returns void
  */
-export async function persistRootPostAddress(threadId: string, rootPostAddress: string): Promise<void> {
+export async function persistRootPostId(threadId: string, rootPostId: string): Promise<void> {
   const { error } = await supabase
     .from("community_threads")
-    .update({ root_post_address: rootPostAddress })
+    .update({ root_post_id: rootPostId })
     .eq("id", threadId)
     .single();
 

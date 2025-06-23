@@ -6,7 +6,7 @@ import { storageClient } from "@/lib/grove";
 // import { client } from '@/lib/clients/lens-protocol-mainnet'
 // import { storageClient } from '@/lib/grove'
 import { fetchCommunity } from "@/lib/supabase";
-import { persistRootPostAddress } from "@/lib/supabase";
+import { persistRootPostId } from "@/lib/supabase";
 import { transformFormDataToThread } from "@/lib/transformers/thread-transformers";
 import { useThreadsStore } from "@/stores/threads-store";
 import { Address, Thread } from "@/types/common";
@@ -91,13 +91,12 @@ export function useThreadCreation() {
       if (result.isErr()) {
         throw new Error(result.error.message);
       }
-
       const postedFeed = result.value as Post;
-      console.log("Posted feed:", postedFeed);
+
       // Persist root post address for the thread
       if (postedFeed.id && data.threadRecord.id) {
         try {
-          await persistRootPostAddress(data.threadRecord.id, postedFeed.id);
+          await persistRootPostId(data.threadRecord.id, postedFeed.id);
         } catch (e) {
           console.error("Failed to persist root post address:", e);
         }
