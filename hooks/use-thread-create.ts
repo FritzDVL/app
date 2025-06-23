@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { lensMainnet } from "@/lib/chains/lens-mainnet";
+import { storageClient } from "@/lib/grove";
 // import { lensMainnet } from '@/lib/chains/lens-mainnet'
 // import { client } from '@/lib/clients/lens-protocol-mainnet'
 // import { storageClient } from '@/lib/grove'
@@ -7,18 +9,23 @@ import { transformFormDataToThread } from "@/lib/transformers/thread-transformer
 import { useThreadsStore } from "@/stores/threads-store";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
+import { immutable } from "@lens-chain/storage-client";
+import { post } from "@lens-protocol/client/actions";
+import { handleOperationWith } from "@lens-protocol/client/viem";
+import { textOnly } from "@lens-protocol/metadata";
+import { evmAddress, useSessionClient } from "@lens-protocol/react";
+// import { feed } from '@lens-protocol/metadata'
+// import { immutable } from '@lens-chain/storage-client'
+import { toast } from "sonner";
 // import { evmAddress } from '@lens-protocol/client'
 // import { createFeed, fetchFeed } from '@lens-protocol/client/actions'
 // import { handleOperationWith } from '@lens-protocol/client/viem'
 // import { useSessionClient } from '@lens-protocol/react'
-// import { useWalletClient } from 'wagmi'
-// import { feed } from '@lens-protocol/metadata'
-// import { immutable } from '@lens-chain/storage-client'
-import { toast } from "sonner";
+import { useWalletClient } from "wagmi";
 
 export interface CreateThreadFormData {
   title: string;
-  summary?: string;
+  summary: string;
   content: string;
   tags: string;
   author: Address;
@@ -27,8 +34,8 @@ export interface CreateThreadFormData {
 export function useThreadCreation() {
   const [isCreating, setIsCreating] = useState(false);
 
-  // const sessionClient = useSessionClient()
-  // const walletClient = useWalletClient()
+  const sessionClient = useSessionClient();
+  const walletClient = useWalletClient();
   const { addThread } = useThreadsStore();
 
   const createThread = async (
@@ -36,6 +43,9 @@ export function useThreadCreation() {
     formData: CreateThreadFormData,
     onSuccess?: (thread: Thread) => void,
   ): Promise<void> => {
+    if (sessionClient.error || !sessionClient.data) {
+      throw new Error("Session client is not available");
+    }
     setIsCreating(true);
 
     const loadingToastId = toast.loading("Creating Thread", {
@@ -50,6 +60,7 @@ export function useThreadCreation() {
         body: JSON.stringify({
           communityAddress,
           title: formData.title,
+          summary: formData.summary,
           content: formData.content,
           tags: formData.tags,
           author: formData.author,
@@ -60,6 +71,24 @@ export function useThreadCreation() {
       if (!response.ok || !data.success) {
         throw new Error(data.error || data.message || "Failed to create thread");
       }
+
+      // Post at feed with content.
+      const metadata = textOnly({
+        content: formData.content,
+      });
+      const acl = immutable(lensMainnet.id);
+      const { uri } = await storageClient.uploadAsJson(metadata, { acl });
+      const result = await post(sessionClient.data, {
+        contentUri: uri,
+        feed: evmAddress(communityAddress),
+      }).andThen(handleOperationWith(walletClient.data));
+
+      if (result.isErr()) {
+        throw new Error(result.error.message);
+      }
+
+      const postedFeed = result.value;
+      console.log("Posted feed:", postedFeed);
 
       // For now, create a mock thread for UI (until backend returns real thread)
       const community = await fetchCommunity(communityAddress);

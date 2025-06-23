@@ -30,6 +30,7 @@ export default function NewThreadPage() {
   const [formData, setFormData] = useState<CreateThreadFormData>({
     title: "",
     content: "",
+    summary: "",
     tags: "",
     author: account?.address, // Use the authenticated user's address
   });
@@ -41,6 +42,13 @@ export default function NewThreadPage() {
     if (!formData.title.trim()) {
       toast.error("Validation Error", {
         description: "Please enter a thread title.",
+      });
+      return;
+    }
+
+    if (!formData.summary.trim()) {
+      toast.error("Validation Error", {
+        description: "Please enter a summary.",
       });
       return;
     }
@@ -168,11 +176,11 @@ export default function NewThreadPage() {
                   {/* Summary */}
                   <div className="space-y-2">
                     <Label htmlFor="summary" className="text-base font-medium text-slate-900">
-                      Summary (optional)
+                      Summary
                     </Label>
                     <Input
                       id="summary"
-                      value={formData.summary || ""}
+                      value={formData.summary}
                       onChange={e => setFormData({ ...formData, summary: e.target.value })}
                       placeholder="A short summary of your thread (max 100 chars)"
                       className="border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
