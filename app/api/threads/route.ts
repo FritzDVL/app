@@ -14,7 +14,7 @@ import { feed } from "@lens-protocol/metadata";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { communityAddress, title, content, author } = body;
+    const { communityAddress, title, summary, content, author } = body;
     if (!communityAddress || !title || !content || !author) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
@@ -23,13 +23,13 @@ export async function POST(req: NextRequest) {
     // 1. Build metadata for the thread
     const metadata = feed({
       name: title,
-      description: content,
+      description: summary || "",
     });
     const acl = immutable(lensMainnet.id);
     // 2. Upload metadata to storage (e.g., Grove/IPFS)
     const { uri } = await storageClient.uploadAsJson(metadata, { acl });
     // 3. Create the feed on Lens Protocol
-    const result = await createFeed(adminSessionClient, {
+    const feedCreationResult = await createFeed(adminSessionClient, {
       metadataUri: uri,
       admins: [evmAddress(ADMIN_USER_ADDRESS)],
       rules: {
@@ -46,11 +46,11 @@ export async function POST(req: NextRequest) {
       .andThen(adminSessionClient.waitForTransaction)
       .andThen(txHash => fetchFeed(adminSessionClient, { txHash }));
 
-    if (result.isErr()) {
-      return NextResponse.json({ error: result.error.message }, { status: 500 });
+    if (feedCreationResult.isErr()) {
+      return NextResponse.json({ error: feedCreationResult.error.message }, { status: 500 });
     }
 
-    const createdFeed = result.value;
+    const createdFeed = feedCreationResult.value;
     // 4. Persist the feed in Supabase
     const threadRecord = await persistCommunityThread(communityAddress, createdFeed?.address, author);
 

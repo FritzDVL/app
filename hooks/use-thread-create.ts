@@ -2,12 +2,11 @@ import { useState } from "react";
 // import { lensMainnet } from '@/lib/chains/lens-mainnet'
 // import { client } from '@/lib/clients/lens-protocol-mainnet'
 // import { storageClient } from '@/lib/grove'
-import { fetchCommunity, persistCommunityThread } from "@/lib/supabase";
+import { fetchCommunity } from "@/lib/supabase";
 import { transformFormDataToThread } from "@/lib/transformers/thread-transformers";
-import { useAuthStore } from "@/stores/auth-store";
 import { useThreadsStore } from "@/stores/threads-store";
 import { Address, Thread } from "@/types/common";
-import { CommunitySupabase, CommunityThreadSupabase } from "@/types/supabase";
+import { CommunityThreadSupabase } from "@/types/supabase";
 // import { evmAddress } from '@lens-protocol/client'
 // import { createFeed, fetchFeed } from '@lens-protocol/client/actions'
 // import { handleOperationWith } from '@lens-protocol/client/viem'
@@ -16,10 +15,10 @@ import { CommunitySupabase, CommunityThreadSupabase } from "@/types/supabase";
 // import { feed } from '@lens-protocol/metadata'
 // import { immutable } from '@lens-chain/storage-client'
 import { toast } from "sonner";
-import { form } from "viem/chains";
 
 export interface CreateThreadFormData {
   title: string;
+  summary?: string;
   content: string;
   tags: string;
   author: Address;
@@ -31,7 +30,6 @@ export function useThreadCreation() {
   // const sessionClient = useSessionClient()
   // const walletClient = useWalletClient()
   const { addThread } = useThreadsStore();
-  const { account } = useAuthStore();
 
   const createThread = async (
     communityAddress: string,

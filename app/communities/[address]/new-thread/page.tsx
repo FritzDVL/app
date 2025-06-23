@@ -57,7 +57,7 @@ export default function NewThreadPage() {
       if (!communityDetails) throw new Error("Community details not loaded");
       if (!account?.address) throw new Error("User address not found");
       await createThread(communityDetails.id, { ...formData }, () => {
-        setFormData({ title: "", content: "", tags: "", author: account.address });
+        setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
         setUploadedImages([]);
       });
       // Redirect back to community using the Lens group address
@@ -162,6 +162,21 @@ export default function NewThreadPage() {
                       placeholder="What's your thread about?"
                       className="h-12 border-slate-200 text-lg focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
                       required
+                    />
+                  </div>
+
+                  {/* Summary */}
+                  <div className="space-y-2">
+                    <Label htmlFor="summary" className="text-base font-medium text-slate-900">
+                      Summary (optional)
+                    </Label>
+                    <Input
+                      id="summary"
+                      value={formData.summary || ""}
+                      onChange={e => setFormData({ ...formData, summary: e.target.value })}
+                      placeholder="A short summary of your thread (max 100 chars)"
+                      className="border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      maxLength={100}
                     />
                   </div>
 
