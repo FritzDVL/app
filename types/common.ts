@@ -1,3 +1,5 @@
+import { Account } from "@lens-protocol/client";
+
 export type Address = `0x${string}`;
 
 // Base Community interface for Lens Protocol communities
@@ -35,13 +37,16 @@ export interface CommunityDetails extends Community {
   isPremium: boolean;
 }
 
-// Author interface for thread authors
-export interface ThreadAuthor {
+interface AuthorBase {
   name: string;
   username: string;
   avatar: string;
   reputation: number;
 }
+
+// Author interface for thread authors
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface ThreadAuthor extends AuthorBase {}
 
 // Base Thread interface for forum threads
 export interface Thread {
@@ -58,4 +63,17 @@ export interface Thread {
   tags: string[];
   communityAddress: string;
   created_at: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface ReplyAuthor extends AuthorBase {}
+
+export interface Reply {
+  id: string;
+  content: string;
+  author: ReplyAuthor;
+  upvotes: number;
+  downvotes: number;
+  //nestedReplies: Reply;
+  createdAt: string;
 }

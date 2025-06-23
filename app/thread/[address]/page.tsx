@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
-import { ThreadNestedReplyCard } from "@/components/thread-nested-reply-card";
+// import { ThreadNestedReplyCard } from "@/components/thread-nested-reply-card";
 import { ThreadReplyBox } from "@/components/thread-reply-box";
 import { ThreadReplyCard } from "@/components/thread-reply-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,8 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThread } from "@/hooks/use-thread";
-import type { Address, Thread } from "@/types/common";
-import { ArrowDown, ArrowUp, Bookmark, Flag, Reply, Share } from "lucide-react";
+import type { Address, Reply as ReplyType } from "@/types/common";
+import { ArrowDown, ArrowUp, Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
   const params = useParams();
@@ -29,7 +29,7 @@ export default function ThreadPage() {
   const { thread, loading, error } = useThread(threadAddress as Address);
 
   // Replies state (replaces mock replies array)
-  const [replies, setReplies] = useState<Thread[]>([]);
+  const [replies, setReplies] = useState<ReplyType[]>([]);
 
   // Handles replying to the main thread only
   const handleReply = () => {
@@ -39,7 +39,6 @@ export default function ThreadPage() {
         ...prev,
         {
           id: Date.now().toString(),
-          title: "", // Replies don't have a title
           content: replyContent["main"],
           author: {
             name: "You",
@@ -49,13 +48,7 @@ export default function ThreadPage() {
           },
           upvotes: 0,
           downvotes: 0,
-          replies: 0,
-          timeAgo: "just now",
-          isPinned: false,
-          isHot: false,
-          tags: [],
-          communityAddress: thread?.communityAddress || "",
-          created_at: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
         },
       ]);
       setReplyingTo(null);
@@ -189,7 +182,7 @@ export default function ThreadPage() {
                     className="text-brand-600 hover:text-brand-700"
                     onClick={() => setReplyingTo("main")}
                   >
-                    <Reply className="mr-2 h-4 w-4" />
+                    <ReplyIcon className="mr-2 h-4 w-4" />
                     Reply
                   </Button>
                   {replyingTo === "main" && (
