@@ -13,8 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useReplyCreate } from "@/hooks/use-reply-create";
 import { useThread } from "@/hooks/use-thread";
-import { useAuthStore } from "@/stores/auth-store";
 import type { Address, Reply as ReplyType } from "@/types/common";
 import { ArrowDown, ArrowUp, Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
@@ -30,28 +30,15 @@ export default function ThreadPage() {
 
   // Hooks
   const { thread, loading, error } = useThread(threadAddress as Address);
-  const { account } = useAuthStore();
+  const { createReply } = useReplyCreate();
 
   // Handlers
   const handleReply = () => {
     if (replyingTo === "main" && replyContent["main"]?.trim()) {
-      // Add new reply to replies state
-      setReplies(prev => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          content: replyContent["main"],
-          author: {
-            name: account?.username?.localName || "",
-            username: account?.username?.value || "",
-            avatar: account?.metadata?.picture,
-            reputation: account?.score || 0,
-          },
-          upvotes: 0,
-          downvotes: 0,
-          createdAt: new Date().toISOString(),
-        },
-      ]);
+      const reply = createReply(replyContent["main"]);
+      if (reply) {
+        setReplies(prev => [...prev, reply]);
+      }
       setReplyingTo(null);
       setReplyContent(c => ({ ...c, main: "" }));
     }
