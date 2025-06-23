@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { lensMainnet } from "@/lib/chains/lens-mainnet";
+import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { storageClient } from "@/lib/grove";
 // import { lensMainnet } from '@/lib/chains/lens-mainnet'
 // import { client } from '@/lib/clients/lens-protocol-mainnet'
 // import { storageClient } from '@/lib/grove'
 import { fetchCommunity } from "@/lib/supabase";
+import { persistRootPostAddress } from "@/lib/supabase";
 import { transformFormDataToThread } from "@/lib/transformers/thread-transformers";
 import { useThreadsStore } from "@/stores/threads-store";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
 import { immutable } from "@lens-chain/storage-client";
-import { post } from "@lens-protocol/client/actions";
+import { fetchPost, post } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { textOnly } from "@lens-protocol/metadata";
-import { evmAddress, useSessionClient } from "@lens-protocol/react";
+import { Post, evmAddress, useSessionClient } from "@lens-protocol/react";
 // import { feed } from '@lens-protocol/metadata'
 // import { immutable } from '@lens-chain/storage-client'
 import { toast } from "sonner";
@@ -71,7 +73,7 @@ export function useThreadCreation() {
       if (!response.ok || !data.success) {
         throw new Error(data.error || data.message || "Failed to create thread");
       }
-
+      console.log("Thread created successfully:", data);
       // Post at feed with content.
       const metadata = textOnly({
         content: formData.content,
@@ -80,15 +82,26 @@ export function useThreadCreation() {
       const { uri } = await storageClient.uploadAsJson(metadata, { acl });
       const result = await post(sessionClient.data, {
         contentUri: uri,
-        feed: evmAddress(data.lens_feed_address),
-      }).andThen(handleOperationWith(walletClient.data));
+        feed: evmAddress(data.threadRecord.lens_feed_address),
+      })
+        .andThen(handleOperationWith(walletClient.data))
+        .andThen(sessionClient.data.waitForTransaction)
+        .andThen(txHash => fetchPost(client, { txHash }));
 
       if (result.isErr()) {
         throw new Error(result.error.message);
       }
 
-      const postedFeed = result.value;
+      const postedFeed = result.value as Post;
       console.log("Posted feed:", postedFeed);
+      // Persist root post address for the thread
+      if (postedFeed.id && data.threadRecord.id) {
+        try {
+          await persistRootPostAddress(data.threadRecord.id, postedFeed.id);
+        } catch (e) {
+          console.error("Failed to persist root post address:", e);
+        }
+      }
 
       // For now, create a mock thread for UI (until backend returns real thread)
       const community = await fetchCommunity(communityAddress);
