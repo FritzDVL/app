@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThread } from "@/hooks/use-thread";
-import type { Address } from "@/types/common";
+import type { Address, Thread } from "@/types/common";
 import { ArrowDown, ArrowUp, Bookmark, Flag, Reply, Share } from "lucide-react";
 
 export default function ThreadPage() {
@@ -28,56 +28,40 @@ export default function ThreadPage() {
   // Fetch thread data using custom hook (cast threadId to Address)
   const { thread, loading, error } = useThread(threadAddress as Address);
 
-  const replies = [
-    {
-      id: "1",
-      content:
-        threadAddress === "building-social-platform"
-          ? "This looks amazing! I've been waiting for something like this. The technical stack looks solid. Have you considered implementing a reputation system to combat spam and low-quality content?"
-          : "Great writeup! I've seen so many projects get rekt by reentrancy attacks. The checks-effects-interactions pattern should be taught in every Solidity course.",
-      author: {
-        name: "Web3 Enthusiast",
-        username: "web3enthusiast.lens",
-        avatar: "/placeholder.svg?height=32&width=32",
-      },
-      upvotes: 15,
-      downvotes: 0,
-      timeAgo: "1h ago",
-      replies: [
+  // Replies state (replaces mock replies array)
+  const [replies, setReplies] = useState<Thread[]>([]);
+
+  // Handles replying to the main thread only
+  const handleReply = () => {
+    if (replyingTo === "main" && replyContent["main"]?.trim()) {
+      // Add new reply to replies state
+      setReplies(prev => [
+        ...prev,
         {
-          id: "11",
-          content:
-            threadAddress === "building-social-platform"
-              ? "Great point about reputation systems! We're actually working on a token-based reputation system where users earn reputation tokens through quality contributions."
-              : "Exactly! I'm working on a course about smart contract security. Would love to include some of these examples if you're okay with it.",
+          id: Date.now().toString(),
+          title: "", // Replies don't have a title
+          content: replyContent["main"],
           author: {
-            name: thread?.author?.name || "Unknown",
-            username: thread?.author?.username || "unknown.lens",
-            avatar: thread?.author?.avatar || "/placeholder.svg",
+            name: "You",
+            username: "you.lens",
+            avatar: "/placeholder.svg?height=32&width=32",
+            reputation: 0,
           },
-          upvotes: 8,
+          upvotes: 0,
           downvotes: 0,
-          timeAgo: "45m ago",
+          replies: 0,
+          timeAgo: "just now",
+          isPinned: false,
+          isHot: false,
+          tags: [],
+          communityAddress: thread?.communityAddress || "",
+          created_at: new Date().toISOString(),
         },
-      ],
-    },
-    {
-      id: "2",
-      content:
-        threadAddress === "building-social-platform"
-          ? "Love the privacy-first approach! How are you handling the balance between decentralization and user experience? Many Web3 apps struggle with onboarding."
-          : "The oracle manipulation point is crucial. I've seen DeFi protocols lose millions because they relied on a single price feed. Chainlink's decentralized oracles are a must.",
-      author: {
-        name: "UX Designer",
-        username: "uxdesigner.lens",
-        avatar: "/placeholder.svg?height=32&width=32",
-      },
-      upvotes: 12,
-      downvotes: 1,
-      timeAgo: "1h ago",
-      replies: [],
-    },
-  ];
+      ]);
+      setReplyingTo(null);
+      setReplyContent(c => ({ ...c, main: "" }));
+    }
+  };
 
   // const handleVote = (type: "up" | "down") => {
   //   setUserVote(userVote === type ? null : type);
@@ -85,23 +69,6 @@ export default function ThreadPage() {
 
   // const handleReaction = (reaction: string) => {
   //   setSelectedReaction(selectedReaction === reaction ? null : reaction);
-  // };
-
-  // const handleReply = (replyId?: string) => {
-  //   if (replyId) {
-  //     setReplyingTo(replyId);
-  //     setReplyContent(c => ({ ...c, [replyId]: "" }));
-  //   } else if (replyingTo) {
-  //     // Submit reply to a reply or main thread
-  //     // Here you would add the reply to the correct place in real app
-  //     console.log("Submitting reply to:", replyingTo, replyContent);
-  //     setReplyingTo(null);
-  //     setReplyContent(c => ({ ...c, [replyingTo]: "" }));
-  //   } else {
-  //     // Open reply box for main thread
-  //     setReplyingTo("main");
-  //     setReplyContent(c => ({ ...c, main: "" }));
-  //   }
   // };
 
   return (
@@ -233,10 +200,7 @@ export default function ThreadPage() {
                         setReplyingTo(null);
                         setReplyContent(c => ({ ...c, main: "" }));
                       }}
-                      onSubmit={() => {
-                        setReplyingTo(null);
-                        setReplyContent(c => ({ ...c, main: "" }));
-                      }}
+                      onSubmit={handleReply}
                     />
                   )}
                 </div>
@@ -259,7 +223,7 @@ export default function ThreadPage() {
               setReplyContent={setReplyContent}
             >
               {/* Nested Replies (temporarily disabled) */}
-              {false && reply.replies && reply.replies.length > 0 && (
+              {/* {false && reply.replies && reply.replies.length > 0 && (
                 <div className="ml-12 space-y-4">
                   {reply.replies.map(nestedReply => (
                     <ThreadNestedReplyCard
@@ -272,7 +236,7 @@ export default function ThreadPage() {
                     />
                   ))}
                 </div>
-              )}
+              )} */}
             </ThreadReplyCard>
           ))}
         </div>
