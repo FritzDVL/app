@@ -25,7 +25,7 @@ export async function transformFeedToThread(feed: Feed, threadRecord: CommunityT
   if (threadRecord.root_post_id) {
     // Fetch the root post details if available
     const rootPostRequest = await fetchPost(client, {
-      post: evmAddress(threadRecord.root_post_id),
+      post: threadRecord.root_post_id,
     });
     if (rootPostRequest.isErr()) {
       throw new Error(`Failed to fetch root post: ${rootPostRequest.error.message}`);
@@ -81,7 +81,7 @@ export async function transformFormDataToThread(
   if (threadRecord.root_post_id) {
     // Fetch the root post details if available
     const rootPostRequest = await fetchPost(client, {
-      post: evmAddress(threadRecord.root_post_id),
+      post: threadRecord.root_post_id,
     });
     if (rootPostRequest.isErr()) {
       throw new Error(`Failed to fetch root post: ${rootPostRequest.error.message}`);

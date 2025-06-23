@@ -111,6 +111,7 @@ export function useThreadCreation() {
         id: "",
         author: formData.author,
         lens_feed_address: data.feed?.address,
+        root_post_id: postedFeed.id,
         created_at: new Date().toISOString(),
         community,
         updated_at: new Date().toISOString(),
