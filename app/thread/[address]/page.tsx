@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThread } from "@/hooks/use-thread";
+import { useAuthStore } from "@/stores/auth-store";
 import type { Address, Reply as ReplyType } from "@/types/common";
 import { ArrowDown, ArrowUp, Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
@@ -29,6 +30,7 @@ export default function ThreadPage() {
 
   // Hooks
   const { thread, loading, error } = useThread(threadAddress as Address);
+  const { account } = useAuthStore();
 
   // Handlers
   const handleReply = () => {
@@ -40,10 +42,10 @@ export default function ThreadPage() {
           id: Date.now().toString(),
           content: replyContent["main"],
           author: {
-            name: "You",
-            username: "you.lens",
-            avatar: "/placeholder.svg?height=32&width=32",
-            reputation: 0,
+            name: account?.username?.localName || "",
+            username: account?.username?.value || "",
+            avatar: account?.metadata?.picture,
+            reputation: account?.score || 0,
           },
           upvotes: 0,
           downvotes: 0,
