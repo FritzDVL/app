@@ -258,8 +258,8 @@ export default function ThreadPage() {
               setReplyingTo={setReplyingTo}
               setReplyContent={setReplyContent}
             >
-              {/* Nested Replies */}
-              {reply.replies && reply.replies.length > 0 && (
+              {/* Nested Replies (temporarily disabled) */}
+              {false && reply.replies && reply.replies.length > 0 && (
                 <div className="ml-12 space-y-4">
                   {reply.replies.map(nestedReply => (
                     <ThreadNestedReplyCard
