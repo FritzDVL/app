@@ -20,18 +20,17 @@ import { ArrowDown, ArrowUp, Bookmark, Flag, Reply as ReplyIcon, Share } from "l
 export default function ThreadPage() {
   const params = useParams();
   const threadAddress = params.address as string;
+
+  // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [userVote, setUserVote] = useState<"up" | "down" | null>(null);
-  // const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-
-  // Fetch thread data using custom hook (cast threadId to Address)
-  const { thread, loading, error } = useThread(threadAddress as Address);
-
-  // Replies state (replaces mock replies array)
   const [replies, setReplies] = useState<ReplyType[]>([]);
 
-  // Handles replying to the main thread only
+  // Hooks
+  const { thread, loading, error } = useThread(threadAddress as Address);
+
+  // Handlers
   const handleReply = () => {
     if (replyingTo === "main" && replyContent["main"]?.trim()) {
       // Add new reply to replies state
