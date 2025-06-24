@@ -1,2 +1,2 @@
 ALTER TABLE community_threads
-ADD COLUMN posts_count integer NOT NULL DEFAULT 0;
+ADD COLUMN replies_count integer NOT NULL DEFAULT 0;
