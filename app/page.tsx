@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { HeroSection } from "@/components/homepage-hero-section";
 import { Navbar } from "@/components/navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { ArrowDown, ArrowUp, Award, Heart, MessageCircle, Pin, Sparkles, TrendingUp, Zap } from "lucide-react";
+import { ArrowDown, ArrowUp, Award, Heart, MessageCircle, Pin, TrendingUp, Zap } from "lucide-react";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("trending");
@@ -133,36 +133,7 @@ export default function HomePage() {
 
       <main className="container mx-auto max-w-6xl px-4 py-12">
         {/* Hero Section - Minimalistic */}
-        <section className="mb-16 text-center">
-          <div className="mb-6 inline-flex items-center rounded-full border border-brand-200/60 bg-brand-50/80 px-4 py-2 text-sm font-medium text-brand-700 backdrop-blur-sm">
-            <Sparkles className="mr-2 h-4 w-4" />
-            Powered by Lens Protocol
-          </div>
-
-          <div className="mb-8 flex justify-center">
-            <Image src="/logo.png" alt="LensForum Logo" width={80} height={80} className="rounded-2xl shadow-lg" />
-          </div>
-
-          <h1 className="mb-6 text-5xl font-bold tracking-tight text-slate-900 md:text-6xl">
-            Lens
-            <span className="bg-gradient-to-r from-brand-600 to-brand-700 bg-clip-text text-transparent">Forum</span>
-          </h1>
-
-          <p className="mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-slate-600">
-            Connect, create, and contribute to the future of decentralized communities
-          </p>
-
-          <div className="flex justify-center">
-            <Link href="/communities">
-              <Button
-                variant="outline"
-                className="rounded-full border-slate-300 px-8 py-3 text-lg font-medium text-slate-700 hover:bg-slate-50"
-              >
-                Explore Communities
-              </Button>
-            </Link>
-          </div>
-        </section>
+        <HeroSection />
 
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
