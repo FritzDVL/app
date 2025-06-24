@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { TextEditor } from "@/components/text-editor";
+import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -110,12 +111,7 @@ export default function NewThreadPage() {
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Link href={`/communities/${communityAddress}`}>
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Community
-              </Button>
-            </Link>
+            <BackNavigationLink href={`/communities/${communityAddress}`}>Back to Community</BackNavigationLink>
             {communityDetails && (
               <div className="flex items-center space-x-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-600 text-sm font-bold text-white">

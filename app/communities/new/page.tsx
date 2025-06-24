@@ -60,12 +60,7 @@ export default function NewCommunityPage() {
         {/* Header with back button and title */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <BackNavigationLink href="/communities">
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
-                <span className="mr-2">←</span>
-                Back to Communities
-              </Button>
-            </BackNavigationLink>
+            <BackNavigationLink href="/communities">Back to Communities</BackNavigationLink>
             <div>
               <h2 className="text-lg font-semibold text-slate-900">Create a New Community</h2>
               <p className="text-sm text-slate-500">Start a new space for your interests</p>
