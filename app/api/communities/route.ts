@@ -11,19 +11,29 @@ import { createGroup, fetchGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { group } from "@lens-protocol/metadata";
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.json();
+    const formData = await request.formData();
+    const name = formData.get("name") as string;
+    const description = formData.get("description") as string;
+    const adminAddress = formData.get("adminAddress") as string;
+    const file = formData.get("image") as File | null;
 
-    const { name, description, adminAddress } = body;
     if (!name || !description || !adminAddress) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    let iconUri = "";
+    if (file) {
+      const acl = immutable(lensMainnet.id);
+      const { uri } = await storageClient.uploadFile(file, { acl });
+      iconUri = uri;
     }
 
     const adminSessionClient = await getAdminSessionClient();
 
     // 1. Build metadata for the group and upload it
-    const groupMetadata = group({ name, description });
+    const groupMetadata = group({ name, description, icon: iconUri });
     const acl = immutable(lensMainnet.id);
     const { uri } = await storageClient.uploadAsJson(groupMetadata, { acl });
 
@@ -50,21 +60,6 @@ export async function POST(req: NextRequest) {
 
     const createdGroup = result.value as Group;
     console.log("[API] Created group:", createdGroup);
-
-    // 3. Add the group to the app
-    // const addAppGroupResult = await addAppGroups(adminSessionClient, {
-    //   groups: [evmAddress(createdGroup.address)],
-    //   app: evmAddress(APP_ADDRESS),
-    // })
-    //   .andThen(handleOperationWith(adminWallet))
-    //   .andThen(adminSessionClient.waitForTransaction);
-
-    // if (addAppGroupResult.isErr()) {
-    //   const err = (addAppGroupResult as any).error;
-    //   console.error("[API] Error adding group to app:", err);
-    //   return NextResponse.json({ error: (err && err.message) || "Failed to add group to app" }, { status: 500 });
-    // }
-    // console.log("[API] Group added to app");
 
     // 4. Persist the community in Supabase
     await persistCommunity(createdGroup.address);

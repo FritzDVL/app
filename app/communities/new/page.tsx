@@ -28,7 +28,7 @@ export default function NewCommunityPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Hooks
-  const { createCommunity, isCreating } = useCommunityCreation();
+  const { isCreating } = useCommunityCreation();
   const { account } = useAuthStore();
 
   // Set adminAddress to account.address if available
@@ -49,13 +49,29 @@ export default function NewCommunityPage() {
     setLoading(true);
     setError(null);
     try {
-      await createCommunity({ ...formData }, (community: any) => {
-        if (community && community.id) {
-          router.push(`/communities/${community.id}`);
-        } else {
-          setError("Community creation failed. Please try again.");
-        }
+      const form = new FormData();
+      form.append("name", formData.name);
+      form.append("description", formData.description);
+      form.append("adminAddress", formData.adminAddress);
+      if (formData.image) {
+        form.append("image", formData.image);
+      }
+      const response = await fetch("/api/communities", {
+        method: "POST",
+        body: form,
       });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        setError(result.error || "Community creation failed. Please try again.");
+        setLoading(false);
+        return;
+      }
+      const community = result.community;
+      if (community && community.id) {
+        router.push(`/communities/${community.id}`);
+      } else {
+        setError("Community creation failed. Please try again.");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to create community");
     } finally {
