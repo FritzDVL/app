@@ -14,15 +14,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
 import { useThreadReplies } from "@/hooks/use-thread-replies";
-import { client } from "@/lib/clients/lens-protocol-mainnet";
-import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { useThreadsStore } from "@/stores/threads-store";
-import { type Address, type Reply as ReplyType, Thread } from "@/types/common";
-import { evmAddress } from "@lens-protocol/client";
-import { Post as LensPost } from "@lens-protocol/client";
-import { fetchPosts } from "@lens-protocol/client/actions";
-import { fetchAccount } from "@lens-protocol/client/actions";
-import { Bookmark, Flag, MessageCircle, Reply as ReplyIcon, Share } from "lucide-react";
+import { type Address, Thread } from "@/types/common";
+import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
   const params = useParams();
