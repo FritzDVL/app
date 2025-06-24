@@ -25,7 +25,6 @@ import { useSessionClient } from "@lens-protocol/react";
 import {
   ArrowDown,
   ArrowUp,
-  Award,
   Clock,
   Filter,
   FlameIcon as Fire,

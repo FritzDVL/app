@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Bold, Image, Italic, LinkIcon, List, Quote } from "lucide-react";
+import { Bold, Image as ImageUpload, Italic, LinkIcon, List, Quote } from "lucide-react";
 
 interface ThreadTextEditorProps {
   value: string;
@@ -44,7 +44,7 @@ export function ThreadTextEditor({
           <label htmlFor="replyImageUpload">
             <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
               <span className="cursor-pointer">
-                <Image className="h-4 w-4" alt="image preview" />
+                <ImageUpload className="h-4 w-4" />
               </span>
             </Button>
             <input

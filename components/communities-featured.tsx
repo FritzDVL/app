@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { CommunitiesCard } from "@/components/communities-card";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 
@@ -57,7 +56,7 @@ export function CommunitiesFeatured({ communities, maxItems = 3 }: CommunitiesFe
               animationDelay: `${200 + index * 150}ms`,
             }}
           >
-            <CommunitiesCard community={community} />
+            {/* <CommunitiesCard community={community} /> */}
           </div>
         ))}
       </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 // import { ThreadNestedReplyCard } from "@/components/thread-nested-reply-card";
@@ -16,7 +15,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
 import { useThread } from "@/hooks/use-thread";
 import type { Address, Reply as ReplyType } from "@/types/common";
-import { ArrowDown, ArrowUp, Award, Bookmark, Flag, Pin, Reply as ReplyIcon, Share } from "lucide-react";
+import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
   const params = useParams();
@@ -24,7 +23,7 @@ export default function ThreadPage() {
 
   // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [userVote, setUserVote] = useState<"up" | "down" | null>(null);
+  // const [userVote, setUserVote] = useState<"up" | "down" | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
   const [replies, setReplies] = useState<ReplyType[]>([]);
 
