@@ -29,8 +29,8 @@ export default function NewThreadPage() {
 
   const [formData, setFormData] = useState<CreateThreadFormData>({
     title: "",
-    content: "",
     summary: "",
+    content: "",
     tags: "",
     author: account?.address || "", // Ensure author is always a string
   });

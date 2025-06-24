@@ -355,7 +355,7 @@ export default function CommunityPage() {
                                   </h3>
                                 </Link>
 
-                                <p className="mb-3 line-clamp-2 text-slate-600">{thread.content}</p>
+                                <p className="mb-3 line-clamp-2 text-slate-600">{thread.summary}</p>
 
                                 <div className="flex items-center justify-between text-sm text-slate-500">
                                   <div className="flex items-center space-x-4">

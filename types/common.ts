@@ -1,4 +1,4 @@
-import { Account, Post } from "@lens-protocol/client";
+import { Post } from "@lens-protocol/client";
 
 export type Address = `0x${string}`;
 
@@ -52,7 +52,7 @@ export interface ThreadAuthor extends AuthorBase {}
 export interface Thread {
   id: string;
   title: string;
-  content: string;
+  summary: string;
   author: ThreadAuthor;
   rootPost: Post | null;
   upvotes: number;

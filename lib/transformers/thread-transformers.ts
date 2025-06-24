@@ -36,7 +36,7 @@ export async function transformFeedToThread(feed: Feed, threadRecord: CommunityT
   return {
     id: feed.address,
     title: feed.metadata?.name || `Thread ${feed.address.slice(-6)}`,
-    content: feed.metadata?.description || "No content available",
+    summary: feed.metadata?.description || "No content available",
     author: {
       name: author.username?.localName || "Unknown Author",
       username: author.username?.value || "unknown",
@@ -92,7 +92,7 @@ export async function transformFormDataToThread(
   return {
     id: threadRecord.lens_feed_address,
     title: formData.title,
-    content: formData.content,
+    summary: formData.content,
     author: {
       name: author.username?.localName || "Unknown Author",
       username: author.username?.value || "unknown",

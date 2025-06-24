@@ -86,9 +86,9 @@ export default function ThreadPage() {
                       <h1 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-brand-600">
                         {thread.title}
                       </h1>
-                      {thread.content && (
+                      {thread.summary && (
                         <p className="mt-1 max-w-2xl text-base font-medium italic text-brand-700/90">
-                          {thread.content}
+                          {thread.summary}
                         </p>
                       )}
                     </div>
