@@ -1,131 +1,140 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { HeroSection } from "@/components/homepage-hero-section";
 import { Navbar } from "@/components/navbar";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useCommunitiesStore } from "@/stores/communities-store";
 import { MessageCircle, TrendingUp, Zap } from "lucide-react";
+
+const featuredForums = [
+  {
+    id: "web3-builders",
+    name: "Web3 Builders",
+    description:
+      "A community for developers building the decentralized web. Share your projects, get feedback, and collaborate.",
+    emoji: "🚀",
+    memberCount: 12500,
+    threadCount: 234,
+    isPrivate: false,
+    isPremium: false,
+    trending: true,
+    category: "Technology",
+  },
+  {
+    id: "defi-discussions",
+    name: "DeFi Discussions",
+    description: "Deep dive into decentralized finance protocols, yield farming strategies, and market analysis.",
+    emoji: "💰",
+    memberCount: 8900,
+    threadCount: 156,
+    isPrivate: false,
+    isPremium: true,
+    trending: true,
+    category: "Finance",
+  },
+  {
+    id: "nft-creators",
+    name: "NFT Creators",
+    description: "Showcase your digital art, discuss marketplace trends, and connect with fellow creators.",
+    emoji: "🎨",
+    memberCount: 15600,
+    threadCount: 445,
+    isPrivate: false,
+    isPremium: false,
+    trending: false,
+    category: "Art",
+  },
+  {
+    id: "crypto-gaming",
+    name: "Crypto Gaming",
+    description: "Play-to-earn games, gaming NFTs, and the future of blockchain gaming.",
+    emoji: "🎮",
+    memberCount: 6700,
+    threadCount: 189,
+    isPrivate: false,
+    isPremium: false,
+    trending: true,
+    category: "Gaming",
+  },
+];
+
+// const trendingThreads = [
+//   {
+//     id: "future-social-media",
+//     title: "The Future of Decentralized Social Media",
+//     content:
+//       "With platforms like Lens Protocol gaining traction, what do you think the social media landscape will look like in 5 years?",
+//     author: {
+//       name: "Alice Chen",
+//       username: "alice.lens",
+//       avatar: "/placeholder.svg?height=32&width=32",
+//       reputation: 1250,
+//     },
+//     forumId: "web3-builders",
+//     forumName: "Web3 Builders",
+//     votes: 89,
+//     replies: 23,
+//     timeAgo: "2 hours ago",
+//     tags: ["social-media", "lens-protocol", "web3"],
+//     isPinned: false,
+//   },
+//   {
+//     id: "smart-contract-security",
+//     title: "Best Practices for Smart Contract Security",
+//     content:
+//       "After the recent exploits, I wanted to share some security best practices I've learned. Here are the top 10 things every developer should know...",
+//     author: {
+//       name: "DevSecOps",
+//       username: "devsecops.lens",
+//       avatar: "/placeholder.svg?height=32&width=32",
+//       reputation: 2100,
+//     },
+//     forumId: "web3-builders",
+//     forumName: "Web3 Builders",
+//     votes: 156,
+//     replies: 45,
+//     timeAgo: "4 hours ago",
+//     tags: ["security", "smart-contracts", "solidity"],
+//     isPinned: true,
+//   },
+//   {
+//     id: "defi-protocol-journey",
+//     title: "My Journey Building a DeFi Protocol",
+//     content:
+//       "It's been 8 months since I started building my first DeFi protocol. Here's what I learned, the mistakes I made, and advice for other builders...",
+//     author: {
+//       name: "BuilderBob",
+//       username: "builderbob.lens",
+//       avatar: "/placeholder.svg?height=32&width=32",
+//       reputation: 890,
+//     },
+//     forumId: "defi-discussions",
+//     forumName: "DeFi Discussions",
+//     votes: 67,
+//     replies: 18,
+//     timeAgo: "6 hours ago",
+//     tags: ["defi", "building", "startup"],
+//     isPinned: false,
+//   },
+// ];
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("new");
 
-  const featuredForums = [
-    {
-      id: "web3-builders",
-      name: "Web3 Builders",
-      description:
-        "A community for developers building the decentralized web. Share your projects, get feedback, and collaborate.",
-      emoji: "🚀",
-      memberCount: 12500,
-      threadCount: 234,
-      isPrivate: false,
-      isPremium: false,
-      trending: true,
-      category: "Technology",
-    },
-    {
-      id: "defi-discussions",
-      name: "DeFi Discussions",
-      description: "Deep dive into decentralized finance protocols, yield farming strategies, and market analysis.",
-      emoji: "💰",
-      memberCount: 8900,
-      threadCount: 156,
-      isPrivate: false,
-      isPremium: true,
-      trending: true,
-      category: "Finance",
-    },
-    {
-      id: "nft-creators",
-      name: "NFT Creators",
-      description: "Showcase your digital art, discuss marketplace trends, and connect with fellow creators.",
-      emoji: "🎨",
-      memberCount: 15600,
-      threadCount: 445,
-      isPrivate: false,
-      isPremium: false,
-      trending: false,
-      category: "Art",
-    },
-    {
-      id: "crypto-gaming",
-      name: "Crypto Gaming",
-      description: "Play-to-earn games, gaming NFTs, and the future of blockchain gaming.",
-      emoji: "🎮",
-      memberCount: 6700,
-      threadCount: 189,
-      isPrivate: false,
-      isPremium: false,
-      trending: true,
-      category: "Gaming",
-    },
-  ];
+  const { communities, fetchCommunities } = useCommunitiesStore();
 
-  // const trendingThreads = [
-  //   {
-  //     id: "future-social-media",
-  //     title: "The Future of Decentralized Social Media",
-  //     content:
-  //       "With platforms like Lens Protocol gaining traction, what do you think the social media landscape will look like in 5 years?",
-  //     author: {
-  //       name: "Alice Chen",
-  //       username: "alice.lens",
-  //       avatar: "/placeholder.svg?height=32&width=32",
-  //       reputation: 1250,
-  //     },
-  //     forumId: "web3-builders",
-  //     forumName: "Web3 Builders",
-  //     votes: 89,
-  //     replies: 23,
-  //     timeAgo: "2 hours ago",
-  //     tags: ["social-media", "lens-protocol", "web3"],
-  //     isPinned: false,
-  //   },
-  //   {
-  //     id: "smart-contract-security",
-  //     title: "Best Practices for Smart Contract Security",
-  //     content:
-  //       "After the recent exploits, I wanted to share some security best practices I've learned. Here are the top 10 things every developer should know...",
-  //     author: {
-  //       name: "DevSecOps",
-  //       username: "devsecops.lens",
-  //       avatar: "/placeholder.svg?height=32&width=32",
-  //       reputation: 2100,
-  //     },
-  //     forumId: "web3-builders",
-  //     forumName: "Web3 Builders",
-  //     votes: 156,
-  //     replies: 45,
-  //     timeAgo: "4 hours ago",
-  //     tags: ["security", "smart-contracts", "solidity"],
-  //     isPinned: true,
-  //   },
-  //   {
-  //     id: "defi-protocol-journey",
-  //     title: "My Journey Building a DeFi Protocol",
-  //     content:
-  //       "It's been 8 months since I started building my first DeFi protocol. Here's what I learned, the mistakes I made, and advice for other builders...",
-  //     author: {
-  //       name: "BuilderBob",
-  //       username: "builderbob.lens",
-  //       avatar: "/placeholder.svg?height=32&width=32",
-  //       reputation: 890,
-  //     },
-  //     forumId: "defi-discussions",
-  //     forumName: "DeFi Discussions",
-  //     votes: 67,
-  //     replies: 18,
-  //     timeAgo: "6 hours ago",
-  //     tags: ["defi", "building", "startup"],
-  //     isPinned: false,
-  //   },
-  // ];
+  // Effects
+  useEffect(() => {
+    fetchCommunities();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-brand-100/30">
@@ -366,11 +375,21 @@ export default function HomePage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4 pt-0">
-                {featuredForums.slice(0, 3).map(forum => (
+                {communities.slice(0, 3).map(forum => (
                   <Link key={forum.id} href={`/communities/${forum.id}`}>
                     <div className="group flex cursor-pointer items-center gap-3 rounded-xl p-3 transition-colors hover:bg-slate-50">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-lg text-white">
-                        {forum.emoji}
+                        {forum.logo ? (
+                          <Image
+                            src={forum.logo.replace("lens://", "https://api.grove.storage/")}
+                            alt={forum.name}
+                            className="h-14 w-14 object-contain"
+                            width={32}
+                            height={32}
+                          />
+                        ) : (
+                          forum.name?.charAt(0)?.toUpperCase() || "?"
+                        )}
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="truncate font-medium text-slate-900 transition-colors group-hover:text-brand-600">
