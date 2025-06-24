@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CommunityCreateDialog } from "@/components/community-create-dialog";
 import { Navbar } from "@/components/navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,20 +9,13 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useCommunitiesStore } from "@/stores/communities-store";
-import { Community } from "@/types/common";
 import { CheckCircle, MessageSquare, Search, Users } from "lucide-react";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Custom hooks
-  const {
-    communities: allCommunities,
-    isLoading,
-    error: fetchError,
-    addCommunity,
-    fetchCommunities,
-  } = useCommunitiesStore();
+  const { communities: allCommunities, isLoading, error: fetchError, fetchCommunities } = useCommunitiesStore();
 
   // Fetch communities on component mount
   useEffect(() => {
@@ -36,10 +28,6 @@ export default function CommunitiesPage() {
       community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       community.description.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
-  const handleCommunityCreated = (newCommunity: Community) => {
-    addCommunity(newCommunity);
-  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -62,7 +50,11 @@ export default function CommunitiesPage() {
                     <p className="mt-1 text-slate-600">Discover and join communities in the Lens ecosystem</p>
                   </div>
 
-                  <CommunityCreateDialog onCommunityCreated={handleCommunityCreated} />
+                  <Link href="/communities/new">
+                    <Button className="rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-6 py-2 text-base font-semibold text-white shadow-sm hover:from-brand-600 hover:to-brand-700">
+                      Create Community
+                    </Button>
+                  </Link>
                 </div>
 
                 {/* Search Bar */}
@@ -187,7 +179,11 @@ export default function CommunitiesPage() {
                             ? "Try adjusting your search or create a new community to get started."
                             : "Be the first to create a community and start building an amazing ecosystem!"}
                         </p>
-                        <CommunityCreateDialog onCommunityCreated={handleCommunityCreated} />
+                        <Link href="/communities/new">
+                          <Button className="rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-6 py-2 text-base font-semibold text-white shadow-sm hover:from-brand-600 hover:to-brand-700">
+                            Create Community
+                          </Button>
+                        </Link>
                       </div>
                     )}
                   </>
