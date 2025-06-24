@@ -41,6 +41,7 @@ import { useWalletClient } from "wagmi";
 export default function CommunityPage() {
   const params = useParams();
   const communityAddress = params.address as string;
+
   const [showPostForm, setShowPostForm] = useState(false);
   const [sortBy, setSortBy] = useState("hot");
   const [newPost, setNewPost] = useState({ title: "", content: "", tags: "" });
@@ -50,6 +51,9 @@ export default function CommunityPage() {
 
   // Use threads store directly
   const { threads, fetchThreadsByCommunity, isLoading: isLoadingThreads } = useThreadsStore();
+
+  // Get threads for this community
+  const communityThreads = threads[communityAddress] || [];
 
   // Effects
   useEffect(() => {
@@ -292,7 +296,7 @@ export default function CommunityPage() {
                       <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-brand-500"></div>
                       <p className="text-slate-600">Loading threads from Lens Protocol...</p>
                     </div>
-                  ) : threads.length === 0 ? (
+                  ) : communityThreads.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12">
                       <div className="mb-4 text-4xl">📝</div>
                       <h3 className="mb-2 text-lg font-semibold text-slate-900">No threads yet</h3>
@@ -300,7 +304,7 @@ export default function CommunityPage() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {threads.map((thread: Thread) => (
+                      {communityThreads.map((thread: Thread) => (
                         <Card
                           key={thread.id}
                           className="border border-slate-200/60 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-300/60 hover:shadow-md"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 // import { ThreadNestedReplyCard } from "@/components/thread-nested-reply-card";
@@ -14,22 +14,34 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
 import { useThread } from "@/hooks/use-thread";
-import type { Address, Reply as ReplyType } from "@/types/common";
+import { useThreadsStore } from "@/stores/threads-store";
+import { type Address, type Reply as ReplyType, Thread } from "@/types/common";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
-export default function ThreadPage() {
-  const params = useParams();
-  const threadAddress = params.address as string;
+export default async function ThreadPage({ params }: { params: Promise<{ address: Address }> }) {
+  const { address: threadAddress } = await params;
 
   // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   // const [userVote, setUserVote] = useState<"up" | "down" | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
   const [replies, setReplies] = useState<ReplyType[]>([]);
+  const [thread, setThread] = useState<Thread | null>(null);
 
   // Hooks
-  const { thread, loading, error } = useThread(threadAddress as Address);
+  const { fetchThreadByAddress, isLoading: loading, error } = useThreadsStore();
   const { createReply } = useReplyCreate();
+
+  useEffect(() => {
+    const fetchThread = async (threadAddress: string) => {
+      const thread = await fetchThreadByAddress(threadAddress);
+      setThread(thread);
+    };
+
+    if (threadAddress) {
+      fetchThread(threadAddress);
+    }
+  }, [threadAddress]);
 
   // Handlers
   const handleReply = () => {
