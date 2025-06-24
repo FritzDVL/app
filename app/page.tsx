@@ -11,130 +11,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useThreadsLatest } from "@/hooks/use-threads-latest";
 import { useCommunitiesStore } from "@/stores/communities-store";
 import { MessageCircle, TrendingUp, Zap } from "lucide-react";
-
-const featuredForums = [
-  {
-    id: "web3-builders",
-    name: "Web3 Builders",
-    description:
-      "A community for developers building the decentralized web. Share your projects, get feedback, and collaborate.",
-    emoji: "🚀",
-    memberCount: 12500,
-    threadCount: 234,
-    isPrivate: false,
-    isPremium: false,
-    trending: true,
-    category: "Technology",
-  },
-  {
-    id: "defi-discussions",
-    name: "DeFi Discussions",
-    description: "Deep dive into decentralized finance protocols, yield farming strategies, and market analysis.",
-    emoji: "💰",
-    memberCount: 8900,
-    threadCount: 156,
-    isPrivate: false,
-    isPremium: true,
-    trending: true,
-    category: "Finance",
-  },
-  {
-    id: "nft-creators",
-    name: "NFT Creators",
-    description: "Showcase your digital art, discuss marketplace trends, and connect with fellow creators.",
-    emoji: "🎨",
-    memberCount: 15600,
-    threadCount: 445,
-    isPrivate: false,
-    isPremium: false,
-    trending: false,
-    category: "Art",
-  },
-  {
-    id: "crypto-gaming",
-    name: "Crypto Gaming",
-    description: "Play-to-earn games, gaming NFTs, and the future of blockchain gaming.",
-    emoji: "🎮",
-    memberCount: 6700,
-    threadCount: 189,
-    isPrivate: false,
-    isPremium: false,
-    trending: true,
-    category: "Gaming",
-  },
-];
-
-// const trendingThreads = [
-//   {
-//     id: "future-social-media",
-//     title: "The Future of Decentralized Social Media",
-//     content:
-//       "With platforms like Lens Protocol gaining traction, what do you think the social media landscape will look like in 5 years?",
-//     author: {
-//       name: "Alice Chen",
-//       username: "alice.lens",
-//       avatar: "/placeholder.svg?height=32&width=32",
-//       reputation: 1250,
-//     },
-//     forumId: "web3-builders",
-//     forumName: "Web3 Builders",
-//     votes: 89,
-//     replies: 23,
-//     timeAgo: "2 hours ago",
-//     tags: ["social-media", "lens-protocol", "web3"],
-//     isPinned: false,
-//   },
-//   {
-//     id: "smart-contract-security",
-//     title: "Best Practices for Smart Contract Security",
-//     content:
-//       "After the recent exploits, I wanted to share some security best practices I've learned. Here are the top 10 things every developer should know...",
-//     author: {
-//       name: "DevSecOps",
-//       username: "devsecops.lens",
-//       avatar: "/placeholder.svg?height=32&width=32",
-//       reputation: 2100,
-//     },
-//     forumId: "web3-builders",
-//     forumName: "Web3 Builders",
-//     votes: 156,
-//     replies: 45,
-//     timeAgo: "4 hours ago",
-//     tags: ["security", "smart-contracts", "solidity"],
-//     isPinned: true,
-//   },
-//   {
-//     id: "defi-protocol-journey",
-//     title: "My Journey Building a DeFi Protocol",
-//     content:
-//       "It's been 8 months since I started building my first DeFi protocol. Here's what I learned, the mistakes I made, and advice for other builders...",
-//     author: {
-//       name: "BuilderBob",
-//       username: "builderbob.lens",
-//       avatar: "/placeholder.svg?height=32&width=32",
-//       reputation: 890,
-//     },
-//     forumId: "defi-discussions",
-//     forumName: "DeFi Discussions",
-//     votes: 67,
-//     replies: 18,
-//     timeAgo: "6 hours ago",
-//     tags: ["defi", "building", "startup"],
-//     isPinned: false,
-//   },
-// ];
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("new");
 
   const { communities, fetchCommunities } = useCommunitiesStore();
+  const { threads, loading, error } = useThreadsLatest();
 
   // Effects
   useEffect(() => {
     fetchCommunities();
-  }, []);
+  }, [fetchCommunities]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-brand-100/30">
@@ -305,31 +195,93 @@ export default function HomePage() {
                   </TabsContent> */}
 
                   <TabsContent value="new" className="mt-0">
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50/80 to-indigo-100/60 p-12 text-center backdrop-blur-sm">
-                      <div className="absolute -left-4 -top-4 h-20 w-20 rounded-full bg-blue-200/30 blur-xl" />
-                      <div className="absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-indigo-200/30 blur-xl" />
-                      <div className="relative z-10">
-                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg">
-                          <MessageCircle className="h-10 w-10 text-white" />
-                        </div>
-                        <h3 className="mb-3 text-xl font-semibold text-slate-700">Fresh Discussions</h3>
-                        <p className="mx-auto max-w-md text-slate-600">
-                          New conversations are brewing. Check back soon for the latest discussions and hot takes from
-                          the community.
-                        </p>
-                        <div className="mt-6 flex justify-center gap-2">
-                          <div className="h-2 w-2 animate-bounce rounded-full bg-blue-400" />
-                          <div
-                            className="h-2 w-2 animate-bounce rounded-full bg-indigo-400"
-                            style={{ animationDelay: "0.1s" }}
-                          />
-                          <div
-                            className="h-2 w-2 animate-bounce rounded-full bg-purple-400"
-                            style={{ animationDelay: "0.2s" }}
-                          />
+                    {loading ? (
+                      <div className="flex items-center justify-center py-12">
+                        <span className="text-slate-500">Loading latest threads...</span>
+                      </div>
+                    ) : error ? (
+                      <div className="flex items-center justify-center py-12">
+                        <span className="text-red-500">{error}</span>
+                      </div>
+                    ) : threads.length === 0 ? (
+                      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50/80 to-indigo-100/60 p-12 text-center backdrop-blur-sm">
+                        <div className="absolute -left-4 -top-4 h-20 w-20 rounded-full bg-blue-200/30 blur-xl" />
+                        <div className="absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-indigo-200/30 blur-xl" />
+                        <div className="relative z-10">
+                          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg">
+                            <MessageCircle className="h-10 w-10 text-white" />
+                          </div>
+                          <h3 className="mb-3 text-xl font-semibold text-slate-700">Fresh Discussions</h3>
+                          <p className="mx-auto max-w-md text-slate-600">
+                            New conversations are brewing. Check back soon for the latest discussions and hot takes from
+                            the community.
+                          </p>
+                          <div className="mt-6 flex justify-center gap-2">
+                            <div className="h-2 w-2 animate-bounce rounded-full bg-blue-400" />
+                            <div
+                              className="h-2 w-2 animate-bounce rounded-full bg-indigo-400"
+                              style={{ animationDelay: "0.1s" }}
+                            />
+                            <div
+                              className="h-2 w-2 animate-bounce rounded-full bg-purple-400"
+                              style={{ animationDelay: "0.2s" }}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {threads.map(thread => (
+                          <Card
+                            key={thread.id}
+                            className="border border-slate-200/60 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-300/60 hover:shadow-md"
+                          >
+                            <CardContent className="p-6">
+                              <div className="flex gap-4">
+                                <div className="min-w-0 flex-1">
+                                  <div className="mb-2 flex items-center gap-2">
+                                    <span className="rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
+                                      {thread.forumName}
+                                    </span>
+                                  </div>
+                                  <Link href={`/thread/${thread.id}`}>
+                                    <h3 className="mb-2 line-clamp-2 cursor-pointer text-lg font-semibold text-slate-900 transition-colors hover:text-brand-600">
+                                      {thread.title}
+                                    </h3>
+                                  </Link>
+                                  <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600">
+                                    {thread.content}
+                                  </p>
+                                  <div className="flex items-center gap-3 text-xs text-slate-500">
+                                    <Link
+                                      href={`/u/${thread.author.username}`}
+                                      className="flex items-center gap-2 hover:text-brand-600"
+                                    >
+                                      {thread.author.avatar ? (
+                                        <Image
+                                          src={thread.author.avatar}
+                                          alt={thread.author.name}
+                                          width={20}
+                                          height={20}
+                                          className="rounded-full"
+                                        />
+                                      ) : (
+                                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-600">
+                                          {thread.author.name?.charAt(0)?.toUpperCase() || "?"}
+                                        </span>
+                                      )}
+                                      <span>{thread.author.name}</span>
+                                    </Link>
+                                    <span>·</span>
+                                    <span>{thread.timeAgo || new Date(thread.created_at).toLocaleDateString()}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
                   </TabsContent>
 
                   <TabsContent value="top" className="mt-0">
