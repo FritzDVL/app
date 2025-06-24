@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { TextEditor } from "@/components/text-editor";
@@ -15,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useCommunityDetails } from "@/hooks/use-community-details";
 import { CreateThreadFormData, useThreadCreation } from "@/hooks/use-thread-create";
 import { useAuthStore } from "@/stores/auth-store";
-import { ArrowLeft, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { toast } from "sonner";
 
 export default function NewThreadPage() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
@@ -8,30 +8,40 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useCommunityCreation } from "@/hooks/use-community-create";
+import { useAuthStore } from "@/stores/auth-store";
 
 export default function NewCommunityPage() {
   const router = useRouter();
+
+  // State handling
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     category: "",
     emoji: "",
+    image: undefined as File | undefined,
+    adminAddress: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { createCommunity, isCreating } = useCommunityCreation();
-  const [adminAddress, setAdminAddress] = useState("");
 
-  // Optionally, get admin address from user context/store if available
-  // For now, require manual input if not available
+  // Hooks
+  const { createCommunity, isCreating } = useCommunityCreation();
+  const { account } = useAuthStore();
+
+  // Set adminAddress to account.address if available
+  useEffect(() => {
+    if (account?.address) {
+      setFormData(prev => ({ ...prev, adminAddress: account.address }));
+    }
+  }, [account?.address]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // Prevent image field from being set here
+    if (e.target.name === "image") return;
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleAdminChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAdminAddress(e.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,7 +49,7 @@ export default function NewCommunityPage() {
     setLoading(true);
     setError(null);
     try {
-      await createCommunity({ ...formData, adminAddress }, (community: any) => {
+      await createCommunity({ ...formData }, (community: any) => {
         if (community && community.id) {
           router.push(`/communities/${community.id}`);
         } else {
@@ -92,42 +102,34 @@ export default function NewCommunityPage() {
                       required
                     />
                   </div>
-                  {/* Emoji */}
+                  {/* Image Upload (replaces Emoji) */}
                   <div className="space-y-2">
-                    <Label htmlFor="emoji" className="text-base font-medium text-slate-900">
-                      Emoji (optional)
+                    <Label htmlFor="image" className="text-base font-medium text-slate-900">
+                      Community Image (optional)
                     </Label>
                     <Input
-                      id="emoji"
-                      name="emoji"
-                      value={formData.emoji}
-                      onChange={handleChange}
-                      placeholder="e.g. 🌐"
-                      maxLength={2}
-                      className="w-20 border-slate-200 text-2xl focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      id="image"
+                      name="image"
+                      type="file"
+                      accept="image/*"
+                      className="w-full border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        setFormData({ ...formData, image: file });
+                      }}
                     />
-                  </div>
-                  {/* Category */}
-                  <div className="space-y-2">
-                    <Label htmlFor="category" className="text-base font-medium text-slate-900">
-                      Category
-                    </Label>
-                    <Input
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleChange}
-                      placeholder="e.g. Development, Art, Gaming"
-                      className="border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
-                      required
-                    />
+                    {formData.image && (
+                      <div className="mt-2">
+                        <span className="text-xs text-slate-500">Selected: {formData.image.name}</span>
+                      </div>
+                    )}
                   </div>
                   {/* Description */}
                   <div className="space-y-2">
                     <Label htmlFor="description" className="text-base font-medium text-slate-900">
                       Description
                     </Label>
-                    <textarea
+                    <Textarea
                       id="description"
                       name="description"
                       value={formData.description}
@@ -145,11 +147,12 @@ export default function NewCommunityPage() {
                     <Input
                       id="adminAddress"
                       name="adminAddress"
-                      value={adminAddress}
-                      onChange={handleAdminChange}
+                      value={formData.adminAddress}
+                      onChange={handleChange}
                       placeholder="0x... (your wallet address)"
                       required
                       className="border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      disabled={!!account?.address}
                     />
                   </div>
                   {error && <div className="text-sm text-red-600">{error}</div>}
