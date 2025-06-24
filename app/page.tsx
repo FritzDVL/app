@@ -241,7 +241,7 @@ export default function HomePage() {
                                 <div className="min-w-0 flex-1">
                                   <div className="mb-2 flex items-center gap-2">
                                     <span className="rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
-                                      {thread.forumName}
+                                      {thread.summary}
                                     </span>
                                   </div>
                                   <Link href={`/thread/${thread.id}`}>
@@ -249,9 +249,9 @@ export default function HomePage() {
                                       {thread.title}
                                     </h3>
                                   </Link>
-                                  <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600">
-                                    {thread.content}
-                                  </p>
+                                  {/* <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600">
+                                    {thread.}
+                                  </p> */}
                                   <div className="flex items-center gap-3 text-xs text-slate-500">
                                     <Link
                                       href={`/u/${thread.author.username}`}

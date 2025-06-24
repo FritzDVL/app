@@ -232,3 +232,22 @@ export async function persistRootPostId(threadId: string, rootPostId: string): P
     throw new Error(`Failed to update root_post_address: ${error.message}`);
   }
 }
+
+/**
+ * Fetches the latest threads from the database
+ * @param limit - Number of threads to fetch (default: 5)
+ * @returns Array of thread records with their Lens feed addresses
+ */
+export async function fetchLatestThreads(limit: number = 5): Promise<CommunityThreadSupabase[]> {
+  const { data: threads, error } = await supabase
+    .from("community_threads")
+    .select("*, community:communities(*)")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    throw new Error(`Failed to fetch latest threads: ${error.message}`);
+  }
+
+  return threads || [];
+}
