@@ -107,10 +107,11 @@ export function useThreadCreation() {
       if (!community) {
         throw new Error("Community not found");
       }
+
       const threadRecord: CommunityThreadSupabase = {
         id: "",
         author: formData.author,
-        lens_feed_address: data.feed?.address,
+        lens_feed_address: data.threadRecord.lens_feed_address,
         root_post_id: postedFeed.id,
         created_at: new Date().toISOString(),
         community,
