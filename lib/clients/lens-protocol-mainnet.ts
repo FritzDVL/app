@@ -4,6 +4,6 @@ const storage = typeof window !== "undefined" ? window.localStorage : undefined;
 
 export const client = PublicClient.create({
   environment: mainnet,
-  origin: "https://lensjudge.xyz",
+  origin: "https://lens-forum.vercel.app/",
   storage,
 });

@@ -30,9 +30,8 @@ const config = createConfig(
     appName: "LensForum",
 
     // Optional app information
-    appDescription: "TBD",
-    appUrl: "https://lensforum.xyz",
-    appIcon: "/placeholder-logo.png",
+    appUrl: "https://lens-forum.vercel.app/",
+    appIcon: "https://lens-forum.vercel.app/logo.png",
   }),
 );
 
