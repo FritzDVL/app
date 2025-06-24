@@ -44,9 +44,12 @@ export default function ThreadPage() {
   }, [threadAddress]);
 
   // Handlers
-  const handleReply = () => {
+  const handleReply = async () => {
+    if (!thread || !thread.rootPost || !thread.rootPost.id) {
+      throw new Error("Thread or root post not found");
+    }
     if (replyingTo === "main" && replyContent["main"]?.trim()) {
-      const reply = createReply(replyContent["main"]);
+      const reply = await createReply(thread?.rootPost?.id, replyContent["main"], threadAddress as Address);
       if (reply) {
         setReplies(prev => [...prev, reply]);
       }
