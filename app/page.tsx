@@ -376,7 +376,7 @@ export default function HomePage() {
                         <h4 className="truncate font-medium text-slate-900 transition-colors group-hover:text-brand-600">
                           {forum.name}
                         </h4>
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                        {/* <div className="flex items-center gap-2 text-xs text-slate-500">
                           <span>{forum.memberCount.toLocaleString()} members</span>
                           {forum.trending && (
                             <Badge
@@ -387,7 +387,7 @@ export default function HomePage() {
                               Hot
                             </Badge>
                           )}
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </Link>
