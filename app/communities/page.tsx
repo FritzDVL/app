@@ -39,7 +39,7 @@ export default function CommunitiesPage() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Header Card */}
-            <Card className="mb-8 border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="mb-8 rounded-xl border border-border bg-card shadow-md">
               <CardContent className="p-8">
                 <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                   <div>
@@ -95,7 +95,7 @@ export default function CommunitiesPage() {
             )}
 
             {/* Communities Content */}
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-xl border border-border bg-card shadow-md">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <h2 className="flex items-center text-2xl font-bold text-slate-900">
@@ -126,7 +126,7 @@ export default function CommunitiesPage() {
                       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
                         {filteredCommunities.map(community => (
                           <Link key={community.id} href={`/communities/${community.id}`} className="group">
-                            <Card className="border border-slate-200/60 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-300/60 hover:shadow-md">
+                            <Card className="rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg">
                               <CardContent className="p-6">
                                 <div className="mb-4 flex items-start justify-between">
                                   {community.logo ? (

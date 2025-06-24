@@ -96,7 +96,7 @@ export default function NewCommunityPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           {/* Main Content Area */}
           <div className="lg:col-span-3">
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-xl border border-border bg-card shadow-md">
               <CardHeader>
                 <h1 className="text-2xl font-bold text-slate-900">Community Details</h1>
                 <p className="text-slate-600">Fill in the details to start your new community</p>
@@ -185,7 +185,7 @@ export default function NewCommunityPage() {
           </div>
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-xl border border-border bg-card shadow-md">
               <CardHeader>
                 <h3 className="text-lg font-semibold text-slate-900">Community Creation Tips</h3>
               </CardHeader>

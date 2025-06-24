@@ -137,7 +137,7 @@ export default function CommunityPage() {
             {/* Main Content */}
             <div className="lg:col-span-3">
               {/* Community Header Card */}
-              <Card className="mb-8 border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+              <Card className="mb-8 rounded-xl border border-border bg-card shadow-md">
                 <CardContent className="p-8">
                   <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
                     <div className="flex items-center space-x-4">
@@ -195,7 +195,7 @@ export default function CommunityPage() {
 
               {/* Post Thread Form */}
               {isJoined && (
-                <Card className="mb-8 border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+                <Card className="mb-8 rounded-xl border border-border bg-card shadow-md">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-semibold text-slate-900">Start a Discussion</h3>
@@ -236,7 +236,7 @@ export default function CommunityPage() {
               )}
 
               {/* Threads Content */}
-              <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+              <Card className="rounded-xl border border-border bg-card shadow-md">
                 <CardHeader className="pb-4">
                   <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                     <h2 className="flex items-center text-2xl font-bold text-slate-900">
@@ -307,7 +307,7 @@ export default function CommunityPage() {
                       {communityThreads.map((thread: Thread) => (
                         <Card
                           key={thread.id}
-                          className="border border-slate-200/60 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-300/60 hover:shadow-md"
+                          className="rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg"
                         >
                           <CardContent className="p-6">
                             <div className="flex items-start space-x-4">

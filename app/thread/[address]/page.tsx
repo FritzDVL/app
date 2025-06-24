@@ -90,7 +90,7 @@ export default function ThreadPage() {
 
         {/* Main Thread */}
         {thread && (
-          <Card className="border border-slate-200/60 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-300/60 hover:shadow-md">
+          <Card className="rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 {/* Thread Icon/Letter */}

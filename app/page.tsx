@@ -234,7 +234,7 @@ export default function HomePage() {
                         {threads.map(thread => (
                           <Card
                             key={thread.id}
-                            className="gradient-card group min-h-[64px] cursor-pointer transition-all duration-200 hover:shadow-md"
+                            className="gradient-card group min-h-[64px] cursor-pointer rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg"
                           >
                             <CardContent className="p-3 sm:p-4 md:p-5">
                               <div className="flex items-start">
@@ -336,7 +336,7 @@ export default function HomePage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Featured Communities */}
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-xl border border-border bg-card shadow-md">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-slate-900">Featured Communities</h3>
@@ -388,7 +388,7 @@ export default function HomePage() {
             </Card>
 
             {/* Stats */}
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-xl border border-border bg-card shadow-md">
               <CardHeader className="pb-4">
                 <h3 className="font-semibold text-slate-900">Community Stats</h3>
               </CardHeader>

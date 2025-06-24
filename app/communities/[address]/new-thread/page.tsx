@@ -146,7 +146,7 @@ export default function NewThreadPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           {/* Main Content Area */}
           <div className="lg:col-span-3">
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-xl border border-border bg-card shadow-md">
               <CardHeader>
                 <h1 className="text-2xl font-bold text-slate-900">Create New Thread</h1>
                 <p className="text-slate-600">Share your thoughts, questions, or ideas with the community</p>
@@ -257,7 +257,7 @@ export default function NewThreadPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Guidelines */}
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-xl border border-border bg-card shadow-md">
               <CardHeader>
                 <h3 className="text-lg font-semibold text-slate-900">Posting Guidelines</h3>
               </CardHeader>
@@ -286,7 +286,7 @@ export default function NewThreadPage() {
             </Card>
 
             {/* Preview */}
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-xl border border-border bg-card shadow-md">
               <CardHeader>
                 <h3 className="text-lg font-semibold text-slate-900">Preview</h3>
               </CardHeader>
@@ -318,7 +318,7 @@ export default function NewThreadPage() {
 
             {/* Community Info */}
             {communityDetails && (
-              <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+              <Card className="rounded-xl border border-border bg-card shadow-md">
                 <CardHeader>
                   <h3 className="text-lg font-semibold text-slate-900">Posting to</h3>
                 </CardHeader>
