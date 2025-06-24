@@ -41,7 +41,7 @@ export function ThreadReplyCard({
                 <span className="text-sm text-gray-500">{reply.timeAgo}</span>
               </div>
               <p className="mb-3 text-gray-700">{reply.content}</p>
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="text-brand-600 hover:text-brand-700"
@@ -68,7 +68,7 @@ export function ThreadReplyCard({
                     setReplyContent(c => ({ ...c, [reply.id]: "" }));
                   }}
                 />
-              )}
+              )} */}
             </div>
           </div>
         </CardContent>
