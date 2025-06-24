@@ -13,13 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
-import { useThread } from "@/hooks/use-thread";
 import { useThreadsStore } from "@/stores/threads-store";
 import { type Address, type Reply as ReplyType, Thread } from "@/types/common";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
-export default async function ThreadPage({ params }: { params: Promise<{ address: Address }> }) {
-  const { address: threadAddress } = await params;
+export default function ThreadPage() {
+  const params = useParams();
+  const { address: threadAddress } = params;
 
   // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ address
     };
 
     if (threadAddress) {
-      fetchThread(threadAddress);
+      fetchThread(threadAddress as string);
     }
   }, [threadAddress]);
 
