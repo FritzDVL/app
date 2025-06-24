@@ -13,9 +13,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
+import { useThreadReplies } from "@/hooks/use-thread-replies";
+import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { useThreadsStore } from "@/stores/threads-store";
 import { type Address, type Reply as ReplyType, Thread } from "@/types/common";
-import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
+import { evmAddress } from "@lens-protocol/client";
+import { Post as LensPost } from "@lens-protocol/client";
+import { fetchPosts } from "@lens-protocol/client/actions";
+import { fetchAccount } from "@lens-protocol/client/actions";
+import { Bookmark, Flag, MessageCircle, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
   const params = useParams();
@@ -25,12 +32,15 @@ export default function ThreadPage() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   // const [userVote, setUserVote] = useState<"up" | "down" | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-  const [replies, setReplies] = useState<ReplyType[]>([]);
   const [thread, setThread] = useState<Thread | null>(null);
 
   // Hooks
   const { fetchThreadByAddress, isLoading: loading, error } = useThreadsStore();
   const { createReply } = useReplyCreate();
+  const { replies, loadingReplies, errorReplies } = useThreadReplies(
+    threadAddress as string | undefined,
+    thread?.rootPost?.id,
+  );
 
   useEffect(() => {
     const fetchThread = async (threadAddress: string) => {
@@ -41,7 +51,7 @@ export default function ThreadPage() {
     if (threadAddress) {
       fetchThread(threadAddress as string);
     }
-  }, [threadAddress]);
+  }, [threadAddress, fetchThreadByAddress]);
 
   // Handlers
   const handleReply = async () => {
@@ -51,10 +61,9 @@ export default function ThreadPage() {
     if (replyingTo === "main" && replyContent["main"]?.trim()) {
       const reply = await createReply(thread?.rootPost?.id, replyContent["main"], threadAddress as Address);
       if (reply) {
-        setReplies(prev => [...prev, reply]);
+        setReplyingTo(null);
+        setReplyContent(c => ({ ...c, main: "" }));
       }
-      setReplyingTo(null);
-      setReplyContent(c => ({ ...c, main: "" }));
     }
   };
 
@@ -82,8 +91,8 @@ export default function ThreadPage() {
         </div>
 
         {/* Loading/Error State */}
-        {loading && <LoadingSpinner text="Loading thread..." />}
-        {error && <div className="py-8 text-center text-red-500">{error}</div>}
+        {(loading || loadingReplies) && <LoadingSpinner text="Loading thread..." />}
+        {(error || errorReplies) && <div className="py-8 text-center text-red-500">{error || errorReplies}</div>}
 
         {/* Main Thread */}
         {thread && (
