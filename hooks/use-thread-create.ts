@@ -117,7 +117,7 @@ export function useThreadCreation() {
         updated_at: new Date().toISOString(),
       };
       const newThread = await transformFormDataToThread(formData, threadRecord, communityAddress);
-      addThread(newThread);
+      addThread(communityAddress, newThread);
       if (onSuccess) onSuccess(newThread);
 
       toast.success("Thread Published!", {
