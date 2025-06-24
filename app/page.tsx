@@ -4,16 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { HeroSection } from "@/components/homepage-hero-section";
 import { Navbar } from "@/components/navbar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { ArrowDown, ArrowUp, Award, Heart, MessageCircle, Pin, TrendingUp, Zap } from "lucide-react";
+import { MessageCircle, TrendingUp, Zap } from "lucide-react";
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState("trending");
+  const [activeTab, setActiveTab] = useState("new");
 
   const featuredForums = [
     {
@@ -67,65 +67,65 @@ export default function HomePage() {
     },
   ];
 
-  const trendingThreads = [
-    {
-      id: "future-social-media",
-      title: "The Future of Decentralized Social Media",
-      content:
-        "With platforms like Lens Protocol gaining traction, what do you think the social media landscape will look like in 5 years?",
-      author: {
-        name: "Alice Chen",
-        username: "alice.lens",
-        avatar: "/placeholder.svg?height=32&width=32",
-        reputation: 1250,
-      },
-      forumId: "web3-builders",
-      forumName: "Web3 Builders",
-      votes: 89,
-      replies: 23,
-      timeAgo: "2 hours ago",
-      tags: ["social-media", "lens-protocol", "web3"],
-      isPinned: false,
-    },
-    {
-      id: "smart-contract-security",
-      title: "Best Practices for Smart Contract Security",
-      content:
-        "After the recent exploits, I wanted to share some security best practices I've learned. Here are the top 10 things every developer should know...",
-      author: {
-        name: "DevSecOps",
-        username: "devsecops.lens",
-        avatar: "/placeholder.svg?height=32&width=32",
-        reputation: 2100,
-      },
-      forumId: "web3-builders",
-      forumName: "Web3 Builders",
-      votes: 156,
-      replies: 45,
-      timeAgo: "4 hours ago",
-      tags: ["security", "smart-contracts", "solidity"],
-      isPinned: true,
-    },
-    {
-      id: "defi-protocol-journey",
-      title: "My Journey Building a DeFi Protocol",
-      content:
-        "It's been 8 months since I started building my first DeFi protocol. Here's what I learned, the mistakes I made, and advice for other builders...",
-      author: {
-        name: "BuilderBob",
-        username: "builderbob.lens",
-        avatar: "/placeholder.svg?height=32&width=32",
-        reputation: 890,
-      },
-      forumId: "defi-discussions",
-      forumName: "DeFi Discussions",
-      votes: 67,
-      replies: 18,
-      timeAgo: "6 hours ago",
-      tags: ["defi", "building", "startup"],
-      isPinned: false,
-    },
-  ];
+  // const trendingThreads = [
+  //   {
+  //     id: "future-social-media",
+  //     title: "The Future of Decentralized Social Media",
+  //     content:
+  //       "With platforms like Lens Protocol gaining traction, what do you think the social media landscape will look like in 5 years?",
+  //     author: {
+  //       name: "Alice Chen",
+  //       username: "alice.lens",
+  //       avatar: "/placeholder.svg?height=32&width=32",
+  //       reputation: 1250,
+  //     },
+  //     forumId: "web3-builders",
+  //     forumName: "Web3 Builders",
+  //     votes: 89,
+  //     replies: 23,
+  //     timeAgo: "2 hours ago",
+  //     tags: ["social-media", "lens-protocol", "web3"],
+  //     isPinned: false,
+  //   },
+  //   {
+  //     id: "smart-contract-security",
+  //     title: "Best Practices for Smart Contract Security",
+  //     content:
+  //       "After the recent exploits, I wanted to share some security best practices I've learned. Here are the top 10 things every developer should know...",
+  //     author: {
+  //       name: "DevSecOps",
+  //       username: "devsecops.lens",
+  //       avatar: "/placeholder.svg?height=32&width=32",
+  //       reputation: 2100,
+  //     },
+  //     forumId: "web3-builders",
+  //     forumName: "Web3 Builders",
+  //     votes: 156,
+  //     replies: 45,
+  //     timeAgo: "4 hours ago",
+  //     tags: ["security", "smart-contracts", "solidity"],
+  //     isPinned: true,
+  //   },
+  //   {
+  //     id: "defi-protocol-journey",
+  //     title: "My Journey Building a DeFi Protocol",
+  //     content:
+  //       "It's been 8 months since I started building my first DeFi protocol. Here's what I learned, the mistakes I made, and advice for other builders...",
+  //     author: {
+  //       name: "BuilderBob",
+  //       username: "builderbob.lens",
+  //       avatar: "/placeholder.svg?height=32&width=32",
+  //       reputation: 890,
+  //     },
+  //     forumId: "defi-discussions",
+  //     forumName: "DeFi Discussions",
+  //     votes: 67,
+  //     replies: 18,
+  //     timeAgo: "6 hours ago",
+  //     tags: ["defi", "building", "startup"],
+  //     isPinned: false,
+  //   },
+  // ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-brand-100/30">
@@ -157,16 +157,16 @@ export default function HomePage() {
                       {/* Animated Background Indicator */}
                       <div
                         className={`absolute h-9 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 shadow-lg transition-all duration-300 ease-out ${
-                          activeTab === "trending"
-                            ? "left-1.5 w-[calc(33.333%-4px)]"
-                            : activeTab === "new"
-                              ? "left-[33.333%] w-[calc(33.333%-4px)]"
-                              : "left-[66.666%] w-[calc(33.333%-4px)]"
+                          activeTab === "new"
+                            ? "left-1.5 w-[calc(50%-4px)]"
+                            : activeTab === "top"
+                              ? "left-[50%] w-[calc(50%-4px)]"
+                              : "left-[50%] w-[calc(50%-4px)]"
                         }`}
                       />
 
                       {/* Tab Buttons */}
-                      <button
+                      {/* <button
                         onClick={() => setActiveTab("trending")}
                         className={`relative z-10 flex h-9 flex-1 items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 ${
                           activeTab === "trending" ? "text-white shadow-sm" : "text-slate-600 hover:text-brand-600"
@@ -174,7 +174,7 @@ export default function HomePage() {
                       >
                         <span className="text-base">🔥</span>
                         <span className="text-sm">Hot</span>
-                      </button>
+                      </button> */}
 
                       <button
                         onClick={() => setActiveTab("new")}
@@ -202,7 +202,7 @@ export default function HomePage() {
                     <div className="absolute -bottom-1 -right-2 h-4 w-4 rounded-full bg-gradient-to-br from-purple-400/20 to-pink-600/20 blur-sm" />
                   </div>
 
-                  <TabsContent value="trending" className="mt-0 space-y-4">
+                  {/* <TabsContent value="trending" className="mt-0 space-y-4">
                     {trendingThreads.map(thread => (
                       <Card
                         key={thread.id}
@@ -210,7 +210,6 @@ export default function HomePage() {
                       >
                         <CardContent className="p-6">
                           <div className="flex gap-4">
-                            {/* Vote Section */}
                             <div className="flex min-w-[50px] flex-col items-center space-y-1">
                               <Button
                                 variant="ghost"
@@ -229,7 +228,6 @@ export default function HomePage() {
                               </Button>
                             </div>
 
-                            {/* Content */}
                             <div className="min-w-0 flex-1">
                               <div className="mb-2 flex items-center gap-2">
                                 {thread.isPinned && (
@@ -295,7 +293,7 @@ export default function HomePage() {
                         </CardContent>
                       </Card>
                     ))}
-                  </TabsContent>
+                  </TabsContent> */}
 
                   <TabsContent value="new" className="mt-0">
                     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50/80 to-indigo-100/60 p-12 text-center backdrop-blur-sm">
