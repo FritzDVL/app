@@ -1,4 +1,5 @@
 import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { getTimeAgo } from "@/lib/utils";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
 import { Feed, Post, evmAddress } from "@lens-protocol/client";
@@ -47,7 +48,7 @@ export async function transformFeedToThread(feed: Feed, threadRecord: CommunityT
     upvotes: Math.floor(Math.random() * 100) + 10, // TODO: Get real voting data
     downvotes: Math.floor(Math.random() * 10),
     replies: Math.floor(Math.random() * 50), // TODO: Get real reply count
-    timeAgo: new Date(threadRecord.created_at).toLocaleDateString(),
+    timeAgo: getTimeAgo(new Date(threadRecord.created_at)),
     isPinned: false, // TODO: Add pinned logic
     isHot: Math.random() > 0.8, // TODO: Add hot logic based on recent activity
     tags: [], // TODO: Extract tags from feed metadata
@@ -61,7 +62,7 @@ export async function transformFeedToThread(feed: Feed, threadRecord: CommunityT
  * Used when we have thread data but no feed details yet
  */
 export async function transformFormDataToThread(
-  formData: { title: string; content: string; tags: string; author: Address },
+  formData: { title: string; summary: string; tags: string; author: Address },
   threadRecord: CommunityThreadSupabase,
   communityAddress: string,
 ): Promise<Thread> {
@@ -92,7 +93,7 @@ export async function transformFormDataToThread(
   return {
     id: threadRecord.lens_feed_address,
     title: formData.title,
-    summary: formData.content,
+    summary: formData.summary,
     author: {
       name: author.username?.localName || "Unknown Author",
       username: author.username?.value || "unknown",
@@ -108,6 +109,8 @@ export async function transformFormDataToThread(
     isHot: true, // New threads are considered "hot"
     tags: [],
     communityAddress: threadRecord.community?.lens_group_address || communityAddress,
-    created_at: threadRecord.created_at,
+    created_at: new Date(threadRecord.created_at).toLocaleString("en-US", {
+      dateStyle: "long",
+    }),
   };
 }
