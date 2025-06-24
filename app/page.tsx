@@ -5,15 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeroSection } from "@/components/homepage-hero-section";
 import { Navbar } from "@/components/navbar";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-// import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useThreadsLatest } from "@/hooks/use-threads-latest";
 import { useCommunitiesStore } from "@/stores/communities-store";
-import { MessageCircle, TrendingUp, Zap } from "lucide-react";
+import { ArrowDown, ArrowUp, Award, MessageCircle, TrendingUp, Zap } from "lucide-react";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("new");
@@ -234,46 +234,107 @@ export default function HomePage() {
                         {threads.map(thread => (
                           <Card
                             key={thread.id}
-                            className="border border-slate-200/60 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-300/60 hover:shadow-md"
+                            className="gradient-card group cursor-pointer transition-all duration-200 hover:shadow-md"
                           >
                             <CardContent className="p-6">
-                              <div className="flex gap-4">
+                              <div className="flex space-x-4">
+                                {/* Vote Section */}
+                                <div className="flex min-w-[40px] flex-col items-center space-y-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 hover:bg-green-100 hover:text-green-600"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      // Handle vote
+                                    }}
+                                  >
+                                    <ArrowUp className="h-4 w-4" />
+                                  </Button>
+                                  <span className="text-sm font-semibold">{thread.upvotes}</span>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 hover:bg-red-100 hover:text-red-600"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      // Handle vote
+                                    }}
+                                  >
+                                    <ArrowDown className="h-4 w-4" />
+                                  </Button>
+                                </div>
+
+                                {/* Content Section */}
                                 <div className="min-w-0 flex-1">
-                                  <div className="mb-2 flex items-center gap-2">
-                                    <span className="rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
-                                      {thread.summary}
-                                    </span>
+                                  <div className="mb-2 flex items-start justify-between">
+                                    <div className="mb-2 flex items-center space-x-2">
+                                      {thread.isPinned && (
+                                        <Badge className="border-yellow-200 bg-yellow-100 text-yellow-700">
+                                          📌 Pinned
+                                        </Badge>
+                                      )}
+                                      {thread.tags.length > 0 &&
+                                        thread.tags.map(tag => (
+                                          <Badge key={tag} variant="outline" className="text-xs">
+                                            {tag}
+                                          </Badge>
+                                        ))}
+                                    </div>
                                   </div>
+
                                   <Link href={`/thread/${thread.id}`}>
-                                    <h3 className="mb-2 line-clamp-2 cursor-pointer text-lg font-semibold text-slate-900 transition-colors hover:text-brand-600">
+                                    <h3 className="mb-2 cursor-pointer text-lg font-semibold transition-colors group-hover:text-green-600">
                                       {thread.title}
                                     </h3>
                                   </Link>
-                                  {/* <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600">
-                                    {thread.}
-                                  </p> */}
-                                  <div className="flex items-center gap-3 text-xs text-slate-500">
-                                    <Link
-                                      href={`/u/${thread.author.username}`}
-                                      className="flex items-center gap-2 hover:text-brand-600"
-                                    >
-                                      {thread.author.avatar ? (
-                                        <Image
-                                          src={thread.author.avatar}
-                                          alt={thread.author.name}
-                                          width={20}
-                                          height={20}
-                                          className="rounded-full"
-                                        />
-                                      ) : (
-                                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-600">
-                                          {thread.author.name?.charAt(0)?.toUpperCase() || "?"}
-                                        </span>
-                                      )}
-                                      <span>{thread.author.name}</span>
-                                    </Link>
-                                    <span>·</span>
-                                    <span>{thread.timeAgo || new Date(thread.created_at).toLocaleDateString()}</span>
+
+                                  {thread.summary && (
+                                    <p className="mb-3 line-clamp-2 text-sm text-gray-600">{thread.summary}</p>
+                                  )}
+
+                                  <div className="mb-3 flex flex-wrap gap-2">
+                                    {Array.isArray(thread.tags) &&
+                                      thread.tags.map(tag => (
+                                        <Badge
+                                          key={tag}
+                                          variant="outline"
+                                          className="cursor-pointer text-xs hover:bg-green-50"
+                                        >
+                                          #{tag}
+                                        </Badge>
+                                      ))}
+                                  </div>
+
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-3">
+                                      <Link
+                                        href={`/u/${thread.author.username}`}
+                                        className="flex items-center space-x-2 hover:text-green-600"
+                                        onClick={e => e.stopPropagation()}
+                                      >
+                                        <Avatar className="h-6 w-6">
+                                          <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
+                                          <AvatarFallback>{thread.author.name[0]}</AvatarFallback>
+                                        </Avatar>
+                                        <span className="text-sm font-medium">{thread.author.name}</span>
+                                        <div className="flex items-center space-x-1">
+                                          <Award className="h-3 w-3 text-yellow-500" />
+                                          <span className="text-xs text-gray-500">{thread.author.reputation}</span>
+                                        </div>
+                                      </Link>
+                                      <span className="text-xs text-gray-400">•</span>
+                                      <span className="text-xs text-gray-500">
+                                        {thread.timeAgo || new Date(thread.created_at).toLocaleDateString()}
+                                      </span>
+                                    </div>
+
+                                    <div className="flex items-center space-x-2">
+                                      <div className="flex items-center text-sm text-gray-500">
+                                        <MessageCircle className="mr-1 h-4 w-4" />
+                                        {thread.replies}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
