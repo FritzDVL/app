@@ -234,107 +234,67 @@ export default function HomePage() {
                         {threads.map(thread => (
                           <Card
                             key={thread.id}
-                            className="gradient-card group cursor-pointer transition-all duration-200 hover:shadow-md"
+                            className="gradient-card group min-h-[64px] cursor-pointer transition-all duration-200 hover:shadow-md"
                           >
-                            <CardContent className="p-6">
-                              <div className="flex space-x-4">
-                                {/* Vote Section */}
-                                <div className="flex min-w-[40px] flex-col items-center space-y-1">
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 hover:bg-green-100 hover:text-green-600"
-                                    onClick={e => {
-                                      e.stopPropagation();
-                                      // Handle vote
-                                    }}
-                                  >
-                                    <ArrowUp className="h-4 w-4" />
-                                  </Button>
-                                  <span className="text-sm font-semibold">{thread.upvotes}</span>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 hover:bg-red-100 hover:text-red-600"
-                                    onClick={e => {
-                                      e.stopPropagation();
-                                      // Handle vote
-                                    }}
-                                  >
-                                    <ArrowDown className="h-4 w-4" />
-                                  </Button>
-                                </div>
-
-                                {/* Content Section */}
+                            <CardContent className="p-3 sm:p-4 md:p-5">
+                              <div className="flex items-start">
+                                {/* Content Section (no logo, no score) */}
                                 <div className="min-w-0 flex-1">
-                                  <div className="mb-2 flex items-start justify-between">
-                                    <div className="mb-2 flex items-center space-x-2">
+                                  <div className="mb-1 flex items-start justify-between">
+                                    <div className="flex items-center space-x-1.5">
                                       {thread.isPinned && (
-                                        <Badge className="border-yellow-200 bg-yellow-100 text-yellow-700">
+                                        <Badge className="h-5 border-yellow-200 bg-yellow-100 px-1.5 py-0.5 text-xs text-yellow-700">
                                           📌 Pinned
                                         </Badge>
                                       )}
                                       {thread.tags.length > 0 &&
                                         thread.tags.map(tag => (
-                                          <Badge key={tag} variant="outline" className="text-xs">
+                                          <Badge key={tag} variant="outline" className="h-5 px-1.5 py-0.5 text-xs">
                                             {tag}
                                           </Badge>
                                         ))}
                                     </div>
+                                    {/* Author Data Top Right */}
+                                    <Link
+                                      href={`/u/${thread.author.username}`}
+                                      className="flex items-center space-x-1.5 hover:text-green-600"
+                                      onClick={e => e.stopPropagation()}
+                                    >
+                                      <Avatar className="h-6 w-6">
+                                        <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
+                                        <AvatarFallback>{thread.author.name[0]}</AvatarFallback>
+                                      </Avatar>
+                                      <span className="text-sm font-medium">{thread.author.name}</span>
+                                    </Link>
                                   </div>
-
                                   <Link href={`/thread/${thread.id}`}>
-                                    <h3 className="mb-2 cursor-pointer text-lg font-semibold transition-colors group-hover:text-green-600">
+                                    <h3 className="mb-1 line-clamp-2 cursor-pointer text-lg font-semibold transition-colors group-hover:text-green-600">
                                       {thread.title}
                                     </h3>
                                   </Link>
-
                                   {thread.summary && (
-                                    <p className="mb-3 line-clamp-2 text-sm text-gray-600">{thread.summary}</p>
+                                    <p className="mb-2 line-clamp-2 text-sm text-gray-600">{thread.summary}</p>
                                   )}
-
-                                  <div className="mb-3 flex flex-wrap gap-2">
+                                  <div className="mb-2 flex flex-wrap gap-1.5">
                                     {Array.isArray(thread.tags) &&
                                       thread.tags.map(tag => (
                                         <Badge
                                           key={tag}
                                           variant="outline"
-                                          className="cursor-pointer text-xs hover:bg-green-50"
+                                          className="h-5 cursor-pointer px-1.5 py-0.5 text-xs hover:bg-green-50"
                                         >
                                           #{tag}
                                         </Badge>
                                       ))}
                                   </div>
-
                                   <div className="flex items-center justify-between">
-                                    <div className="flex items-center space-x-3">
-                                      <Link
-                                        href={`/u/${thread.author.username}`}
-                                        className="flex items-center space-x-2 hover:text-green-600"
-                                        onClick={e => e.stopPropagation()}
-                                      >
-                                        <Avatar className="h-6 w-6">
-                                          <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                                          <AvatarFallback>{thread.author.name[0]}</AvatarFallback>
-                                        </Avatar>
-                                        <span className="text-sm font-medium">{thread.author.name}</span>
-                                        <div className="flex items-center space-x-1">
-                                          <Award className="h-3 w-3 text-yellow-500" />
-                                          <span className="text-xs text-gray-500">{thread.author.reputation}</span>
-                                        </div>
-                                      </Link>
-                                      <span className="text-xs text-gray-400">•</span>
-                                      <span className="text-xs text-gray-500">
-                                        {thread.timeAgo || new Date(thread.created_at).toLocaleDateString()}
-                                      </span>
+                                    <div className="flex items-center text-sm text-gray-500">
+                                      <MessageCircle className="mr-1 h-3.5 w-3.5" />
+                                      {thread.replies}
                                     </div>
-
-                                    <div className="flex items-center space-x-2">
-                                      <div className="flex items-center text-sm text-gray-500">
-                                        <MessageCircle className="mr-1 h-4 w-4" />
-                                        {thread.replies}
-                                      </div>
-                                    </div>
+                                    <span className="text-[11px] text-gray-500">
+                                      {thread.timeAgo || new Date(thread.created_at).toLocaleDateString()}
+                                    </span>
                                   </div>
                                 </div>
                               </div>
