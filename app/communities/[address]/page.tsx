@@ -138,11 +138,13 @@ export default function CommunityPage() {
                   <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
                     <div className="flex items-center space-x-4">
                       <div className="text-6xl">
-                        {communityDetails.picture ? (
+                        {communityDetails.logo ? (
                           <Image
-                            src={communityDetails.picture}
+                            src={communityDetails.logo.replace("lens://", "https://api.grove.storage/")}
                             alt={communityDetails.name}
-                            className="h-16 w-16 rounded-full object-cover"
+                            width={100}
+                            height={100}
+                            className="h-16 w-16 rounded-full border border-slate-200 bg-white object-cover"
                           />
                         ) : (
                           <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-white shadow-lg">

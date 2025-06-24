@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { Badge } from "@/components/ui/badge";
@@ -128,9 +129,19 @@ export default function CommunitiesPage() {
                             <Card className="border border-slate-200/60 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-300/60 hover:shadow-md">
                               <CardContent className="p-6">
                                 <div className="mb-4 flex items-start justify-between">
-                                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-lg font-semibold text-white shadow-lg">
-                                    {community.name.charAt(0).toUpperCase()}
-                                  </div>
+                                  {community.logo ? (
+                                    <Image
+                                      src={community.logo.replace("lens://", "https://api.grove.storage/")}
+                                      alt={community.name}
+                                      width={64}
+                                      height={64}
+                                      className="h-12 w-12 rounded-full border border-slate-200 bg-white object-cover"
+                                    />
+                                  ) : (
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-lg font-semibold text-white shadow-lg">
+                                      {community.name.charAt(0).toUpperCase()}
+                                    </div>
+                                  )}
                                   {community.isVerified && <CheckCircle className="h-5 w-5 text-brand-500" />}
                                 </div>
 

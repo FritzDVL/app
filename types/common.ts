@@ -13,8 +13,7 @@ export interface Community {
   threadCount?: number;
   recentActivity: string;
   isVerified?: boolean;
-  avatarUrl?: string;
-  picture?: string;
+  logo?: string | null;
   trending?: boolean;
   owner?: string;
 }

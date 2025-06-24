@@ -28,6 +28,7 @@ export function transformGroupToCommunity(group: Group): Community {
     recentActivity,
     isVerified: true,
     trending: isNewlyCreated,
+    logo: group.metadata?.icon ? group.metadata.icon : undefined,
   };
 }
 
@@ -36,15 +37,15 @@ export function transformGroupToCommunity(group: Group): Community {
  */
 export function transformCommunityToDetails(
   community: Community,
-  isJoined: boolean = false,
-  isPremium: boolean = false,
+  opts?: { isJoined?: boolean; isPremium?: boolean; logo?: string | null },
 ): CommunityDetails {
   return {
     ...community,
     members: community.memberCount,
     threads: community.threadCount || 0,
     moderators: [], // Will be fetched separately by components that need it
-    isJoined,
-    isPremium,
+    isJoined: opts?.isJoined ?? false,
+    isPremium: opts?.isPremium ?? false,
+    logo: opts?.logo || community.logo,
   };
 }

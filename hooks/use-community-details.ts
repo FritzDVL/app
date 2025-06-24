@@ -32,6 +32,7 @@ export function useCommunityDetails(communityId: string) {
 
         // Get membership status if user is logged in
         let userIsMember = false;
+        let logo: string | undefined = undefined;
         if (sessionClient.data) {
           try {
             const groupResult = await fetchGroup(sessionClient.data, {
@@ -40,14 +41,18 @@ export function useCommunityDetails(communityId: string) {
 
             if (groupResult.isOk() && groupResult.value) {
               userIsMember = groupResult.value.operations?.isMember || false;
+              // Get logo from group metadata if available
+              logo = groupResult.value.metadata?.icon;
             }
           } catch (membershipError) {
             console.warn("Could not check membership status:", membershipError);
           }
         }
 
-        // Transform to CommunityDetails format
-        const details = transformCommunityToDetails(community, userIsMember, false);
+        // Build logo object if available
+        const logoObj = logo ? logo : undefined;
+        // Transform to CommunityDetails format, pass logoObj as second param
+        const details = transformCommunityToDetails(community, { isJoined: userIsMember, logo: logoObj });
 
         setCommunityDetails(details);
         setIsJoined(userIsMember);

@@ -324,9 +324,19 @@ export default function NewThreadPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center space-x-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-600 text-lg font-bold text-white">
-                      {communityDetails.name.charAt(0)}
-                    </div>
+                    {communityDetails.logo ? (
+                      <Image
+                        src={communityDetails.logo.replace("lens://", "https://api.grove.storage/")}
+                        alt={communityDetails.name}
+                        width={64}
+                        height={64}
+                        className="h-10 w-10 rounded-full border border-slate-200 bg-white object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-600 text-lg font-bold text-white">
+                        {communityDetails.name.charAt(0)}
+                      </div>
+                    )}
                     <div>
                       <h4 className="font-semibold text-slate-900">{communityDetails.name}</h4>
                       <p className="text-sm text-slate-500">{communityDetails.members.toLocaleString()} members</p>
