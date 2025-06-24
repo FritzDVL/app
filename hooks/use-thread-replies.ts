@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
-import { evmAddress, Post as LensPost } from "@lens-protocol/client";
-import { fetchPosts, fetchAccount } from "@lens-protocol/client/actions";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { type Reply as ReplyType } from "@/types/common";
+import { Post as LensPost, evmAddress } from "@lens-protocol/client";
+import { fetchAccount, fetchPosts } from "@lens-protocol/client/actions";
 
 export function useThreadReplies(threadAddress: string | undefined, rootPostId: string | undefined) {
   const [replies, setReplies] = useState<ReplyType[]>([]);
