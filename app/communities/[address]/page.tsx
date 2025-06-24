@@ -371,11 +371,7 @@ export default function CommunityPage() {
                                         <span>{thread.author.name}</span>
                                       </Link>
                                     )}
-                                    <span>
-                                      {new Date(thread.timeAgo).toLocaleString("en-US", {
-                                        dateStyle: "long",
-                                      })}
-                                    </span>
+                                    <span>{thread.timeAgo}</span>
                                   </div>
                                   <div className="flex items-center space-x-2">
                                     <div className="flex items-center">
