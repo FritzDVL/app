@@ -14,7 +14,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
 import { fetchReplies } from "@/lib/fetchers/replies";
 import { fetchThread } from "@/lib/fetchers/thread";
-import { type Address } from "@/types/common";
+import { type Address, type ThreadReplyWithDepth } from "@/types/common";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
@@ -42,14 +42,14 @@ export default function ThreadPage() {
     enabled: !!thread,
     staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
-    select: (flatReplies: any[]) => {
+    select: (flatReplies: ThreadReplyWithDepth[]) => {
       if (!thread?.rootPost?.id) return flatReplies;
       const rootPostId = String(thread.rootPost.id);
 
       // Filter out the root post if present
       const repliesOnly = flatReplies.filter(r => r.id !== rootPostId);
 
-      const repliesByParent: { [parentId: string]: typeof repliesOnly } = {};
+      const repliesByParent: { [parentId: string]: ThreadReplyWithDepth[] } = {};
       for (const reply of repliesOnly) {
         const parentId = String(reply.parentReplyId || rootPostId);
         if (!repliesByParent[parentId]) repliesByParent[parentId] = [];
@@ -57,12 +57,12 @@ export default function ThreadPage() {
       }
 
       // Recursively flatten replies in nested order, tracking depth
-      function flattenReplies(parentId: string, depth = 0): any[] {
+      function flattenReplies(parentId: string, depth = 0): ThreadReplyWithDepth[] {
         return (repliesByParent[parentId] || []).reduce((acc, reply) => {
           acc.push({ ...reply, _depth: depth });
           acc.push(...flattenReplies(String(reply.id), depth + 1));
           return acc;
-        }, [] as any[]);
+        }, [] as ThreadReplyWithDepth[]);
       }
       return flattenReplies(rootPostId);
     },

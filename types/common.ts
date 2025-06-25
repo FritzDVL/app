@@ -65,3 +65,8 @@ export interface Reply {
   createdAt: string;
   parentReplyId?: string;
 }
+
+// Represents a reply with depth for flattened threaded display
+export type ThreadReplyWithDepth<T = any> = T & {
+  _depth: number;
+};
