@@ -55,6 +55,12 @@ export default function ThreadPage() {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, main: "" }));
       }
+    } else if (replyingTo && replyContent[replyingTo]?.trim()) {
+      const reply = await createReply(replyingTo, replyContent[replyingTo], threadAddress as Address);
+      if (reply) {
+        setReplyingTo(null);
+        setReplyContent(c => ({ ...c, [replyingTo]: "" }));
+      }
     }
   };
 
@@ -202,6 +208,7 @@ export default function ThreadPage() {
               replyContent={replyContent}
               setReplyingTo={setReplyingTo}
               setReplyContent={setReplyContent}
+              handleReply={handleReply}
             />
           )
         )}

@@ -12,6 +12,7 @@ export function ThreadReplyCard({
   replyContent,
   setReplyingTo,
   setReplyContent,
+  handleReply, // <-- add this prop
   children,
 }: {
   reply: any;
@@ -19,6 +20,7 @@ export function ThreadReplyCard({
   replyContent: { [key: string]: string };
   setReplyingTo: (id: string | null) => void;
   setReplyContent: (fn: (c: any) => any) => void;
+  handleReply: (parentId: string, content: string) => Promise<void>; // <-- type
   children?: React.ReactNode;
 }) {
   return (
@@ -45,7 +47,6 @@ export function ThreadReplyCard({
                 variant="ghost"
                 size="sm"
                 className="text-brand-600 hover:text-brand-700"
-                disabled
                 onClick={() => setReplyingTo(reply.id)}
               >
                 <Reply className="mr-2 h-4 w-4" />
@@ -64,9 +65,9 @@ export function ThreadReplyCard({
                     setReplyingTo(null);
                     setReplyContent(c => ({ ...c, [reply.id]: "" }));
                   }}
-                  onSubmit={() => {
-                    setReplyingTo(null);
-                    setReplyContent(c => ({ ...c, [reply.id]: "" }));
+                  onSubmit={async () => {
+                    if (!replyContent[reply.id]?.trim()) return;
+                    await handleReply(reply.id, replyContent[reply.id]);
                   }}
                 />
               )}

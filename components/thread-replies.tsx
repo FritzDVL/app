@@ -7,6 +7,7 @@ interface ThreadRepliesProps {
   replyContent: { [key: string]: string };
   setReplyingTo: (id: string | null) => void;
   setReplyContent: (fn: (c: any) => any) => void;
+  handleReply: (parentId: string, content: string) => Promise<void>; // <-- add prop
 }
 
 export function ThreadReplies({
@@ -15,6 +16,7 @@ export function ThreadReplies({
   replyContent,
   setReplyingTo,
   setReplyContent,
+  handleReply,
 }: ThreadRepliesProps) {
   return (
     <div className="space-y-4">
@@ -27,6 +29,7 @@ export function ThreadReplies({
           replyContent={replyContent}
           setReplyingTo={setReplyingTo}
           setReplyContent={setReplyContent}
+          handleReply={handleReply} // pass down
         >
           {/* Nested Replies (temporarily disabled) */}
         </ThreadReplyCard>
