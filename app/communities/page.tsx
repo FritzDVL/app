@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
@@ -8,35 +8,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { populateCommunities } from "@/lib/populate/communities";
-import { useForumStore } from "@/stores/forum-store";
+import { fetchCommunities } from "@/lib/fetchers/communities";
+import { useQuery } from "@tanstack/react-query";
 import { MessageSquare, Search, Users } from "lucide-react";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Use normalized forum store for communities
-  const communities = Object.values(useForumStore(state => state.communities));
-  const setCommunities = useForumStore(state => state.setCommunities);
-  const [isLoading, setIsLoading] = useState(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
-
-  // Fetch and populate communities on mount if not already loaded
-  useEffect(() => {
-    const doPopulate = async () => {
-      setIsLoading(true);
-      setFetchError(null);
-      try {
-        const populated = await populateCommunities();
-        setCommunities(populated);
-      } catch (err) {
-        setFetchError(err instanceof Error ? err.message : "Failed to fetch communities");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    doPopulate();
-  }, [setCommunities]);
+  // Fetch communities with React Query
+  const {
+    data: communities = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["communities"],
+    queryFn: fetchCommunities,
+    staleTime: 60 * 1000, // 1 minute
+    refetchOnWindowFocus: true,
+  });
 
   // Filter communities based on search query
   const filteredCommunities = communities.filter(
@@ -101,10 +91,12 @@ export default function CommunitiesPage() {
             </Card>
 
             {/* Error Messages */}
-            {fetchError && (
+            {isError && (
               <Card className="mb-6 border-red-200 bg-red-50/80 backdrop-blur-sm">
                 <CardContent className="p-4">
-                  <div className="text-sm text-red-700">{fetchError}</div>
+                  <div className="text-sm text-red-700">
+                    {error instanceof Error ? error.message : "Failed to fetch communities"}
+                  </div>
                 </CardContent>
               </Card>
             )}
