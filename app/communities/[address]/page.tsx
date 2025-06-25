@@ -16,8 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useCommunityDetails } from "@/hooks/use-community-details";
-import { useThreadsStore } from "@/stores/threads-store";
+import { populateCommunities } from "@/lib/populate/communities";
+import { useForumStore } from "@/stores/forum-store";
 import { Thread } from "@/types/common";
 import { evmAddress } from "@lens-protocol/client";
 import { joinGroup } from "@lens-protocol/client/actions";
@@ -46,21 +46,33 @@ export default function CommunityPage() {
   const [sortBy, setSortBy] = useState("hot");
   const [newPost, setNewPost] = useState({ title: "", content: "", tags: "" });
 
-  // Use custom hooks for community details
-  const { communityDetails, isJoined, setIsJoined, isLoading, error } = useCommunityDetails(communityAddress);
+  // Use forum store for communities
+  const communities = useForumStore(state => state.communities);
+  const setCommunities = useForumStore(state => state.setCommunities);
+  const community = communities[communityAddress];
+  // Get threads for this community from normalized store
+  const allThreads = useForumStore(state => state.threads);
+  const communityThreads = Object.values(allThreads).filter(thread => thread.community === communityAddress);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [isJoined, setIsJoined] = useState(false); // You may want to fetch this from your backend/session
 
-  // Use threads store directly
-  const { threads, fetchThreadsByCommunity, isLoading: isLoadingThreads } = useThreadsStore();
-
-  // Get threads for this community
-  const communityThreads = threads[communityAddress] || [];
-
-  // Effects
+  // Populate communities if not present
   useEffect(() => {
-    if (communityAddress) {
-      fetchThreadsByCommunity(communityAddress);
-    }
-  }, [communityAddress, fetchThreadsByCommunity]);
+    if (community) return;
+    setIsLoading(true);
+    setFetchError(null);
+    (async () => {
+      try {
+        const populated = await populateCommunities();
+        setCommunities(populated);
+      } catch (err) {
+        setFetchError(err instanceof Error ? err.message : "Failed to fetch community");
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [community, setCommunities]);
 
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
@@ -115,12 +127,12 @@ export default function CommunityPage() {
       )}
 
       {/* Error State */}
-      {error && !isLoading && (
+      {fetchError && !isLoading && (
         <div className="mx-auto max-w-2xl px-4 py-24">
           <div className="text-center">
             <div className="mb-4 text-6xl">😞</div>
             <h1 className="mb-2 text-2xl font-bold text-slate-900">Community Not Found</h1>
-            <p className="mb-6 text-slate-600">{error}</p>
+            <p className="mb-6 text-slate-600">{fetchError}</p>
             <Link href="/communities">
               <Button className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 font-semibold text-white hover:from-brand-600 hover:to-brand-700">
                 Back to Communities
@@ -131,7 +143,7 @@ export default function CommunityPage() {
       )}
 
       {/* Main Content */}
-      {communityDetails && !isLoading && !error && (
+      {community && !isLoading && !fetchError && (
         <main className="mx-auto max-w-7xl px-4 py-8">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
             {/* Main Content */}
@@ -142,31 +154,31 @@ export default function CommunityPage() {
                   <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
                     <div className="flex items-center space-x-4">
                       <div className="text-6xl">
-                        {communityDetails.logo ? (
+                        {community.logo ? (
                           <Image
-                            src={communityDetails.logo.replace("lens://", "https://api.grove.storage/")}
-                            alt={communityDetails.name}
+                            src={community.logo.replace("lens://", "https://api.grove.storage/")}
+                            alt={community.name}
                             width={100}
                             height={100}
                             className="h-16 w-16 rounded-full border border-slate-200 bg-white object-cover"
                           />
                         ) : (
                           <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-white shadow-lg">
-                            {communityDetails.name.charAt(0).toUpperCase()}
+                            {community.name.charAt(0).toUpperCase()}
                           </div>
                         )}
                       </div>
                       <div>
-                        <h1 className="mb-2 text-3xl font-bold text-slate-900">{communityDetails.name}</h1>
-                        <p className="mb-4 max-w-2xl text-slate-600">{communityDetails.description}</p>
+                        <h1 className="mb-2 text-3xl font-bold text-slate-900">{community.name}</h1>
+                        <p className="mb-4 max-w-2xl text-slate-600">{community.description}</p>
                         <div className="flex items-center space-x-6 text-sm text-slate-500">
                           <div className="flex items-center">
                             <Users className="mr-2 h-4 w-4" />
-                            {communityDetails.members.toLocaleString()} members
+                            {community.memberCount.toLocaleString()} members
                           </div>
                           <div className="flex items-center">
                             <MessageCircle className="mr-2 h-4 w-4" />
-                            {communityDetails.threads} threads
+                            {community.threadsCount} threads
                           </div>
                         </div>
                       </div>
@@ -183,11 +195,11 @@ export default function CommunityPage() {
                       >
                         {isJoined ? "✓ Joined" : "Join Community"}
                       </Button>
-                      {communityDetails.isPremium && (
+                      {/* {community.isPremium && (
                         <Button className="rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 px-8 py-3 font-semibold text-white hover:from-yellow-500 hover:to-orange-600">
                           Unlock Premium
                         </Button>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 </CardContent>
@@ -199,7 +211,7 @@ export default function CommunityPage() {
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-semibold text-slate-900">Start a Discussion</h3>
-                      <ThreadNewButton communityId={communityDetails.id} isJoined={isJoined} />
+                      <ThreadNewButton communityId={community.id} isJoined={isJoined} />
                     </div>
                   </CardHeader>
                   {showPostForm && (
@@ -291,7 +303,7 @@ export default function CommunityPage() {
 
                 <CardContent className="pt-0">
                   {/* Threads List */}
-                  {isLoadingThreads ? (
+                  {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-12">
                       <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-brand-500"></div>
                       <p className="text-slate-600">Loading threads from Lens Protocol...</p>
@@ -323,15 +335,15 @@ export default function CommunityPage() {
                               {/* Content */}
                               <div className="min-w-0 flex-1">
                                 <div className="mb-2 flex items-center space-x-2">
-                                  {thread.isPinned && (
+                                  {/* {thread.isPinned && (
                                     <Badge className="border-brand-200 bg-brand-50 text-brand-600">
                                       <Pin className="mr-1 h-3 w-3" />
                                       Pinned
                                     </Badge>
-                                  )}
-                                  {thread.isHot && (
+                                  )} */}
+                                  {/* {thread.isHot && (
                                     <Badge className="border-orange-200 bg-orange-50 text-orange-600">🔥 Hot</Badge>
-                                  )}
+                                  )} */}
                                   {Array.isArray(thread.tags) &&
                                     thread.tags.length > 0 &&
                                     thread.tags.map((tag: string) => (
@@ -395,7 +407,7 @@ export default function CommunityPage() {
               <CommunityRules />
 
               {/* Moderators */}
-              <CommunityModerators groupAddress={communityDetails.id} />
+              <CommunityModerators groupAddress={community.id} />
             </div>
           </div>
         </main>

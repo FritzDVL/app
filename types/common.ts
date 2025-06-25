@@ -38,7 +38,7 @@ export interface ThreadAuthor extends AuthorBase {}
 // Base Thread interface for forum threads
 export interface Thread {
   id: string;
-  communityId: string;
+  community: Address;
   address: Address;
   title: string;
   summary: string;
@@ -57,7 +57,7 @@ export interface ReplyAuthor extends AuthorBase {}
 
 export interface Reply {
   id: string;
-  threadId: string;
+  thread: Address;
   content: string;
   author: ReplyAuthor;
   upvotes: number;

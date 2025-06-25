@@ -144,7 +144,7 @@ export default function CommunitiesPage() {
                     {filteredCommunities.length > 0 ? (
                       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
                         {filteredCommunities.map(community => (
-                          <Link key={community.id} href={`/communities/${community.id}`} className="group">
+                          <Link key={community.id} href={`/communities/${community.address}`} className="group">
                             <Card className="rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg">
                               <CardContent className="p-6">
                                 <div className="mb-4 flex items-start justify-between">
@@ -161,7 +161,7 @@ export default function CommunitiesPage() {
                                       {community.name.charAt(0).toUpperCase()}
                                     </div>
                                   )}
-                                  {community.isVerified && <CheckCircle className="h-5 w-5 text-brand-500" />}
+                                  {/* {community.isVerified && <CheckCircle className="h-5 w-5 text-brand-500" />} */}
                                 </div>
 
                                 <h3 className="mb-2 text-lg font-semibold text-slate-900 transition-colors group-hover:text-brand-600">
@@ -176,12 +176,12 @@ export default function CommunitiesPage() {
                                     <span>{community.memberCount.toLocaleString()}</span>
                                   </div>
 
-                                  <Badge
+                                  {/* <Badge
                                     variant="outline"
                                     className="border-brand-200 bg-brand-50 text-xs text-brand-600"
                                   >
                                     {community.category}
-                                  </Badge>
+                                  </Badge> */}
                                 </div>
 
                                 {community.postCount !== undefined && (
@@ -250,7 +250,7 @@ export default function CommunitiesPage() {
             </Card>
 
             {/* Categories */}
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            {/* <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <h3 className="font-semibold text-slate-900">Popular Categories</h3>
               </CardHeader>
@@ -268,7 +268,7 @@ export default function CommunitiesPage() {
                     </div>
                   ))}
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </main>

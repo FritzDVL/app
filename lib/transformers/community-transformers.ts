@@ -17,6 +17,7 @@ export function transformGroupToCommunity(
     address: group.address,
     name: group.metadata?.name || "",
     description: group.metadata?.description || "",
+    logo: group.metadata?.icon || null,
     memberCount: 0,
     threadsCount: 0,
     moderators,

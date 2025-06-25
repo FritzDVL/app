@@ -359,7 +359,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent className="space-y-4 pt-0">
                 {communities.slice(0, 3).map(forum => (
-                  <Link key={forum.id} href={`/communities/${forum.id}`}>
+                  <Link key={forum.id} href={`/communities/${forum.address}`}>
                     <div className="group flex cursor-pointer items-center gap-3 rounded-xl p-3 transition-colors hover:bg-slate-50">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-lg text-white">
                         {forum.logo ? (
