@@ -56,7 +56,7 @@ export interface Thread {
   rootPost: Post | null;
   upvotes: number;
   downvotes: number;
-  replies: number;
+  repliesCount: number;
   timeAgo: string;
   isPinned: boolean;
   isHot: boolean;

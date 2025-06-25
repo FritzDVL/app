@@ -293,7 +293,7 @@ export default function HomePage() {
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center text-sm text-gray-500">
                                       <MessageCircle className="mr-1 h-3.5 w-3.5" />
-                                      {thread.replies}
+                                      {thread.repliesCount}
                                     </div>
                                     <span className="text-[11px] text-gray-500">
                                       {thread.timeAgo || new Date(thread.created_at).toLocaleDateString()}

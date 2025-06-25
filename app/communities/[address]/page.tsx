@@ -368,7 +368,7 @@ export default function CommunityPage() {
                                   <div className="flex items-center space-x-2">
                                     <div className="flex items-center">
                                       <MessageCircle className="mr-1 h-4 w-4" />
-                                      {thread.replies} replies
+                                      {thread.repliesCount} replies
                                     </div>
                                     <Button variant="ghost" size="sm" className="p-1">
                                       <Share className="h-4 w-4" />
