@@ -7,6 +7,7 @@ import { Post } from "@lens-protocol/client";
 export function transformPostToReply(post: Post, author: ReplyAuthor): Reply {
   return {
     id: post.id,
+    thread: post.feed?.address,
     content: typeof post.metadata === "object" && "content" in post.metadata ? String(post.metadata.content) : "",
     author,
     upvotes: post.stats?.upvotes ?? 0,

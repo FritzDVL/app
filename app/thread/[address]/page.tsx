@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 // import { ThreadNestedReplyCard } from "@/components/thread-nested-reply-card";
@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
-import { useThreadReplies } from "@/hooks/use-thread-replies";
+import { populateReplies } from "@/lib/populate/replies";
 import { populateThread } from "@/lib/populate/thread";
 import { useForumStore } from "@/stores/forum-store";
 import { type Address, Thread } from "@/types/common";
@@ -30,40 +30,33 @@ export default function ThreadPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Normalized store
-  const thread = useForumStore(state => (threadAddress ? state.threads[threadAddress as string] : null));
+  const thread = useForumStore(state => state.threads[threadAddress as Address]);
   const addThread = useForumStore(state => state.addThread);
-
-  // Replies
-  const { createReply } = useReplyCreate();
-  const { replies, loadingReplies, errorReplies } = useThreadReplies(
-    threadAddress as string | undefined,
-    thread?.rootPost?.id,
-  );
+  const hasPopulatedThread = useRef(false);
 
   useEffect(() => {
-    let cancelled = false;
-    const loadThread = async (threadAddress: string) => {
-      if (thread) return;
+    const addr = String(threadAddress);
+    if (!addr) return;
+    if (thread || hasPopulatedThread.current) return;
+    const fetchThread = async () => {
       setLoading(true);
       setError(null);
       try {
-        const threadData = await populateThread(threadAddress);
-        if (!cancelled && threadData) {
+        const threadData = await populateThread(addr);
+        if (threadData) {
           addThread(threadData);
+          hasPopulatedThread.current = true;
         }
       } catch (e: any) {
-        if (!cancelled) setError(e.message || "Failed to load thread");
+        setError(e.message || "Failed to load thread");
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     };
-    if (threadAddress && !thread) {
-      loadThread(threadAddress as string);
-    }
-    return () => {
-      cancelled = true;
-    };
+    fetchThread();
   }, [threadAddress, thread, addThread]);
+
+  const replies: any[] = [];
 
   // Handlers
   const handleReply = async () => {
@@ -75,10 +68,11 @@ export default function ThreadPage() {
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, main: "" }));
-        // TODO: update thread.replies to include the new reply.
       }
     }
   };
+
+  const { createReply } = useReplyCreate();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -94,8 +88,8 @@ export default function ThreadPage() {
         </div>
 
         {/* Loading/Error State */}
-        {(loading || loadingReplies) && <LoadingSpinner text="Loading thread..." />}
-        {(error || errorReplies) && <div className="py-8 text-center text-red-500">{error || errorReplies}</div>}
+        {loading && <LoadingSpinner text="Loading thread..." />}
+        {error && <div className="py-8 text-center text-red-500">{error}</div>}
 
         {/* Main Thread */}
         {thread && (
