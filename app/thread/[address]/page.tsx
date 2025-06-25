@@ -65,7 +65,8 @@ export default function ThreadPage() {
     const fetchReplies = async () => {
       try {
         const fetchedReplies = await populateReplies(threadAddress as string);
-        setReplies(fetchedReplies, threadAddress as string);
+        const filteredReplies = fetchedReplies.filter(reply => reply.id !== thread?.rootPost?.id);
+        setReplies(filteredReplies, threadAddress as string);
       } catch (e) {
         // Optionally handle error
       }

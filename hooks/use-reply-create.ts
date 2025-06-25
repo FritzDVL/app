@@ -69,7 +69,7 @@ export function useReplyCreate() {
     const replyUri = await uploadReplyMetadata(metadata);
     const replyPost = await createReplyOnLens(replyUri, to, feedAddress);
     const reply = buildReplyObject(replyPost);
-    addReply(reply);
+    addReply(reply, feedAddress);
     return reply;
   }
 
