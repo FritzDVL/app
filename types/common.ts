@@ -12,6 +12,7 @@ export interface Community {
   logo?: string | null;
   threadsCount: number;
   moderators: Moderator[];
+  createdAt: string; // ISO date string
 }
 
 // Moderator interface for detailed moderator information

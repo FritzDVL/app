@@ -13,20 +13,27 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useThreadsLatest } from "@/hooks/use-threads-latest";
-import { useCommunitiesStore } from "@/stores/communities-store";
+import { populateCommunities } from "@/lib/populate/communities";
+import { useForumStore } from "@/stores/forum-store";
 import { TrendingUp, Zap } from "lucide-react";
 import { MessageCircle } from "lucide-react";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("new");
 
-  const { communities, fetchCommunities } = useCommunitiesStore();
+  // Use normalized forum store for communities
+  const communities = Object.values(useForumStore(state => state.communities));
+  const setCommunities = useForumStore(state => state.setCommunities);
   const { threads, loading, error } = useThreadsLatest();
 
-  // Effects
+  // Populate communities from database and lens protocol, set in forum store
   useEffect(() => {
-    fetchCommunities();
-  }, [fetchCommunities]);
+    async function doPopulate() {
+      const populated = await populateCommunities();
+      setCommunities(populated);
+    }
+    doPopulate();
+  }, [setCommunities]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-brand-100/30">
