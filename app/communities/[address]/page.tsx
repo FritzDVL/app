@@ -15,9 +15,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityMembership } from "@/hooks/use-community-membership";
 import { populateCommunities } from "@/lib/populate/communities";
+import { populateCommunity } from "@/lib/populate/community";
 import { populateThreads } from "@/lib/populate/threads";
 import { useForumStore } from "@/stores/forum-store";
 import { Thread } from "@/types/common";
@@ -48,8 +50,9 @@ export default function CommunityPage() {
   const [showPostForm, setShowPostForm] = useState(false);
   const [sortBy, setSortBy] = useState("hot");
   const [newPost, setNewPost] = useState({ title: "", content: "", tags: "" });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isCommunityLoading, setIsCommunityLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [areThreadsLoading, setAreThreadsLoading] = useState(false);
 
   // --- Stores ---
   const communities = useForumStore(state => state.communities);
@@ -62,38 +65,39 @@ export default function CommunityPage() {
 
   // --- Effects ---
   useEffect(() => {
-    if (community) return;
-    setIsLoading(true);
+    setIsCommunityLoading(true);
     setFetchError(null);
-    const doPopulateCommunities = async () => {
+    const doPopulateCommunity = async () => {
       try {
-        const populated = await populateCommunities();
-        setCommunities(populated);
+        const populated = await populateCommunity(communityAddress);
+        if (!populated) {
+          throw new Error("Community not found");
+        }
+        setCommunities([populated]);
       } catch (err) {
         setFetchError(err instanceof Error ? err.message : "Failed to fetch community");
       } finally {
-        setIsLoading(false);
+        setIsCommunityLoading(false);
       }
     };
-    doPopulateCommunities();
-  }, [community, setCommunities]);
+    doPopulateCommunity();
+  }, [communityAddress, setCommunities]);
 
   useEffect(() => {
-    if (!community || isLoading || fetchError) return;
-    if (communityThreads.length > 0) return;
-    setIsLoading(true);
+    setIsCommunityLoading(true);
     const doPopulateThreads = async () => {
       try {
+        setAreThreadsLoading(true);
         const threads = await populateThreads(communityAddress);
         setThreads(threads);
       } catch (err) {
         setFetchError(err instanceof Error ? err.message : "Failed to fetch threads");
       } finally {
-        setIsLoading(false);
+        setAreThreadsLoading(false);
       }
     };
     doPopulateThreads();
-  }, [community, communityAddress, communityThreads.length, isLoading, fetchError, setThreads]);
+  }, [communityAddress]);
 
   // --- Handlers ---
   const sessionClient = useSessionClient();
@@ -140,7 +144,7 @@ export default function CommunityPage() {
       </div>
 
       {/* Loading State */}
-      {(isLoading || isMembershipLoading) && (
+      {(isCommunityLoading || isMembershipLoading) && (
         <div className="flex flex-col items-center justify-center py-24">
           <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-brand-500"></div>
           <p className="text-lg font-medium text-slate-600">Loading community...</p>
@@ -149,7 +153,7 @@ export default function CommunityPage() {
       )}
 
       {/* Error State */}
-      {fetchError && !isLoading && (
+      {fetchError && !isCommunityLoading && (
         <div className="mx-auto max-w-2xl px-4 py-24">
           <div className="text-center">
             <div className="mb-4 text-6xl">😞</div>
@@ -165,7 +169,7 @@ export default function CommunityPage() {
       )}
 
       {/* Main Content */}
-      {community && !isLoading && !fetchError && (
+      {community && !isCommunityLoading && !fetchError && (
         <main className="mx-auto max-w-7xl px-4 py-8">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
             {/* Main Content */}
@@ -325,7 +329,9 @@ export default function CommunityPage() {
 
                 <CardContent className="pt-0">
                   {/* Threads List */}
-                  {isLoading ? (
+                  {areThreadsLoading ? (
+                    <LoadingSpinner text="Loading threads..." />
+                  ) : isCommunityLoading ? (
                     <div className="flex flex-col items-center justify-center py-12">
                       <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-brand-500"></div>
                       <p className="text-slate-600">Loading threads from Lens Protocol...</p>
