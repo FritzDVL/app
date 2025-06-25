@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { populateCommunities } from "@/lib/populate/communities";
+import { populateThreads } from "@/lib/populate/threads";
 import { useForumStore } from "@/stores/forum-store";
 import { Thread } from "@/types/common";
 import { evmAddress } from "@lens-protocol/client";
@@ -50,6 +51,7 @@ export default function CommunityPage() {
   const communities = useForumStore(state => state.communities);
   const setCommunities = useForumStore(state => state.setCommunities);
   const community = communities[communityAddress];
+  const setThreads = useForumStore(state => state.setThreads);
   // Get threads for this community from normalized store
   const allThreads = useForumStore(state => state.threads);
   const communityThreads = Object.values(allThreads).filter(thread => thread.community === communityAddress);
@@ -59,6 +61,7 @@ export default function CommunityPage() {
 
   // Populate communities if not present
   useEffect(() => {
+    // Only fetch if the current community is not in the store
     if (community) return;
     setIsLoading(true);
     setFetchError(null);
@@ -72,7 +75,27 @@ export default function CommunityPage() {
         setIsLoading(false);
       }
     })();
+    // Only run if the community is missing
   }, [community, setCommunities]);
+
+  // Populate threads for this community if not present
+  useEffect(() => {
+    // Only fetch if the community exists, there is no error, and threads for this community are not already present
+    if (!community || isLoading || fetchError) return;
+    if (communityThreads.length > 0) return;
+    setIsLoading(true);
+    (async () => {
+      try {
+        const threads = await populateThreads(communityAddress);
+        setThreads(threads);
+      } catch (err) {
+        setFetchError(err instanceof Error ? err.message : "Failed to fetch threads");
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+    // Only run if the community exists and threads are missing
+  }, [community, communityAddress, communityThreads.length, isLoading, fetchError, setThreads]);
 
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();

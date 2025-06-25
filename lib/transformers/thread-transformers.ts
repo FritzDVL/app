@@ -2,26 +2,17 @@ import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { getTimeAgo } from "@/lib/utils";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
-import { Feed, Post, evmAddress } from "@lens-protocol/client";
+import { Account, Feed, Post, evmAddress } from "@lens-protocol/client";
 import { fetchAccount, fetchPost } from "@lens-protocol/client/actions";
 
 /**
  * Transform a Lens Feed object and thread record to a Thread object
- * COMMENTED OUT: Lens Protocol integration disabled
  */
-export async function transformFeedToThread(feed: Feed, threadRecord: CommunityThreadSupabase): Promise<Thread> {
-  const accountRequest = await fetchAccount(client, {
-    address: evmAddress(threadRecord.author),
-  });
-
-  if (accountRequest.isErr()) {
-    throw new Error(`Failed to fetch account: ${accountRequest.error.message}`);
-  }
-  const author = accountRequest.value;
-  if (!author) {
-    throw new Error(`Account not found for address: ${feed.owner}`);
-  }
-
+export async function transformFeedToThread(
+  feed: Feed,
+  threadRecord: CommunityThreadSupabase,
+  author: Account,
+): Promise<Thread> {
   let rootPost: Post | null = null;
   if (threadRecord.root_post_id) {
     // Fetch the root post details if available
@@ -36,6 +27,8 @@ export async function transformFeedToThread(feed: Feed, threadRecord: CommunityT
 
   return {
     id: feed.address,
+    address: feed.address,
+    community: threadRecord.community?.lens_group_address as Address,
     title: feed.metadata?.name || `Thread ${feed.address.slice(-6)}`,
     summary: feed.metadata?.description || "No content available",
     author: {
@@ -48,12 +41,8 @@ export async function transformFeedToThread(feed: Feed, threadRecord: CommunityT
     upvotes: Math.floor(Math.random() * 100) + 10, // TODO: Get real voting data
     downvotes: Math.floor(Math.random() * 10),
     repliesCount: Math.floor(Math.random() * 50), // TODO: Get real reply count
-    replies: [],
     timeAgo: getTimeAgo(new Date(threadRecord.created_at)),
-    isPinned: false, // TODO: Add pinned logic
-    isHot: Math.random() > 0.8, // TODO: Add hot logic based on recent activity
     tags: [], // TODO: Extract tags from feed metadata
-    communityAddress: threadRecord.community.lens_group_address,
     created_at: threadRecord.created_at,
   };
 }
@@ -105,12 +94,8 @@ export async function transformFormDataToThread(
     upvotes: 0, // New thread starts with 0 votes
     downvotes: 0,
     repliesCount: 0, // New thread starts with 0 replies
-    replies: [],
     timeAgo: "Just now",
-    isPinned: false,
-    isHot: true, // New threads are considered "hot"
     tags: [],
-    communityAddress: threadRecord.community?.lens_group_address || communityAddress,
     created_at: new Date(threadRecord.created_at).toLocaleString("en-US", {
       dateStyle: "long",
     }),
