@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useThreadsLatest } from "@/hooks/use-threads-latest";
@@ -20,20 +21,38 @@ import { MessageCircle } from "lucide-react";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("new");
+  const [isLoading, setIsLoading] = useState(true);
 
   // Use normalized forum store for communities
   const communities = Object.values(useForumStore(state => state.communities));
   const setCommunities = useForumStore(state => state.setCommunities);
+  const communitiesLoaded = useForumStore(state => state.communitiesLoaded);
   const { threads, loading, error } = useThreadsLatest();
 
   // Populate communities from database and lens protocol, set in forum store
   useEffect(() => {
-    async function doPopulate() {
+    const doPopulate = async () => {
+      if (communitiesLoaded) {
+        setIsLoading(false);
+        return;
+      }
+
       const populated = await populateCommunities();
       setCommunities(populated);
-    }
+      setIsLoading(false);
+    };
+
     doPopulate();
-  }, [setCommunities]);
+  }, [setCommunities, communitiesLoaded]);
+
+  // In render, show loading if not loaded
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <LoadingSpinner text="Loading communities..." />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-brand-100/30">
