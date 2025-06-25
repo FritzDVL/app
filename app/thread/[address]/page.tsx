@@ -15,7 +15,7 @@ import { useReplyCreate } from "@/hooks/use-reply-create";
 import { fetchReplies } from "@/lib/fetchers/replies";
 import { fetchThread } from "@/lib/fetchers/thread";
 import { type Address } from "@/types/common";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
@@ -67,6 +67,7 @@ export default function ThreadPage() {
       return flattenReplies(rootPostId);
     },
   });
+  const queryClient = useQueryClient();
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) {
       throw new Error("Thread or root post not found");
@@ -76,12 +77,14 @@ export default function ThreadPage() {
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, main: "" }));
+        queryClient.invalidateQueries({ queryKey: ["replies", threadAddress] });
       }
     } else if (replyingTo && replyContent[replyingTo]?.trim()) {
       const reply = await createReply(replyingTo, replyContent[replyingTo], threadAddress as Address);
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, [replyingTo]: "" }));
+        queryClient.invalidateQueries({ queryKey: ["replies", threadAddress] });
       }
     }
   };
