@@ -7,15 +7,11 @@ export interface Community {
   id: string;
   name: string;
   description: string;
-  category: string;
   memberCount: number;
   postCount?: number;
-  threadCount?: number;
-  recentActivity: string;
-  isVerified?: boolean;
   logo?: string | null;
-  trending?: boolean;
-  owner?: string;
+  threadsCount: number;
+  moderators: Moderator[];
 }
 
 // Moderator interface for detailed moderator information
@@ -24,16 +20,6 @@ export interface Moderator {
   address: string;
   picture?: string;
   displayName: string;
-}
-
-// Extended interface for community detail pages with additional fields
-export interface CommunityDetails extends Community {
-  members: number; // Alias for memberCount for backward compatibility
-  threads: number; // Alias for threadCount for backward compatibility
-  rules?: string[]; // Optional since we use default rules
-  moderators: Moderator[];
-  isJoined: boolean;
-  isPremium: boolean;
 }
 
 interface AuthorBase {
@@ -50,6 +36,7 @@ export interface ThreadAuthor extends AuthorBase {}
 // Base Thread interface for forum threads
 export interface Thread {
   id: string;
+  communityId: string;
   title: string;
   summary: string;
   author: ThreadAuthor;
@@ -58,12 +45,8 @@ export interface Thread {
   downvotes: number;
   repliesCount: number;
   timeAgo: string;
-  isPinned: boolean;
-  isHot: boolean;
   tags: string[];
-  communityAddress: string;
   created_at: string;
-  replies: Reply[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -71,10 +54,11 @@ export interface ReplyAuthor extends AuthorBase {}
 
 export interface Reply {
   id: string;
+  threadId: string;
   content: string;
   author: ReplyAuthor;
   upvotes: number;
   downvotes: number;
-  //nestedReplies: Reply;
   createdAt: string;
+  parentReplyId?: string;
 }
