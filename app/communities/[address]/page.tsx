@@ -44,23 +44,23 @@ export default function CommunityPage() {
   const params = useParams();
   const communityAddress = params.address as string;
 
+  // --- State ---
   const [showPostForm, setShowPostForm] = useState(false);
   const [sortBy, setSortBy] = useState("hot");
   const [newPost, setNewPost] = useState({ title: "", content: "", tags: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Use forum store for communities
+  // --- Stores ---
   const communities = useForumStore(state => state.communities);
   const setCommunities = useForumStore(state => state.setCommunities);
   const community = communities[communityAddress];
   const setThreads = useForumStore(state => state.setThreads);
-  // Get threads for this community from normalized store
   const allThreads = useForumStore(state => state.threads);
   const communityThreads = Object.values(allThreads).filter(thread => thread.community === communityAddress);
-  const [isLoading, setIsLoading] = useState(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
   const { isMember: isJoined, isLoading: isMembershipLoading } = useCommunityMembership(communityAddress);
 
-  // Populate communities if not present
+  // --- Effects ---
   useEffect(() => {
     if (community) return;
     setIsLoading(true);
@@ -78,7 +78,6 @@ export default function CommunityPage() {
     doPopulateCommunities();
   }, [community, setCommunities]);
 
-  // Populate threads for this community if not present
   useEffect(() => {
     if (!community || isLoading || fetchError) return;
     if (communityThreads.length > 0) return;
@@ -96,6 +95,7 @@ export default function CommunityPage() {
     doPopulateThreads();
   }, [community, communityAddress, communityThreads.length, isLoading, fetchError, setThreads]);
 
+  // --- Handlers ---
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
 
@@ -129,6 +129,7 @@ export default function CommunityPage() {
     console.log(`Voted ${type} on thread ${threadId}`);
   };
 
+  // --- Render ---
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
