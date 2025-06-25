@@ -252,7 +252,7 @@ export default function HomePage() {
                                 <div className="min-w-0 flex-1">
                                   <div className="mb-1 flex items-start justify-between">
                                     <div className="flex items-center space-x-1.5">
-                                      {thread.isPinned && (
+                                      {/* {thread.isPinned && (
                                         <Badge className="h-5 border-yellow-200 bg-yellow-100 px-1.5 py-0.5 text-xs text-yellow-700">
                                           📌 Pinned
                                         </Badge>
@@ -262,7 +262,7 @@ export default function HomePage() {
                                           <Badge key={tag} variant="outline" className="h-5 px-1.5 py-0.5 text-xs">
                                             {tag}
                                           </Badge>
-                                        ))}
+                                        ))} */}
                                     </div>
                                     {/* Author Data Top Right */}
                                     <Link
