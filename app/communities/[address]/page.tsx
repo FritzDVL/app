@@ -18,14 +18,13 @@ import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityMembership } from "@/hooks/use-community-membership";
-import { populateCommunity } from "@/lib/populate/community";
-import { populateThreads } from "@/lib/populate/threads";
-import { useForumStore } from "@/stores/forum-store";
-import { Thread } from "@/types/common";
+import { fetchCommunity } from "@/lib/fetchers/community";
+import { fetchThreads } from "@/lib/fetchers/threads";
 import { evmAddress } from "@lens-protocol/client";
 import { joinGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { useSessionClient } from "@lens-protocol/react";
+import { useQuery } from "@tanstack/react-query";
 import {
   ArrowUp,
   Clock,
@@ -48,54 +47,38 @@ export default function CommunityPage() {
   const [showPostForm, setShowPostForm] = useState(false);
   const [sortBy, setSortBy] = useState("hot");
   const [newPost, setNewPost] = useState({ title: "", content: "", tags: "" });
-  const [isCommunityLoading, setIsCommunityLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [areThreadsLoading, setAreThreadsLoading] = useState(false);
 
-  // --- Stores ---
-  const communities = useForumStore(state => state.communities);
-  const setCommunities = useForumStore(state => state.setCommunities);
-  const community = communities[communityAddress];
-  const setThreads = useForumStore(state => state.setThreads);
-  const allThreads = useForumStore(state => state.threads);
-  const communityThreads = Object.values(allThreads).filter(thread => thread.community === communityAddress);
+  // --- Fetch community (React Query) ---
+  const {
+    data: community,
+    isLoading: isCommunityLoading,
+    isError: isCommunityError,
+    error: communityError,
+  } = useQuery({
+    queryKey: ["community", communityAddress],
+    queryFn: () => fetchCommunity(communityAddress),
+    enabled: !!communityAddress,
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+
+  // --- Fetch threads (React Query) ---
+  const {
+    data: threads = [],
+    isLoading: areThreadsLoading,
+    isError: isThreadsError,
+    error: threadsError,
+  } = useQuery({
+    queryKey: ["threads", communityAddress],
+    queryFn: () => fetchThreads(communityAddress),
+    enabled: !!communityAddress,
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+
+  const communityThreads = threads.filter(thread => thread.community === communityAddress);
   const { isMember: isJoined, isLoading: isMembershipLoading } = useCommunityMembership(communityAddress);
-
-  // --- Effects ---
-  useEffect(() => {
-    setIsCommunityLoading(true);
-    setFetchError(null);
-    const doPopulateCommunity = async () => {
-      try {
-        const populated = await populateCommunity(communityAddress);
-        if (!populated) {
-          throw new Error("Community not found");
-        }
-        setCommunities([populated]);
-      } catch (err) {
-        setFetchError(err instanceof Error ? err.message : "Failed to fetch community");
-      } finally {
-        setIsCommunityLoading(false);
-      }
-    };
-    doPopulateCommunity();
-  }, [communityAddress, setCommunities]);
-
-  useEffect(() => {
-    setIsCommunityLoading(true);
-    const doPopulateThreads = async () => {
-      try {
-        setAreThreadsLoading(true);
-        const threads = await populateThreads(communityAddress);
-        setThreads(threads);
-      } catch (err) {
-        setFetchError(err instanceof Error ? err.message : "Failed to fetch threads");
-      } finally {
-        setAreThreadsLoading(false);
-      }
-    };
-    doPopulateThreads();
-  }, [communityAddress]);
 
   // --- Handlers ---
   const sessionClient = useSessionClient();
@@ -342,7 +325,7 @@ export default function CommunityPage() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {communityThreads.map((thread: Thread) => (
+                      {communityThreads.map(thread => (
                         <Card
                           key={thread.id}
                           className="rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg"
