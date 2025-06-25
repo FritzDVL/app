@@ -5,6 +5,7 @@ export type Address = `0x${string}`;
 // Base Community interface for Lens Protocol communities
 export interface Community {
   id: string;
+  address: Address;
   name: string;
   description: string;
   memberCount: number;
@@ -18,7 +19,7 @@ export interface Community {
 // Moderator interface for detailed moderator information
 export interface Moderator {
   username: string;
-  address: string;
+  address: Address;
   picture?: string;
   displayName: string;
 }
@@ -38,6 +39,7 @@ export interface ThreadAuthor extends AuthorBase {}
 export interface Thread {
   id: string;
   communityId: string;
+  address: Address;
   title: string;
   summary: string;
   author: ThreadAuthor;
