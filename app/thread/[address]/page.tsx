@@ -13,10 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
-import { populateReplies } from "@/lib/populate/replies";
 import { populateThread } from "@/lib/populate/thread";
 import { useForumStore } from "@/stores/forum-store";
-import { type Address, Thread } from "@/types/common";
+import { type Address, Reply } from "@/types/common";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
@@ -35,18 +34,14 @@ export default function ThreadPage() {
   const hasPopulatedThread = useRef(false);
 
   useEffect(() => {
-    const addr = String(threadAddress);
-    if (!addr) return;
     if (thread || hasPopulatedThread.current) return;
+    hasPopulatedThread.current = true;
     const fetchThread = async () => {
-      setLoading(true);
-      setError(null);
       try {
-        const threadData = await populateThread(addr);
-        if (threadData) {
-          addThread(threadData);
-          hasPopulatedThread.current = true;
-        }
+        setLoading(true);
+        setError(null);
+        const threadData = await populateThread(String(threadAddress));
+        if (threadData) addThread(threadData);
       } catch (e: any) {
         setError(e.message || "Failed to load thread");
       } finally {
@@ -54,11 +49,8 @@ export default function ThreadPage() {
       }
     };
     fetchThread();
-  }, [threadAddress, thread, addThread]);
+  }, []);
 
-  const replies: any[] = [];
-
-  // Handlers
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) {
       throw new Error("Thread or root post not found");
@@ -73,6 +65,7 @@ export default function ThreadPage() {
   };
 
   const { createReply } = useReplyCreate();
+  const replies: Reply[] = [];
 
   return (
     <div className="min-h-screen bg-slate-50">
