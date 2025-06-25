@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { populateThread } from "@/lib/populate/thread";
+import { fetchThread } from "@/lib/fetchers/thread";
 import { fetchLatestThreads } from "@/lib/supabase";
 import type { Thread } from "@/types/common";
 
@@ -17,7 +17,7 @@ export function useThreadsLatest(limit: number = 5) {
         const transformed: Thread[] = [];
         for (const threadRecord of threadRecords) {
           try {
-            const thread = await populateThread(threadRecord.lens_feed_address);
+            const thread = await fetchThread(threadRecord.lens_feed_address);
             if (!thread) continue;
             transformed.push(thread);
           } catch {

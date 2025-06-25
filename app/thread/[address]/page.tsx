@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { ThreadReplies } from "@/components/thread-replies";
@@ -26,15 +26,9 @@ export default function ThreadPage() {
   // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-  const [error, setError] = useState<string | null>(null);
 
   // Fetch thread with TanStack Query
-  const {
-    data: thread,
-    isLoading: loading,
-    isError,
-    error: threadError,
-  } = useQuery({
+  const { data: thread, isLoading: loading } = useQuery({
     queryKey: ["thread", threadAddress],
     queryFn: () => fetchThread(String(threadAddress)),
     enabled: !!threadAddress,
@@ -43,12 +37,7 @@ export default function ThreadPage() {
   });
 
   // Fetch replies with TanStack Query (only after thread is loaded)
-  const {
-    data: replies = [],
-    isLoading: loadingReplies,
-    isError: isRepliesError,
-    error: repliesError,
-  } = useQuery({
+  const { data: replies = [], isLoading: loadingReplies } = useQuery({
     queryKey: ["replies", threadAddress],
     queryFn: () => fetchReplies(String(threadAddress)),
     enabled: !!thread,
@@ -86,7 +75,6 @@ export default function ThreadPage() {
 
         {/* Loading/Error State */}
         {loading && <LoadingSpinner text="Loading thread..." />}
-        {error && <div className="py-8 text-center text-red-500">{error}</div>}
 
         {/* Main Thread */}
         {thread && typeof replies !== "undefined" && (

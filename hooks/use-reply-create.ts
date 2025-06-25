@@ -3,7 +3,6 @@ import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { storageClient } from "@/lib/grove";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { useAuthStore } from "@/stores/auth-store";
-import { useForumStore } from "@/stores/forum-store";
 import type { Address, Reply as ReplyType } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
 import { Post, evmAddress, postId, uri } from "@lens-protocol/client";
@@ -18,7 +17,6 @@ export function useReplyCreate() {
   const { account } = useAuthStore();
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
-  const addReply = useForumStore(state => state.addReply);
 
   // --- Helpers ---
   function getReplyMetadata(content: string) {
@@ -69,7 +67,6 @@ export function useReplyCreate() {
     const replyUri = await uploadReplyMetadata(metadata);
     const replyPost = await createReplyOnLens(replyUri, to, feedAddress);
     const reply = buildReplyObject(replyPost);
-    addReply(reply, feedAddress);
     return reply;
   }
 

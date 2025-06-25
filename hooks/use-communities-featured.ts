@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { populateCommunity } from "@/lib/populate/community";
+import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchFeaturedCommunities } from "@/lib/supabase";
 import { Community } from "@/types/common";
 
@@ -16,7 +16,7 @@ export function useCommunitiesFeatured() {
       setIsLoading(true);
       try {
         const dbCommunities = await fetchFeaturedCommunities();
-        const populated = await Promise.all(dbCommunities.map(c => populateCommunity(c.lens_group_address)));
+        const populated = await Promise.all(dbCommunities.map(c => fetchCommunity(c.lens_group_address)));
         if (isMounted) {
           setFeatured(populated.filter(Boolean) as Community[]);
         }

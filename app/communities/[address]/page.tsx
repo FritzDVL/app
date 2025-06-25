@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -47,15 +47,9 @@ export default function CommunityPage() {
   const [showPostForm, setShowPostForm] = useState(false);
   const [sortBy, setSortBy] = useState("hot");
   const [newPost, setNewPost] = useState({ title: "", content: "", tags: "" });
-  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // --- Fetch community (React Query) ---
-  const {
-    data: community,
-    isLoading: isCommunityLoading,
-    isError: isCommunityError,
-    error: communityError,
-  } = useQuery({
+  const { data: community, isLoading: isCommunityLoading } = useQuery({
     queryKey: ["community", communityAddress],
     queryFn: () => fetchCommunity(communityAddress),
     enabled: !!communityAddress,
@@ -64,12 +58,7 @@ export default function CommunityPage() {
   });
 
   // --- Fetch threads (React Query) ---
-  const {
-    data: threads = [],
-    isLoading: areThreadsLoading,
-    isError: isThreadsError,
-    error: threadsError,
-  } = useQuery({
+  const { data: threads = [], isLoading: areThreadsLoading } = useQuery({
     queryKey: ["threads", communityAddress],
     queryFn: () => fetchThreads(communityAddress),
     enabled: !!communityAddress,
@@ -133,24 +122,8 @@ export default function CommunityPage() {
         </div>
       )}
 
-      {/* Error State */}
-      {fetchError && !isCommunityLoading && (
-        <div className="mx-auto max-w-2xl px-4 py-24">
-          <div className="text-center">
-            <div className="mb-4 text-6xl">😞</div>
-            <h1 className="mb-2 text-2xl font-bold text-slate-900">Community Not Found</h1>
-            <p className="mb-6 text-slate-600">{fetchError}</p>
-            <Link href="/communities">
-              <Button className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 font-semibold text-white hover:from-brand-600 hover:to-brand-700">
-                Back to Communities
-              </Button>
-            </Link>
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
-      {community && !isCommunityLoading && !fetchError && (
+      {community && !isCommunityLoading && (
         <main className="mx-auto max-w-7xl px-4 py-8">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
             {/* Main Content */}
