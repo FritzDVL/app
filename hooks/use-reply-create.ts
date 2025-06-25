@@ -33,7 +33,7 @@ export function useReplyCreate() {
     const { uri: replyUri } = await storageClient.uploadAsJson(metadata, { acl });
 
     // 3. Create the reply using the session client
-    toast.loading("Posting reply...");
+    const notificationLoading = toast.loading("Posting reply...");
     const replyRequest = await post(sessionClient.data, {
       contentUri: uri(replyUri),
       commentOn: {
@@ -51,6 +51,7 @@ export function useReplyCreate() {
     }
 
     const replyPost = replyRequest.value as Post;
+    toast.dismiss(notificationLoading);
     toast.success("Reply posted!");
 
     return transformPostToReply(replyPost, {
