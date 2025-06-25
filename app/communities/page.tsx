@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { populateCommunities } from "@/lib/populate/communities";
 import { useForumStore } from "@/stores/forum-store";
-import { CheckCircle, MessageSquare, Search, Users } from "lucide-react";
+import { MessageSquare, Search, Users } from "lucide-react";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,11 +21,12 @@ export default function CommunitiesPage() {
   const communitiesLoaded = useForumStore(state => state.communitiesLoaded);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const hasPopulated = useRef(false);
 
   // Fetch and populate communities on mount if not already loaded
   useEffect(() => {
-    if (communitiesLoaded) return;
+    if (communitiesLoaded) {
+      return;
+    }
     const doPopulate = async () => {
       setIsLoading(true);
       setFetchError(null);
