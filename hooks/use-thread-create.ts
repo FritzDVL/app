@@ -8,6 +8,7 @@ import { storageClient } from "@/lib/grove";
 import { fetchCommunity } from "@/lib/supabase";
 import { persistRootPostId } from "@/lib/supabase";
 import { transformFormDataToThread } from "@/lib/transformers/thread-transformers";
+import { useForumStore } from "@/stores/forum-store";
 import { useThreadsStore } from "@/stores/threads-store";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
@@ -127,7 +128,7 @@ export function useThreadCreation() {
   const [isCreating, setIsCreating] = useState(false);
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
-  const { addThread } = useThreadsStore();
+  const addThread = useForumStore(state => state.addThread);
 
   const createThread = async (
     communityAddress: string,
@@ -168,7 +169,7 @@ export function useThreadCreation() {
       // 6. Build thread record and thread instance
       const threadRecord = buildThreadRecord(formData, data, postedFeed, community);
       const newThread = transformFormDataToThread(formData, threadRecord, communityAddress, author, rootPost);
-      addThread(communityAddress, newThread);
+      addThread(newThread);
       if (onSuccess) {
         onSuccess(newThread);
       }

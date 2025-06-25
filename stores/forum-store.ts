@@ -31,11 +31,11 @@ export const useForumStore = create<ForumState>(set => ({
     }),
   addCommunity: community =>
     set(state => ({
-      communities: { ...state.communities, [community.address]: community },
+      communities: { [community.address]: community, ...state.communities },
     })),
   addThread: thread =>
     set(state => ({
-      threads: { ...state.threads, [thread.id]: thread },
+      threads: { [thread.id]: thread, ...state.threads },
     })),
   addReply: reply =>
     set(state => ({

@@ -11,9 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCommunityDetails } from "@/hooks/use-community-details";
 import { CreateThreadFormData, useThreadCreation } from "@/hooks/use-thread-create";
 import { useAuthStore } from "@/stores/auth-store";
+import { useForumStore } from "@/stores/forum-store";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
 
@@ -22,8 +22,10 @@ export default function NewThreadPage() {
   const router = useRouter();
   const communityAddress = params.address as string;
 
-  // Use custom hooks
-  const { communityDetails, isLoading } = useCommunityDetails(communityAddress);
+  // Get current community from normalized store
+  const communities = useForumStore(state => state.communities);
+  const community = communities[communityAddress];
+
   const { createThread, isCreating } = useThreadCreation();
   const { account } = useAuthStore();
 
@@ -38,38 +40,26 @@ export default function NewThreadPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!formData.title.trim()) {
-      toast.error("Validation Error", {
-        description: "Please enter a thread title.",
-      });
+      toast.error("Validation Error", { description: "Please enter a thread title." });
       return;
     }
-
     if (!formData.summary.trim()) {
-      toast.error("Validation Error", {
-        description: "Please enter a summary.",
-      });
+      toast.error("Validation Error", { description: "Please enter a summary." });
       return;
     }
-
     if (!formData.content.trim()) {
-      toast.error("Validation Error", {
-        description: "Please enter thread content.",
-      });
+      toast.error("Validation Error", { description: "Please enter thread content." });
       return;
     }
-
     try {
-      // Use the Lens group address for thread creation
-      if (!communityDetails) throw new Error("Community details not loaded");
+      if (!community) throw new Error("Community not loaded");
       if (!account?.address) throw new Error("User address not found");
-      await createThread(communityDetails.id, { ...formData, author: account.address }, () => {
+      await createThread(community.address, { ...formData, author: account.address }, () => {
         setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
         setUploadedImages([]);
       });
-      // Redirect back to community using the Lens group address
-      router.push(`/communities/${communityDetails.id}`);
+      router.push(`/communities/${community.address}`);
     } catch (error) {
       console.error("Error in handleSubmit:", error);
     }
@@ -90,7 +80,7 @@ export default function NewThreadPage() {
     setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  if (isLoading) {
+  if (!community) {
     return (
       <div className="min-h-screen bg-slate-50">
         <Navbar />
@@ -111,13 +101,13 @@ export default function NewThreadPage() {
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <BackNavigationLink href={`/communities/${communityAddress}`}>Back to Community</BackNavigationLink>
-            {communityDetails && (
+            {community && (
               <div className="flex items-center space-x-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-600 text-sm font-bold text-white">
-                  {communityDetails.name.charAt(0)}
+                  {community.name.charAt(0)}
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">{communityDetails.name}</h2>
+                  <h2 className="text-lg font-semibold text-slate-900">{community.name}</h2>
                   <p className="text-sm text-slate-500">Create a new thread</p>
                 </div>
               </div>
@@ -239,7 +229,7 @@ export default function NewThreadPage() {
                     {formData.tags && (
                       <div className="mt-2 flex flex-wrap gap-2">
                         {formData.tags.split(",").map(
-                          (tag, index) =>
+                          (tag: string, index: number) =>
                             tag.trim() && (
                               <Badge key={index} variant="outline" className="text-xs">
                                 {tag.trim()}
@@ -300,7 +290,7 @@ export default function NewThreadPage() {
                     {formData.tags && (
                       <div className="flex flex-wrap gap-1">
                         {formData.tags.split(",").map(
-                          (tag, index) =>
+                          (tag: string, index: number) =>
                             tag.trim() && (
                               <Badge key={index} variant="outline" className="text-xs">
                                 {tag.trim()}
@@ -317,29 +307,29 @@ export default function NewThreadPage() {
             </Card>
 
             {/* Community Info */}
-            {communityDetails && (
+            {community && (
               <Card className="rounded-xl border border-border bg-card shadow-md">
                 <CardHeader>
                   <h3 className="text-lg font-semibold text-slate-900">Posting to</h3>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center space-x-3">
-                    {communityDetails.logo ? (
+                    {community.logo ? (
                       <Image
-                        src={communityDetails.logo.replace("lens://", "https://api.grove.storage/")}
-                        alt={communityDetails.name}
+                        src={community.logo.replace("lens://", "https://api.grove.storage/")}
+                        alt={community.name}
                         width={64}
                         height={64}
                         className="h-10 w-10 rounded-full border border-slate-200 bg-white object-cover"
                       />
                     ) : (
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-600 text-lg font-bold text-white">
-                        {communityDetails.name.charAt(0)}
+                        {community.name.charAt(0)}
                       </div>
                     )}
                     <div>
-                      <h4 className="font-semibold text-slate-900">{communityDetails.name}</h4>
-                      <p className="text-sm text-slate-500">{communityDetails.members.toLocaleString()} members</p>
+                      <h4 className="font-semibold text-slate-900">{community.name}</h4>
+                      <p className="text-sm text-slate-500">{community.memberCount.toLocaleString()} members</p>
                     </div>
                   </div>
                 </CardContent>
