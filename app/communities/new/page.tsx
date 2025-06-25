@@ -186,13 +186,28 @@ export default function NewCommunityPage() {
                     />
                   </div>
                   {error && <div className="text-sm text-red-600">{error}</div>}
-                  <Button
-                    type="submit"
-                    className="w-full rounded-full bg-gradient-to-r from-brand-500 to-brand-600 text-lg font-semibold text-white shadow-lg hover:from-brand-600 hover:to-brand-700"
-                    disabled={loading || isCreating}
-                  >
-                    {loading || isCreating ? "Creating..." : "Create Community"}
-                  </Button>
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 font-semibold text-white shadow-lg hover:from-brand-600 hover:to-brand-700"
+                      disabled={
+                        loading ||
+                        isCreating ||
+                        !formData.name.trim() ||
+                        !formData.description.trim() ||
+                        !formData.adminAddress.trim()
+                      }
+                    >
+                      {loading || isCreating ? (
+                        <div className="flex items-center gap-2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
+                          Creating...
+                        </div>
+                      ) : (
+                        <>Create Community</>
+                      )}
+                    </Button>
+                  </div>
                 </form>
               </CardContent>
             </Card>
