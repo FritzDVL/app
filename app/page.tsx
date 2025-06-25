@@ -26,24 +26,18 @@ export default function HomePage() {
   // Use normalized forum store for communities
   const communities = Object.values(useForumStore(state => state.communities));
   const setCommunities = useForumStore(state => state.setCommunities);
-  const communitiesLoaded = useForumStore(state => state.communitiesLoaded);
   const { threads, loading, error } = useThreadsLatest();
 
   // Populate communities from database and lens protocol, set in forum store
   useEffect(() => {
     const doPopulate = async () => {
-      if (communitiesLoaded) {
-        setIsLoading(false);
-        return;
-      }
-
       const populated = await populateCommunities();
       setCommunities(populated);
       setIsLoading(false);
     };
 
     doPopulate();
-  }, [setCommunities, communitiesLoaded]);
+  }, [setCommunities]);
 
   // In render, show loading if not loaded
   if (isLoading) {
