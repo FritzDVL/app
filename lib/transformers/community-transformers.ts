@@ -14,6 +14,7 @@ export function transformGroupToCommunity(
 
   return {
     id: dbCommunity.id,
+    address: group.address,
     name: group.metadata?.name || "",
     description: group.metadata?.description || "",
     memberCount: 0,
