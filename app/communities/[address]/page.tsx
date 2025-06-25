@@ -233,7 +233,7 @@ export default function CommunityPage() {
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-semibold text-slate-900">Start a Discussion</h3>
-                      <ThreadNewButton communityId={community.id} isJoined={isJoined} />
+                      <ThreadNewButton communityAddress={community.address} isJoined={isJoined} />
                     </div>
                   </CardHeader>
                   {showPostForm && (

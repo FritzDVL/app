@@ -2,15 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Address } from "@/types/common";
 import { PenTool } from "lucide-react";
 
 interface ThreadNewButtonProps {
-  communityId: string;
+  communityAddress: Address;
   isJoined: boolean;
   className?: string;
 }
 
-export function ThreadNewButton({ communityId, isJoined, className = "" }: ThreadNewButtonProps) {
+export function ThreadNewButton({ communityAddress, isJoined, className = "" }: ThreadNewButtonProps) {
   const router = useRouter();
 
   const handleCreateThread = () => {
@@ -19,7 +20,7 @@ export function ThreadNewButton({ communityId, isJoined, className = "" }: Threa
       return;
     }
 
-    router.push(`/communities/${communityId}/new-thread`);
+    router.push(`/communities/${communityAddress}/new-thread`);
   };
 
   return (
