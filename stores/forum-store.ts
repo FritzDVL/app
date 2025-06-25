@@ -19,7 +19,7 @@ export const useForumStore = create<ForumState>(set => ({
   replies: {},
   setCommunities: communities =>
     set({
-      communities: Object.fromEntries(communities.map(c => [c.id, c])),
+      communities: Object.fromEntries(communities.map(c => [c.address, c])),
     }),
   setThreads: threads =>
     set({
@@ -31,7 +31,7 @@ export const useForumStore = create<ForumState>(set => ({
     }),
   addCommunity: community =>
     set(state => ({
-      communities: { ...state.communities, [community.id]: community },
+      communities: { ...state.communities, [community.address]: community },
     })),
   addThread: thread =>
     set(state => ({
