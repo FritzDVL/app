@@ -196,7 +196,7 @@ export default function HomePage() {
                   <TabsContent value="new" className="mt-0">
                     {loading ? (
                       <div className="flex items-center justify-center py-12">
-                        <span className="text-slate-500">Loading latest threads...</span>
+                        <LoadingSpinner text="Loading latest threads..." />
                       </div>
                     ) : error ? (
                       <div className="flex items-center justify-center py-12">
