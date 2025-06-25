@@ -428,7 +428,7 @@ export default function CommunityPage() {
               <CommunityRules />
 
               {/* Moderators */}
-              <CommunityModerators groupAddress={community.id} />
+              <CommunityModerators moderators={community.moderators} />
             </div>
           </div>
         </main>
