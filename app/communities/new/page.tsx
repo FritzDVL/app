@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityCreation } from "@/hooks/use-community-create";
 import { useAuthStore } from "@/stores/auth-store";
+import { toast } from "sonner";
 
 export default function NewCommunityPage() {
   const router = useRouter();
@@ -48,6 +49,7 @@ export default function NewCommunityPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    toast.loading("Creating community...");
     try {
       const form = new FormData();
       form.append("name", formData.name);
@@ -63,17 +65,29 @@ export default function NewCommunityPage() {
       const result = await response.json();
       if (!response.ok || !result.success) {
         setError(result.error || "Community creation failed. Please try again.");
+        toast.error("Community creation failed", {
+          description: result.error || "Please try again.",
+        });
         setLoading(false);
         return;
       }
       const community = result.community;
       if (community && community.id) {
-        router.push(`/communities/${community.id}`);
+        toast.success("Community created!", {
+          description: `Welcome to ${community.name}`,
+        });
+        router.push(`/communities/${community.address}`);
       } else {
         setError("Community creation failed. Please try again.");
+        toast.error("Community creation failed", {
+          description: "Please try again.",
+        });
       }
     } catch (err: any) {
       setError(err.message || "Failed to create community");
+      toast.error("Community creation failed", {
+        description: err.message || "Failed to create community",
+      });
     } finally {
       setLoading(false);
     }

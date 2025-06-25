@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { lensMainnet } from "@/lib/chains/lens-mainnet";
 import { getAdminSessionClient } from "@/lib/clients/admin-session";
+import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { storageClient } from "@/lib/grove";
 import { persistCommunity } from "@/lib/supabase";
 import { transformGroupToCommunity } from "@/lib/transformers/community-transformers";
 import { adminWallet } from "@/lib/wallets/admin-wallet";
+import { Moderator } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
 import { Group, evmAddress } from "@lens-protocol/client";
-import { createGroup, fetchGroup } from "@lens-protocol/client/actions";
+import { createGroup, fetchAdminsFor, fetchGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { group } from "@lens-protocol/metadata";
 
@@ -62,9 +64,26 @@ export async function POST(request: NextRequest) {
     console.log("[API] Created group:", createdGroup);
 
     // 4. Persist the community in Supabase
-    await persistCommunity(createdGroup.address);
+    const persistedCommunity = await persistCommunity(createdGroup.address);
     console.log("[API] Community persisted in Supabase:", createdGroup.address);
-    const newCommunity = transformGroupToCommunity(createdGroup);
+
+    // 5. Add new moderators
+    const adminsResult = await fetchAdminsFor(client, {
+      address: evmAddress(createdGroup.address),
+    });
+    let moderators: Moderator[] = [];
+    if (adminsResult.isOk()) {
+      const admins = adminsResult.value.items;
+      moderators = admins.map(admin => ({
+        username: admin.account.username?.value || "",
+        address: admin.account.address,
+        picture: admin.account.metadata?.picture,
+        displayName: admin.account.username?.localName || "",
+      }));
+    }
+
+    // 6. Transform and return the new community
+    const newCommunity = transformGroupToCommunity(createdGroup, persistedCommunity, moderators);
     console.log("[API] Returning new community:", newCommunity);
     return NextResponse.json({ success: true, community: newCommunity });
   } catch (error) {
