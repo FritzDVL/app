@@ -57,6 +57,7 @@ export default function ThreadPage() {
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, main: "" }));
+        // TODO: update thread.replies to include the new reply.
       }
     }
   };
