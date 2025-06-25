@@ -2,8 +2,8 @@ import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { getTimeAgo } from "@/lib/utils";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
-import { Account, Feed, Post, evmAddress } from "@lens-protocol/client";
-import { fetchAccount, fetchPost } from "@lens-protocol/client/actions";
+import { Account, Feed, Post } from "@lens-protocol/client";
+import { fetchPost } from "@lens-protocol/client/actions";
 
 /**
  * Transform a Lens Feed object and thread record to a Thread object

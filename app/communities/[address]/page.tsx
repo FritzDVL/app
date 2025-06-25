@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityMembership } from "@/hooks/use-community-membership";
-import { populateCommunities } from "@/lib/populate/communities";
 import { populateCommunity } from "@/lib/populate/community";
 import { populateThreads } from "@/lib/populate/threads";
 import { useForumStore } from "@/stores/forum-store";
@@ -34,7 +33,6 @@ import {
   FlameIcon as Fire,
   MessageCircle,
   MoreHorizontal,
-  Pin,
   Search,
   Share,
   Users,

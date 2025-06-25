@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HeroSection } from "@/components/homepage-hero-section";
@@ -15,8 +15,6 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useCommunitiesFeatured } from "@/hooks/use-communities-featured";
 import { useThreadsLatest } from "@/hooks/use-threads-latest";
-import { populateCommunities } from "@/lib/populate/communities";
-import { useForumStore } from "@/stores/forum-store";
 import { TrendingUp, Zap } from "lucide-react";
 import { MessageCircle } from "lucide-react";
 

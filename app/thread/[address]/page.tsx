@@ -6,7 +6,6 @@ import { Navbar } from "@/components/navbar";
 import { ThreadReplies } from "@/components/thread-replies";
 // import { ThreadNestedReplyCard } from "@/components/thread-nested-reply-card";
 import { ThreadReplyBox } from "@/components/thread-reply-box";
-import { ThreadReplyCard } from "@/components/thread-reply-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +16,7 @@ import { useReplyCreate } from "@/hooks/use-reply-create";
 import { populateReplies } from "@/lib/populate/replies";
 import { populateThread } from "@/lib/populate/thread";
 import { useForumStore } from "@/stores/forum-store";
-import { type Address, Reply } from "@/types/common";
+import { type Address } from "@/types/common";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
@@ -68,7 +67,7 @@ export default function ThreadPage() {
         const filteredReplies = fetchedReplies.filter(reply => reply.id !== thread?.rootPost?.id);
         setReplies(filteredReplies, threadAddress as string);
       } catch (e) {
-        // Optionally handle error
+        throw new Error(`Failed to fetch replies: ${e instanceof Error ? e.message : "Unknown error"}`);
       }
     };
     fetchReplies();
