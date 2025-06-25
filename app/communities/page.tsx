@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
@@ -9,22 +9,34 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useCommunitiesStore } from "@/stores/communities-store";
+import { populateCommunities } from "@/lib/populate/communities";
+import { useForumStore } from "@/stores/forum-store";
 import { CheckCircle, MessageSquare, Search, Users } from "lucide-react";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Custom hooks
-  const { communities: allCommunities, isLoading, error: fetchError, fetchCommunities } = useCommunitiesStore();
+  // Use normalized forum store for communities
+  const communities = Object.values(useForumStore(state => state.communities));
+  const setCommunities = useForumStore(state => state.setCommunities);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const hasPopulated = useRef(false);
 
-  // Fetch communities on component mount
+  // Fetch and populate communities on mount if not already loaded
   useEffect(() => {
-    fetchCommunities();
-  }, [fetchCommunities]);
+    if (communities.length > 0 || hasPopulated.current) return;
+    hasPopulated.current = true;
+    setIsLoading(true);
+    setFetchError(null);
+    populateCommunities()
+      .then(populated => setCommunities(populated))
+      .catch(err => setFetchError(err instanceof Error ? err.message : "Failed to fetch communities"))
+      .finally(() => setIsLoading(false));
+  }, [communities.length, setCommunities]);
 
   // Filter communities based on search query
-  const filteredCommunities = allCommunities.filter(
+  const filteredCommunities = communities.filter(
     community =>
       community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       community.description.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -45,7 +57,7 @@ export default function CommunitiesPage() {
                   <div>
                     <div className="mb-3 inline-flex items-center rounded-full border border-brand-300/30 bg-gradient-to-r from-brand-500/20 to-brand-400/20 px-3 py-1">
                       <Users className="mr-2 h-4 w-4 text-brand-600" />
-                      <span className="text-sm font-medium text-brand-700">{allCommunities.length} Communities</span>
+                      <span className="text-sm font-medium text-brand-700">{communities.length} Communities</span>
                     </div>
                     <h1 className="text-3xl font-bold text-slate-900">Communities</h1>
                     <p className="mt-1 text-slate-600">Discover and join communities in the Lens ecosystem</p>
@@ -213,18 +225,18 @@ export default function CommunitiesPage() {
               <CardContent className="space-y-4 pt-0">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-600">Total Communities</span>
-                  <span className="font-semibold text-slate-900">{allCommunities.length}</span>
+                  <span className="font-semibold text-slate-900">{communities.length}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-600">Active Members</span>
                   <span className="font-semibold text-slate-900">
-                    {allCommunities.reduce((total, c) => total + c.memberCount, 0).toLocaleString()}
+                    {communities.reduce((total, c) => total + c.memberCount, 0).toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-600">Total Posts</span>
                   <span className="font-semibold text-slate-900">
-                    {allCommunities.reduce((total, c) => total + (c.postCount || 0), 0).toLocaleString()}
+                    {communities.reduce((total, c) => total + (c.postCount || 0), 0).toLocaleString()}
                   </span>
                 </div>
               </CardContent>
@@ -236,7 +248,7 @@ export default function CommunitiesPage() {
                 <h3 className="font-semibold text-slate-900">Popular Categories</h3>
               </CardHeader>
               <CardContent className="space-y-3 pt-0">
-                {Array.from(new Set(allCommunities.map(c => c.category)))
+                {Array.from(new Set(communities.map(c => c.category)))
                   .slice(0, 5)
                   .map(category => (
                     <div key={category} className="flex items-center justify-between">
@@ -244,7 +256,7 @@ export default function CommunitiesPage() {
                         {category}
                       </Badge>
                       <span className="text-sm text-slate-500">
-                        {allCommunities.filter(c => c.category === category).length}
+                        {communities.filter(c => c.category === category).length}
                       </span>
                     </div>
                   ))}
