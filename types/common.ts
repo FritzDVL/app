@@ -63,6 +63,7 @@ export interface Thread {
   tags: string[];
   communityAddress: string;
   created_at: string;
+  replies: Reply[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

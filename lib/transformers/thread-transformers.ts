@@ -48,6 +48,7 @@ export async function transformFeedToThread(feed: Feed, threadRecord: CommunityT
     upvotes: Math.floor(Math.random() * 100) + 10, // TODO: Get real voting data
     downvotes: Math.floor(Math.random() * 10),
     repliesCount: Math.floor(Math.random() * 50), // TODO: Get real reply count
+    replies: [],
     timeAgo: getTimeAgo(new Date(threadRecord.created_at)),
     isPinned: false, // TODO: Add pinned logic
     isHot: Math.random() > 0.8, // TODO: Add hot logic based on recent activity
@@ -104,6 +105,7 @@ export async function transformFormDataToThread(
     upvotes: 0, // New thread starts with 0 votes
     downvotes: 0,
     repliesCount: 0, // New thread starts with 0 replies
+    replies: [],
     timeAgo: "Just now",
     isPinned: false,
     isHot: true, // New threads are considered "hot"
