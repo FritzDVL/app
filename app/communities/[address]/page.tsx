@@ -61,11 +61,10 @@ export default function CommunityPage() {
 
   // Populate communities if not present
   useEffect(() => {
-    // Only fetch if the current community is not in the store
     if (community) return;
     setIsLoading(true);
     setFetchError(null);
-    (async () => {
+    const doPopulateCommunities = async () => {
       try {
         const populated = await populateCommunities();
         setCommunities(populated);
@@ -74,17 +73,16 @@ export default function CommunityPage() {
       } finally {
         setIsLoading(false);
       }
-    })();
-    // Only run if the community is missing
+    };
+    doPopulateCommunities();
   }, [community, setCommunities]);
 
   // Populate threads for this community if not present
   useEffect(() => {
-    // Only fetch if the community exists, there is no error, and threads for this community are not already present
     if (!community || isLoading || fetchError) return;
     if (communityThreads.length > 0) return;
     setIsLoading(true);
-    (async () => {
+    const doPopulateThreads = async () => {
       try {
         const threads = await populateThreads(communityAddress);
         setThreads(threads);
@@ -93,8 +91,8 @@ export default function CommunityPage() {
       } finally {
         setIsLoading(false);
       }
-    })();
-    // Only run if the community exists and threads are missing
+    };
+    doPopulateThreads();
   }, [community, communityAddress, communityThreads.length, isLoading, fetchError, setThreads]);
 
   const sessionClient = useSessionClient();
