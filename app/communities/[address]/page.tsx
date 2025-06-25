@@ -8,6 +8,7 @@ import { CommunityModerators } from "@/components/community-moderators";
 import { CommunityRules } from "@/components/community-rules";
 import { Navbar } from "@/components/navbar";
 import { ThreadNewButton } from "@/components/thread-new-button";
+import { ThreadVoting } from "@/components/thread-voting";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +24,6 @@ import { joinGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { useSessionClient } from "@lens-protocol/react";
 import {
-  ArrowDown,
   ArrowUp,
   Clock,
   Filter,
@@ -313,25 +313,11 @@ export default function CommunityPage() {
                             <div className="flex items-start space-x-4">
                               {/* Voting */}
                               <div className="flex min-w-[50px] flex-col items-center space-y-1">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="rounded-full p-1 transition-colors hover:bg-brand-50 hover:text-brand-600"
-                                  onClick={() => handleVote(thread.id, "up")}
-                                >
-                                  <ArrowUp className="h-4 w-4" />
-                                </Button>
-                                <span className="text-sm font-medium text-slate-600">
-                                  {thread.upvotes - thread.downvotes}
-                                </span>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="rounded-full p-1 transition-colors hover:bg-red-50 hover:text-red-600"
-                                  onClick={() => handleVote(thread.id, "down")}
-                                >
-                                  <ArrowDown className="h-4 w-4" />
-                                </Button>
+                                <ThreadVoting
+                                  votes={thread.upvotes - thread.downvotes}
+                                  onUpvote={() => handleVote(thread.id, "up")}
+                                  onDownvote={() => handleVote(thread.id, "down")}
+                                />
                               </div>
 
                               {/* Content */}

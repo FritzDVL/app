@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeroSection } from "@/components/homepage-hero-section";
 import { Navbar } from "@/components/navbar";
+import { ThreadVoting } from "@/components/thread-voting";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,8 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useThreadsLatest } from "@/hooks/use-threads-latest";
 import { useCommunitiesStore } from "@/stores/communities-store";
-import { ArrowDown, ArrowUp, Award, MessageCircle, TrendingUp, Zap } from "lucide-react";
+import { TrendingUp, Zap } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("new");
@@ -238,6 +240,7 @@ export default function HomePage() {
                           >
                             <CardContent className="p-3 sm:p-4 md:p-5">
                               <div className="flex items-start">
+                                <ThreadVoting votes={thread.upvotes - thread.downvotes} />
                                 {/* Content Section (no logo, no score) */}
                                 <div className="min-w-0 flex-1">
                                   <div className="mb-1 flex items-start justify-between">
