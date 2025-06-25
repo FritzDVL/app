@@ -25,14 +25,21 @@ export default function CommunitiesPage() {
 
   // Fetch and populate communities on mount if not already loaded
   useEffect(() => {
+    const doPopulate = async () => {
+      setIsLoading(true);
+      setFetchError(null);
+      try {
+        const populated = await populateCommunities();
+        setCommunities(populated);
+      } catch (err) {
+        setFetchError(err instanceof Error ? err.message : "Failed to fetch communities");
+      } finally {
+        setIsLoading(false);
+      }
+    };
     if (communities.length > 0 || hasPopulated.current) return;
     hasPopulated.current = true;
-    setIsLoading(true);
-    setFetchError(null);
-    populateCommunities()
-      .then(populated => setCommunities(populated))
-      .catch(err => setFetchError(err instanceof Error ? err.message : "Failed to fetch communities"))
-      .finally(() => setIsLoading(false));
+    doPopulate();
   }, [communities.length, setCommunities]);
 
   // Filter communities based on search query
