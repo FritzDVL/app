@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { ThreadReplies } from "@/components/thread-replies";
@@ -13,10 +13,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
-import { populateReplies } from "@/lib/populate/replies";
-import { populateThread } from "@/lib/populate/thread";
-import { useForumStore } from "@/stores/forum-store";
+import { fetchReplies } from "@/lib/fetchers/replies";
+import { fetchThread } from "@/lib/fetchers/thread";
 import { type Address } from "@/types/common";
+import { useQuery } from "@tanstack/react-query";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
@@ -26,52 +26,35 @@ export default function ThreadPage() {
   // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Normalized store
-  const thread = useForumStore(state => state.threads[threadAddress as Address]);
-  const addThread = useForumStore(state => state.addThread);
-  const replies = useForumStore(state => state.replies[threadAddress as Address]);
-  const setReplies = useForumStore(state => state.setReplies);
-  const hasPopulatedThread = useRef(false);
+  // Fetch thread with TanStack Query
+  const {
+    data: thread,
+    isLoading: loading,
+    isError,
+    error: threadError,
+  } = useQuery({
+    queryKey: ["thread", threadAddress],
+    queryFn: () => fetchThread(String(threadAddress)),
+    enabled: !!threadAddress,
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
 
-  useEffect(() => {
-    if (thread || hasPopulatedThread.current) return;
-    hasPopulatedThread.current = true;
-    const fetchThread = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const threadData = await populateThread(String(threadAddress));
-        if (threadData) {
-          addThread(threadData);
-        }
-      } catch (e: any) {
-        setError(e.message || "Failed to load thread");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchThread();
-  }, []);
-
-  // Populate replies only after thread is loaded and only once
-  const hasPopulatedReplies = useRef<string | null>(null);
-  useEffect(() => {
-    if (!thread || hasPopulatedReplies.current === threadAddress) return;
-    hasPopulatedReplies.current = threadAddress as string;
-    const fetchReplies = async () => {
-      try {
-        const fetchedReplies = await populateReplies(threadAddress as string);
-        const filteredReplies = fetchedReplies.filter(reply => reply.id !== thread?.rootPost?.id);
-        setReplies(filteredReplies, threadAddress as string);
-      } catch (e) {
-        throw new Error(`Failed to fetch replies: ${e instanceof Error ? e.message : "Unknown error"}`);
-      }
-    };
-    fetchReplies();
-  }, [thread, threadAddress, setReplies]);
+  // Fetch replies with TanStack Query (only after thread is loaded)
+  const {
+    data: replies = [],
+    isLoading: loadingReplies,
+    isError: isRepliesError,
+    error: repliesError,
+  } = useQuery({
+    queryKey: ["replies", threadAddress],
+    queryFn: () => fetchReplies(String(threadAddress)),
+    enabled: !!thread,
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
 
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) {
@@ -221,14 +204,18 @@ export default function ThreadPage() {
         )}
 
         {/* Replies */}
-        {typeof replies !== "undefined" && (
-          <ThreadReplies
-            replies={replies}
-            replyingTo={replyingTo}
-            replyContent={replyContent}
-            setReplyingTo={setReplyingTo}
-            setReplyContent={setReplyContent}
-          />
+        {loadingReplies ? (
+          <LoadingSpinner text="Loading replies..." />
+        ) : (
+          typeof replies !== "undefined" && (
+            <ThreadReplies
+              replies={replies.filter(reply => reply.id !== thread?.rootPost?.id)}
+              replyingTo={replyingTo}
+              replyContent={replyContent}
+              setReplyingTo={setReplyingTo}
+              setReplyContent={setReplyContent}
+            />
+          )
         )}
       </div>
     </div>
