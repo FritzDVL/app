@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { populateThread } from "@/lib/populate/thread";
 import { fetchLatestThreads } from "@/lib/supabase";
-import { transformFeedToThread } from "@/lib/transformers/thread-transformers";
 import type { Thread } from "@/types/common";
-import { evmAddress } from "@lens-protocol/client";
-import { fetchFeed } from "@lens-protocol/client/actions";
 
 export function useThreadsLatest(limit: number = 5) {
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -20,11 +17,8 @@ export function useThreadsLatest(limit: number = 5) {
         const transformed: Thread[] = [];
         for (const threadRecord of threadRecords) {
           try {
-            const feedResult = await fetchFeed(client, {
-              feed: evmAddress(threadRecord.lens_feed_address),
-            });
-            if (feedResult.isErr() || !feedResult.value) continue;
-            const thread = await transformFeedToThread(feedResult.value, threadRecord);
+            const thread = await populateThread(threadRecord.lens_feed_address);
+            if (!thread) continue;
             transformed.push(thread);
           } catch {
             continue;

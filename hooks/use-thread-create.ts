@@ -9,7 +9,6 @@ import { fetchCommunity } from "@/lib/supabase";
 import { persistRootPostId } from "@/lib/supabase";
 import { transformFormDataToThread } from "@/lib/transformers/thread-transformers";
 import { useForumStore } from "@/stores/forum-store";
-import { useThreadsStore } from "@/stores/threads-store";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
 import { immutable } from "@lens-chain/storage-client";
