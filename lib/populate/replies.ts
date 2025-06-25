@@ -9,7 +9,7 @@ import { fetchAccount, fetchPosts } from "@lens-protocol/client/actions";
  * @param threadAddress - The Lens Protocol thread address
  * @param rootPostId - The root post id to exclude from replies
  */
-export async function populateReplies(threadAddress: string, rootPostId: string): Promise<Reply[]> {
+export async function populateReplies(threadAddress: string): Promise<Reply[]> {
   const result = await fetchPosts(client, {
     filter: {
       feeds: [{ feed: evmAddress(threadAddress) }],
@@ -17,7 +17,7 @@ export async function populateReplies(threadAddress: string, rootPostId: string)
   });
   if (!result.isOk() || !result.value.items) return [];
   const validPosts = result.value.items.filter(
-    (item: any) => item && item.__typename === "Post" && item.author && item.author.address && item.id !== rootPostId,
+    (item: any) => item && item.__typename === "Post" && item.author && item.author.address,
   ) as LensPost[];
   validPosts.sort((a, b) => {
     const aTime = a.timestamp ? new Date(a.timestamp).getTime() : 0;

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
+import { ThreadReplies } from "@/components/thread-replies";
 // import { ThreadNestedReplyCard } from "@/components/thread-nested-reply-card";
 import { ThreadReplyBox } from "@/components/thread-reply-box";
 import { ThreadReplyCard } from "@/components/thread-reply-card";
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
+import { populateReplies } from "@/lib/populate/replies";
 import { populateThread } from "@/lib/populate/thread";
 import { useForumStore } from "@/stores/forum-store";
 import { type Address, Reply } from "@/types/common";
@@ -31,6 +33,8 @@ export default function ThreadPage() {
   // Normalized store
   const thread = useForumStore(state => state.threads[threadAddress as Address]);
   const addThread = useForumStore(state => state.addThread);
+  const replies = useForumStore(state => state.replies[threadAddress as Address]);
+  const setReplies = useForumStore(state => state.setReplies);
   const hasPopulatedThread = useRef(false);
 
   useEffect(() => {
@@ -41,7 +45,9 @@ export default function ThreadPage() {
         setLoading(true);
         setError(null);
         const threadData = await populateThread(String(threadAddress));
-        if (threadData) addThread(threadData);
+        if (threadData) {
+          addThread(threadData);
+        }
       } catch (e: any) {
         setError(e.message || "Failed to load thread");
       } finally {
@@ -50,6 +56,22 @@ export default function ThreadPage() {
     };
     fetchThread();
   }, []);
+
+  // Populate replies only after thread is loaded and only once
+  const hasPopulatedReplies = useRef<string | null>(null);
+  useEffect(() => {
+    if (!thread || hasPopulatedReplies.current === threadAddress) return;
+    hasPopulatedReplies.current = threadAddress as string;
+    const fetchReplies = async () => {
+      try {
+        const fetchedReplies = await populateReplies(threadAddress as string);
+        setReplies(fetchedReplies, threadAddress as string);
+      } catch (e) {
+        // Optionally handle error
+      }
+    };
+    fetchReplies();
+  }, [thread, threadAddress, setReplies]);
 
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) {
@@ -65,7 +87,6 @@ export default function ThreadPage() {
   };
 
   const { createReply } = useReplyCreate();
-  const replies: Reply[] = [];
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -85,7 +106,7 @@ export default function ThreadPage() {
         {error && <div className="py-8 text-center text-red-500">{error}</div>}
 
         {/* Main Thread */}
-        {thread && (
+        {thread && typeof replies !== "undefined" && (
           <Card className="rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
@@ -200,36 +221,15 @@ export default function ThreadPage() {
         )}
 
         {/* Replies */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-bold text-gray-900">{replies.length} Replies</h3>
-
-          {replies.map(reply => (
-            <ThreadReplyCard
-              key={reply.id}
-              reply={reply}
-              replyingTo={replyingTo}
-              replyContent={replyContent}
-              setReplyingTo={setReplyingTo}
-              setReplyContent={setReplyContent}
-            >
-              {/* Nested Replies (temporarily disabled) */}
-              {/* {false && reply.replies && reply.replies.length > 0 && (
-                <div className="ml-12 space-y-4">
-                  {reply.replies.map(nestedReply => (
-                    <ThreadNestedReplyCard
-                      key={nestedReply.id}
-                      nestedReply={nestedReply}
-                      replyingTo={replyingTo}
-                      replyContent={replyContent}
-                      setReplyingTo={setReplyingTo}
-                      setReplyContent={setReplyContent}
-                    />
-                  ))}
-                </div>
-              )} */}
-            </ThreadReplyCard>
-          ))}
-        </div>
+        {typeof replies !== "undefined" && (
+          <ThreadReplies
+            replies={replies}
+            replyingTo={replyingTo}
+            replyContent={replyContent}
+            setReplyingTo={setReplyingTo}
+            setReplyContent={setReplyContent}
+          />
+        )}
       </div>
     </div>
   );
