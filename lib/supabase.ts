@@ -251,3 +251,21 @@ export async function fetchLatestThreads(limit: number = 5): Promise<CommunityTh
 
   return threads || [];
 }
+
+/**
+ * Fetches the 3 oldest communities (for featured display)
+ * @returns Array of up to 3 community records
+ */
+export async function fetchFeaturedCommunities(): Promise<CommunitySupabase[]> {
+  const { data: communities, error } = await supabase
+    .from("communities")
+    .select("*")
+    .order("created_at", { ascending: true })
+    .limit(3);
+
+  if (error) {
+    throw new Error(`Failed to fetch featured communities: ${error.message}`);
+  }
+
+  return communities || [];
+}

@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useCommunitiesFeatured } from "@/hooks/use-communities-featured";
 import { useThreadsLatest } from "@/hooks/use-threads-latest";
 import { populateCommunities } from "@/lib/populate/communities";
 import { useForumStore } from "@/stores/forum-store";
@@ -21,32 +22,8 @@ import { MessageCircle } from "lucide-react";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("new");
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Use normalized forum store for communities
-  const communities = Object.values(useForumStore(state => state.communities));
-  const setCommunities = useForumStore(state => state.setCommunities);
   const { threads, loading, error } = useThreadsLatest();
-
-  // Populate communities from database and lens protocol, set in forum store
-  useEffect(() => {
-    const doPopulate = async () => {
-      const populated = await populateCommunities();
-      setCommunities(populated);
-      setIsLoading(false);
-    };
-
-    doPopulate();
-  }, [setCommunities]);
-
-  // In render, show loading if not loaded
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <LoadingSpinner text="Loading communities..." />
-      </div>
-    );
-  }
+  const { featured: featuredCommunities, isLoading: loadingFeatured } = useCommunitiesFeatured();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-brand-100/30">
@@ -371,42 +348,36 @@ export default function HomePage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4 pt-0">
-                {communities.slice(0, 3).map(forum => (
-                  <Link key={forum.id} href={`/communities/${forum.address}`}>
-                    <div className="group flex cursor-pointer items-center gap-3 rounded-xl p-3 transition-colors hover:bg-slate-50">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-lg text-white">
-                        {forum.logo ? (
-                          <Image
-                            src={forum.logo.replace("lens://", "https://api.grove.storage/")}
-                            alt={forum.name}
-                            className="h-14 w-14 object-contain"
-                            width={32}
-                            height={32}
-                          />
-                        ) : (
-                          forum.name?.charAt(0)?.toUpperCase() || "?"
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h4 className="truncate font-medium text-slate-900 transition-colors group-hover:text-brand-600">
-                          {forum.name}
-                        </h4>
-                        {/* <div className="flex items-center gap-2 text-xs text-slate-500">
-                          <span>{forum.memberCount.toLocaleString()} members</span>
-                          {forum.trending && (
-                            <Badge
-                              variant="secondary"
-                              className="border-orange-200 bg-orange-50 px-1.5 py-0.5 text-orange-600"
-                            >
-                              <TrendingUp className="mr-1 h-2.5 w-2.5" />
-                              Hot
-                            </Badge>
+                {loadingFeatured ? (
+                  <div className="flex items-center justify-center py-8">
+                    <LoadingSpinner text="Loading featured..." />
+                  </div>
+                ) : (
+                  featuredCommunities.map(forum => (
+                    <Link key={forum.id} href={`/communities/${forum.address}`}>
+                      <div className="group flex cursor-pointer items-center gap-3 rounded-xl p-3 transition-colors hover:bg-slate-50">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-lg text-white">
+                          {forum.logo ? (
+                            <Image
+                              src={forum.logo.replace("lens://", "https://api.grove.storage/")}
+                              alt={forum.name}
+                              className="h-14 w-14 object-contain"
+                              width={32}
+                              height={32}
+                            />
+                          ) : (
+                            forum.name?.charAt(0)?.toUpperCase() || "?"
                           )}
-                        </div> */}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="truncate font-medium text-slate-900 transition-colors group-hover:text-brand-600">
+                            {forum.name}
+                          </h4>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))
+                )}
               </CardContent>
             </Card>
 
