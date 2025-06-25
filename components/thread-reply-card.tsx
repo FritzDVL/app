@@ -15,17 +15,19 @@ export function ThreadReplyCard({
   setReplyContent,
   handleReply, // <-- add this prop
   children,
+  depth = 0,
 }: {
-  reply: ReplyType;
+  reply: ReplyType & { _depth?: number };
   replyingTo: string | null;
   replyContent: { [key: string]: string };
   setReplyingTo: (id: string | null) => void;
   setReplyContent: (fn: (c: any) => any) => void;
   handleReply: (parentId: string, content: string) => Promise<void>; // <-- type
   children?: React.ReactNode;
+  depth?: number;
 }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" style={{ marginLeft: depth * 24 }}>
       <Card className="gradient-card border border-brand-200/50">
         <CardContent className="p-6">
           <div className="flex items-start space-x-4">

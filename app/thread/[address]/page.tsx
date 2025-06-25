@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
-import { ThreadReplies } from "@/components/thread-replies";
-// import { ThreadNestedReplyCard } from "@/components/thread-nested-reply-card";
 import { ThreadReplyBox } from "@/components/thread-reply-box";
+import { ThreadReplyCard } from "@/components/thread-reply-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
@@ -43,8 +42,31 @@ export default function ThreadPage() {
     enabled: !!thread,
     staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
-  });
+    select: (flatReplies: any[]) => {
+      if (!thread?.rootPost?.id) return flatReplies;
+      const rootPostId = String(thread.rootPost.id);
 
+      // Filter out the root post if present
+      const repliesOnly = flatReplies.filter(r => r.id !== rootPostId);
+
+      const repliesByParent: { [parentId: string]: typeof repliesOnly } = {};
+      for (const reply of repliesOnly) {
+        const parentId = String(reply.parentReplyId || rootPostId);
+        if (!repliesByParent[parentId]) repliesByParent[parentId] = [];
+        repliesByParent[parentId].push(reply);
+      }
+
+      // Recursively flatten replies in nested order, tracking depth
+      function flattenReplies(parentId: string, depth = 0): any[] {
+        return (repliesByParent[parentId] || []).reduce((acc, reply) => {
+          acc.push({ ...reply, _depth: depth });
+          acc.push(...flattenReplies(String(reply.id), depth + 1));
+          return acc;
+        }, [] as any[]);
+      }
+      return flattenReplies(rootPostId);
+    },
+  });
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) {
       throw new Error("Thread or root post not found");
@@ -202,14 +224,23 @@ export default function ThreadPage() {
           <LoadingSpinner text="Loading replies..." />
         ) : (
           typeof replies !== "undefined" && (
-            <ThreadReplies
-              replies={replies.filter(reply => reply.id !== thread?.rootPost?.id)}
-              replyingTo={replyingTo}
-              replyContent={replyContent}
-              setReplyingTo={setReplyingTo}
-              setReplyContent={setReplyContent}
-              handleReply={handleReply}
-            />
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-gray-900">{Array.isArray(replies) ? replies.length : 0} Replies</h3>
+              {(Array.isArray(replies) ? replies : [])
+                .filter((reply: any) => reply.id !== thread?.rootPost?.id)
+                .map((reply: any) => (
+                  <ThreadReplyCard
+                    key={reply.id}
+                    reply={reply}
+                    replyingTo={replyingTo}
+                    replyContent={replyContent}
+                    setReplyingTo={setReplyingTo}
+                    setReplyContent={setReplyContent}
+                    handleReply={handleReply}
+                    depth={reply._depth ?? 0}
+                  />
+                ))}
+            </div>
           )
         )}
       </div>

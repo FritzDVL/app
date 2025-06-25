@@ -7,7 +7,8 @@ interface ThreadRepliesProps {
   replyContent: { [key: string]: string };
   setReplyingTo: (id: string | null) => void;
   setReplyContent: (fn: (c: any) => any) => void;
-  handleReply: (parentId: string, content: string) => Promise<void>; // <-- add prop
+  handleReply: (parentId: string, content: string) => Promise<void>;
+  rootPostId: string;
 }
 
 export function ThreadReplies({
@@ -17,23 +18,38 @@ export function ThreadReplies({
   setReplyingTo,
   setReplyContent,
   handleReply,
+  rootPostId,
 }: ThreadRepliesProps) {
-  return (
-    <div className="space-y-4">
-      <h3 className="text-xl font-bold text-gray-900">{replies.length} Replies</h3>
-      {replies.map((reply: Reply) => (
+  // Organize replies by parentReplyId
+  const repliesByParent: { [parentId: string]: Reply[] } = {};
+  for (const reply of replies) {
+    const parentId = reply.parentReplyId || rootPostId;
+    if (!repliesByParent[parentId]) repliesByParent[parentId] = [];
+    repliesByParent[parentId].push(reply);
+  }
+
+  // Recursive render with indentation for nesting
+  function renderReplies(parentId: string, depth = 0) {
+    return (repliesByParent[parentId] || []).map(reply => (
+      <div key={reply.id} style={{ marginLeft: depth * 24 }}>
         <ThreadReplyCard
-          key={reply.id}
           reply={reply}
           replyingTo={replyingTo}
           replyContent={replyContent}
           setReplyingTo={setReplyingTo}
           setReplyContent={setReplyContent}
-          handleReply={handleReply} // pass down
+          handleReply={handleReply}
         >
-          {/* Nested Replies (temporarily disabled) */}
+          {renderReplies(reply.id, depth + 1)}
         </ThreadReplyCard>
-      ))}
+      </div>
+    ));
+  }
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold text-gray-900">{replies.length} Replies</h3>
+      {renderReplies(rootPostId)}
     </div>
   );
 }
