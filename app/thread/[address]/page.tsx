@@ -14,7 +14,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
 import { useThreadReplies } from "@/hooks/use-thread-replies";
-import { useThreadsStore } from "@/stores/threads-store";
+import { populateThread } from "@/lib/populate/thread";
+import { useForumStore } from "@/stores/forum-store";
 import { type Address, Thread } from "@/types/common";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
@@ -24,12 +25,15 @@ export default function ThreadPage() {
 
   // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  // const [userVote, setUserVote] = useState<"up" | "down" | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-  const [thread, setThread] = useState<Thread | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Hooks
-  const { fetchThreadByAddress, isLoading: loading, error } = useThreadsStore();
+  // Normalized store
+  const thread = useForumStore(state => (threadAddress ? state.threads[threadAddress as string] : null));
+  const addThread = useForumStore(state => state.addThread);
+
+  // Replies
   const { createReply } = useReplyCreate();
   const { replies, loadingReplies, errorReplies } = useThreadReplies(
     threadAddress as string | undefined,
@@ -37,15 +41,29 @@ export default function ThreadPage() {
   );
 
   useEffect(() => {
-    const fetchThread = async (threadAddress: string) => {
-      const thread = await fetchThreadByAddress(threadAddress);
-      setThread(thread);
+    let cancelled = false;
+    const loadThread = async (threadAddress: string) => {
+      if (thread) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const threadData = await populateThread(threadAddress);
+        if (!cancelled && threadData) {
+          addThread(threadData);
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e.message || "Failed to load thread");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     };
-
-    if (threadAddress) {
-      fetchThread(threadAddress as string);
+    if (threadAddress && !thread) {
+      loadThread(threadAddress as string);
     }
-  }, [threadAddress, fetchThreadByAddress]);
+    return () => {
+      cancelled = true;
+    };
+  }, [threadAddress, thread, addThread]);
 
   // Handlers
   const handleReply = async () => {
@@ -62,23 +80,13 @@ export default function ThreadPage() {
     }
   };
 
-  // const handleVote = (type: "up" | "down") => {
-  //   setUserVote(userVote === type ? null : type);
-  // };
-
-  // const handleReaction = (reaction: string) => {
-  //   setSelectedReaction(selectedReaction === reaction ? null : reaction);
-  // };
-
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
       <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
         {/* Back to Community Link */}
         <div className="mb-2">
-          <BackNavigationLink href={`/communities/${thread?.communityAddress || ""}`}>
-            Back to Community
-          </BackNavigationLink>
+          <BackNavigationLink href={`/communities/${thread?.community || ""}`}>Back to Community</BackNavigationLink>
         </div>
         {/* Breadcrumb */}
         <div className="flex items-center space-x-2 text-sm text-gray-500">
