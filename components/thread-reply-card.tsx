@@ -4,6 +4,7 @@ import { ThreadReplyBox } from "./thread-reply-box";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Reply as ReplyType } from "@/types/common";
 import { Reply } from "lucide-react";
 
 export function ThreadReplyCard({
@@ -15,7 +16,7 @@ export function ThreadReplyCard({
   handleReply, // <-- add this prop
   children,
 }: {
-  reply: any;
+  reply: ReplyType;
   replyingTo: string | null;
   replyContent: { [key: string]: string };
   setReplyingTo: (id: string | null) => void;
@@ -40,7 +41,14 @@ export function ThreadReplyCard({
                   </Avatar>
                   <span className="font-medium text-gray-900">{reply.author.name}</span>
                 </Link>
-                <span className="text-sm text-gray-500">{reply.timeAgo}</span>
+                <span className="text-sm text-gray-500">
+                  {reply.createdAt
+                    ? new Date(reply.createdAt).toLocaleString("en-US", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })
+                    : "Unknown date"}
+                </span>
               </div>
               <p className="mb-3 text-gray-700">{reply.content}</p>
               <Button
