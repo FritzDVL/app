@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useCommunityMembership } from "@/hooks/use-community-membership";
 import { populateCommunities } from "@/lib/populate/communities";
 import { populateThreads } from "@/lib/populate/threads";
 import { useForumStore } from "@/stores/forum-store";
@@ -57,7 +58,7 @@ export default function CommunityPage() {
   const communityThreads = Object.values(allThreads).filter(thread => thread.community === communityAddress);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [isJoined, setIsJoined] = useState(false); // You may want to fetch this from your backend/session
+  const { isMember: isJoined, isLoading: isMembershipLoading } = useCommunityMembership(communityAddress);
 
   // Populate communities if not present
   useEffect(() => {
@@ -111,7 +112,7 @@ export default function CommunityPage() {
       }).andThen(handleOperationWith(walletClient.data));
 
       if (result.isOk()) {
-        setIsJoined(true);
+        // No need to setIsJoined(true), hook will update automatically
       } else {
         throw new Error(result.error.message);
       }
@@ -120,8 +121,7 @@ export default function CommunityPage() {
       toast.error("Action Failed", {
         description: "Unable to update your membership status. Please try again.",
       });
-      // Revert the state change on error
-      setIsJoined(false);
+      // No need to setIsJoined(false), hook will update automatically
     }
   };
 
@@ -139,7 +139,7 @@ export default function CommunityPage() {
       </div>
 
       {/* Loading State */}
-      {isLoading && (
+      {(isLoading || isMembershipLoading) && (
         <div className="flex flex-col items-center justify-center py-24">
           <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-brand-500"></div>
           <p className="text-lg font-medium text-slate-600">Loading community...</p>
