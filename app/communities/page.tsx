@@ -19,12 +19,14 @@ export default function CommunitiesPage() {
   // Use normalized forum store for communities
   const communities = Object.values(useForumStore(state => state.communities));
   const setCommunities = useForumStore(state => state.setCommunities);
+  const communitiesLoaded = useForumStore(state => state.communitiesLoaded);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const hasPopulated = useRef(false);
 
   // Fetch and populate communities on mount if not already loaded
   useEffect(() => {
+    if (communitiesLoaded) return;
     const doPopulate = async () => {
       setIsLoading(true);
       setFetchError(null);
@@ -37,10 +39,8 @@ export default function CommunitiesPage() {
         setIsLoading(false);
       }
     };
-    if (communities.length > 0 || hasPopulated.current) return;
-    hasPopulated.current = true;
     doPopulate();
-  }, [communities.length, setCommunities]);
+  }, [setCommunities, communitiesLoaded]);
 
   // Filter communities based on search query
   const filteredCommunities = communities.filter(
