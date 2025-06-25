@@ -85,24 +85,6 @@ export default function NewThreadPage() {
             <BackNavigationLink href={`/communities/${communityAddress}`}>Back to Community</BackNavigationLink>
             {/* Community info can be fetched here if needed */}
           </div>
-
-          <Button
-            onClick={handleSubmit}
-            disabled={isCreating || !formData.title.trim() || !formData.content.trim()}
-            className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 font-semibold text-white shadow-lg hover:from-brand-600 hover:to-brand-700"
-          >
-            {isCreating ? (
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
-                Publishing...
-              </div>
-            ) : (
-              <>
-                <Send className="mr-2 h-4 w-4" />
-                Publish Thread
-              </>
-            )}
-          </Button>
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
@@ -210,6 +192,26 @@ export default function NewThreadPage() {
                         )}
                       </div>
                     )}
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      disabled={isCreating || !formData.title.trim() || !formData.content.trim()}
+                      className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 font-semibold text-white shadow-lg hover:from-brand-600 hover:to-brand-700"
+                    >
+                      {isCreating ? (
+                        <div className="flex items-center gap-2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
+                          Publishing...
+                        </div>
+                      ) : (
+                        <>
+                          <Send className="mr-2 h-4 w-4" />
+                          Publish Thread
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </form>
               </CardContent>
