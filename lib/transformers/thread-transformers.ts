@@ -50,38 +50,19 @@ export async function transformFeedToThread(
 /**
  * Transform form data and thread record to a basic Thread object
  * Used when we have thread data but no feed details yet
+ * Now expects author and rootPost to be provided.
  */
-export async function transformFormDataToThread(
+export function transformFormDataToThread(
   formData: { title: string; summary: string; tags: string; author: Address },
   threadRecord: CommunityThreadSupabase,
   communityAddress: string,
-): Promise<Thread> {
-  const accountRequest = await fetchAccount(client, {
-    address: evmAddress(formData.author),
-  });
-
-  if (accountRequest.isErr()) {
-    throw new Error(`Failed to fetch account: ${accountRequest.error.message}`);
-  }
-  const author = accountRequest.value;
-  if (!author) {
-    throw new Error(`Account not found for address: ${formData.author}`);
-  }
-
-  let rootPost: Post | null = null;
-  if (threadRecord.root_post_id) {
-    // Fetch the root post details if available
-    const rootPostRequest = await fetchPost(client, {
-      post: threadRecord.root_post_id,
-    });
-    if (rootPostRequest.isErr()) {
-      throw new Error(`Failed to fetch root post: ${rootPostRequest.error.message}`);
-    }
-    rootPost = rootPostRequest.value as Post;
-  }
-
+  author: Account,
+  rootPost: Post | null,
+): Thread {
   return {
     id: threadRecord.lens_feed_address,
+    address: threadRecord.lens_feed_address as Address,
+    community: communityAddress as Address,
     title: formData.title,
     summary: formData.summary,
     author: {
