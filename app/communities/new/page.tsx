@@ -49,7 +49,7 @@ export default function NewCommunityPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    toast.loading("Creating community...");
+    const toastLoading = toast.loading("Creating community...");
     try {
       const form = new FormData();
       form.append("name", formData.name);
@@ -79,9 +79,6 @@ export default function NewCommunityPage() {
         router.push(`/communities/${community.address}`);
       } else {
         setError("Community creation failed. Please try again.");
-        toast.error("Community creation failed", {
-          description: "Please try again.",
-        });
       }
     } catch (err: any) {
       setError(err.message || "Failed to create community");
@@ -90,6 +87,7 @@ export default function NewCommunityPage() {
       });
     } finally {
       setLoading(false);
+      toast.dismiss(toastLoading);
     }
   };
 
