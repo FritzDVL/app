@@ -22,13 +22,13 @@ export function CommunityModerators({ moderators }: CommunityModeratorsProps) {
             .map(mod => (
               <Link
                 key={mod.address}
-                href={`/u/${mod.username}`}
+                href={`/u/${mod.username.replace("lens/", "")}`}
                 className="flex items-center space-x-3 transition-colors hover:text-brand-600"
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={mod.picture || "/placeholder.svg?height=32&width=32"} alt={mod.displayName} />
                   <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-xs text-white">
-                    {mod.displayName.toUpperCase()}
+                    {mod.displayName.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
