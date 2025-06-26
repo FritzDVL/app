@@ -237,7 +237,7 @@ export default function HomePage() {
                               <div className="flex items-start">
                                 <VotingActions postid={postId(thread.id)} score={thread.upvotes - thread.downvotes} />
                                 {/* Content Section (no logo, no score) */}
-                                <div className="min-w-0 flex-1">
+                                <div className="ml-4 min-w-0 flex-1">
                                   <div className="mb-1 flex items-start justify-between">
                                     <div className="flex items-center space-x-1.5">
                                       {/* {thread.isPinned && (
