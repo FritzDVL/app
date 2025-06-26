@@ -224,6 +224,7 @@ export interface CommunitySupabase {
   id: string;
   name: string;
   lens_group_address: string;
+  threads_count?: number;
   created_at: string;
   updated_at: string;
 }

@@ -189,7 +189,7 @@ export async function fetchThread(lensFeedAddress: string): Promise<CommunityThr
 export async function fetchCommunity(lensGroupAddress: string): Promise<CommunitySupabase | null> {
   const { data: community, error } = await supabase
     .from("communities")
-    .select("*")
+    .select("*, threads_count:community_threads(count)")
     .eq("lens_group_address", lensGroupAddress)
     .single();
 
@@ -199,6 +199,11 @@ export async function fetchCommunity(lensGroupAddress: string): Promise<Communit
       return null;
     }
     throw new Error(`Failed to fetch community: ${error.message}`);
+  }
+
+  // threads_count will be an array with a single object { count: number }
+  if (community) {
+    return { ...community, threads_count: community.threads_count?.[0]?.count ?? 0 };
   }
 
   return community;

@@ -20,7 +20,7 @@ export function transformGroupToCommunity(
     description: group.metadata?.description || "",
     logo: group.metadata?.icon || null,
     memberCount: groupStats.totalMembers || 0,
-    threadsCount: 0,
+    threadsCount: dbCommunity.threads_count || 0,
     moderators,
     createdAt: groupTimestamp,
   };
