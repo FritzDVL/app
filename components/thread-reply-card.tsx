@@ -31,7 +31,7 @@ export function ThreadReplyCard({
       <Card className="gradient-card border border-brand-200/50">
         <CardContent className="p-6">
           <div className="flex items-start space-x-4">
-            <ThreadReplyActions score={reply.upvotes - reply.downvotes} />
+            <ThreadReplyActions postId={reply.id} score={reply.upvotes - reply.downvotes} />
             <div className="flex-1">
               <div className="mb-3 flex items-center space-x-2">
                 <Link href={`/u/${reply.author.username}`} className="flex items-center space-x-2 hover:text-brand-600">
