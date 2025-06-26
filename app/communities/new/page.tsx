@@ -11,10 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityCreation } from "@/hooks/use-community-create";
 import { useAuthStore } from "@/stores/auth-store";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export default function NewCommunityPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   // State handling
   const [formData, setFormData] = useState({
@@ -76,6 +78,8 @@ export default function NewCommunityPage() {
         toast.success("Community created!", {
           description: `Welcome to ${community.name}`,
         });
+        // Invalidate and refetch communities list
+        await queryClient.invalidateQueries({ queryKey: ["communities"] });
         router.push(`/communities/${community.address}`);
       } else {
         setError("Community creation failed. Please try again.");
