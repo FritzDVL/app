@@ -18,12 +18,9 @@ import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityMembership } from "@/hooks/use-community-membership";
+import { useJoinCommunity } from "@/hooks/use-join-community";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchThreads } from "@/lib/fetchers/threads";
-import { evmAddress } from "@lens-protocol/client";
-import { joinGroup } from "@lens-protocol/client/actions";
-import { handleOperationWith } from "@lens-protocol/client/viem";
-import { useSessionClient } from "@lens-protocol/react";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowUp,
@@ -36,8 +33,6 @@ import {
   Share,
   Users,
 } from "lucide-react";
-import { toast } from "sonner";
-import { useWalletClient } from "wagmi";
 
 export default function CommunityPage() {
   const params = useParams();
@@ -67,45 +62,9 @@ export default function CommunityPage() {
   });
 
   const communityThreads = threads.filter(thread => thread.community === communityAddress);
-  const {
-    isMember: isJoined,
-    isLoading: isMembershipLoading,
-    updateIsMember,
-  } = useCommunityMembership(communityAddress);
+  const { isMember: isJoined, isLoading: isMembershipLoading } = useCommunityMembership(communityAddress);
 
-  // --- Handlers ---
-  const sessionClient = useSessionClient();
-  const walletClient = useWalletClient();
-
-  const handleJoinCommunity = async () => {
-    if (!sessionClient.data) {
-      toast.error("Not logged in", {
-        description: "Please log in to join communities.",
-      });
-      return;
-    }
-    const toastIsJoining = toast.loading("Joining community...");
-    try {
-      const result = await joinGroup(sessionClient.data, {
-        group: evmAddress(communityAddress),
-      }).andThen(handleOperationWith(walletClient.data));
-
-      if (result.isOk()) {
-        toast.success("You have joined the community!");
-        updateIsMember(true);
-      } else {
-        throw new Error(result.error.message);
-      }
-    } catch (error) {
-      console.error("Error joining/leaving community:", error);
-      toast.error("Action Failed", {
-        description: "Unable to update your membership status. Please try again.",
-      });
-      // No need to setIsJoined(false), hook will update automatically
-    } finally {
-      toast.dismiss(toastIsJoining);
-    }
-  };
+  const handleJoinCommunity = useJoinCommunity(communityAddress);
 
   const handleVote = (threadId: string, type: "up" | "down") => {
     console.log(`Voted ${type} on thread ${threadId}`);
