@@ -1,42 +1,51 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { addReaction } from "@lens-protocol/client/actions";
+import { PostReactionType, postId, useSessionClient } from "@lens-protocol/react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 
-export function ThreadReplyActions({ postId, score }: { postId: string; score: number }) {
+export function ThreadReplyActions({ postId: postid, score }: { postId: string; score: number }) {
   const [loading, setLoading] = useState<"up" | "down" | null>(null);
+  const sessionClient = useSessionClient();
 
-  // Handler for upvote button
-  const handleUpvote = async () => {
-    setLoading("up");
+  // Generalized handler for voting
+  const handleVote = async (
+    type: "up" | "down",
+    reactionType: PostReactionType,
+    successMsg: string,
+    failMsg: string,
+  ) => {
+    if (!sessionClient.data) {
+      toast.error("Not logged in", {
+        description: `Please log in to ${type === "up" ? "upvote" : "downvote"} posts.`,
+      });
+      return;
+    }
+    setLoading(type);
+    const loadingToastId = toast.loading(type === "up" ? "Upvoting..." : "Downvoting...");
     try {
-      // Simulate network delay for animation
-      await new Promise(resolve => setTimeout(resolve, 900));
-      // TODO: Add logic to record upvote reaction for postId
-      // await upvotePost(postId);
-      toast.success("Upvoted!");
+      const result = await addReaction(sessionClient.data, {
+        post: postId(postid),
+        reaction: reactionType,
+      });
+      if (result.isErr()) {
+        toast.dismiss(loadingToastId);
+        return console.error(result.error);
+      }
+      toast.success(successMsg);
     } catch {
-      toast.error("Failed to upvote. Please try again.");
+      toast.error(failMsg);
     } finally {
+      toast.dismiss(loadingToastId);
       setLoading(null);
     }
   };
 
-  // Handler for downvote button
-  const handleDownvote = async () => {
-    setLoading("down");
-    try {
-      // Simulate network delay for animation
-      await new Promise(resolve => setTimeout(resolve, 900));
-      // TODO: Add logic to record downvote reaction for postId
-      // await downvotePost(postId);
-      toast.success("Downvoted!");
-    } catch {
-      toast.error("Failed to downvote. Please try again.");
-    } finally {
-      setLoading(null);
-    }
-  };
+  const handleUpvote = () =>
+    handleVote("up", PostReactionType.Upvote, "Upvoted!", "Failed to upvote. Please try again.");
+  const handleDownvote = () =>
+    handleVote("down", PostReactionType.Downvote, "Downvoted!", "Failed to downvote. Please try again.");
 
   return (
     <div className="flex flex-col items-center space-y-1">
