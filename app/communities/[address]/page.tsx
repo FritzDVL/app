@@ -82,11 +82,7 @@ export default function CommunityPage() {
   const confirmLeaveCommunity = async () => {
     try {
       await leaveCommunity();
-      toast.success("You have left the community.");
     } catch (error) {
-      toast.error("Could not leave the community", {
-        description: "Please try again later.",
-      });
       console.error("Error leaving community:", error);
     }
   };
