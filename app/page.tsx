@@ -235,7 +235,12 @@ export default function HomePage() {
                           >
                             <CardContent className="p-3 sm:p-4 md:p-5">
                               <div className="flex items-start">
-                                <VotingActions postid={postId(thread.id)} score={thread.upvotes - thread.downvotes} />
+                                {thread.rootPost && (
+                                  <VotingActions
+                                    postid={postId(thread.rootPost.id)}
+                                    score={thread.rootPost.stats.upvotes - thread.rootPost.stats.downvotes}
+                                  />
+                                )}
                                 {/* Content Section (no logo, no score) */}
                                 <div className="ml-4 min-w-0 flex-1">
                                   <div className="mb-1 flex items-start justify-between">
