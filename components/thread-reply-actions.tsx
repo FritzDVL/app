@@ -1,13 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { addReaction } from "@lens-protocol/client/actions";
-import { PostReactionType, postId, useSessionClient } from "@lens-protocol/react";
+import { addReaction, fetchPost } from "@lens-protocol/client/actions";
+import { Post, PostReactionType, postId, useSessionClient } from "@lens-protocol/react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 
 export function ThreadReplyActions({ postId: postid, score }: { postId: string; score: number }) {
+  // State
+  const [hasUserUpvoted, setHasUserUpvoted] = useState(false);
+  const [hasUserDownvoted, setHasUserDownvoted] = useState(false);
   const [loading, setLoading] = useState<"up" | "down" | null>(null);
+
+  // Hooks
   const sessionClient = useSessionClient();
+
+  useEffect(() => {
+    const checkReactions = async () => {
+      if (!sessionClient.data) return;
+      try {
+        const postResult = await fetchPost(sessionClient.data, {
+          post: postId(postid),
+        });
+        if (postResult.isErr()) {
+          console.error("Failed to fetch post reactions:", postResult.error);
+          return;
+        }
+        const post = postResult.value as Post;
+
+        // Check if the user has reacted to the post
+        const hasUserUpvoted = post.operations?.hasUpvoted;
+        const hasUserDownvoted = post.operations?.hasDownvoted;
+
+        setHasUserUpvoted(hasUserUpvoted || false);
+        setHasUserDownvoted(hasUserDownvoted || false);
+      } catch (error) {
+        console.error("Error checking reactions:", error);
+      }
+    };
+
+    checkReactions();
+  }, [sessionClient.data, postid]);
 
   // Generalized handler for voting
   const handleVote = async (
@@ -50,11 +82,12 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
   return (
     <div className="flex flex-col items-center space-y-1">
       <Button
-        variant="ghost"
+        variant={hasUserUpvoted ? "secondary" : "ghost"}
         size="sm"
-        className="rounded-full p-1 hover:bg-green-100 hover:text-green-600"
+        className={`rounded-full p-1 hover:bg-green-100 hover:text-green-600 ${hasUserUpvoted ? "bg-green-100 text-green-600" : ""}`}
         onClick={handleUpvote}
         disabled={loading === "up" || loading === "down"}
+        aria-pressed={hasUserUpvoted}
       >
         {loading === "up" ? (
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
@@ -64,11 +97,12 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
       </Button>
       <span className="text-sm font-medium text-gray-600">{score}</span>
       <Button
-        variant="ghost"
+        variant={hasUserDownvoted ? "secondary" : "ghost"}
         size="sm"
-        className="rounded-full p-1 hover:bg-red-100 hover:text-red-600"
+        className={`rounded-full p-1 hover:bg-red-100 hover:text-red-600 ${hasUserDownvoted ? "bg-red-100 text-red-600" : ""}`}
         onClick={handleDownvote}
         disabled={loading === "up" || loading === "down"}
+        aria-pressed={hasUserDownvoted}
       >
         {loading === "down" ? (
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
