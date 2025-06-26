@@ -44,20 +44,8 @@ export async function persistCommunityThread(
   if (existingCommunity) {
     community = existingCommunity;
   } else {
-    // Community doesn't exist, create it
-    const { data: newCommunity, error: insertError } = await supabase
-      .from("communities")
-      .insert({
-        lens_group_address: communityLensAddress,
-      })
-      .select()
-      .single();
-
-    if (insertError) {
-      throw new Error(`Failed to create community: ${insertError.message}`);
-    }
-
-    community = newCommunity;
+    // Community doesn't exist, throw error
+    throw new Error(`Community with address ${communityLensAddress} does not exist`);
   }
 
   // Now create the thread record
@@ -83,7 +71,7 @@ export async function persistCommunityThread(
  * @param lensGroupAddress - The Lens Protocol group address
  * @returns The created community record
  */
-export async function persistCommunity(lensGroupAddress: string): Promise<CommunitySupabase> {
+export async function persistCommunity(lensGroupAddress: string, name: string): Promise<CommunitySupabase> {
   // Check if community already exists
   const { data: existingCommunity, error: fetchError } = await supabase
     .from("communities")
@@ -105,6 +93,7 @@ export async function persistCommunity(lensGroupAddress: string): Promise<Commun
     .from("communities")
     .insert({
       lens_group_address: lensGroupAddress,
+      name,
     })
     .select()
     .single();

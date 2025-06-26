@@ -131,40 +131,37 @@ export default function CommunityPage() {
               {/* Community Header Card */}
               <Card className="mb-8 rounded-xl border border-border bg-card shadow-md">
                 <CardContent className="p-8">
-                  <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-                    <div className="flex items-center space-x-4">
-                      <div className="text-6xl">
-                        {community.logo ? (
-                          <Image
-                            src={community.logo.replace("lens://", "https://api.grove.storage/")}
-                            alt={community.name}
-                            width={100}
-                            height={100}
-                            className="h-16 w-16 rounded-full border border-slate-200 bg-white object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-white shadow-lg">
-                            {community.name.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <h1 className="mb-2 text-3xl font-bold text-slate-900">{community.name}</h1>
-                        <p className="mb-4 max-w-2xl text-slate-600">{community.description}</p>
-                        <div className="flex items-center space-x-6 text-sm text-slate-500">
-                          <div className="flex items-center">
-                            <Users className="mr-2 h-4 w-4" />
-                            {community.memberCount.toLocaleString()} members
-                          </div>
-                          <div className="flex items-center">
-                            <MessageCircle className="mr-2 h-4 w-4" />
-                            {community.threadsCount} threads
-                          </div>
+                  <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-6 md:space-y-0">
+                    <div className="flex h-[100px] w-[100px] items-center justify-center">
+                      {community.logo ? (
+                        <Image
+                          src={community.logo.replace("lens://", "https://api.grove.storage/")}
+                          alt={community.name}
+                          width={100}
+                          height={100}
+                          className="h-[100px] w-[100px] rounded-full border border-slate-200 bg-white object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-white shadow-lg">
+                          {community.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h1 className="mb-2 truncate text-3xl font-bold text-slate-900">{community.name}</h1>
+                      <p className="mb-4 max-w-2xl truncate text-slate-600">{community.description}</p>
+                      <div className="flex items-center space-x-6 text-sm text-slate-500">
+                        <div className="flex items-center">
+                          <Users className="mr-2 h-4 w-4" />
+                          {community.memberCount.toLocaleString()} members
+                        </div>
+                        <div className="flex items-center">
+                          <MessageCircle className="mr-2 h-4 w-4" />
+                          {community.threadsCount} threads
                         </div>
                       </div>
                     </div>
-
-                    <div className="flex flex-col gap-3 sm:flex-row">
+                    <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
                       <Button
                         onClick={handleJoinCommunity}
                         className={`rounded-full px-8 py-3 font-semibold transition-colors ${
@@ -175,11 +172,6 @@ export default function CommunityPage() {
                       >
                         {isJoined ? "✓ Joined" : "Join Community"}
                       </Button>
-                      {/* {community.isPremium && (
-                        <Button className="rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 px-8 py-3 font-semibold text-white hover:from-yellow-500 hover:to-orange-600">
-                          Unlock Premium
-                        </Button>
-                      )} */}
                     </div>
                   </div>
                 </CardContent>

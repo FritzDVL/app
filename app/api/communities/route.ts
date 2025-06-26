@@ -34,8 +34,11 @@ export async function POST(request: NextRequest) {
 
     const adminSessionClient = await getAdminSessionClient();
 
+    // 1. Prepare group name for metadata (no spaces, max 20 chars)
+    const groupName = name.replace(/\s+/g, "-").slice(0, 20);
+
     // 1. Build metadata for the group and upload it
-    const groupMetadata = group({ name, description, icon: iconUri });
+    const groupMetadata = group({ name: groupName, description, icon: iconUri });
     const acl = immutable(lensMainnet.id);
     const { uri } = await storageClient.uploadAsJson(groupMetadata, { acl });
 
@@ -63,8 +66,8 @@ export async function POST(request: NextRequest) {
     const createdGroup = result.value as Group;
     console.log("[API] Created group:", createdGroup);
 
-    // 4. Persist the community in Supabase
-    const persistedCommunity = await persistCommunity(createdGroup.address);
+    // 4. Persist the community in Supabase (pass full name as well)
+    const persistedCommunity = await persistCommunity(createdGroup.address, name);
     console.log("[API] Community persisted in Supabase:", createdGroup.address);
 
     // 5. Add new moderators

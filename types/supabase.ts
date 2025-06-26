@@ -33,18 +33,21 @@ export type Database = {
           created_at: string;
           id: string;
           lens_group_address: string;
+          name: string;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
           lens_group_address: string;
+          name: string;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
           id?: string;
           lens_group_address?: string;
+          name?: string;
           updated_at?: string;
         };
         Relationships: [];
@@ -56,6 +59,7 @@ export type Database = {
           created_at: string;
           id: string;
           lens_feed_address: string;
+          replies_count: number;
           root_post_id: string | null;
           updated_at: string;
         };
@@ -65,6 +69,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           lens_feed_address: string;
+          replies_count?: number;
           root_post_id?: string | null;
           updated_at?: string;
         };
@@ -74,6 +79,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           lens_feed_address?: string;
+          replies_count?: number;
           root_post_id?: string | null;
           updated_at?: string;
         };
@@ -216,6 +222,7 @@ export const Constants = {
 
 export interface CommunitySupabase {
   id: string;
+  name: string;
   lens_group_address: string;
   created_at: string;
   updated_at: string;
