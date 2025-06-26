@@ -1,12 +1,13 @@
 import { Community, Moderator } from "@/types/common";
 import { CommunitySupabase } from "@/types/supabase";
-import { Group } from "@lens-protocol/client";
+import { Group, GroupStatsResponse } from "@lens-protocol/client";
 
 /**
  * Transform a Lens Group object to a Community object
  */
 export function transformGroupToCommunity(
   group: Group,
+  groupStats: GroupStatsResponse,
   dbCommunity: CommunitySupabase,
   moderators: Moderator[],
 ): Community {
@@ -18,7 +19,7 @@ export function transformGroupToCommunity(
     name: dbCommunity.name || "",
     description: group.metadata?.description || "",
     logo: group.metadata?.icon || null,
-    memberCount: 0,
+    memberCount: groupStats.totalMembers || 0,
     threadsCount: 0,
     moderators,
     createdAt: groupTimestamp,
