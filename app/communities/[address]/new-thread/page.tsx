@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CreateThreadFormData, useThreadCreation } from "@/hooks/use-thread-create";
 import { useAuthStore } from "@/stores/auth-store";
+import { useQueryClient } from "@tanstack/react-query";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,6 +24,7 @@ export default function NewThreadPage() {
 
   const { createThread, isCreating } = useThreadCreation();
   const { account } = useAuthStore();
+  const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState<CreateThreadFormData>({
     title: "",
@@ -53,6 +55,8 @@ export default function NewThreadPage() {
         setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
         setUploadedImages([]);
       });
+      // Invalidate and refetch threads for this community
+      await queryClient.invalidateQueries({ queryKey: ["threads", communityAddress] });
       router.push(`/communities/${communityAddress}`);
     } catch (error) {
       console.error("Error in handleSubmit:", error);
