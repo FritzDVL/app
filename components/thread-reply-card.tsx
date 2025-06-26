@@ -34,7 +34,10 @@ export function ThreadReplyCard({
             <ThreadReplyActions postId={reply.id} score={reply.upvotes - reply.downvotes} />
             <div className="flex-1">
               <div className="mb-3 flex items-center space-x-2">
-                <Link href={`/u/${reply.author.username}`} className="flex items-center space-x-2 hover:text-brand-600">
+                <Link
+                  href={`/u/${reply.author.username.replace("lens/", "")}`}
+                  className="flex items-center space-x-2 hover:text-brand-600"
+                >
                   <Avatar className="h-6 w-6">
                     <AvatarImage src={reply.author.avatar || "/placeholder.svg"} />
                     <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-xs text-white">
