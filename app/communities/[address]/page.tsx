@@ -67,7 +67,11 @@ export default function CommunityPage() {
   });
 
   const communityThreads = threads.filter(thread => thread.community === communityAddress);
-  const { isMember: isJoined, isLoading: isMembershipLoading } = useCommunityMembership(communityAddress);
+  const {
+    isMember: isJoined,
+    isLoading: isMembershipLoading,
+    updateIsMember,
+  } = useCommunityMembership(communityAddress);
 
   // --- Handlers ---
   const sessionClient = useSessionClient();
@@ -80,13 +84,15 @@ export default function CommunityPage() {
       });
       return;
     }
+    const toastIsJoining = toast.loading("Joining community...");
     try {
       const result = await joinGroup(sessionClient.data, {
         group: evmAddress(communityAddress),
       }).andThen(handleOperationWith(walletClient.data));
 
       if (result.isOk()) {
-        // No need to setIsJoined(true), hook will update automatically
+        toast.success("You have joined the community!");
+        updateIsMember(true);
       } else {
         throw new Error(result.error.message);
       }
@@ -96,6 +102,8 @@ export default function CommunityPage() {
         description: "Unable to update your membership status. Please try again.",
       });
       // No need to setIsJoined(false), hook will update automatically
+    } finally {
+      toast.dismiss(toastIsJoining);
     }
   };
 

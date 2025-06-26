@@ -46,5 +46,8 @@ export const useCommunityMembership = (address: string) => {
     };
   }, [address, sessionClient.data]);
 
-  return { isMember, isLoading, error };
+  // Allow external update of isMember
+  const updateIsMember = (value: boolean) => setIsMember(value);
+
+  return { isMember, isLoading, error, updateIsMember };
 };
