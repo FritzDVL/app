@@ -13,7 +13,6 @@ import { useWalletClient } from "wagmi";
 export function useLeaveCommunity(communityAddress: string) {
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
-  const { updateIsMember } = useCommunityMembership(communityAddress);
 
   const leave = async () => {
     if (!sessionClient.data) {
@@ -30,7 +29,6 @@ export function useLeaveCommunity(communityAddress: string) {
 
       if (result.isOk()) {
         toast.success("You have left the community!");
-        updateIsMember(false);
       } else {
         throw new Error(result.error.message);
       }

@@ -66,7 +66,11 @@ export default function CommunityPage() {
   });
 
   const communityThreads = threads.filter(thread => thread.community === communityAddress);
-  const { isMember: isJoined, isLoading: isMembershipLoading } = useCommunityMembership(communityAddress);
+  const {
+    isMember: isJoined,
+    isLoading: isMembershipLoading,
+    updateIsMember,
+  } = useCommunityMembership(communityAddress);
 
   const joinCommunity = useJoinCommunity(communityAddress);
   const leaveCommunity = useLeaveCommunity(communityAddress);
@@ -82,8 +86,18 @@ export default function CommunityPage() {
   const confirmLeaveCommunity = async () => {
     try {
       await leaveCommunity();
+      updateIsMember(false);
     } catch (error) {
       console.error("Error leaving community:", error);
+    }
+  };
+
+  const handleJoinCommunity = async () => {
+    try {
+      await joinCommunity();
+      updateIsMember(true);
+    } catch (error) {
+      console.error("Error joining community:", error);
     }
   };
 
@@ -147,7 +161,7 @@ export default function CommunityPage() {
                     </div>
                     <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
                       <Button
-                        onClick={isJoined ? handleLeaveCommunity : joinCommunity}
+                        onClick={isJoined ? handleLeaveCommunity : handleJoinCommunity}
                         className={`rounded-full px-8 py-3 font-semibold transition-colors ${
                           isJoined
                             ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"

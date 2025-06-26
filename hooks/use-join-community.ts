@@ -13,7 +13,6 @@ import { useWalletClient } from "wagmi";
 export function useJoinCommunity(communityAddress: string) {
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
-  const { updateIsMember } = useCommunityMembership(communityAddress);
 
   const join = async () => {
     if (!sessionClient.data) {
@@ -30,7 +29,6 @@ export function useJoinCommunity(communityAddress: string) {
 
       if (result.isOk()) {
         toast.success("You have joined the community!");
-        updateIsMember(true);
       } else {
         throw new Error(result.error.message);
       }
