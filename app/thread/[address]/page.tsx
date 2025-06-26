@@ -181,15 +181,15 @@ export default function ThreadPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" className="rounded-full">
+                  <Button variant="ghost" size="sm" className="rounded-full" disabled>
                     <Share className="mr-2 h-4 w-4" />
                     Share
                   </Button>
-                  <Button variant="ghost" size="sm" className="rounded-full">
+                  <Button variant="ghost" size="sm" className="rounded-full" disabled>
                     <Bookmark className="mr-2 h-4 w-4" />
                     Save
                   </Button>
-                  <Button variant="ghost" size="sm" className="rounded-full text-red-500 hover:text-red-600">
+                  <Button variant="ghost" size="sm" className="rounded-full text-red-500 hover:text-red-600" disabled>
                     <Flag className="mr-2 h-4 w-4" />
                     Report
                   </Button>
