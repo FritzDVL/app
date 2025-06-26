@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { LeaveCommunityDialog } from "@/components/community-leave-dialog";
 import { CommunityModerators } from "@/components/community-moderators";
 import { CommunityRules } from "@/components/community-rules";
 import { Navbar } from "@/components/navbar";
@@ -34,6 +35,7 @@ import {
   Share,
   Users,
 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function CommunityPage() {
   const params = useParams();
@@ -43,6 +45,7 @@ export default function CommunityPage() {
   const [showPostForm, setShowPostForm] = useState(false);
   const [sortBy, setSortBy] = useState("hot");
   const [newPost, setNewPost] = useState({ title: "", content: "", tags: "" });
+  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
 
   // --- Fetch community (React Query) ---
   const { data: community, isLoading: isCommunityLoading } = useQuery({
@@ -70,6 +73,22 @@ export default function CommunityPage() {
 
   const handleVote = (threadId: string, type: "up" | "down") => {
     console.log(`Voted ${type} on thread ${threadId}`);
+  };
+
+  const handleLeaveCommunity = async () => {
+    setShowLeaveDialog(true);
+  };
+
+  const confirmLeaveCommunity = async () => {
+    try {
+      await leaveCommunity();
+      toast.success("Has salido de la comunidad.");
+    } catch (error) {
+      toast.error("No se pudo salir de la comunidad", {
+        description: "Inténtalo de nuevo más tarde.",
+      });
+      console.error("Error leaving community:", error);
+    }
   };
 
   // --- Render ---
@@ -132,7 +151,7 @@ export default function CommunityPage() {
                     </div>
                     <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
                       <Button
-                        onClick={isJoined ? leaveCommunity : joinCommunity}
+                        onClick={isJoined ? handleLeaveCommunity : joinCommunity}
                         className={`rounded-full px-8 py-3 font-semibold transition-colors ${
                           isJoined
                             ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -141,6 +160,11 @@ export default function CommunityPage() {
                       >
                         {isJoined ? "Leave Community" : "Join Community"}
                       </Button>
+                      <LeaveCommunityDialog
+                        open={showLeaveDialog}
+                        onOpenChange={setShowLeaveDialog}
+                        onConfirm={confirmLeaveCommunity}
+                      />
                     </div>
                   </div>
                 </CardContent>
