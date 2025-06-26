@@ -19,6 +19,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityMembership } from "@/hooks/use-community-membership";
 import { useJoinCommunity } from "@/hooks/use-join-community";
+import { useLeaveCommunity } from "@/hooks/use-leave-community";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchThreads } from "@/lib/fetchers/threads";
 import { useQuery } from "@tanstack/react-query";
@@ -64,7 +65,8 @@ export default function CommunityPage() {
   const communityThreads = threads.filter(thread => thread.community === communityAddress);
   const { isMember: isJoined, isLoading: isMembershipLoading } = useCommunityMembership(communityAddress);
 
-  const handleJoinCommunity = useJoinCommunity(communityAddress);
+  const joinCommunity = useJoinCommunity(communityAddress);
+  const leaveCommunity = useLeaveCommunity(communityAddress);
 
   const handleVote = (threadId: string, type: "up" | "down") => {
     console.log(`Voted ${type} on thread ${threadId}`);
@@ -130,14 +132,14 @@ export default function CommunityPage() {
                     </div>
                     <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
                       <Button
-                        onClick={handleJoinCommunity}
+                        onClick={isJoined ? leaveCommunity : joinCommunity}
                         className={`rounded-full px-8 py-3 font-semibold transition-colors ${
                           isJoined
                             ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"
                             : "bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:from-brand-600 hover:to-brand-700"
                         }`}
                       >
-                        {isJoined ? "✓ Joined" : "Join Community"}
+                        {isJoined ? "Leave Community" : "Join Community"}
                       </Button>
                     </div>
                   </div>

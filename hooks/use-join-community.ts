@@ -15,7 +15,7 @@ export function useJoinCommunity(communityAddress: string) {
   const walletClient = useWalletClient();
   const { updateIsMember } = useCommunityMembership(communityAddress);
 
-  const handleJoinCommunity = async () => {
+  const join = async () => {
     if (!sessionClient.data) {
       toast.error("Not logged in", {
         description: "Please log in to join communities.",
@@ -44,5 +44,5 @@ export function useJoinCommunity(communityAddress: string) {
     }
   };
 
-  return handleJoinCommunity;
+  return join;
 }
