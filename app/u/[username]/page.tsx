@@ -207,7 +207,13 @@ export default function ProfilePage() {
           <div className="relative h-48 overflow-hidden rounded-3xl md:h-64">
             {lensAccount?.metadata?.coverPicture ? (
               <>
-                <Image src={lensAccount.metadata.coverPicture} alt="Cover" className="h-full w-full object-cover" />
+                <Image
+                  src={lensAccount.metadata.coverPicture}
+                  alt="Cover"
+                  className="h-full w-full object-cover"
+                  width={300}
+                  height={100}
+                />
                 <div className="absolute inset-0 bg-black/20"></div>
               </>
             ) : (
