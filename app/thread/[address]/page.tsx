@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { ThreadReplyBox } from "@/components/thread-reply-box";
@@ -130,13 +131,18 @@ export default function ThreadPage() {
                       )}
                     </div>
                     <div className="ml-4 flex items-center gap-2 text-sm text-slate-500">
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                        <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-xs text-white">
-                          {thread.author.name[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm font-medium">{thread.author.name}</span>
+                      <Link
+                        href={`/u/${thread.author.username.replace("lens/", "")}`}
+                        className="flex items-center gap-2"
+                      >
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
+                          <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-xs text-white">
+                            {thread.author.name[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium">{thread.author.name}</span>
+                      </Link>
                     </div>
                   </div>
                   {thread.rootPost &&
