@@ -1,11 +1,25 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { addReaction, fetchPost, undoReaction } from "@lens-protocol/client/actions";
-import { Post, PostReactionType, postId, useSessionClient } from "@lens-protocol/react";
+import { Post, PostId, PostReactionType, postId, useSessionClient } from "@lens-protocol/react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 
-export function ThreadReplyActions({ postId: postid, score }: { postId: string; score: number }) {
+interface VotingActionsProps {
+  postid: PostId;
+  score: number;
+  className?: string;
+  upvoteLabel?: string;
+  downvoteLabel?: string;
+}
+
+export function VotingActions({
+  postid,
+  score,
+  className,
+  upvoteLabel = "Upvote",
+  downvoteLabel = "Downvote",
+}: VotingActionsProps) {
   const [hasUserUpvoted, setHasUserUpvoted] = useState(false);
   const [hasUserDownvoted, setHasUserDownvoted] = useState(false);
   const [loading, setLoading] = useState<"up" | "down" | null>(null);
@@ -22,9 +36,9 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
           console.error("Failed to fetch post reactions:", postResult.error);
           return;
         }
-        const post = postResult.value as Post;
-        setHasUserUpvoted(!!post.operations?.hasUpvoted);
-        setHasUserDownvoted(!!post.operations?.hasDownvoted);
+        const fetchedPost = postResult.value as Post;
+        setHasUserUpvoted(!!fetchedPost.operations?.hasUpvoted);
+        setHasUserDownvoted(!!fetchedPost.operations?.hasDownvoted);
       } catch (error) {
         console.error("Error checking reactions:", error);
       }
@@ -40,13 +54,15 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
   ) => {
     if (!sessionClient.data) {
       toast.error("Not logged in", {
-        description: `Please log in to ${type === "up" ? "upvote" : "downvote"} posts.`,
+        description: `Please log in to ${type === "up" ? upvoteLabel.toLowerCase() : downvoteLabel.toLowerCase()} posts.`,
       });
       return;
     }
     setLoading(type);
     if (hasUserReacted) {
-      const removingToastId = toast.loading(type === "up" ? "Removing upvote..." : "Removing downvote...");
+      const removingToastId = toast.loading(
+        type === "up" ? `Removing ${upvoteLabel.toLowerCase()}...` : `Removing ${downvoteLabel.toLowerCase()}...`,
+      );
       try {
         const result = await undoReaction(sessionClient.data, {
           post: postId(postid),
@@ -59,9 +75,13 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
         }
         setHasUserReacted(false);
         setScoreState(prev => prev + (type === "up" ? -1 : 1));
-        toast.success(type === "up" ? "Upvote removed" : "Downvote removed");
+        toast.success(type === "up" ? `${upvoteLabel} removed` : `${downvoteLabel} removed`);
       } catch {
-        toast.error(type === "up" ? "Failed to remove upvote." : "Failed to remove downvote.");
+        toast.error(
+          type === "up"
+            ? `Failed to remove ${upvoteLabel.toLowerCase()}.`
+            : `Failed to remove ${downvoteLabel.toLowerCase()}.`,
+        );
         toast.dismiss(removingToastId);
       } finally {
         setLoading(null);
@@ -69,7 +89,7 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
       return;
     }
     // Add reaction
-    const votingToastId = toast.loading(type === "up" ? "Upvoting..." : "Downvoting...");
+    const votingToastId = toast.loading(type === "up" ? `${upvoteLabel}...` : `${downvoteLabel}...`);
     try {
       const result = await addReaction(sessionClient.data, {
         post: postId(postid),
@@ -82,9 +102,13 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
       }
       setHasUserReacted(true);
       setScoreState(prev => prev + (type === "up" ? 1 : -1));
-      toast.success(type === "up" ? "Upvoted!" : "Downvoted!");
+      toast.success(type === "up" ? `${upvoteLabel}d!` : `${downvoteLabel}d!`);
     } catch {
-      toast.error(type === "up" ? "Failed to upvote. Please try again." : "Failed to downvote. Please try again.");
+      toast.error(
+        type === "up"
+          ? `Failed to ${upvoteLabel.toLowerCase()}. Please try again.`
+          : `Failed to ${downvoteLabel.toLowerCase()}. Please try again.`,
+      );
     } finally {
       setLoading(null);
     }
@@ -94,7 +118,7 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
   const handleDownvote = () => handleVote("down", PostReactionType.Downvote, hasUserDownvoted, setHasUserDownvoted);
 
   return (
-    <div className="flex flex-col items-center space-y-1">
+    <div className={`flex flex-col items-center space-y-1 ${className || ""}`}>
       <Button
         variant={hasUserUpvoted ? "secondary" : "ghost"}
         size="sm"
@@ -102,6 +126,7 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
         onClick={handleUpvote}
         disabled={loading === "up" || loading === "down" || hasUserDownvoted}
         aria-pressed={hasUserUpvoted}
+        aria-label={upvoteLabel}
       >
         {loading === "up" ? (
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
@@ -117,6 +142,7 @@ export function ThreadReplyActions({ postId: postid, score }: { postId: string; 
         onClick={handleDownvote}
         disabled={loading === "up" || loading === "down" || hasUserUpvoted}
         aria-pressed={hasUserDownvoted}
+        aria-label={downvoteLabel}
       >
         {loading === "down" ? (
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />

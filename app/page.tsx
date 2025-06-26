@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeroSection } from "@/components/homepage-hero-section";
 import { Navbar } from "@/components/navbar";
-import { ThreadVoting } from "@/components/thread-voting";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,10 +12,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { VotingActions } from "@/components/voting-actions";
 import { useCommunitiesFeatured } from "@/hooks/use-communities-featured";
 import { useThreadsLatest } from "@/hooks/use-threads-latest";
-import { TrendingUp, Zap } from "lucide-react";
-import { MessageCircle } from "lucide-react";
+import { postId } from "@lens-protocol/react";
+import { MessageCircle, TrendingUp, Zap } from "lucide-react";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("new");
@@ -235,7 +235,7 @@ export default function HomePage() {
                           >
                             <CardContent className="p-3 sm:p-4 md:p-5">
                               <div className="flex items-start">
-                                <ThreadVoting votes={thread.upvotes - thread.downvotes} />
+                                <VotingActions postid={postId(thread.id)} score={thread.upvotes - thread.downvotes} />
                                 {/* Content Section (no logo, no score) */}
                                 <div className="min-w-0 flex-1">
                                   <div className="mb-1 flex items-start justify-between">

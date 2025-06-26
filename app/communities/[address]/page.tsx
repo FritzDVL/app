@@ -9,7 +9,6 @@ import { CommunityModerators } from "@/components/community-moderators";
 import { CommunityRules } from "@/components/community-rules";
 import { Navbar } from "@/components/navbar";
 import { ThreadNewButton } from "@/components/thread-new-button";
-import { ThreadVoting } from "@/components/thread-voting";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
@@ -18,11 +17,13 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Textarea } from "@/components/ui/textarea";
+import { VotingActions } from "@/components/voting-actions";
 import { useCommunityMembership } from "@/hooks/use-community-membership";
 import { useJoinCommunity } from "@/hooks/use-join-community";
 import { useLeaveCommunity } from "@/hooks/use-leave-community";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchThreads } from "@/lib/fetchers/threads";
+import { postId } from "@lens-protocol/react";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowUp,
@@ -35,7 +36,6 @@ import {
   Share,
   Users,
 } from "lucide-react";
-import { toast } from "sonner";
 
 export default function CommunityPage() {
   const params = useParams();
@@ -74,10 +74,6 @@ export default function CommunityPage() {
 
   const joinCommunity = useJoinCommunity(communityAddress);
   const leaveCommunity = useLeaveCommunity(communityAddress);
-
-  const handleVote = (threadId: string, type: "up" | "down") => {
-    console.log(`Voted ${type} on thread ${threadId}`);
-  };
 
   const handleLeaveCommunity = async () => {
     setShowLeaveDialog(true);
@@ -302,11 +298,7 @@ export default function CommunityPage() {
                             <div className="flex items-start space-x-4">
                               {/* Voting */}
                               <div className="flex min-w-[50px] flex-col items-center space-y-1">
-                                <ThreadVoting
-                                  votes={thread.upvotes - thread.downvotes}
-                                  onUpvote={() => handleVote(thread.id, "up")}
-                                  onDownvote={() => handleVote(thread.id, "down")}
-                                />
+                                <VotingActions postid={postId(thread.id)} score={thread.upvotes - thread.downvotes} />
                               </div>
 
                               {/* Content */}

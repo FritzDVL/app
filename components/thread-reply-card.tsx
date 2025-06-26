@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ThreadReplyActions } from "./thread-reply-actions";
 import { ThreadReplyBox } from "./thread-reply-box";
+import { VotingActions } from "./voting-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Reply as ReplyType } from "@/types/common";
+import { postId } from "@lens-protocol/react";
 import { Reply } from "lucide-react";
 
 export function ThreadReplyCard({
@@ -31,7 +32,7 @@ export function ThreadReplyCard({
       <Card className="gradient-card border border-brand-200/50">
         <CardContent className="p-6">
           <div className="flex items-start space-x-4">
-            <ThreadReplyActions postId={reply.id} score={reply.upvotes - reply.downvotes} />
+            <VotingActions postid={postId(reply.id)} score={reply.upvotes - reply.downvotes} />
             <div className="flex-1">
               <div className="mb-3 flex items-center space-x-2">
                 <Link
