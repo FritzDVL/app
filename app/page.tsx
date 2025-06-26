@@ -259,7 +259,7 @@ export default function HomePage() {
                                     </div>
                                     {/* Author Data Top Right */}
                                     <Link
-                                      href={`/u/${thread.author.username}`}
+                                      href={`/u/${thread.author.username.replace("lens/", "")}`}
                                       className="flex items-center space-x-1.5 hover:text-green-600"
                                       onClick={e => e.stopPropagation()}
                                     >
