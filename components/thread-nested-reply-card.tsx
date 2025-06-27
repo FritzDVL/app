@@ -54,10 +54,10 @@ export function ThreadNestedReplyCard({
             {replyingTo === nestedReply.id && (
               <ThreadReplyBox
                 value={replyContent[nestedReply.id] || ""}
-                onChange={e =>
+                onChange={(value: string) =>
                   setReplyContent(c => ({
                     ...c,
-                    [nestedReply.id]: e.target.value,
+                    [nestedReply.id]: value,
                   }))
                 }
                 onCancel={() => {
