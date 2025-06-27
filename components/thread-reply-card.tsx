@@ -56,7 +56,10 @@ export function ThreadReplyCard({
                     : "Unknown date"}
                 </span>
               </div>
-              <p className="mb-3 text-gray-700">{reply.content}</p>
+              <div
+                className="mb-3 max-w-none text-gray-700 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:text-lg [&_h3]:font-semibold"
+                dangerouslySetInnerHTML={{ __html: reply.content }}
+              />
               <Button
                 variant="ghost"
                 size="sm"
