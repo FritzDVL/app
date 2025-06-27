@@ -4,6 +4,7 @@ import { VotingActions } from "./voting-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/utils";
 import { Reply as ReplyType } from "@/types/common";
 import { postId } from "@lens-protocol/react";
 import { Reply } from "lucide-react";
@@ -48,17 +49,12 @@ export function ThreadReplyCard({
                   <span className="font-medium text-gray-900">{reply.author.name}</span>
                 </Link>
                 <span className="text-sm text-gray-500">
-                  {reply.createdAt
-                    ? new Date(reply.createdAt).toLocaleString("en-US", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })
-                    : "Unknown date"}
+                  {reply.createdAt ? getTimeAgo(new Date(reply.createdAt)) : "Unknown date"}
                 </span>
               </div>
               <div
                 className="mb-3 max-w-none text-gray-700 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:text-lg [&_h3]:font-semibold [&_li]:mb-1 [&_p]:min-h-[1.5em] [&_pre]:rounded-md [&_pre]:bg-gray-100 [&_pre]:p-3 [&_ul]:ml-6 [&_ul]:list-disc"
-                dangerouslySetInnerHTML={{ __html: reply.content }}
+                dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(reply.content) }}
               />
               <Button
                 variant="ghost"
@@ -77,10 +73,20 @@ export function ThreadReplyCard({
                     setReplyContent(c => ({ ...c, [reply.id]: "" }));
                   }}
                   onSubmit={async () => {
-                    if (!replyContent[reply.id]?.trim()) return;
-                    await handleReply(reply.id, replyContent[reply.id]);
+                    const raw = replyContent[reply.id] || "";
+                    // Remove trailing empty <p></p> tags from HTML
+                    const withoutTrailingPTags = removeTrailingEmptyPTags(raw);
+                    // Remove trailing whitespace after the last non-whitespace character, but preserve trailing <p></p> blocks
+                    const trimmed = withoutTrailingPTags.replace(/(\S)(\s+)$/g, "$1");
+                    if (!trimmed.trim()) return;
+                    await handleReply(reply.id, trimmed);
+                    setReplyContent(c => ({ ...c, [reply.id]: "" }));
                   }}
-                  onChange={val => setReplyContent(c => ({ ...c, [reply.id]: val }))}
+                  onChange={val => {
+                    // Remove trailing whitespace after last non-whitespace character, but preserve trailing <p></p>
+                    const trimmed = val.replace(/(\S)(\s+)$/g, "$1");
+                    setReplyContent(c => ({ ...c, [reply.id]: trimmed }));
+                  }}
                 />
               )}
             </div>

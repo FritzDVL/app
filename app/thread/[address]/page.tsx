@@ -15,6 +15,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
 import { fetchReplies } from "@/lib/fetchers/replies";
 import { fetchThread } from "@/lib/fetchers/thread";
+import { getTimeAgo } from "@/lib/utils";
 import { type Address, type ThreadReplyWithDepth } from "@/types/common";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
@@ -49,6 +50,16 @@ export default function ThreadPage() {
 
       // Filter out the root post if present
       const repliesOnly = flatReplies.filter(r => r.id !== rootPostId);
+
+      // Sort by score (desc), then by createdAt (asc)
+      repliesOnly.sort((a, b) => {
+        const scoreA = (a.upvotes || 0) - (a.downvotes || 0);
+        const scoreB = (b.upvotes || 0) - (b.downvotes || 0);
+        if (scoreA !== scoreB) return scoreB - scoreA;
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateA - dateB;
+      });
 
       const repliesByParent: { [parentId: string]: ThreadReplyWithDepth[] } = {};
       for (const reply of repliesOnly) {

@@ -3,6 +3,7 @@ import { ThreadReplyBox } from "./thread-reply-box";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { getTimeAgo } from "@/lib/utils";
 import { Reply } from "lucide-react";
 
 export function ThreadNestedReplyCard({
@@ -36,7 +37,9 @@ export function ThreadNestedReplyCard({
               >
                 {nestedReply.author.name}
               </Link>
-              <span className="text-sm text-gray-500">{nestedReply.timeAgo}</span>
+              <span className="text-sm text-gray-500">
+                {nestedReply.createdAt ? getTimeAgo(new Date(nestedReply.createdAt)) : "Unknown date"}
+              </span>
             </div>
             <p className="text-sm text-gray-700">{nestedReply.content}</p>
             <Button

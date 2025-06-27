@@ -20,3 +20,10 @@ export function getTimeAgo(date: Date): string {
   const years = Math.floor(months / 12);
   return `${years} year${years === 1 ? "" : "s"} ago`;
 }
+
+/**
+ * Removes trailing empty <p></p> or <p>\s*</p> tags from the end of an HTML string.
+ */
+export function removeTrailingEmptyPTags(html: string): string {
+  return html.replace(/(?:<p>\s*<\/p>)+$/g, "");
+}
