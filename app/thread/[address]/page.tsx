@@ -72,7 +72,6 @@ export default function ThreadPage() {
     refetchOnWindowFocus: true,
     select: (flatReplies: PaginatedRepliesResult) => {
       if (!thread?.rootPost?.id) {
-        console.log("No root post found, returning empty replies");
         return { replies: [], pageInfo: flatReplies.pageInfo };
       }
       const rootPostId = String(thread.rootPost.id);

@@ -94,6 +94,5 @@ export async function fetchRepliesPaginated(
     }
   }
 
-  console.log(`Fetched ${replies} replies for thread ${threadAddress} with cursor ${cursor}`);
   return { items: replies, pageInfo: result.value.pageInfo };
 }
