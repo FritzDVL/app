@@ -300,10 +300,12 @@ export default function ThreadPage() {
                 <PaginationItem>
                   <PaginationPrevious
                     onClick={handlePrev}
-                    aria-disabled={!replies.pageInfo.prev}
-                    tabIndex={!replies.pageInfo.prev ? -1 : 0}
+                    aria-disabled={!replies.pageInfo.prev || cursor === null}
+                    tabIndex={!replies.pageInfo.prev || cursor === null ? -1 : 0}
                     className={
-                      !replies.pageInfo.prev ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"
+                      !replies.pageInfo.prev || cursor === null
+                        ? "pointer-events-none cursor-not-allowed opacity-50"
+                        : "cursor-pointer"
                     }
                   />
                 </PaginationItem>
