@@ -15,7 +15,6 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/use-reply-create";
 import { fetchReplies } from "@/lib/fetchers/replies";
 import { fetchThread } from "@/lib/fetchers/thread";
-import { getTimeAgo } from "@/lib/utils";
 import { type Address, type ThreadReplyWithDepth } from "@/types/common";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
