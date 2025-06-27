@@ -2,23 +2,33 @@
 
 import React from "react";
 import "./text-editor.css";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Color } from "@tiptap/extension-color";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { Redo2, Undo2 } from "lucide-react";
+
+const headingOptions = [
+  { label: "Paragraph", value: "paragraph" },
+  { label: "Heading 1", value: 1 },
+  { label: "Heading 2", value: 2 },
+  { label: "Heading 3", value: 3 },
+  { label: "Heading 4", value: 4 },
+  { label: "Heading 5", value: 5 },
+  { label: "Heading 6", value: 6 },
+];
 
 const MenuBar = () => {
   const { editor } = useCurrentEditor();
-
-  if (!editor) {
-    return null;
-  }
+  if (!editor) return null;
 
   return (
     <div className="w-full space-y-2">
       <div className="w-full overflow-hidden">
         <div className="mb-2 flex w-full flex-wrap items-center gap-1.5 rounded-lg border border-slate-200 bg-gradient-to-r from-slate-50 to-slate-100/50 p-3 shadow-sm">
+          {/* Mark buttons */}
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
             disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -67,90 +77,45 @@ const MenuBar = () => {
           >
             <span className="font-mono text-base transition-transform group-hover:scale-110">&lt;/&gt;</span>
           </button>
-          <button
-            onClick={() => editor.chain().focus().unsetAllMarks().run()}
-            className="group h-8 w-auto rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-600 shadow-sm transition-all duration-200 hover:scale-105 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            type="button"
+          <div className="mx-2 h-6 w-px bg-slate-200" />
+          {/* Heading/Paragraph selector */}
+          <Select
+            value={(() => {
+              if (editor.isActive("paragraph")) return "paragraph";
+              for (let i = 1; i <= 6; i++) {
+                if (editor.isActive("heading", { level: i })) return i.toString();
+              }
+              return "paragraph";
+            })()}
+            onValueChange={val => {
+              if (val === "paragraph") {
+                editor.chain().focus().setParagraph().run();
+              } else {
+                editor
+                  .chain()
+                  .focus()
+                  .toggleHeading({ level: Number(val) as any })
+                  .run();
+              }
+            }}
           >
-            Clear marks
-          </button>
-          <button
-            onClick={() => editor.chain().focus().clearNodes().run()}
-            className="group h-8 w-auto rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-600 shadow-sm transition-all duration-200 hover:scale-105 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            type="button"
-          >
-            Clear nodes
-          </button>
-          <button
-            onClick={() => editor.chain().focus().setParagraph().run()}
-            className={`group h-8 w-auto rounded-lg border border-transparent px-3 text-xs font-medium shadow-sm transition-all duration-200 hover:scale-105 ${
-              editor.isActive("paragraph")
-                ? "bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                : "bg-white text-slate-700 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            }`}
-          >
-            Paragraph
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={`group h-8 w-auto rounded-lg border border-transparent px-3 text-xs font-medium shadow-sm transition-all duration-200 hover:scale-105 ${
-              editor.isActive("heading", { level: 1 })
-                ? "bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                : "bg-white text-slate-700 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            }`}
-          >
-            H1
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={`group h-8 w-auto rounded-lg border border-transparent px-3 text-xs font-medium shadow-sm transition-all duration-200 hover:scale-105 ${
-              editor.isActive("heading", { level: 2 })
-                ? "bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                : "bg-white text-slate-700 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            }`}
-          >
-            H2
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={`group h-8 w-auto rounded-lg border border-transparent px-3 text-xs font-medium shadow-sm transition-all duration-200 hover:scale-105 ${
-              editor.isActive("heading", { level: 3 })
-                ? "bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                : "bg-white text-slate-700 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            }`}
-          >
-            H3
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-            className={`group h-8 w-auto rounded-lg border border-transparent px-3 text-xs font-medium shadow-sm transition-all duration-200 hover:scale-105 ${
-              editor.isActive("heading", { level: 4 })
-                ? "bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                : "bg-white text-slate-700 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            }`}
-          >
-            H4
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-            className={`group h-8 w-auto rounded-lg border border-transparent px-3 text-xs font-medium shadow-sm transition-all duration-200 hover:scale-105 ${
-              editor.isActive("heading", { level: 5 })
-                ? "bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                : "bg-white text-slate-700 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            }`}
-          >
-            H5
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-            className={`group h-8 w-auto rounded-lg border border-transparent px-3 text-xs font-medium shadow-sm transition-all duration-200 hover:scale-105 ${
-              editor.isActive("heading", { level: 6 })
-                ? "bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                : "bg-white text-slate-700 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            }`}
-          >
-            H6
-          </button>
+            <SelectTrigger className="h-8 w-32 rounded-lg border border-slate-200 bg-white px-2 text-xs font-medium text-slate-700 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30">
+              <SelectValue placeholder="Heading" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              {headingOptions.map(opt => (
+                <SelectItem
+                  key={opt.value}
+                  value={opt.value.toString()}
+                  className="hover:text-primary focus:text-primary"
+                >
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div className="mx-2 h-6 w-px bg-slate-200" />
+          {/* List/Block buttons */}
           <button
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={`group h-8 w-auto rounded-lg border border-transparent px-3 text-xs font-medium shadow-sm transition-all duration-200 hover:scale-105 ${
@@ -191,41 +156,34 @@ const MenuBar = () => {
           >
             Blockquote
           </button>
-          <button
-            onClick={() => editor.chain().focus().setHorizontalRule().run()}
-            className="group h-8 w-auto rounded-lg border border-transparent bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition-all duration-200 hover:scale-105 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-          >
-            Horizontal rule
-          </button>
-          <button
-            onClick={() => editor.chain().focus().setHardBreak().run()}
-            className="group h-8 w-auto rounded-lg border border-transparent bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition-all duration-200 hover:scale-105 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-          >
-            Hard break
-          </button>
+          <div className="mx-2 h-6 w-px bg-slate-200" />
+          {/* Undo/Redo with icons */}
           <button
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().chain().focus().undo().run()}
-            className="group h-8 w-auto rounded-lg border border-transparent bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition-all duration-200 hover:scale-105 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md disabled:opacity-50 disabled:hover:scale-100"
+            className="group flex h-8 w-8 items-center justify-center rounded-lg border border-transparent bg-white text-slate-700 shadow-sm transition-all duration-200 hover:scale-105 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md disabled:opacity-50 disabled:hover:scale-100"
+            type="button"
+            aria-label="Undo"
           >
-            Undo
+            <Undo2 className="h-4 w-4" />
           </button>
           <button
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().chain().focus().redo().run()}
-            className="group h-8 w-auto rounded-lg border border-transparent bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition-all duration-200 hover:scale-105 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md disabled:opacity-50 disabled:hover:scale-100"
+            className="group flex h-8 w-8 items-center justify-center rounded-lg border border-transparent bg-white text-slate-700 shadow-sm transition-all duration-200 hover:scale-105 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md disabled:opacity-50 disabled:hover:scale-100"
+            type="button"
+            aria-label="Redo"
           >
-            Redo
+            <Redo2 className="h-4 w-4" />
           </button>
+          <div className="mx-2 h-6 w-px bg-slate-200" />
+          {/* Clear marks/nodes */}
           <button
-            onClick={() => editor.chain().focus().setColor("#958DF1").run()}
-            className={`group h-8 w-auto rounded-lg border border-transparent px-3 text-xs font-medium shadow-sm transition-all duration-200 hover:scale-105 ${
-              editor.isActive("textStyle", { color: "#958DF1" })
-                ? "bg-gradient-to-br from-purple-400 to-purple-600 text-white shadow-lg shadow-purple-200/50"
-                : "bg-white text-slate-700 hover:border-slate-200 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
-            }`}
+            onClick={() => editor.chain().focus().clearNodes().run()}
+            className="group h-8 w-auto rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-600 shadow-sm transition-all duration-200 hover:scale-105 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 hover:shadow-md"
+            type="button"
           >
-            Purple
+            Clear format
           </button>
         </div>
       </div>
