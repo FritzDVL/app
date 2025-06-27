@@ -3,8 +3,11 @@
 import React from "react";
 import "./text-editor.css";
 import { Button } from "./ui/button";
-import { BubbleMenu, EditorContent, FloatingMenu, useEditor } from "@tiptap/react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { ChevronDown, Redo2, Undo2 } from "lucide-react";
 
 interface TextEditorProps {
   value: string;
@@ -29,11 +32,13 @@ export function TextEditor({ value, onChange }: TextEditorProps) {
           "word-break: break-word",
           "white-space: pre-wrap",
           "box-sizing: border-box",
-          "padding: 0.5rem 0.75rem",
+          "padding: 0.5rem 0.75rem 2.5rem 0.75rem", // extra bottom padding for toolbar
           "outline: none",
           "background: transparent",
-          "border: 1px solid rgb(226 232 240)",
-          "border-radius: 0.5rem",
+          "border: 1.5px solid #E5E7EB",
+          "border-radius: 0.75rem",
+          "min-height: 10rem",
+          "position: relative",
           // "border-top: none",
           "border-top-left-radius: 0",
           "border-top-right-radius: 0",
@@ -44,88 +49,129 @@ export function TextEditor({ value, onChange }: TextEditorProps) {
   });
 
   return (
-    <div className="tiptap-editor-container flex w-full min-w-0 flex-col">
-      <div className="flex w-full min-w-0 flex-1">
-        <div className="w-full min-w-0 flex-1">
-          {editor && (
-            <BubbleMenu className="bubble-menu" tippyOptions={{ duration: 100 }} editor={editor}>
-              <Button
-                size="icon"
-                variant="default"
-                className={`h-8 w-8 border-2 !border-gray-200 !bg-[#F3F4F6] p-0 shadow-sm transition-colors duration-150 hover:!bg-[#E5E7EB] focus:!bg-[#E5E7EB] ${editor.isActive("bold") ? "border-brand-500 font-bold" : "text-gray-700"}`}
-                onClick={() => editor.chain().focus().toggleBold().run()}
-                type="button"
-                aria-label="Bold"
-              >
-                <span className="text-base font-bold">B</span>
-              </Button>
-              <Button
-                size="icon"
-                variant="default"
-                className={`h-8 w-8 border-2 !border-gray-200 !bg-[#F3F4F6] p-0 shadow-sm transition-colors duration-150 hover:!bg-[#E5E7EB] focus:!bg-[#E5E7EB] ${editor.isActive("italic") ? "border-brand-500 italic" : "text-gray-700"}`}
-                onClick={() => editor.chain().focus().toggleItalic().run()}
-                type="button"
-                aria-label="Italic"
-              >
-                <span className="text-base italic">I</span>
-              </Button>
-              <Button
-                size="icon"
-                variant="default"
-                className={`h-8 w-8 border-2 !border-gray-200 !bg-[#F3F4F6] p-0 shadow-sm transition-colors duration-150 hover:!bg-[#E5E7EB] focus:!bg-[#E5E7EB] ${editor.isActive("strike") ? "border-brand-500 line-through" : "text-gray-700"}`}
-                onClick={() => editor.chain().focus().toggleStrike().run()}
-                type="button"
-                aria-label="Strikethrough"
-              >
-                <span className="text-base line-through">S</span>
-              </Button>
-            </BubbleMenu>
-          )}
-
-          {editor && (
-            <FloatingMenu className="floating-menu" tippyOptions={{ duration: 100 }} editor={editor}>
-              {/*
-              <button
-                onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                className={`group flex h-8 w-8 items-center justify-center rounded-lg border-2 border-brand-500 bg-white/90 p-0 shadow-md transition-all duration-200 hover:scale-110 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-400/50 ${
-                  editor.isActive("heading", { level: 1 })
-                    ? "border-brand-600 bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                    : "text-slate-700 hover:border-brand-400"
-                }`}
-                type="button"
-              >
-                <span className="text-base font-bold transition-transform group-hover:scale-125">H1</span>
-              </button>
-              <button
-                onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                className={`group flex h-8 w-8 items-center justify-center rounded-lg border-2 border-brand-500 bg-white/90 p-0 shadow-md transition-all duration-200 hover:scale-110 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-400/50 ${
-                  editor.isActive("heading", { level: 2 })
-                    ? "border-brand-600 bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                    : "text-slate-700 hover:border-brand-400"
-                }`}
-                type="button"
-              >
-                <span className="text-base font-bold transition-transform group-hover:scale-125">H2</span>
-              </button>
-              */}
-              {/*
-              <button
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-                className={`group flex h-8 w-8 items-center justify-center rounded-lg border-2 border-brand-500 bg-slate-100 p-0 shadow-md transition-all duration-200 hover:scale-110 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400/50 ${
-                  editor.isActive("bulletList")
-                    ? "border-brand-600 bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200/50"
-                    : "text-slate-700 hover:border-brand-400"
-                }`}
-                type="button"
-              >
-                <span className="text-base transition-transform group-hover:scale-125">•</span>
-              </button>
-              */}
-            </FloatingMenu>
-          )}
-          <EditorContent editor={editor} />
+    <TooltipProvider>
+      <div className="relative flex w-full min-w-0 flex-col">
+        <div className="flex w-full min-w-0 flex-1">
+          <div className="w-full">
+            <EditorContent editor={editor} />
+            {/* Toolbar at the bottom */}
+            <div className="absolute bottom-0 left-0 right-0 z-10 flex w-full items-center gap-0 rounded-b-xl border-t border-gray-200 bg-white/95 px-2 py-1">
+              {/* Group 1: Bold/Italic */}
+              <div className="flex items-center divide-x divide-gray-300 overflow-hidden rounded-md border border-gray-200 bg-[#F3F4F6]">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className={`h-8 w-8 rounded-none bg-transparent hover:bg-[#E5E7EB] focus:bg-[#E5E7EB] ${editor?.isActive("bold") ? "font-bold text-brand-600" : "text-gray-700"}`}
+                      onClick={() => editor?.chain().focus().toggleBold().run()}
+                      type="button"
+                      aria-label="Bold"
+                      disabled={!editor?.can().chain().focus().toggleBold().run()}
+                    >
+                      <span className="text-base font-bold">B</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Bold</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className={`h-8 w-8 rounded-none bg-transparent hover:bg-[#E5E7EB] focus:bg-[#E5E7EB] ${editor?.isActive("italic") ? "italic text-brand-600" : "text-gray-700"}`}
+                      onClick={() => editor?.chain().focus().toggleItalic().run()}
+                      type="button"
+                      aria-label="Italic"
+                      disabled={!editor?.can().chain().focus().toggleItalic().run()}
+                    >
+                      <span className="text-base italic">I</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Italic</TooltipContent>
+                </Tooltip>
+              </div>
+              {/* Group 2: Formats Dropdown */}
+              <div className="ml-2 flex items-center overflow-hidden rounded-md border border-gray-200 bg-[#F3F4F6]">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="flex h-8 w-8 items-center justify-center gap-1 rounded-none bg-transparent text-gray-700 hover:bg-[#E5E7EB] focus:bg-[#E5E7EB]"
+                          aria-label="Formats"
+                        >
+                          <span className="text-base font-bold">T</span>
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="w-36 border border-gray-200 bg-white p-1 shadow-lg">
+                        <DropdownMenuItem
+                          onSelect={e => {
+                            e.preventDefault();
+                            editor?.chain().focus().toggleBulletList().run();
+                          }}
+                          className={editor?.isActive("bulletList") ? "font-semibold" : ""}
+                        >
+                          <span className="mr-2 text-lg">•</span> Bulleted List
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onSelect={e => {
+                            e.preventDefault();
+                            editor?.chain().focus().toggleCode().run();
+                          }}
+                          disabled={!editor?.can().chain().focus().toggleCode().run()}
+                          className={editor?.isActive("code") ? "font-semibold" : ""}
+                        >
+                          <span className="mr-2 font-mono text-base">&lt;/&gt;</span> Code
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TooltipTrigger>
+                  <TooltipContent>Formats</TooltipContent>
+                </Tooltip>
+              </div>
+              {/* Group 3: Undo/Redo */}
+              <div className="ml-2 flex items-center divide-x divide-gray-300 overflow-hidden rounded-md border border-gray-200 bg-[#F3F4F6]">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 rounded-none bg-transparent text-gray-700 hover:bg-[#E5E7EB] focus:bg-[#E5E7EB]"
+                      onClick={() => editor?.chain().focus().undo().run()}
+                      type="button"
+                      aria-label="Undo"
+                      disabled={!editor?.can().chain().focus().undo().run()}
+                    >
+                      <Undo2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Undo</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 rounded-none bg-transparent text-gray-700 hover:bg-[#E5E7EB] focus:bg-[#E5E7EB]"
+                      onClick={() => editor?.chain().focus().redo().run()}
+                      type="button"
+                      aria-label="Redo"
+                      disabled={!editor?.can().chain().focus().redo().run()}
+                    >
+                      <Redo2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Redo</TooltipContent>
+                </Tooltip>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }

@@ -57,7 +57,7 @@ export function ThreadReplyCard({
                 </span>
               </div>
               <div
-                className="mb-3 max-w-none text-gray-700 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:text-lg [&_h3]:font-semibold"
+                className="mb-3 max-w-none text-gray-700 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:text-lg [&_h3]:font-semibold [&_li]:mb-1 [&_p]:min-h-[1.5em] [&_pre]:rounded-md [&_pre]:bg-gray-100 [&_pre]:p-3 [&_ul]:ml-6 [&_ul]:list-disc"
                 dangerouslySetInnerHTML={{ __html: reply.content }}
               />
               <Button
