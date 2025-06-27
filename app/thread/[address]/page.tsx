@@ -112,6 +112,7 @@ export default function ThreadPage() {
     },
   });
   const queryClient = useQueryClient();
+
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) {
       throw new Error("Thread or root post not found");
@@ -226,7 +227,7 @@ export default function ThreadPage() {
                 <div className="flex items-center gap-4 text-slate-500">
                   <div className="flex items-center gap-1">
                     <ReplyIcon className="h-4 w-4" />
-                    <span className="text-sm">{replies.replies.length}</span>
+                    <span className="text-sm">{thread.repliesCount}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
