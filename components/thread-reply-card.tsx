@@ -77,6 +77,7 @@ export function ThreadReplyCard({
                     if (!replyContent[reply.id]?.trim()) return;
                     await handleReply(reply.id, replyContent[reply.id]);
                   }}
+                  onChange={val => setReplyContent(c => ({ ...c, [reply.id]: val }))}
                 />
               )}
             </div>
