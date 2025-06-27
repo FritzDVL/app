@@ -215,7 +215,6 @@ export default function ThreadPage() {
                 {replyingTo === "main" && (
                   <ThreadReplyBox
                     value={replyContent["main"] || ""}
-                    onChange={e => setReplyContent(c => ({ ...c, main: e.target.value }))}
                     onCancel={() => {
                       setReplyingTo(null);
                       setReplyContent(c => ({ ...c, main: "" }));
