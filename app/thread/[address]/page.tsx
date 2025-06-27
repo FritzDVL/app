@@ -220,6 +220,7 @@ export default function ThreadPage() {
                       setReplyContent(c => ({ ...c, main: "" }));
                     }}
                     onSubmit={handleReply}
+                    onChange={val => setReplyContent(c => ({ ...c, main: val }))}
                   />
                 )}
               </div>

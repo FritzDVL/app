@@ -8,10 +8,12 @@ export function ThreadReplyBox({
   onCancel,
   onSubmit,
   value,
+  onChange,
 }: {
   onCancel: () => void;
   onSubmit: () => void;
   value: string;
+  onChange: (value: string) => void;
 }) {
   return (
     <div className="mt-4 flex w-full min-w-0 items-start space-x-4">
@@ -21,7 +23,7 @@ export function ThreadReplyBox({
       </Avatar>
       <div className="min-w-0 flex-1 space-y-2">
         <div className="w-full min-w-0">
-          <TextEditor />
+          <TextEditor value={value} onChange={onChange} />
         </div>
         <div className="flex justify-end space-x-2">
           <Button variant="ghost" size="sm" onClick={onCancel}>

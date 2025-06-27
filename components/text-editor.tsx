@@ -235,7 +235,12 @@ const content = `
 </blockquote>
 `;
 
-export function TextEditor() {
+interface TextEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export function TextEditor({ value, onChange }: TextEditorProps) {
   return (
     <div className="tiptap-editor-container flex w-full min-w-0 flex-col">
       <div className="flex w-full min-w-0 flex-1">
@@ -243,7 +248,12 @@ export function TextEditor() {
           <EditorProvider
             slotBefore={<MenuBar />}
             extensions={extensions}
-            content={content}
+            content={value}
+            onUpdate={({ editor }) => {
+              if (onChange) {
+                onChange(editor.getHTML());
+              }
+            }}
             editorProps={{
               attributes: {
                 style: [
