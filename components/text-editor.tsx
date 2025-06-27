@@ -100,7 +100,7 @@ export function TextEditor({ value, onChange }: TextEditorProps) {
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="flex h-8 w-8 items-center justify-center gap-1 rounded-none bg-transparent text-gray-700 hover:bg-[#E5E7EB] focus:bg-[#E5E7EB]"
+                          className="flex h-8 w-9 items-center justify-center gap-1 rounded-none bg-transparent pl-2 text-gray-700 hover:bg-[#E5E7EB] focus:bg-[#E5E7EB]"
                           aria-label="Formats"
                         >
                           <span className="text-base font-bold">T</span>
@@ -108,6 +108,33 @@ export function TextEditor({ value, onChange }: TextEditorProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="start" className="w-36 border border-gray-200 bg-white p-1 shadow-lg">
+                        <DropdownMenuItem
+                          onSelect={e => {
+                            e.preventDefault();
+                            editor?.chain().focus().toggleHeading({ level: 1 }).run();
+                          }}
+                          className={editor?.isActive("heading", { level: 1 }) ? "font-semibold" : ""}
+                        >
+                          <span className="mr-2 text-lg font-bold">H1</span> Heading 1
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onSelect={e => {
+                            e.preventDefault();
+                            editor?.chain().focus().toggleHeading({ level: 2 }).run();
+                          }}
+                          className={editor?.isActive("heading", { level: 2 }) ? "font-semibold" : ""}
+                        >
+                          <span className="mr-2 text-base font-bold">H2</span> Heading 2
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onSelect={e => {
+                            e.preventDefault();
+                            editor?.chain().focus().toggleHeading({ level: 3 }).run();
+                          }}
+                          className={editor?.isActive("heading", { level: 3 }) ? "font-semibold" : ""}
+                        >
+                          <span className="mr-2 text-base font-bold">H3</span> Heading 3
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onSelect={e => {
                             e.preventDefault();
