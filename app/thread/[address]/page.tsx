@@ -301,17 +301,21 @@ export default function ThreadPage() {
                 <PaginationItem>
                   <PaginationPrevious
                     onClick={handlePrev}
-                    // aria-disabled={!replies.pageInfo.prev}
-                    // tabIndex={!pageInfo.prev ? -1 : 0}
-                    // className={!pageInfo.prev ? "pointer-events-none opacity-50" : ""}
+                    aria-disabled={!replies.pageInfo.prev}
+                    tabIndex={!replies.pageInfo.prev ? -1 : 0}
+                    className={
+                      !replies.pageInfo.prev ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"
+                    }
                   />
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext
                     onClick={handleNext}
-                    // aria-disabled={!pageInfo.next}
-                    // tabIndex={!pageInfo.next ? -1 : 0}
-                    // className={!pageInfo.next ? "pointer-events-none opacity-50" : ""}
+                    aria-disabled={!replies.pageInfo.next}
+                    tabIndex={!replies.pageInfo.next ? -1 : 0}
+                    className={
+                      !replies.pageInfo.next ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"
+                    }
                   />
                 </PaginationItem>
               </PaginationContent>
