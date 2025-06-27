@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
@@ -12,10 +13,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { useReplyCreate } from "@/hooks/use-reply-create";
-import { fetchReplies } from "@/lib/fetchers/replies";
+import { fetchReplies, fetchRepliesPaginated } from "@/lib/fetchers/replies";
 import { fetchThread } from "@/lib/fetchers/thread";
-import { type Address, type ThreadReplyWithDepth } from "@/types/common";
+import { type Address, PaginatedRepliesResult, type ThreadReplyWithDepth } from "@/types/common";
+import { PageSize } from "@lens-protocol/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
@@ -26,6 +35,8 @@ export default function ThreadPage() {
   // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+  // PAGINATION STATE
+  const [cursor, setCursor] = useState<string | null>(null);
 
   // Fetch thread with TanStack Query
   const { data: thread, isLoading: loading } = useQuery({
@@ -36,19 +47,38 @@ export default function ThreadPage() {
     refetchOnWindowFocus: true,
   });
 
+  // Pagination handlers for replies
+  const handlePrev = () => {
+    if (replies && replies.pageInfo && replies.pageInfo.prev) {
+      setCursor(replies.pageInfo.prev);
+    }
+  };
+  const handleNext = () => {
+    if (replies && replies.pageInfo && replies.pageInfo.next) {
+      setCursor(replies.pageInfo.next);
+    }
+  };
+
   // Fetch replies with TanStack Query (only after thread is loaded)
-  const { data: replies = [], isLoading: loadingReplies } = useQuery({
-    queryKey: ["replies", threadAddress],
-    queryFn: () => fetchReplies(String(threadAddress)),
+  const { data: replies = { replies: [], pageInfo: {} }, isLoading: loadingReplies } = useQuery<
+    PaginatedRepliesResult,
+    Error,
+    { replies: ThreadReplyWithDepth[]; pageInfo: any }
+  >({
+    queryKey: ["replies", threadAddress, cursor],
+    queryFn: () => fetchRepliesPaginated(String(threadAddress), PageSize.Ten, cursor),
     enabled: !!thread,
     staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
-    select: (flatReplies: ThreadReplyWithDepth[]) => {
-      if (!thread?.rootPost?.id) return flatReplies;
+    select: (flatReplies: PaginatedRepliesResult) => {
+      if (!thread?.rootPost?.id) {
+        console.log("No root post found, returning empty replies");
+        return { replies: [], pageInfo: flatReplies.pageInfo };
+      }
       const rootPostId = String(thread.rootPost.id);
 
       // Filter out the root post if present
-      const repliesOnly = flatReplies.filter(r => r.id !== rootPostId);
+      const repliesOnly = flatReplies.items.filter(r => r.id !== rootPostId);
 
       // Sort by score (desc), then by createdAt (asc)
       repliesOnly.sort((a, b) => {
@@ -75,7 +105,10 @@ export default function ThreadPage() {
           return acc;
         }, [] as ThreadReplyWithDepth[]);
       }
-      return flattenReplies(rootPostId);
+      return {
+        replies: flattenReplies(rootPostId),
+        pageInfo: flatReplies.pageInfo,
+      };
     },
   });
   const queryClient = useQueryClient();
@@ -193,7 +226,7 @@ export default function ThreadPage() {
                 <div className="flex items-center gap-4 text-slate-500">
                   <div className="flex items-center gap-1">
                     <ReplyIcon className="h-4 w-4" />
-                    <span className="text-sm">{replies.length}</span>
+                    <span className="text-sm">{replies.replies.length}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -242,10 +275,12 @@ export default function ThreadPage() {
         {loadingReplies ? (
           <LoadingSpinner text="Loading replies..." />
         ) : (
-          typeof replies !== "undefined" && (
+          <>
             <div className="space-y-4">
-              <h3 className="text-xl font-bold text-gray-900">{Array.isArray(replies) ? replies.length : 0} Replies</h3>
-              {(Array.isArray(replies) ? replies : [])
+              <h3 className="text-xl font-bold text-gray-900">
+                {Array.isArray(replies.replies) ? replies.replies.length : 0} Replies
+              </h3>
+              {(Array.isArray(replies.replies) ? replies.replies : [])
                 .filter((reply: any) => reply.id !== thread?.rootPost?.id)
                 .map((reply: any) => (
                   <ThreadReplyCard
@@ -260,7 +295,27 @@ export default function ThreadPage() {
                   />
                 ))}
             </div>
-          )
+            <Pagination className="my-6">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={handlePrev}
+                    // aria-disabled={!replies.pageInfo.prev}
+                    // tabIndex={!pageInfo.prev ? -1 : 0}
+                    // className={!pageInfo.prev ? "pointer-events-none opacity-50" : ""}
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={handleNext}
+                    // aria-disabled={!pageInfo.next}
+                    // tabIndex={!pageInfo.next ? -1 : 0}
+                    // className={!pageInfo.next ? "pointer-events-none opacity-50" : ""}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </>
         )}
       </div>
     </div>

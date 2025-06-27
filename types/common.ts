@@ -70,3 +70,14 @@ export interface Reply {
 export type ThreadReplyWithDepth<T = any> = T & {
   _depth: number;
 };
+
+// Paginated result info type for Lens replies
+export type PageInfo = {
+  prev: string | null;
+  next: string | null;
+};
+
+export type PaginatedRepliesResult = {
+  items: Reply[];
+  pageInfo: PageInfo;
+};
