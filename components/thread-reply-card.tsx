@@ -69,12 +69,6 @@ export function ThreadReplyCard({
               {replyingTo === reply.id && (
                 <ThreadReplyBox
                   value={replyContent[reply.id] || ""}
-                  onChange={e =>
-                    setReplyContent(c => ({
-                      ...c,
-                      [reply.id]: e.target.value,
-                    }))
-                  }
                   onCancel={() => {
                     setReplyingTo(null);
                     setReplyContent(c => ({ ...c, [reply.id]: "" }));

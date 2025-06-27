@@ -63,17 +63,6 @@ export default function NewThreadPage() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      // Here you would upload the images to your storage service
-      // For now, we'll just simulate with placeholder URLs
-      const newImages = Array.from(files).map(file => URL.createObjectURL(file));
-      setUploadedImages(prev => [...prev, ...newImages]);
-      toast.success("Images uploaded successfully!");
-    }
-  };
-
   const removeImage = (index: number) => {
     setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
@@ -136,41 +125,8 @@ export default function NewThreadPage() {
                     <Label htmlFor="content" className="text-base font-medium text-slate-900">
                       Content
                     </Label>
-                    <TextEditor
-                      value={formData.content}
-                      onChange={e => setFormData({ ...formData, content: e.target.value })}
-                      placeholder="Write your thread content here... You can add formatting, images, and detailed explanations."
-                      minHeightClass="min-h-[400px]"
-                      onImageUpload={handleImageUpload}
-                    />
+                    <TextEditor />
                   </div>
-
-                  {/* Uploaded Images */}
-                  {uploadedImages.length > 0 && (
-                    <div className="space-y-2">
-                      <Label className="text-base font-medium text-slate-900">Attached Images</Label>
-                      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                        {uploadedImages.map((image, index) => (
-                          <div key={index} className="group relative">
-                            <Image
-                              src={image}
-                              alt={`Upload ${index + 1}`}
-                              className="h-24 w-full rounded-lg border border-slate-200 object-cover"
-                            />
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              className="absolute right-1 top-1 h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100"
-                              onClick={() => removeImage(index)}
-                            >
-                              ×
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                   {/* Tags */}
                   <div className="space-y-2">

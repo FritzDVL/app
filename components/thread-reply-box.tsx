@@ -8,29 +8,21 @@ export function ThreadReplyBox({
   onCancel,
   onSubmit,
   value,
-  onChange,
-  onImageUpload,
 }: {
   onCancel: () => void;
   onSubmit: () => void;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onImageUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className="mt-4 flex items-start space-x-4">
-      <Avatar className="h-8 w-8">
+    <div className="mt-4 flex w-full min-w-0 items-start space-x-4">
+      <Avatar className="h-8 w-8 flex-shrink-0">
         <AvatarImage src="/placeholder.svg?height=32&width=32" />
         <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-white">U</AvatarFallback>
       </Avatar>
-      <div className="flex-1 space-y-2">
-        <TextEditor
-          value={value}
-          onChange={onChange}
-          placeholder="Write your reply..."
-          minHeightClass="min-h-[80px]"
-          onImageUpload={onImageUpload}
-        />
+      <div className="min-w-0 flex-1 space-y-2">
+        <div className="w-full min-w-0">
+          <TextEditor />
+        </div>
         <div className="flex justify-end space-x-2">
           <Button variant="ghost" size="sm" onClick={onCancel}>
             Cancel
