@@ -79,33 +79,16 @@ export default function ThreadPage() {
       // Filter out the root post if present
       const repliesOnly = flatReplies.items.filter(r => r.id !== rootPostId);
 
-      // Sort by score (desc), then by createdAt (asc)
+      // Sort by createdAt (oldest to newest)
       repliesOnly.sort((a, b) => {
-        const scoreA = (a.upvotes || 0) - (a.downvotes || 0);
-        const scoreB = (b.upvotes || 0) - (b.downvotes || 0);
-        if (scoreA !== scoreB) return scoreB - scoreA;
         const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return dateA - dateB;
       });
 
-      const repliesByParent: { [parentId: string]: ThreadReplyWithDepth[] } = {};
-      for (const reply of repliesOnly) {
-        const parentId = String(reply.parentReplyId || rootPostId);
-        if (!repliesByParent[parentId]) repliesByParent[parentId] = [];
-        repliesByParent[parentId].push(reply);
-      }
-
-      // Recursively flatten replies in nested order, tracking depth
-      function flattenReplies(parentId: string, depth = 0): ThreadReplyWithDepth[] {
-        return (repliesByParent[parentId] || []).reduce((acc, reply) => {
-          acc.push({ ...reply, _depth: depth });
-          acc.push(...flattenReplies(String(reply.id), depth + 1));
-          return acc;
-        }, [] as ThreadReplyWithDepth[]);
-      }
+      // No flattening, just return the straight list
       return {
-        replies: flattenReplies(rootPostId),
+        replies: repliesOnly,
         pageInfo: flatReplies.pageInfo,
       };
     },
