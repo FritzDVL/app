@@ -66,7 +66,7 @@ export default function ThreadPage() {
     { replies: ThreadReplyWithDepth[]; pageInfo: any }
   >({
     queryKey: ["replies", threadAddress, cursor],
-    queryFn: () => fetchRepliesPaginated(String(threadAddress), PageSize.Ten, cursor),
+    queryFn: () => fetchRepliesPaginated(String(threadAddress), PageSize.Fifty, cursor),
     enabled: !!thread,
     staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
@@ -275,6 +275,7 @@ export default function ThreadPage() {
                     setReplyContent={setReplyContent}
                     handleReply={handleReply}
                     depth={reply._depth ?? 0}
+                    rootPostId={thread?.rootPost?.id || ""}
                   />
                 ))}
             </div>
