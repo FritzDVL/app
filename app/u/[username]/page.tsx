@@ -142,38 +142,12 @@ export default function ProfilePage() {
     );
   }
 
-  const joinedForums = [
+  const joinedCommunities = [
     { id: "1", name: "🌐 Web3", members: 15420, role: "Moderator" },
     { id: "2", name: "💻 Development", members: 8934, role: "Contributor" },
     { id: "3", name: "🔒 Security", members: 5678, role: "Member" },
     { id: "4", name: "🎨 Design", members: 3421, role: "Mentor" },
   ];
-
-  // const getBadgeColor = (rarity: string) => {
-  //   switch (rarity) {
-  //     case "legendary":
-  //       return "from-yellow-400 to-orange-500";
-  //     case "epic":
-  //       return "from-purple-500 to-pink-500";
-  //     case "rare":
-  //       return "from-blue-500 to-cyan-500";
-  //     default:
-  //       return "from-gray-400 to-gray-500";
-  //   }
-  // };
-
-  // const getRarityBorder = (rarity: string) => {
-  //   switch (rarity) {
-  //     case "legendary":
-  //       return "border-yellow-400 shadow-yellow-400/50";
-  //     case "epic":
-  //       return "border-purple-500 shadow-purple-500/50";
-  //     case "rare":
-  //       return "border-blue-500 shadow-blue-500/50";
-  //     default:
-  //       return "border-gray-400";
-  //   }
-  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50/30 via-brand-50 to-brand-100/30">
@@ -302,7 +276,7 @@ export default function ProfilePage() {
               Recent replies
             </TabsTrigger>
             <TabsTrigger value="forums" className="rounded-full">
-              Forums
+              Communities
             </TabsTrigger>
           </TabsList>
 
@@ -365,49 +339,51 @@ export default function ProfilePage() {
           </TabsContent>
 
           <TabsContent value="forums" className="space-y-4">
-            {joinedForums.map((forum: any, index: number) => (
+            {joinedCommunities.map((community: any, index: number) => (
               <Card key={index} className="gradient-card border border-brand-200/50 transition-shadow hover:shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                      <div className="text-2xl">{forum.name.split(" ")[0]}</div>
+                      <div className="text-2xl">{community.name.split(" ")[0]}</div>
                       <div>
-                        <Link href={`/forum/${forum.id}`}>
+                        <Link href={`/forum/${community.id}`}>
                           <h3 className="cursor-pointer text-lg font-semibold text-gray-900 hover:text-brand-600">
-                            {forum.name.substring(2)}
+                            {community.name.substring(2)}
                           </h3>
                         </Link>
                         <div className="flex items-center space-x-4 text-sm text-gray-500">
                           <div className="flex items-center">
                             <Users className="mr-1 h-4 w-4" />
-                            {forum.members.toLocaleString()} members
+                            {community.members.toLocaleString()} members
                           </div>
                           <Badge
                             className={`${
-                              forum.role === "Moderator"
+                              community.role === "Moderator"
                                 ? "bg-red-100 text-red-700"
-                                : forum.role === "Mentor"
+                                : community.role === "Mentor"
                                   ? "bg-blue-100 text-blue-700"
-                                  : forum.role === "Contributor"
+                                  : community.role === "Contributor"
                                     ? "bg-green-100 text-green-700"
                                     : "bg-gray-100 text-gray-700"
                             }`}
                           >
-                            {forum.role}
+                            {community.role}
                           </Badge>
                         </div>
                       </div>
                     </div>
-                    <Link href={`/forum/${forum.id}`}>
+                    <Link href={`/forum/${community.id}`}>
                       <Button variant="outline" className="rounded-full">
-                        View Forum
+                        View Community
                       </Button>
                     </Link>
                   </div>
                 </CardContent>
               </Card>
             ))}
-            {joinedForums.length === 0 && <div className="py-8 text-center text-gray-500">No forums joined yet</div>}
+            {joinedCommunities.length === 0 && (
+              <div className="py-8 text-center text-gray-500">No communities joined yet</div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
