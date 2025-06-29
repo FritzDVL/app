@@ -11,6 +11,7 @@ import { handleOperationWith } from "@lens-protocol/client/viem";
 import { textOnly } from "@lens-protocol/metadata";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
+import { lensTestnet } from "viem/chains";
 import { useWalletClient } from "wagmi";
 
 export function useReplyCreate() {
@@ -24,7 +25,7 @@ export function useReplyCreate() {
   }
 
   async function uploadReplyMetadata(metadata: any) {
-    const acl = immutable(lensMainnet.id);
+    const acl = immutable(lensTestnet.id);
     const { uri: replyUri } = await storageClient.uploadAsJson(metadata, { acl });
     return replyUri;
   }

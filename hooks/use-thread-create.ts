@@ -19,6 +19,7 @@ import { Post, evmAddress, useSessionClient } from "@lens-protocol/react";
 // import { feed } from '@lens-protocol/metadata'
 // import { immutable } from '@lens-chain/storage-client'
 import { toast } from "sonner";
+import { lensTestnet } from "viem/chains";
 // import { evmAddress } from '@lens-protocol/client'
 // import { createFeed, fetchFeed } from '@lens-protocol/client/actions'
 // import { handleOperationWith } from '@lens-protocol/client/viem'
@@ -62,7 +63,7 @@ async function uploadThreadContent(
   walletClient: any,
 ) {
   const metadata = textOnly({ content: formData.content });
-  const acl = immutable(lensMainnet.id);
+  const acl = immutable(lensTestnet.id);
   const { uri } = await storageClient.uploadAsJson(metadata, { acl });
   const result = await post(sessionClient, {
     contentUri: uri,

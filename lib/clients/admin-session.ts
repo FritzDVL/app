@@ -1,8 +1,8 @@
 import { adminSigner } from "@/lib/wallets/admin-wallet";
-import { ChallengeRequest, PublicClient, type SessionClient, mainnet } from "@lens-protocol/client";
+import { ChallengeRequest, PublicClient, type SessionClient, mainnet, testnet } from "@lens-protocol/client";
 
 const client = PublicClient.create({
-  environment: mainnet,
+  environment: testnet,
   origin: "https://localhsot:3000",
 });
 

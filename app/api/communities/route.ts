@@ -12,6 +12,7 @@ import { Group, evmAddress } from "@lens-protocol/client";
 import { createGroup, fetchAdminsFor, fetchGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { group } from "@lens-protocol/metadata";
+import { lensTestnet } from "viem/chains";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     let iconUri = "";
     if (file) {
-      const acl = immutable(lensMainnet.id);
+      const acl = immutable(lensTestnet.id);
       const { uri } = await storageClient.uploadFile(file, { acl });
       iconUri = uri;
     }
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     // 1. Build metadata for the group and upload it
     const groupMetadata = group({ name: groupName, description, icon: iconUri });
-    const acl = immutable(lensMainnet.id);
+    const acl = immutable(lensTestnet.id);
     const { uri } = await storageClient.uploadAsJson(groupMetadata, { acl });
 
     // 2. Create the group on Lens Protocol
@@ -64,11 +65,9 @@ export async function POST(request: NextRequest) {
     }
 
     const createdGroup = result.value as Group;
-    console.log("[API] Created group:", createdGroup);
 
     // 4. Persist the community in Supabase (pass full name as well)
     const persistedCommunity = await persistCommunity(createdGroup.address, name);
-    console.log("[API] Community persisted in Supabase:", createdGroup.address);
 
     // 5. Add new moderators
     const adminsResult = await fetchAdminsFor(client, {
@@ -86,8 +85,15 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. Transform and return the new community
-    const newCommunity = transformGroupToCommunity(createdGroup, persistedCommunity, moderators);
-    console.log("[API] Returning new community:", newCommunity);
+    const newCommunity = transformGroupToCommunity(
+      createdGroup,
+      {
+        totalMembers: 0,
+        __typename: "GroupStatsResponse",
+      },
+      persistedCommunity,
+      moderators,
+    );
     return NextResponse.json({ success: true, community: newCommunity });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });

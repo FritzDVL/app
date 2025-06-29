@@ -1,7 +1,8 @@
-import { lensMainnet } from "../chains/lens-mainnet";
+// import { lensMainnet } from "../chains/lens-mainnet";
 import { Address } from "@/types/common";
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
+import { lensTestnet } from "viem/chains";
 
 const privateKey = process.env.PRIVATE_KEY;
 if (!privateKey) {
@@ -12,6 +13,6 @@ export const adminSigner = privateKeyToAccount(privateKey as Address);
 
 export const adminWallet = createWalletClient({
   account: adminSigner,
-  chain: lensMainnet,
+  chain: lensTestnet,
   transport: http(),
 });
