@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/auth-store";
 import { addReaction, fetchPost, undoReaction } from "@lens-protocol/client/actions";
 import { Post, PostId, PostReactionType, postId, useSessionClient } from "@lens-protocol/react";
 import { ArrowDown, ArrowUp } from "lucide-react";
@@ -25,6 +26,7 @@ export function VotingActions({
   const [loading, setLoading] = useState<"up" | "down" | null>(null);
   const [scoreState, setScoreState] = useState(score);
   const sessionClient = useSessionClient();
+  const { isLoggedIn } = useAuthStore();
 
   useEffect(() => {
     setScoreState(score);
@@ -124,7 +126,7 @@ export function VotingActions({
         size="sm"
         className={`rounded-full p-1 hover:bg-green-100 hover:text-green-600 ${hasUserUpvoted ? "bg-green-100 text-green-600" : ""}`}
         onClick={handleUpvote}
-        disabled={loading === "up" || loading === "down" || hasUserDownvoted}
+        disabled={loading === "up" || loading === "down" || hasUserDownvoted || !isLoggedIn}
         aria-pressed={hasUserUpvoted}
         aria-label={upvoteLabel}
       >
@@ -140,7 +142,7 @@ export function VotingActions({
         size="sm"
         className={`rounded-full p-1 hover:bg-red-100 hover:text-red-600 ${hasUserDownvoted ? "bg-red-100 text-red-600" : ""}`}
         onClick={handleDownvote}
-        disabled={loading === "up" || loading === "down" || hasUserUpvoted}
+        disabled={loading === "up" || loading === "down" || hasUserUpvoted || !isLoggedIn}
         aria-pressed={hasUserDownvoted}
         aria-label={downvoteLabel}
       >

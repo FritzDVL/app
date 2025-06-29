@@ -21,13 +21,14 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useReplyCreate } from "@/hooks/use-reply-create";
-import { fetchReplies, fetchRepliesPaginated } from "@/lib/fetchers/replies";
+import { fetchRepliesPaginated } from "@/lib/fetchers/replies";
 import { fetchThread } from "@/lib/fetchers/thread";
+import { removeTrailingEmptyPTags } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth-store";
 import { type Address, PaginatedRepliesResult, type ThreadReplyWithDepth } from "@/types/common";
 import { PageSize } from "@lens-protocol/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
-import { removeTrailingEmptyPTags } from "@/lib/utils";
 
 export default function ThreadPage() {
   const params = useParams();
@@ -36,7 +37,6 @@ export default function ThreadPage() {
   // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-  // PAGINATION STATE
   const [cursor, setCursor] = useState<string | null>(null);
 
   // Fetch thread with TanStack Query
@@ -118,6 +118,7 @@ export default function ThreadPage() {
   };
 
   const { createReply } = useReplyCreate();
+  const { isLoggedIn } = useAuthStore();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -238,6 +239,7 @@ export default function ThreadPage() {
                   size="sm"
                   className="text-brand-600 hover:text-brand-700"
                   onClick={() => setReplyingTo("main")}
+                  disabled={!isLoggedIn}
                 >
                   <ReplyIcon className="mr-2 h-4 w-4" />
                   Reply

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { fetchReply } from "@/lib/fetchers/reply";
 import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth-store";
 import { Reply as ReplyType } from "@/types/common";
 import { postId } from "@lens-protocol/react";
 import { Reply } from "lucide-react";
@@ -36,6 +37,8 @@ export function ThreadReplyCard({
   const [showContext, setShowContext] = useState(false);
   const [contextChain, setContextChain] = useState<ReplyType[]>([]);
   const [loadingContext, setLoadingContext] = useState(false);
+
+  const { isLoggedIn } = useAuthStore();
 
   // Recursively fetch context chain, stopping at rootPostId
   const fetchContextChain = async (parentId: string, acc: ReplyType[] = []): Promise<ReplyType[]> => {
@@ -176,6 +179,7 @@ export function ThreadReplyCard({
                   size="sm"
                   className="px-2 py-1 text-xs text-brand-600 hover:text-brand-700"
                   onClick={() => setReplyingTo(reply.id)}
+                  disabled={!isLoggedIn}
                 >
                   <Reply className="mr-1 h-3 w-3" />
                   Reply

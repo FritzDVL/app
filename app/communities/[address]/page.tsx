@@ -23,19 +23,10 @@ import { useJoinCommunity } from "@/hooks/use-join-community";
 import { useLeaveCommunity } from "@/hooks/use-leave-community";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchThreads } from "@/lib/fetchers/threads";
+import { useAuthStore } from "@/stores/auth-store";
 import { postId } from "@lens-protocol/react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ArrowUp,
-  Clock,
-  Filter,
-  FlameIcon as Fire,
-  MessageCircle,
-  MoreHorizontal,
-  Search,
-  Share,
-  Users,
-} from "lucide-react";
+import { ArrowUp, Clock, Filter, FlameIcon as Fire, MessageCircle, Search, Users } from "lucide-react";
 
 export default function CommunityPage() {
   const params = useParams();
@@ -74,6 +65,7 @@ export default function CommunityPage() {
 
   const joinCommunity = useJoinCommunity(communityAddress);
   const leaveCommunity = useLeaveCommunity(communityAddress);
+  const { isLoggedIn } = useAuthStore();
 
   const handleLeaveCommunity = async () => {
     setShowLeaveDialog(true);
@@ -157,6 +149,7 @@ export default function CommunityPage() {
                     </div>
                     <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
                       <Button
+                        disabled={!isLoggedIn}
                         onClick={isJoined ? handleLeaveCommunity : handleJoinCommunity}
                         className={`rounded-full px-8 py-3 font-semibold transition-colors ${
                           isJoined
@@ -356,12 +349,12 @@ export default function CommunityPage() {
                                       <MessageCircle className="mr-1 h-4 w-4" />
                                       {thread.repliesCount} replies
                                     </div>
-                                    <Button variant="ghost" size="sm" className="p-1">
+                                    {/* <Button variant="ghost" size="sm" className="p-1">
                                       <Share className="h-4 w-4" />
                                     </Button>
                                     <Button variant="ghost" size="sm" className="p-1">
                                       <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
+                                    </Button> */}
                                   </div>
                                 </div>
                               </div>
