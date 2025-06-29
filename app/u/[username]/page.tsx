@@ -8,19 +8,21 @@ import { Navbar } from "@/components/navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { fetchLatestRepliesByAuthor } from "@/lib/fetchers/replies";
 import { useAuthStore } from "@/stores/auth-store";
 import { Account } from "@lens-protocol/client";
 import { fetchAccount, fetchAccountStats } from "@lens-protocol/client/actions";
 import { evmAddress } from "@lens-protocol/react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowUp, Calendar, LinkIcon, MapPin, MessageCircle, Users } from "lucide-react";
 
 export default function ProfilePage() {
   const params = useParams();
   const username = params.username as string;
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("recent");
   const [isLoading, setIsLoading] = useState(true);
   const [lensAccount, setLensAccount] = useState<Account | null>(null);
 
@@ -32,6 +34,16 @@ export default function ProfilePage() {
 
   const { account } = useAuthStore();
   const isOwnProfile = account?.username?.localName === username;
+
+  const { data: userReplies = [], isLoading: loadingReplies } = useQuery({
+    queryKey: ["latestReplies", lensAccount?.address],
+    queryFn: async () => {
+      if (!lensAccount?.address) return [];
+      return fetchLatestRepliesByAuthor(lensAccount.address, 10);
+    },
+    enabled: !!lensAccount?.address,
+    staleTime: 1000 * 60 * 2, // 2 minutes
+  });
 
   useEffect(() => {
     const loadProfileData = async () => {
@@ -129,39 +141,6 @@ export default function ProfilePage() {
       </div>
     );
   }
-
-  const userPosts = [
-    {
-      id: "1",
-      title: "The Future of Decentralized Social Media",
-      content: "Exploring how blockchain technology is reshaping social interactions...",
-      forum: "🌐 Web3",
-      upvotes: 245,
-      replies: 67,
-      timeAgo: "2 hours ago",
-      isPopular: true,
-    },
-    {
-      id: "2",
-      title: "Best Practices for Smart Contract Security",
-      content: "Key considerations when auditing smart contracts...",
-      forum: "🔒 Security",
-      upvotes: 156,
-      replies: 23,
-      timeAgo: "1 day ago",
-      isPopular: false,
-    },
-    {
-      id: "3",
-      title: "Building Your First DApp: A Complete Guide",
-      content: "Step by step tutorial for beginners...",
-      forum: "💻 Development",
-      upvotes: 89,
-      replies: 45,
-      timeAgo: "3 days ago",
-      isPopular: false,
-    },
-  ];
 
   const joinedForums = [
     { id: "1", name: "🌐 Web3", members: 15420, role: "Moderator" },
@@ -318,171 +297,64 @@ export default function ProfilePage() {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="gradient-card grid w-full grid-cols-3 rounded-full border border-brand-200/50 p-1">
-            <TabsTrigger value="overview" className="rounded-full">
-              Overview
+          <TabsList className="gradient-card grid w-full grid-cols-2 rounded-full border border-brand-200/50 p-1">
+            <TabsTrigger value="recent" className="rounded-full">
+              Recent replies
             </TabsTrigger>
-            {/* <TabsTrigger value="posts" className="rounded-full">
-              Posts
-            </TabsTrigger> */}
-            {/* <TabsTrigger value="badges" className="rounded-full">
-              Badges
-            </TabsTrigger> */}
             <TabsTrigger value="forums" className="rounded-full">
               Forums
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              {/* Account Info */}
-              {/* <Card className="lg:col-span-2 gradient-card border border-purple-200/50">
-                <CardHeader>
-                  <h3 className="text-xl font-bold flex items-center">
-                    <Trophy className="w-6 h-6 mr-2 text-yellow-500" />
-                    Account Information
-                  </h3>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Level</span>
-                    <span className="text-sm font-semibold">
-                      Level {profileData.level}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Username</span>
-                    <span className="font-semibold">
-                      @{lensAccount?.username?.localName || username}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Display Name</span>
-                    <span className="font-semibold">
-                      {lensAccount?.metadata?.name ||
-                        lensAccount?.username?.localName ||
-                        username}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Reputation</span>
-                    <span className="font-semibold">
-                      0/5.0
-                    </span>
-                  </div>
-                </CardContent>
-              </Card> */}
-
-              {/* Quick Stats */}
-              {/* <Card className="gradient-card border border-purple-200/50">
-                <CardHeader>
-                  <h3 className="text-xl font-bold">Profile Stats</h3>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Posts</span>
-                    <span className="font-semibold">{posts}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Followers</span>
-                    <span className="font-semibold">{followers}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Following</span>
-                    <span className="font-semibold">{following}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">
-                      Level Progress
-                    </span>
-                    <div className="w-20">
-                      <Progress value={75} className="h-2" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card> */}
-            </div>
-
-            {/* Recent Activity */}
-            <Card className="gradient-card border border-brand-200/50">
-              <CardHeader>
-                <h3 className="text-xl font-bold">Recent Posts</h3>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {userPosts.length > 0 ? (
-                  userPosts.slice(0, 3).map((post: any) => (
-                    <div
-                      key={post.id}
-                      className="flex items-center justify-between rounded-xl bg-gradient-to-r from-brand-50 to-brand-100 p-4 transition-shadow hover:shadow-md"
-                    >
-                      <div className="flex-1">
-                        <div className="mb-1 flex items-center space-x-2">
-                          {post.isPopular && (
-                            <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">🔥 Popular</Badge>
-                          )}
-                          <Badge variant="outline" className="text-xs">
-                            {post.forum}
-                          </Badge>
-                        </div>
-                        <Link href={`/thread/${post.id}`}>
-                          <h4 className="mb-1 cursor-pointer font-semibold text-gray-900 hover:text-brand-600">
-                            {post.title}
-                          </h4>
-                        </Link>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <div className="flex items-center">
-                            <ArrowUp className="mr-1 h-4 w-4" />
-                            {post.upvotes}
-                          </div>
-                          <div className="flex items-center">
-                            <MessageCircle className="mr-1 h-4 w-4" />
-                            {post.replies}
-                          </div>
-                          <span>{post.timeAgo}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-8 text-center text-gray-500">No posts yet</div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="posts" className="space-y-4">
-            {userPosts.length > 0 ? (
-              userPosts.map((post: any) => (
+          <TabsContent value="recent" className="space-y-4">
+            {/* Latest Replies */}
+            {loadingReplies ? (
+              <div className="py-8 text-center text-gray-500">Loading latest posts...</div>
+            ) : userReplies.length > 0 ? (
+              userReplies.map((reply: any) => (
                 <Card
-                  key={post.id}
+                  key={reply.id}
                   className="gradient-card border border-brand-200/50 transition-shadow hover:shadow-lg"
                 >
-                  <CardContent className="p-6">
-                    <div className="mb-2 flex items-center space-x-2">
-                      {post.isPopular && (
-                        <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">🔥 Popular</Badge>
-                      )}
-                      <Badge variant="outline" className="text-xs">
-                        {post.forum}
-                      </Badge>
-                    </div>
-                    <Link href={`/thread/${post.id}`}>
-                      <h3 className="mb-2 cursor-pointer text-lg font-semibold text-gray-900 hover:text-brand-600">
-                        {post.title}
-                      </h3>
-                    </Link>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center">
-                          <ArrowUp className="mr-1 h-4 w-4" />
-                          {post.upvotes}
-                        </div>
-                        <div className="flex items-center">
-                          <MessageCircle className="mr-1 h-4 w-4" />
-                          {post.replies}
-                        </div>
+                  <CardContent className="rounded-xl border border-brand-100/60 bg-white p-6 shadow-md">
+                    <div className="flex flex-col gap-2">
+                      {/* Thread link */}
+                      <div className="mb-1 flex flex-wrap items-center gap-2">
+                        {reply.thread && (
+                          <Link
+                            href={`/thread/${reply.thread}`}
+                            className="group inline-flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 shadow-sm ring-1 ring-inset ring-brand-100 transition hover:bg-brand-100 hover:text-brand-900"
+                          >
+                            <MessageCircle className="h-4 w-4 text-brand-400 transition group-hover:text-brand-600" />
+                            <span>View Thread</span>
+                            <ArrowUp className="ml-1 h-3 w-3 -rotate-90 text-brand-300 transition group-hover:text-brand-600" />
+                          </Link>
+                        )}
                       </div>
-                      <span>{post.timeAgo}</span>
+                      {/* Reply content */}
+                      <div className="prose prose-sm max-w-none rounded-lg px-4 py-2 text-gray-800">
+                        <div dangerouslySetInnerHTML={{ __html: reply.content }} />
+                      </div>
+                      {/* Actions row */}
+                      <div className="mt-3 flex flex-row items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1 text-brand-600">
+                            <ArrowUp className="h-4 w-4" />
+                            <span className="font-semibold">{reply.upvotes || 0}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-red-400">
+                            <ArrowUp className="h-4 w-4 rotate-180" />
+                            <span className="font-semibold">{reply.downvotes || 0}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-gray-500">
+                            <MessageCircle className="h-4 w-4" />
+                            <span>{0}</span>
+                          </div>
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {reply.createdAt ? new Date(reply.createdAt).toLocaleString() : ""}
+                        </span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -491,41 +363,6 @@ export default function ProfilePage() {
               <div className="py-8 text-center text-gray-500">No posts yet</div>
             )}
           </TabsContent>
-
-          {/* <TabsContent value="badges" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {profileData.badges.map((badge: any) => (
-                <Card
-                  key={badge.id}
-                  className={`gradient-card border transition-all duration-300 ${
-                    badge.unlocked
-                      ? `${getRarityBorder(badge.rarity)} shadow-lg`
-                      : "border-gray-200 opacity-60"
-                  }`}
-                >
-                  <CardContent className="p-6 text-center">
-                    <div className="text-4xl mb-3">{badge.icon}</div>
-                    <h3 className="font-bold text-lg mb-2">{badge.name}</h3>
-                    <p className="text-sm text-gray-600 mb-3">
-                      {badge.description}
-                    </p>
-                    <Badge
-                      className={`bg-gradient-to-r ${getBadgeColor(
-                        badge.rarity
-                      )} text-white`}
-                    >
-                      {badge.rarity}
-                    </Badge>
-                    {!badge.unlocked && (
-                      <div className="mt-3 text-xs text-gray-500">
-                        🔒 Not unlocked yet
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent> */}
 
           <TabsContent value="forums" className="space-y-4">
             {joinedForums.map((forum: any, index: number) => (
