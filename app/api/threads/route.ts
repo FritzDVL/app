@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { lensMainnet } from "@/lib/chains/lens-mainnet";
 import { getAdminSessionClient } from "@/lib/clients/admin-session";
 import { ADMIN_USER_ADDRESS } from "@/lib/constants";
 import { storageClient } from "@/lib/grove";

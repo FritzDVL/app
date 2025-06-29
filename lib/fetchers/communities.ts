@@ -57,7 +57,7 @@ export async function fetchCommunities(): Promise<Community[]> {
   return communitiesData;
 }
 
-export async function fetchCommunitiesJoined(member: Address, limit = 10): Promise<Community[]> {
+export async function fetchCommunitiesJoined(member: Address): Promise<Community[]> {
   try {
     const result = await fetchGroups(client, {
       filter: {
@@ -71,7 +71,7 @@ export async function fetchCommunitiesJoined(member: Address, limit = 10): Promi
     }
 
     // items: Array<Group>
-    const { items, pageInfo } = result.value;
+    const { items } = result.value;
     if (!items || items.length === 0) {
       return [];
     }

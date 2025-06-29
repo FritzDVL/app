@@ -40,7 +40,8 @@ export async function transformFeedToThread(
     rootPost,
     upvotes: Math.floor(Math.random() * 100) + 10, // TODO: Get real voting data
     downvotes: Math.floor(Math.random() * 10),
-    repliesCount: threadRecord.replies_count || 0,
+    // repliesCount: threadRecord.replies_count || 0,
+    repliesCount: 0,
     timeAgo: getTimeAgo(new Date(threadRecord.created_at)),
     tags: [], // TODO: Extract tags from feed metadata
     created_at: threadRecord.created_at,

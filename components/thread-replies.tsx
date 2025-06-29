@@ -39,6 +39,7 @@ export function ThreadReplies({
           setReplyingTo={setReplyingTo}
           setReplyContent={setReplyContent}
           handleReply={handleReply}
+          rootPostId={rootPostId}
         >
           {renderReplies(reply.id, depth + 1)}
         </ThreadReplyCard>

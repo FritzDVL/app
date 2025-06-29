@@ -50,7 +50,7 @@ export default function ProfilePage() {
     queryKey: ["joinedCommunities", lensAccount?.address],
     queryFn: async () => {
       if (!lensAccount?.address) return [];
-      return fetchCommunitiesJoined(lensAccount.address, 10);
+      return fetchCommunitiesJoined(lensAccount.address);
     },
     enabled: !!lensAccount?.address,
     staleTime: 1000 * 60 * 2,

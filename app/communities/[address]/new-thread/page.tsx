@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { TextEditor } from "@/components/text-editor";
@@ -14,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { CreateThreadFormData, useThreadCreation } from "@/hooks/use-thread-create";
 import { useAuthStore } from "@/stores/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
-import { set } from "date-fns";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
 
