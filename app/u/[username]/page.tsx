@@ -11,8 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { fetchCommunitiesJoined } from "@/lib/fetchers/communities";
 import { fetchLatestRepliesByAuthor } from "@/lib/fetchers/replies";
 import { useAuthStore } from "@/stores/auth-store";
+import { Community } from "@/types/common";
 import { Account } from "@lens-protocol/client";
 import { fetchAccount, fetchAccountStats } from "@lens-protocol/client/actions";
 import { evmAddress } from "@lens-protocol/react";
@@ -43,6 +45,16 @@ export default function ProfilePage() {
     },
     enabled: !!lensAccount?.address,
     staleTime: 1000 * 60 * 2, // 2 minutes
+  });
+
+  const { data: joinedCommunities = [], isLoading: loadingCommunities } = useQuery({
+    queryKey: ["joinedCommunities", lensAccount?.address],
+    queryFn: async () => {
+      if (!lensAccount?.address) return [];
+      return fetchCommunitiesJoined(lensAccount.address, 10);
+    },
+    enabled: !!lensAccount?.address,
+    staleTime: 1000 * 60 * 2,
   });
 
   useEffect(() => {
@@ -141,13 +153,6 @@ export default function ProfilePage() {
       </div>
     );
   }
-
-  const joinedCommunities = [
-    { id: "1", name: "🌐 Web3", members: 15420, role: "Moderator" },
-    { id: "2", name: "💻 Development", members: 8934, role: "Contributor" },
-    { id: "3", name: "🔒 Security", members: 5678, role: "Member" },
-    { id: "4", name: "🎨 Design", members: 3421, role: "Mentor" },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50/30 via-brand-50 to-brand-100/30">
@@ -339,49 +344,57 @@ export default function ProfilePage() {
           </TabsContent>
 
           <TabsContent value="forums" className="space-y-4">
-            {joinedCommunities.map((community: any, index: number) => (
-              <Card key={index} className="gradient-card border border-brand-200/50 transition-shadow hover:shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="text-2xl">{community.name.split(" ")[0]}</div>
-                      <div>
-                        <Link href={`/forum/${community.id}`}>
-                          <h3 className="cursor-pointer text-lg font-semibold text-gray-900 hover:text-brand-600">
-                            {community.name.substring(2)}
-                          </h3>
-                        </Link>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <div className="flex items-center">
-                            <Users className="mr-1 h-4 w-4" />
-                            {community.members.toLocaleString()} members
+            {loadingCommunities ? (
+              <div className="py-8 text-center text-gray-500">Loading communities...</div>
+            ) : joinedCommunities.length > 0 ? (
+              joinedCommunities.map((community: Community, index: number) => (
+                <Card
+                  key={index}
+                  className="gradient-card border border-brand-200/50 transition-shadow hover:shadow-lg"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="text-2xl">
+                          {community.logo ? (
+                            <Image
+                              src={community.logo.replace("lens://", "https://api.grove.storage/")}
+                              alt={community.name}
+                              width={32}
+                              height={32}
+                              className="rounded-full"
+                            />
+                          ) : (
+                            community.name.charAt(0)
+                          )}
+                        </div>
+                        <div>
+                          <Link href={`/communities/${community.address}`}>
+                            <h3 className="cursor-pointer text-lg font-semibold text-gray-900 hover:text-brand-600">
+                              {community.name}
+                            </h3>
+                          </Link>
+                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                            <div className="flex items-center">
+                              <Users className="mr-1 h-4 w-4" />
+                              {community.memberCount.toLocaleString()} members
+                            </div>
+                            {community.moderators?.length > 0 && (
+                              <Badge className="bg-green-100 text-green-700">Moderator</Badge>
+                            )}
                           </div>
-                          <Badge
-                            className={`${
-                              community.role === "Moderator"
-                                ? "bg-red-100 text-red-700"
-                                : community.role === "Mentor"
-                                  ? "bg-blue-100 text-blue-700"
-                                  : community.role === "Contributor"
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            {community.role}
-                          </Badge>
                         </div>
                       </div>
+                      <Link href={`/communities/${community.address}`}>
+                        <Button variant="outline" className="rounded-full">
+                          View Community
+                        </Button>
+                      </Link>
                     </div>
-                    <Link href={`/forum/${community.id}`}>
-                      <Button variant="outline" className="rounded-full">
-                        View Community
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-            {joinedCommunities.length === 0 && (
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
               <div className="py-8 text-center text-gray-500">No communities joined yet</div>
             )}
           </TabsContent>
