@@ -19,7 +19,7 @@ const DEFAULT_RULES = [
 
 export function CommunityRules({ rules = DEFAULT_RULES, className = "" }: CommunityRulesProps) {
   return (
-    <Card className={`motion-preset-fade-in gradient-card border border-brand-200/50 ${className}`}>
+    <Card className={`motion-preset-fade-in rounded-xl border border-border bg-card shadow-md ${className}`}>
       <CardHeader>
         <h3 className="text-lg font-semibold">Community Rules</h3>
       </CardHeader>

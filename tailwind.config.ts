@@ -1,4 +1,6 @@
+import tailwindcssLineClamp from "@tailwindcss/line-clamp";
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
   darkMode: ["class"],
@@ -14,69 +16,78 @@ const config: Config = {
         custom: ["var(--font-custom)", "system-ui", "sans-serif"],
       },
       colors: {
-        // Logo-inspired brand colors
+        // Fresh, light theme with green brand (logo-inspired), white backgrounds, and colored cards
         brand: {
           50: "#f0fdf4",
           100: "#dcfce7",
           200: "#bbf7d0",
           300: "#86efac",
           400: "#4ade80",
-          500: "#22c55e",
+          500: "#22c55e", // Main green (logo)
           600: "#16a34a",
           700: "#15803d",
           800: "#166534",
           900: "#14532d",
           950: "#052e16",
         },
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: {
+          DEFAULT: "#f8fafc", // soft white
+          light: "#ffffff", // pure white for sections
+        },
+        foreground: {
+          DEFAULT: "#18181b", // dark for contrast
+          light: "#4ade80", // green accent for highlights
+        },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "#e6f9f3", // soft mint green for cards
+          green: "#dcfce7", // light green card
+          yellow: "#fef9c3", // light yellow card
+          pink: "#fce7f3", // light pink card
+          foreground: "#18181b",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "#f1f5f9",
+          foreground: "#18181b",
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#22c55e", // green
+          foreground: "#fff",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#0ea5e9", // blue accent
+          foreground: "#fff",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#f1f5f9", // very light gray
+          foreground: "#64748b",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#fbbf24", // yellow accent
+          foreground: "#fff",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#ef4444", // strong red
+          foreground: "#fff",
         },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        border: "#e5e7eb",
+        input: "#e5e7eb",
+        ring: "#22c55e",
         chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
+          1: "#22c55e",
+          2: "#0ea5e9",
+          3: "#fbbf24",
+          4: "#f472b6",
+          5: "#f59e42",
         },
         sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+          DEFAULT: "#e0f2fe",
+          foreground: "#18181b",
+          primary: "#22c55e",
+          "primary-foreground": "#fff",
+          accent: "#0ea5e9",
+          "accent-foreground": "#fff",
+          border: "#bae6fd",
+          ring: "#22c55e",
         },
       },
       borderRadius: {
@@ -108,6 +119,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/line-clamp")],
+  plugins: [tailwindcssAnimate, tailwindcssLineClamp],
 };
 export default config;

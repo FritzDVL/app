@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { CreateThreadFormData, useThreadCreation } from "@/hooks/use-thread-create";
 import { useAuthStore } from "@/stores/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
+import { set } from "date-fns";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
 
@@ -33,7 +34,6 @@ export default function NewThreadPage() {
     tags: "",
     author: account?.address || "", // Ensure author is always a string
   });
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +53,6 @@ export default function NewThreadPage() {
       if (!account?.address) throw new Error("User address not found");
       await createThread(communityAddress, { ...formData, author: account.address }, () => {
         setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
-        setUploadedImages([]);
       });
       // Invalidate and refetch threads for this community
       await queryClient.invalidateQueries({ queryKey: ["threads", communityAddress] });
@@ -61,10 +60,6 @@ export default function NewThreadPage() {
     } catch (error) {
       console.error("Error in handleSubmit:", error);
     }
-  };
-
-  const removeImage = (index: number) => {
-    setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -125,7 +120,12 @@ export default function NewThreadPage() {
                     <Label htmlFor="content" className="text-base font-medium text-slate-900">
                       Content
                     </Label>
-                    <TextEditor />
+                    <TextEditor
+                      value={formData.content}
+                      onChange={function (value: string): void {
+                        setFormData({ ...formData, content: value });
+                      }}
+                    />
                   </div>
 
                   {/* Tags */}

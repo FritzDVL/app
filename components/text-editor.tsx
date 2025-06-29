@@ -34,7 +34,7 @@ export function TextEditor({ value, onChange }: TextEditorProps) {
           "box-sizing: border-box",
           "padding: 0.5rem 0.75rem 2.5rem 0.75rem", // extra bottom padding for toolbar
           "outline: none",
-          "background: transparent",
+          "background: white",
           "border: 1.5px solid #E5E7EB",
           "border-radius: 0.75rem",
           "min-height: 10rem",

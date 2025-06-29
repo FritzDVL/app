@@ -27,6 +27,7 @@ import { type Address, PaginatedRepliesResult, type ThreadReplyWithDepth } from 
 import { PageSize } from "@lens-protocol/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
+import { removeTrailingEmptyPTags } from "@/lib/utils";
 
 export default function ThreadPage() {
   const params = useParams();
@@ -188,9 +189,12 @@ export default function ThreadPage() {
                               : "Unknown date"}
                           </span>
                         </div>
-                        <div className="prose prose-lg max-w-none whitespace-pre-line rounded-xl p-5 text-gray-800">
-                          {thread.rootPost.metadata.content}
-                        </div>
+                        <div
+                          className="prose prose-lg max-w-none whitespace-pre-line rounded-xl p-5 text-gray-800"
+                          dangerouslySetInnerHTML={{
+                            __html: removeTrailingEmptyPTags(thread.rootPost.metadata.content),
+                          }}
+                        />
                       </div>
                     )}
                   <div className="mb-2 flex flex-wrap items-center gap-2">

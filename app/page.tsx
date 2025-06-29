@@ -35,7 +35,7 @@ export default function HomePage() {
           {/* Main Content */}
           <div className="space-y-8 lg:col-span-2">
             {/* Trending Discussions */}
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-xl border border-border bg-card shadow-md">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <h2 className="flex items-center text-2xl font-bold text-slate-900">
@@ -52,7 +52,7 @@ export default function HomePage() {
                     <div className="relative flex w-full items-center rounded-2xl bg-gradient-to-r from-slate-100/80 via-white/90 to-slate-100/80 p-1.5 shadow-inner backdrop-blur-sm">
                       {/* Animated Background Indicator */}
                       <div
-                        className={`absolute h-9 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 shadow-lg transition-all duration-300 ease-out ${
+                        className={`absolute h-9 rounded-xl bg-gradient-to-r from-brand-400 to-brand-600 shadow-lg transition-all duration-300 ease-out ${
                           activeTab === "new"
                             ? "left-1.5 w-[calc(50%-4px)]"
                             : activeTab === "top"
@@ -75,7 +75,7 @@ export default function HomePage() {
                       <button
                         onClick={() => setActiveTab("new")}
                         className={`relative z-10 flex h-9 flex-1 items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 ${
-                          activeTab === "new" ? "text-white shadow-sm" : "text-slate-600 hover:text-brand-600"
+                          activeTab === "new" ? "text-white shadow-sm" : "text-black hover:text-brand-600"
                         }`}
                       >
                         <span className="text-base">✨</span>
@@ -85,7 +85,7 @@ export default function HomePage() {
                       <button
                         onClick={() => setActiveTab("top")}
                         className={`relative z-10 flex h-9 flex-1 items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 ${
-                          activeTab === "top" ? "text-white shadow-sm" : "text-slate-600 hover:text-brand-600"
+                          activeTab === "top" ? "text-white shadow-sm" : "text-black hover:text-brand-600"
                         }`}
                       >
                         <span className="text-base">🏆</span>
@@ -95,7 +95,7 @@ export default function HomePage() {
 
                     {/* Decorative Elements */}
                     <div className="absolute -left-2 -top-1 h-6 w-6 rounded-full bg-gradient-to-br from-brand-400/20 to-brand-600/20 blur-sm" />
-                    <div className="absolute -bottom-1 -right-2 h-4 w-4 rounded-full bg-gradient-to-br from-purple-400/20 to-pink-600/20 blur-sm" />
+                    <div className="absolute -bottom-1 -right-2 h-4 w-4 rounded-full bg-gradient-to-br from-brand-300/20 to-brand-700/20 blur-sm" />
                   </div>
 
                   {/* <TabsContent value="trending" className="mt-0 space-y-4">
@@ -201,26 +201,26 @@ export default function HomePage() {
                         <span className="text-red-500">{error}</span>
                       </div>
                     ) : threads.length === 0 ? (
-                      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50/80 to-indigo-100/60 p-12 text-center backdrop-blur-sm">
-                        <div className="absolute -left-4 -top-4 h-20 w-20 rounded-full bg-blue-200/30 blur-xl" />
-                        <div className="absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-indigo-200/30 blur-xl" />
+                      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-100/80 to-brand-200/60 p-12 text-center backdrop-blur-sm">
+                        <div className="absolute -left-4 -top-4 h-20 w-20 rounded-full bg-brand-200/30 blur-xl" />
+                        <div className="absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-brand-300/30 blur-xl" />
                         <div className="relative z-10">
-                          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg">
+                          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 shadow-lg">
                             <MessageCircle className="h-10 w-10 text-white" />
                           </div>
-                          <h3 className="mb-3 text-xl font-semibold text-slate-700">Fresh Discussions</h3>
-                          <p className="mx-auto max-w-md text-slate-600">
+                          <h3 className="mb-3 text-xl font-semibold text-brand-900">Fresh Discussions</h3>
+                          <p className="mx-auto max-w-md text-brand-800">
                             New conversations are brewing. Check back soon for the latest discussions and hot takes from
                             the community.
                           </p>
                           <div className="mt-6 flex justify-center gap-2">
-                            <div className="h-2 w-2 animate-bounce rounded-full bg-blue-400" />
+                            <div className="h-2 w-2 animate-bounce rounded-full bg-brand-400" />
                             <div
-                              className="h-2 w-2 animate-bounce rounded-full bg-indigo-400"
+                              className="h-2 w-2 animate-bounce rounded-full bg-brand-500"
                               style={{ animationDelay: "0.1s" }}
                             />
                             <div
-                              className="h-2 w-2 animate-bounce rounded-full bg-purple-400"
+                              className="h-2 w-2 animate-bounce rounded-full bg-brand-700"
                               style={{ animationDelay: "0.2s" }}
                             />
                           </div>
@@ -271,12 +271,12 @@ export default function HomePage() {
                                     </Link>
                                   </div>
                                   <Link href={`/thread/${thread.id}`}>
-                                    <h3 className="mb-1 line-clamp-2 cursor-pointer text-lg font-semibold transition-colors group-hover:text-green-600">
+                                    <h3 className="mb-1 line-clamp-2 cursor-pointer text-lg font-semibold transition-colors group-hover:text-brand-600">
                                       {thread.title}
                                     </h3>
                                   </Link>
                                   {thread.summary && (
-                                    <p className="mb-2 line-clamp-2 text-sm text-gray-600">{thread.summary}</p>
+                                    <p className="mb-2 line-clamp-2 text-sm text-black">{thread.summary}</p>
                                   )}
                                   <div className="mb-2 flex flex-wrap gap-1.5">
                                     {Array.isArray(thread.tags) &&
@@ -309,23 +309,23 @@ export default function HomePage() {
                   </TabsContent>
 
                   <TabsContent value="top" className="mt-0">
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-50/80 to-orange-100/60 p-12 text-center backdrop-blur-sm">
-                      <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-amber-200/30 blur-xl" />
-                      <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-orange-200/30 blur-xl" />
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-100/80 to-emerald-200/60 p-12 text-center backdrop-blur-sm">
+                      <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-emerald-200/30 blur-xl" />
+                      <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-emerald-300/30 blur-xl" />
                       <div className="relative z-10">
-                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg">
+                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 shadow-lg">
                           <TrendingUp className="h-10 w-10 text-white" />
                         </div>
-                        <h3 className="mb-3 text-xl font-semibold text-slate-700">All-Time Legends</h3>
-                        <p className="mx-auto max-w-md text-slate-600">
+                        <h3 className="mb-3 text-xl font-semibold text-brand-900">All-Time Legends</h3>
+                        <p className="mx-auto max-w-md text-brand-800">
                           Discover the most epic discussions that have shaped our community. The cream of the crop
                           awaits.
                         </p>
                         <div className="mt-6 flex justify-center">
                           <div className="flex items-center gap-1">
-                            <div className="h-1 w-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500" />
-                            <div className="h-2 w-2 animate-pulse rounded-full bg-orange-500" />
-                            <div className="h-1 w-8 rounded-full bg-gradient-to-r from-orange-500 to-amber-400" />
+                            <div className="h-1 w-8 rounded-full bg-gradient-to-r from-brand-400 to-brand-600" />
+                            <div className="h-2 w-2 animate-pulse rounded-full bg-brand-500" />
+                            <div className="h-1 w-8 rounded-full bg-gradient-to-r from-brand-600 to-brand-400" />
                           </div>
                         </div>
                       </div>

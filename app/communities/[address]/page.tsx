@@ -292,7 +292,7 @@ export default function CommunityPage() {
                       {communityThreads.map(thread => (
                         <Card
                           key={thread.id}
-                          className="rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg"
+                          className="rounded-xl border border-border bg-white shadow-md transition-all duration-200 hover:shadow-lg"
                         >
                           <CardContent className="p-6">
                             <div className="flex items-start space-x-4">
