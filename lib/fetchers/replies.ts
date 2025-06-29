@@ -1,6 +1,7 @@
+import { APP_ADDRESS } from "../constants";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
-import { PaginatedRepliesResult, Reply } from "@/types/common";
+import { Address, PaginatedRepliesResult, Reply } from "@/types/common";
 import { Post as LensPost, PageSize, evmAddress } from "@lens-protocol/client";
 import { fetchAccount, fetchPosts } from "@lens-protocol/client/actions";
 
@@ -95,4 +96,47 @@ export async function fetchRepliesPaginated(
   }
 
   return { items: replies, pageInfo: result.value.pageInfo };
+}
+
+export async function fetchLatestRepliesByAuthor(author: Address, limit: number = 10): Promise<Reply[]> {
+  const replies: Reply[] = [];
+  try {
+    const result = await fetchPosts(client, {
+      filter: {
+        authors: [evmAddress(author)],
+        apps: [evmAddress(APP_ADDRESS)],
+      },
+    });
+
+    if (result.isErr()) {
+      console.error("Failed to fetch latest replies by author:", result.error);
+      return [];
+    }
+
+    if (!result.value.items) return [];
+
+    const validPosts = result.value.items.filter(
+      (item: any) => item && item.__typename === "Post" && item.author && item.author.address,
+    ) as LensPost[];
+    validPosts.sort((a, b) => {
+      const aTime = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+      const bTime = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+      return bTime - aTime; // Sort newest to oldest
+    });
+
+    for (const post of validPosts.slice(0, limit)) {
+      replies.push(
+        transformPostToReply(post, {
+          name: post.author.username?.localName || "Unknown Author",
+          username: post.author.username?.value || "unknown",
+          avatar: post.author.metadata?.picture || "",
+          reputation: post.author.score || 0,
+        }),
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching latest replies by author:", error);
+    return [];
+  }
+  return replies;
 }

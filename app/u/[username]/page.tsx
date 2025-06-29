@@ -322,9 +322,9 @@ export default function ProfilePage() {
             <TabsTrigger value="overview" className="rounded-full">
               Overview
             </TabsTrigger>
-            <TabsTrigger value="posts" className="rounded-full">
+            {/* <TabsTrigger value="posts" className="rounded-full">
               Posts
-            </TabsTrigger>
+            </TabsTrigger> */}
             {/* <TabsTrigger value="badges" className="rounded-full">
               Badges
             </TabsTrigger> */}
