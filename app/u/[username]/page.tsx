@@ -293,27 +293,28 @@ export default function ProfilePage() {
               userReplies.map((reply: any) => (
                 <Card
                   key={reply.id}
-                  className="gradient-card border border-brand-200/50 transition-shadow hover:shadow-lg"
+                  className="rounded-xl border border-brand-100/60 bg-white shadow-md transition-shadow hover:shadow-lg"
                 >
-                  <CardContent className="rounded-xl border border-brand-100/60 bg-white p-6 shadow-md">
+                  <CardContent className="p-6">
                     <div className="flex flex-col gap-2">
-                      {/* Thread link */}
-                      <div className="mb-1 flex flex-wrap items-center gap-2">
+                      <div className="flex w-full items-start justify-between">
+                        {/* Reply content */}
+                        <div className="prose prose-sm max-w-none rounded-lg px-4 py-2 text-gray-800">
+                          <div dangerouslySetInnerHTML={{ __html: reply.content }} />
+                        </div>
                         {reply.thread && (
                           <Link
                             href={`/thread/${reply.thread}`}
-                            className="group inline-flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 shadow-sm ring-1 ring-inset ring-brand-100 transition hover:bg-brand-100 hover:text-brand-900"
+                            className="group inline-flex items-center gap-2 rounded-full bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 shadow-sm ring-1 ring-inset ring-brand-100 transition hover:bg-brand-100 hover:text-brand-900 focus:outline-none focus:ring-2 focus:ring-brand-400"
+                            aria-label="View Thread"
                           >
-                            <MessageCircle className="h-4 w-4 text-brand-400 transition group-hover:text-brand-600" />
-                            <span>View Thread</span>
-                            <ArrowUp className="ml-1 h-3 w-3 -rotate-90 text-brand-300 transition group-hover:text-brand-600" />
+                            <MessageCircle className="h-5 w-5 text-brand-400 transition group-hover:text-brand-600" />
+                            View Thread
+                            <ArrowUp className="ml-1 h-4 w-4 -rotate-90 text-brand-300 transition group-hover:text-brand-600" />
                           </Link>
                         )}
                       </div>
-                      {/* Reply content */}
-                      <div className="prose prose-sm max-w-none rounded-lg px-4 py-2 text-gray-800">
-                        <div dangerouslySetInnerHTML={{ __html: reply.content }} />
-                      </div>
+
                       {/* Actions row */}
                       <div className="mt-3 flex flex-row items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -349,8 +350,8 @@ export default function ProfilePage() {
             ) : joinedCommunities.length > 0 ? (
               joinedCommunities.map((community: Community, index: number) => (
                 <Card
-                  key={index}
-                  className="gradient-card border border-brand-200/50 transition-shadow hover:shadow-lg"
+                  key={community.id}
+                  className="rounded-xl border border-brand-100/60 bg-white shadow-md transition-shadow hover:shadow-lg"
                 >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
@@ -379,16 +380,20 @@ export default function ProfilePage() {
                               <Users className="mr-1 h-4 w-4" />
                               {community.memberCount.toLocaleString()} members
                             </div>
-                            {community.moderators?.length > 0 && (
-                              <Badge className="bg-green-100 text-green-700">Moderator</Badge>
-                            )}
+                            {community.moderators?.some(
+                              m => m.address.toLowerCase() === lensAccount?.address?.toLowerCase(),
+                            ) && <Badge className="bg-green-100 text-green-700">Moderator</Badge>}
                           </div>
                         </div>
                       </div>
-                      <Link href={`/communities/${community.address}`}>
-                        <Button variant="outline" className="rounded-full">
-                          View Community
-                        </Button>
+                      <Link
+                        href={`/communities/${community.address}`}
+                        className="group inline-flex items-center gap-2 rounded-full bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 shadow-sm ring-1 ring-inset ring-brand-100 transition hover:bg-brand-100 hover:text-brand-900 focus:outline-none focus:ring-2 focus:ring-brand-400"
+                        aria-label={`View ${community.name} Community`}
+                      >
+                        <Users className="h-5 w-5 text-brand-400 transition group-hover:text-brand-600" />
+                        View Community
+                        <ArrowUp className="ml-1 h-4 w-4 -rotate-90 text-brand-300 transition group-hover:text-brand-600" />
                       </Link>
                     </div>
                   </CardContent>
