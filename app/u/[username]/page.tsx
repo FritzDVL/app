@@ -7,7 +7,6 @@ import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
@@ -348,7 +347,7 @@ export default function ProfilePage() {
             {loadingCommunities ? (
               <div className="py-8 text-center text-gray-500">Loading communities...</div>
             ) : joinedCommunities.length > 0 ? (
-              joinedCommunities.map((community: Community, index: number) => (
+              joinedCommunities.map((community: Community) => (
                 <Card
                   key={community.id}
                   className="rounded-xl border border-brand-100/60 bg-white shadow-md transition-shadow hover:shadow-lg"
