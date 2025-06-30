@@ -29,6 +29,7 @@ interface AuthorBase {
   username: string;
   avatar: string;
   reputation: number;
+  address: Address;
 }
 
 // Author interface for thread authors

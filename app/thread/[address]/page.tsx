@@ -232,7 +232,7 @@ export default function ThreadPage() {
                     Report
                   </Button>
                   {/* Tip Button */}
-                  <TipGhoPopover />
+                  <TipGhoPopover to={thread.author.address} />
                 </div>
               </div>
               {/* Main thread reply button and contextual reply box */}

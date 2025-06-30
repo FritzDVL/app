@@ -36,6 +36,7 @@ export async function transformFeedToThread(
       username: author.username?.value || "unknown",
       avatar: author.metadata?.picture || "",
       reputation: author.score || 0,
+      address: author.address as Address,
     },
     rootPost,
     upvotes: Math.floor(Math.random() * 100) + 10, // TODO: Get real voting data
@@ -71,6 +72,7 @@ export function transformFormDataToThread(
       username: author.username?.value || "unknown",
       avatar: author.metadata?.picture || "",
       reputation: author.score || 0,
+      address: author.address as Address,
     },
     rootPost,
     upvotes: 0, // New thread starts with 0 votes
