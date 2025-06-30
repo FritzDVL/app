@@ -2,17 +2,31 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useAuthStore } from "@/stores/auth-store";
+import { Address } from "@/types/common";
 import { Coins } from "lucide-react";
 
 interface TipGhoPopoverProps {
-  disabled?: boolean;
-  onSend?: (amount: number) => void;
+  to: Address;
 }
 
-export function TipGhoPopover({ disabled, onSend }: TipGhoPopoverProps) {
+export function TipGhoPopover({ to }: TipGhoPopoverProps) {
   const [tipAmount, setTipAmount] = useState<number | null>(null);
   const [customMode, setCustomMode] = useState(false);
   const [customValue, setCustomValue] = useState(1);
+
+  const { isLoggedIn } = useAuthStore();
+
+  const handleTip = () => {
+    if (tipAmount && tipAmount > 0) {
+      // Here you would implement the logic to send the tip
+      console.log(`Sending ${tipAmount} GHO to ${to}`);
+      // Reset tip amount after sending
+      setTipAmount(null);
+      setCustomMode(false);
+      setCustomValue(1);
+    }
+  };
 
   return (
     <Popover>
@@ -21,7 +35,7 @@ export function TipGhoPopover({ disabled, onSend }: TipGhoPopoverProps) {
           variant="ghost"
           size="sm"
           className="rounded-full text-green-600 hover:text-green-700"
-          disabled={disabled}
+          disabled={!isLoggedIn}
         >
           <Coins className="mr-2 h-4 w-4" />
           Tip
@@ -87,9 +101,7 @@ export function TipGhoPopover({ disabled, onSend }: TipGhoPopoverProps) {
             size="sm"
             className="w-full rounded-full font-semibold shadow-sm"
             disabled={!tipAmount || tipAmount <= 0}
-            onClick={() => {
-              if (tipAmount && tipAmount > 0 && onSend) onSend(tipAmount);
-            }}
+            onClick={handleTip}
           >
             Send Tip
           </Button>
