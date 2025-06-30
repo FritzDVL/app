@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -14,10 +14,20 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
   const [tipAmount, setTipAmount] = useState<number | null>(null);
   const [customMode, setCustomMode] = useState(false);
   const [customValue, setCustomValue] = useState(1);
+  const [canTip, setCanTip] = useState(true);
 
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, account } = useAuthStore();
 
   const handleTip = () => {
+    if (!account) {
+      console.error("No account found");
+      return;
+    }
+    // if (!canTip) {
+    //   console.error("Account cannot tip");
+    //   return;
+    // }
+
     if (tipAmount && tipAmount > 0) {
       // Here you would implement the logic to send the tip
       console.log(`Sending ${tipAmount} GHO to ${to}`);
@@ -28,6 +38,20 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
     }
   };
 
+  useEffect(() => {
+    if (account) {
+      console.log("Account found:", account);
+      // Check if the account has a Tipping Account Action
+      for (const action of account.actions) {
+        switch (action.__typename) {
+          case "TippingAccountAction":
+            setCanTip(true);
+            break;
+        }
+      }
+    }
+  }, [account]);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -35,7 +59,7 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
           variant="ghost"
           size="sm"
           className="rounded-full text-green-600 hover:text-green-700"
-          disabled={!isLoggedIn}
+          disabled={!isLoggedIn || !canTip}
         >
           <Coins className="mr-2 h-4 w-4" />
           Tip
