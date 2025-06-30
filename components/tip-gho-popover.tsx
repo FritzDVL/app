@@ -4,7 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
+import { bigDecimal, evmAddress } from "@lens-protocol/client";
+import { executeAccountAction } from "@lens-protocol/client/actions";
+import { handleOperationWith } from "@lens-protocol/client/viem";
+import { useSessionClient } from "@lens-protocol/react";
 import { Coins } from "lucide-react";
+import { toast } from "sonner";
+import { useWalletClient } from "wagmi";
 
 interface TipGhoPopoverProps {
   to: Address;
@@ -17,10 +23,16 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
   const [canTip, setCanTip] = useState(true);
 
   const { isLoggedIn, account } = useAuthStore();
+  const sessionClient = useSessionClient();
+  const walletClient = useWalletClient();
 
-  const handleTip = () => {
+  const handleTip = async () => {
     if (!account) {
       console.error("No account found");
+      return;
+    }
+    if (!sessionClient || !sessionClient.data) {
+      console.error("No session client available");
       return;
     }
     // if (!canTip) {
@@ -29,12 +41,32 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
     // }
 
     if (tipAmount && tipAmount > 0) {
-      // Here you would implement the logic to send the tip
-      console.log(`Sending ${tipAmount} GHO to ${to}`);
-      // Reset tip amount after sending
-      setTipAmount(null);
-      setCustomMode(false);
-      setCustomValue(1);
+      const toastId = toast.loading("Sending tip...");
+      try {
+        const result = await executeAccountAction(sessionClient.data, {
+          account: evmAddress(to),
+          action: {
+            tipping: {
+              native: bigDecimal(tipAmount),
+            },
+          },
+        }).andThen(handleOperationWith(walletClient.data));
+
+        toast.dismiss(toastId);
+        if (result.isErr()) {
+          toast.error("Failed to send tip: " + result.error.message);
+          return console.error(result.error);
+        }
+        toast.success("Tip sent successfully!");
+        // Reset tip amount after sending
+        setTipAmount(null);
+        setCustomMode(false);
+        setCustomValue(1);
+      } catch (err: any) {
+        toast.dismiss(toastId);
+        toast.error("Failed to send tip: " + (err?.message || "Unknown error"));
+        console.error(err);
+      }
     }
   };
 
