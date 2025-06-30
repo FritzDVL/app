@@ -2,6 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { VotingActions } from "./voting-actions";
+import { TipGhoPopover } from "@/components/tip-gho-popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,8 +10,9 @@ import { fetchReply } from "@/lib/fetchers/reply";
 import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { Reply as ReplyType } from "@/types/common";
+import { PostId } from "@lens-protocol/client";
 import { postId } from "@lens-protocol/react";
-import { Reply } from "lucide-react";
+import { Coins, Reply } from "lucide-react";
 
 export function ThreadReplyCard({
   reply,
@@ -171,18 +173,26 @@ export function ThreadReplyCard({
                 className="mb-2 max-w-none text-sm text-gray-700 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-200 [&_blockquote]:pl-3 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_li]:mb-1 [&_p]:min-h-[1.2em] [&_pre]:rounded-md [&_pre]:bg-gray-100 [&_pre]:p-2 [&_ul]:ml-4 [&_ul]:list-disc"
                 dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(reply.content) }}
               />
-              {/* Reply button bottom right */}
-              <div className="flex justify-end">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="px-2 py-1 text-xs text-brand-600 hover:text-brand-700"
-                  onClick={() => setReplyingTo(reply.id)}
-                  disabled={!isLoggedIn}
-                >
-                  <Reply className="mr-1 h-3 w-3" />
-                  Reply
-                </Button>
+              {/* Reply button and tip button bottom right */}
+              <div className="mt-2 flex items-end justify-between">
+                {/* Tips counter bottom left */}
+                <div className="flex items-center gap-1 text-xs">
+                  <Coins className="h-4 w-4" />
+                  <span>{(reply as any).tips ?? 0}</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="px-2 py-1 text-xs text-brand-600 hover:text-brand-700"
+                    onClick={() => setReplyingTo(reply.id)}
+                    disabled={!isLoggedIn}
+                  >
+                    <Reply className="mr-1 h-3 w-3" />
+                    Reply
+                  </Button>
+                  <TipGhoPopover to={reply.id as PostId} />
+                </div>
               </div>
               {replyingTo === reply.id && (
                 <ThreadReplyBox

@@ -89,7 +89,7 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="rounded-full text-green-600 hover:text-green-700"
+          className="text-green-600 hover:text-green-700"
           disabled={!isLoggedIn || !canTip}
         >
           <Coins className="mr-2 h-4 w-4" />
