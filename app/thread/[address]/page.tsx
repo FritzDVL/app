@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { ThreadReplyBox } from "@/components/thread-reply-box";
 import { ThreadReplyCard } from "@/components/thread-reply-card";
+import { TipGhoPopover } from "@/components/tip-gho-popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
@@ -230,6 +231,8 @@ export default function ThreadPage() {
                     <Flag className="mr-2 h-4 w-4" />
                     Report
                   </Button>
+                  {/* Tip Button */}
+                  <TipGhoPopover />
                 </div>
               </div>
               {/* Main thread reply button and contextual reply box */}
