@@ -27,9 +27,9 @@ import { fetchThread } from "@/lib/fetchers/thread";
 import { removeTrailingEmptyPTags } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { type Address, PaginatedRepliesResult, type ThreadReplyWithDepth } from "@/types/common";
-import { PageSize } from "@lens-protocol/client";
+import { PageSize, PostId } from "@lens-protocol/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bookmark, Flag, Reply as ReplyIcon, Share } from "lucide-react";
+import { Bookmark, Coins, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
   const params = useParams();
@@ -217,6 +217,10 @@ export default function ThreadPage() {
                     <ReplyIcon className="h-4 w-4" />
                     <span className="text-sm">{thread.repliesCount}</span>
                   </div>
+                  <div className="flex items-center gap-1">
+                    <Coins className="h-4 w-4" />
+                    <span className="text-sm">{thread.rootPost?.stats.tips}</span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="sm" className="rounded-full" disabled>
@@ -232,7 +236,7 @@ export default function ThreadPage() {
                     Report
                   </Button>
                   {/* Tip Button */}
-                  <TipGhoPopover to={thread.author.address} />
+                  <TipGhoPopover to={thread.rootPost?.id || ("" as PostId)} />
                 </div>
               </div>
               {/* Main thread reply button and contextual reply box */}

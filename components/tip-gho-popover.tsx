@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuthStore } from "@/stores/auth-store";
-import { Address } from "@/types/common";
-import { bigDecimal, evmAddress } from "@lens-protocol/client";
-import { executeAccountAction } from "@lens-protocol/client/actions";
+import { PostId, bigDecimal, postId } from "@lens-protocol/client";
+import { executePostAction } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { useSessionClient } from "@lens-protocol/react";
 import { Coins } from "lucide-react";
@@ -13,7 +12,7 @@ import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
 
 interface TipGhoPopoverProps {
-  to: Address;
+  to: PostId;
 }
 
 export function TipGhoPopover({ to }: TipGhoPopoverProps) {
@@ -43,8 +42,8 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
     if (tipAmount && tipAmount > 0) {
       const toastId = toast.loading("Sending tip...");
       try {
-        const result = await executeAccountAction(sessionClient.data, {
-          account: evmAddress(to),
+        const result = await executePostAction(sessionClient.data, {
+          post: postId(to),
           action: {
             tipping: {
               native: bigDecimal(tipAmount),
