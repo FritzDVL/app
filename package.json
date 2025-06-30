@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
+    "@lens-chain/sdk": "^1.0.3",
     "@lens-chain/storage-client": "^1.0.5",
     "@lens-protocol/client": "0.0.0-canary-20250618120637",
     "@lens-protocol/metadata": "^2.1.0",
