@@ -63,6 +63,7 @@ export interface Reply {
   author: ReplyAuthor;
   upvotes: number;
   downvotes: number;
+  tips: number;
   createdAt: string;
   parentReplyId?: string;
 }
