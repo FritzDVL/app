@@ -133,7 +133,7 @@ export default function CommunitiesPage() {
                       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
                         {filteredCommunities.map(community => (
                           <Link key={community.id} href={`/communities/${community.address}`} className="group">
-                            <Card className="rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg">
+                            <Card className="rounded-xl border border-border bg-white/70">
                               <CardContent className="p-6">
                                 <div className="mb-4 flex items-start justify-between">
                                   {community.logo ? (

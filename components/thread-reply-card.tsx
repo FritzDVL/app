@@ -20,7 +20,6 @@ export function ThreadReplyCard({
   setReplyContent,
   handleReply, // <-- add this prop
   children,
-  depth = 0,
   rootPostId, // <-- new prop for root post id
 }: {
   reply: ReplyType & { _depth?: number };
@@ -102,8 +101,8 @@ export function ThreadReplyCard({
   );
 
   return (
-    <div className="space-y-2" style={{ marginLeft: depth * 18 }}>
-      <Card className="border border-brand-100 bg-white/80 shadow-sm">
+    <div className="space-y-2">
+      <Card className="rounded-xl border bg-white/80 shadow-sm">
         <CardContent className="p-3">
           <div className="flex items-start gap-2">
             <div className="flex flex-col items-center pr-2">

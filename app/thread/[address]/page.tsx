@@ -121,7 +121,7 @@ export default function ThreadPage() {
   const { isLoggedIn } = useAuthStore();
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <Navbar />
       <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
         {/* Back to Community Link */}
@@ -138,7 +138,7 @@ export default function ThreadPage() {
 
         {/* Main Thread */}
         {thread && typeof replies !== "undefined" && (
-          <Card className="rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg">
+          <Card className="rounded-xl border border-border bg-white/40">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 {/* Thread Icon/Letter */}

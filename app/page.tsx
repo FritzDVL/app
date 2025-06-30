@@ -62,16 +62,6 @@ export default function HomePage() {
                       />
 
                       {/* Tab Buttons */}
-                      {/* <button
-                        onClick={() => setActiveTab("trending")}
-                        className={`relative z-10 flex h-9 flex-1 items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 ${
-                          activeTab === "trending" ? "text-white shadow-sm" : "text-slate-600 hover:text-brand-600"
-                        }`}
-                      >
-                        <span className="text-base">🔥</span>
-                        <span className="text-sm">Hot</span>
-                      </button> */}
-
                       <button
                         onClick={() => setActiveTab("new")}
                         className={`relative z-10 flex h-9 flex-1 items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 ${
@@ -97,99 +87,6 @@ export default function HomePage() {
                     <div className="absolute -left-2 -top-1 h-6 w-6 rounded-full bg-gradient-to-br from-brand-400/20 to-brand-600/20 blur-sm" />
                     <div className="absolute -bottom-1 -right-2 h-4 w-4 rounded-full bg-gradient-to-br from-brand-300/20 to-brand-700/20 blur-sm" />
                   </div>
-
-                  {/* <TabsContent value="trending" className="mt-0 space-y-4">
-                    {trendingThreads.map(thread => (
-                      <Card
-                        key={thread.id}
-                        className="border border-slate-200/60 bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-300/60 hover:shadow-md"
-                      >
-                        <CardContent className="p-6">
-                          <div className="flex gap-4">
-                            <div className="flex min-w-[50px] flex-col items-center space-y-1">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-full hover:bg-brand-50 hover:text-brand-600"
-                              >
-                                <ArrowUp className="h-4 w-4" />
-                              </Button>
-                              <span className="text-sm font-semibold text-slate-700">{thread.votes}</span>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-full hover:bg-red-50 hover:text-red-600"
-                              >
-                                <ArrowDown className="h-4 w-4" />
-                              </Button>
-                            </div>
-
-                            <div className="min-w-0 flex-1">
-                              <div className="mb-2 flex items-center gap-2">
-                                {thread.isPinned && (
-                                  <Badge variant="secondary" className="border-amber-200 bg-amber-50 text-amber-700">
-                                    <Pin className="mr-1 h-3 w-3" />
-                                    Pinned
-                                  </Badge>
-                                )}
-                                <Badge variant="outline" className="text-xs">
-                                  {thread.forumName}
-                                </Badge>
-                              </div>{" "}
-                              <Link href={`/thread/${thread.id}`}>
-                                <h3 className="mb-2 line-clamp-2 cursor-pointer text-lg font-semibold text-slate-900 transition-colors hover:text-brand-600">
-                                  {thread.title}
-                                </h3>
-                              </Link>
-                              <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600">
-                                {thread.content}
-                              </p>
-                              <div className="mb-4 flex flex-wrap gap-1">
-                                {thread.tags.map(tag => (
-                                  <Badge
-                                    key={tag}
-                                    variant="secondary"
-                                    className="cursor-pointer bg-slate-100 text-xs hover:bg-slate-200"
-                                  >
-                                    #{tag}
-                                  </Badge>
-                                ))}
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                  <Link
-                                    href={`/u/${thread.author.username}`}
-                                    className="flex items-center gap-2 transition-colors hover:text-brand-600"
-                                  >
-                                    <Avatar className="h-6 w-6">
-                                      <AvatarImage src={thread.author.avatar} />
-                                      <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
-                                    </Avatar>
-                                    <span className="text-sm font-medium">{thread.author.name}</span>
-                                  </Link>
-                                  <Badge variant="outline" className="text-xs">
-                                    <Award className="mr-1 h-3 w-3 text-amber-500" />
-                                    {thread.author.reputation}
-                                  </Badge>
-                                  <span className="text-xs text-slate-500">{thread.timeAgo}</span>
-                                </div>
-
-                                <div className="flex items-center gap-4 text-slate-500">
-                                  <div className="flex items-center gap-1">
-                                    <MessageCircle className="h-4 w-4" />
-                                    <span className="text-sm">{thread.replies}</span>
-                                  </div>
-                                  <Button variant="ghost" size="sm" className="h-8">
-                                    <Heart className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </TabsContent> */}
 
                   <TabsContent value="new" className="mt-0">
                     {loading ? (
@@ -231,7 +128,7 @@ export default function HomePage() {
                         {threads.map(thread => (
                           <Card
                             key={thread.id}
-                            className="gradient-card group min-h-[64px] cursor-pointer rounded-xl border border-border bg-card shadow-md transition-all duration-200 hover:shadow-lg"
+                            className="gradient-card group min-h-[64px] cursor-pointer rounded-xl border border-border bg-white shadow-md transition-all duration-200 hover:shadow-lg"
                           >
                             <CardContent className="p-3 sm:p-4 md:p-5">
                               <div className="flex items-start">

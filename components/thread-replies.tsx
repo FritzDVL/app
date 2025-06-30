@@ -31,7 +31,7 @@ export function ThreadReplies({
   // Recursive render with indentation for nesting
   function renderReplies(parentId: string, depth = 0) {
     return (repliesByParent[parentId] || []).map(reply => (
-      <div key={reply.id} style={{ marginLeft: depth * 24 }}>
+      <div key={reply.id}>
         <ThreadReplyCard
           reply={reply}
           replyingTo={replyingTo}
