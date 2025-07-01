@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { CommunityRules } from "@/components/community-rules";
 import { Navbar } from "@/components/navbar";
 import { TextEditor } from "@/components/text-editor";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
@@ -61,89 +62,92 @@ export default function NewThreadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
       <Navbar />
 
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-6">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <BackNavigationLink href={`/communities/${communityAddress}`}>Back to Community</BackNavigationLink>
-            {/* Community info can be fetched here if needed */}
-          </div>
+        <div className="mb-6 flex items-center">
+          <BackNavigationLink href={`/communities/${communityAddress}`}>Back to Community</BackNavigationLink>
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-          {/* Main Content Area */}
+          {/* Main Content */}
           <div className="lg:col-span-3">
-            <Card className="rounded-xl border border-border bg-card shadow-md">
-              <CardHeader>
-                <h1 className="text-2xl font-bold text-slate-900">Create New Thread</h1>
-                <p className="text-slate-600">Share your thoughts, questions, or ideas with the community</p>
+            <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <h1 className="text-2xl font-medium text-slate-900">Create New Thread</h1>
+                <p className="text-slate-600">Share your thoughts with the community</p>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Title */}
                   <div className="space-y-2">
-                    <Label htmlFor="title" className="text-base font-medium text-slate-900">
-                      Thread Title
+                    <Label htmlFor="title" className="text-sm font-medium text-slate-700">
+                      Title
                     </Label>
                     <Input
                       id="title"
                       value={formData.title}
                       onChange={e => setFormData({ ...formData, title: e.target.value })}
                       placeholder="What's your thread about?"
-                      className="h-12 border-slate-200 text-lg focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      className="rounded-full border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                       required
                     />
                   </div>
 
                   {/* Summary */}
                   <div className="space-y-2">
-                    <Label htmlFor="summary" className="text-base font-medium text-slate-900">
+                    <Label htmlFor="summary" className="text-sm font-medium text-slate-700">
                       Summary
                     </Label>
                     <Input
                       id="summary"
                       value={formData.summary}
                       onChange={e => setFormData({ ...formData, summary: e.target.value })}
-                      placeholder="A short summary of your thread (max 100 chars)"
-                      className="border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      placeholder="Brief description (max 100 chars)"
+                      className="rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                       maxLength={100}
                     />
                   </div>
 
                   {/* Content Editor */}
                   <div className="space-y-2">
-                    <Label htmlFor="content" className="text-base font-medium text-slate-900">
+                    <Label htmlFor="content" className="text-sm font-medium text-slate-700">
                       Content
                     </Label>
-                    <TextEditor
-                      value={formData.content}
-                      onChange={function (value: string): void {
-                        setFormData({ ...formData, content: value });
-                      }}
-                    />
+                    <div className="rounded-2xl border border-slate-300/60 bg-white/80 p-4 backdrop-blur-sm">
+                      <TextEditor
+                        value={formData.content}
+                        onChange={function (value: string): void {
+                          setFormData({ ...formData, content: value });
+                        }}
+                      />
+                    </div>
                   </div>
 
                   {/* Tags */}
                   <div className="space-y-2">
-                    <Label htmlFor="tags" className="text-base font-medium text-slate-900">
+                    <Label htmlFor="tags" className="text-sm font-medium text-slate-700">
                       Tags (optional)
                     </Label>
                     <Input
                       id="tags"
                       value={formData.tags}
                       onChange={e => setFormData({ ...formData, tags: e.target.value })}
-                      placeholder="development, discussion, help, tutorial (comma separated)"
-                      className="border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      placeholder="development, discussion, help (comma separated)"
+                      className="rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                     />
                     {formData.tags && (
-                      <div className="mt-2 flex flex-wrap gap-2">
+                      <div className="mt-3 flex flex-wrap gap-2">
                         {formData.tags.split(",").map(
                           (tag: string, index: number) =>
                             tag.trim() && (
-                              <Badge key={index} variant="outline" className="text-xs">
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="rounded-full border-slate-300/60 bg-white/80 text-slate-600 backdrop-blur-sm"
+                              >
                                 {tag.trim()}
                               </Badge>
                             ),
@@ -152,11 +156,12 @@ export default function NewThreadPage() {
                     )}
                   </div>
 
-                  <div className="flex justify-end">
+                  {/* Submit Button */}
+                  <div className="flex justify-end pt-4">
                     <Button
                       type="submit"
                       disabled={isCreating || !formData.title.trim() || !formData.content.trim()}
-                      className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 font-semibold text-white shadow-lg hover:from-brand-600 hover:to-brand-700"
+                      className="rounded-full bg-green-600 hover:bg-green-700 disabled:opacity-50"
                     >
                       {isCreating ? (
                         <div className="flex items-center gap-2">
@@ -179,67 +184,7 @@ export default function NewThreadPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Guidelines */}
-            <Card className="rounded-xl border border-border bg-card shadow-md">
-              <CardHeader>
-                <h3 className="text-lg font-semibold text-slate-900">Posting Guidelines</h3>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm text-slate-600">
-                <div className="flex items-start space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Be respectful and constructive</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Use clear, descriptive titles</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Add relevant tags to help others find your post</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Include context and details</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-red-500">×</span>
-                  <span>No spam or self-promotion</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Preview */}
-            <Card className="rounded-xl border border-border bg-card shadow-md">
-              <CardHeader>
-                <h3 className="text-lg font-semibold text-slate-900">Preview</h3>
-              </CardHeader>
-              <CardContent>
-                {formData.title || formData.content ? (
-                  <div className="space-y-3">
-                    {formData.title && <h4 className="text-lg font-semibold text-slate-900">{formData.title}</h4>}
-                    {formData.content && (
-                      <p className="line-clamp-4 text-sm leading-relaxed text-slate-600">{formData.content}</p>
-                    )}
-                    {formData.tags && (
-                      <div className="flex flex-wrap gap-1">
-                        {formData.tags.split(",").map(
-                          (tag: string, index: number) =>
-                            tag.trim() && (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {tag.trim()}
-                              </Badge>
-                            ),
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-sm text-slate-400">Start typing to see a preview...</p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Community Info */}
-            {/* Community info can be added here if needed */}
+            <CommunityRules variant="posting" />
           </div>
         </div>
       </main>
