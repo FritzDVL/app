@@ -12,7 +12,7 @@ import { fetchThread } from "@/lib/fetchers/thread";
 import { fetchFeaturedCommunities, fetchLatestThreads } from "@/lib/supabase";
 import type { Community, Thread } from "@/types/common";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Clock, Edit3, Heart, MessageCircle, Sparkles, Users, Zap } from "lucide-react";
+import { ArrowRight, Clock, Edit3, Heart, MessageCircle, Sparkles, Users } from "lucide-react";
 
 function formatDate(date: Date): string {
   const now = new Date();
@@ -69,7 +69,7 @@ export default function HomePage() {
       {/* Main Content Container */}
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {/* Enhanced Stats Bar */}
-        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
           <div className="group cursor-pointer rounded-2xl border border-slate-300/50 bg-white p-4 backdrop-blur-sm transition-all hover:scale-105 hover:border-blue-300/60">
             <div className="flex items-center gap-3">
               <div className="rounded-full bg-blue-100 p-2 transition-all group-hover:bg-blue-200">
@@ -100,32 +100,17 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="group cursor-pointer rounded-2xl border border-slate-300/50 bg-white p-4 backdrop-blur-sm transition-all hover:scale-105 hover:border-purple-300/60">
-            <div className="flex items-center gap-3">
-              <div className="rounded-full bg-purple-100 p-2 transition-all group-hover:bg-purple-200">
-                <Zap className="h-4 w-4 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-xs text-slate-600">Active Now</p>
-                <p className="text-lg font-bold text-slate-900">42</p>
-                <div className="flex items-center gap-1">
-                  <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></div>
-                  <span className="text-xs text-slate-500">Live</span>
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="group cursor-pointer rounded-2xl border border-slate-300/50 bg-white p-4 backdrop-blur-sm transition-all hover:scale-105 hover:border-amber-300/60">
             <div className="flex items-center gap-3">
               <div className="rounded-full bg-amber-100 p-2 transition-all group-hover:bg-amber-200">
                 <Sparkles className="h-4 w-4 text-amber-600" />
               </div>
               <div>
-                <p className="text-xs text-slate-600">This Week</p>
-                <p className="text-lg font-bold text-slate-900">1.2k</p>
+                <p className="text-xs text-slate-600">Communities</p>
+                <p className="text-lg font-bold text-slate-900">50</p>
                 <div className="flex items-center gap-1 text-xs text-amber-600">
                   <div className="h-1 w-1 rounded-full bg-amber-500"></div>
-                  <span>+156 posts</span>
+                  <span>+1 community</span>
                 </div>
               </div>
             </div>

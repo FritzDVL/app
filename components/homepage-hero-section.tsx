@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Compass, Sparkles } from "lucide-react";
 
 export function HeroSection() {
   return (
@@ -32,7 +32,11 @@ export function HeroSection() {
 
       <div className="flex justify-center">
         <Link href="/communities">
-          <Button variant="outline" className="rounded-full px-8 py-3 text-lg font-medium">
+          <Button
+            variant="outline"
+            className="rounded-full border-slate-300 bg-white px-8 py-3 text-lg font-medium text-slate-700"
+          >
+            <Compass className="mr-2 h-5 w-5" />
             Explore Communities
           </Button>
         </Link>
