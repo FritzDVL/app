@@ -40,7 +40,7 @@ export function Navbar() {
   const { logout } = useLogout();
 
   return (
-    <nav className="gradient-card sticky top-0 z-50 border-b border-white/20 px-4 py-3">
+    <nav className="sticky top-0 z-50 border-b border-border bg-white/95 px-4 py-3 shadow-sm backdrop-blur-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         {/* Logo */}
         <Link href="/" className="group flex items-center space-x-2">
@@ -66,13 +66,13 @@ export function Navbar() {
         {/* Desktop Actions */}
         <div className="hidden items-center space-x-3 md:flex">
           <Link href="/">
-            <Button variant={pathname === "/" ? "default" : "ghost"} size="sm" className="rounded-full">
+            <Button variant={pathname === "/" ? "default" : "ghost"} size="sm">
               <Home className="mr-2 h-4 w-4" />
               Home
             </Button>
           </Link>
           <Link href="/communities">
-            <Button variant={pathname === "/communities" ? "default" : "ghost"} size="sm" className="rounded-full">
+            <Button variant={pathname === "/communities" ? "default" : "ghost"} size="sm">
               <Users className="mr-2 h-4 w-4" />
               Communities
             </Button>
@@ -91,24 +91,24 @@ export function Navbar() {
           {account ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="h-8 w-8 cursor-pointer ring-2 ring-brand-200 transition-all hover:ring-brand-400">
+                <Avatar className="h-8 w-8 cursor-pointer border-2 border-border transition-all hover:border-brand-300">
                   <AvatarImage src={account.metadata?.picture || "/placeholder.svg?height=32&width=32"} />
                   <AvatarFallback>{account.username?.localName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="gradient-card w-[200px] border-white/20">
-                <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/20">
+              <DropdownMenuContent align="end" className="w-[200px] border border-border bg-white shadow-md">
+                <DropdownMenuItem asChild className="cursor-pointer">
                   <Link href={`/u/${account.username?.localName || "user"}`}>
                     <User className="mr-2 h-4 w-4 text-brand-500" />
                     Go to profile
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowLensDialog(true)} className="cursor-pointer hover:bg-white/20">
+                <DropdownMenuItem onClick={() => setShowLensDialog(true)} className="cursor-pointer">
                   <RefreshCw className="mr-2 h-4 w-4 text-brand-500" />
                   Switch account
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-gray-200" />
-                <DropdownMenuItem onClick={logout} className="cursor-pointer hover:bg-white/20">
+                <DropdownMenuSeparator className="bg-border" />
+                <DropdownMenuItem onClick={logout} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4 text-brand-500" />
                   Logout
                 </DropdownMenuItem>
@@ -127,11 +127,11 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="mt-4 border-t border-white/20 pb-4 md:hidden">
+        <div className="mt-4 border-t border-border bg-white pb-4 md:hidden">
           <div className="space-y-3 pt-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-              <Input placeholder="Search..." className="rounded-full border-white/30 bg-white/50 pl-10" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+              <Input placeholder="Search..." className="border-border bg-white pl-10" />
             </div>
             <Link href="/" className="block">
               <Button variant="ghost" className="w-full justify-start">
@@ -157,9 +157,9 @@ export function Navbar() {
                 <LoginConnectButton />
               </div>
             )}
-            <Button className="gradient-button w-full rounded-full">
+            <Button className="w-full">
               <Plus className="mr-2 h-4 w-4" />
-              Create Forum
+              Create Thread
             </Button>
           </div>
         </div>
