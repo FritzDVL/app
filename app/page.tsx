@@ -7,8 +7,11 @@ import { HeroSection } from "@/components/homepage-hero-section";
 import { Navbar } from "@/components/navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useCommunitiesFeatured } from "@/hooks/use-communities-featured";
-import { useThreadsLatest } from "@/hooks/use-threads-latest";
+import { fetchCommunity } from "@/lib/fetchers/community";
+import { fetchThread } from "@/lib/fetchers/thread";
+import { fetchFeaturedCommunities, fetchLatestThreads } from "@/lib/supabase";
+import type { Community, Thread } from "@/types/common";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Clock, Edit3, Heart, MessageCircle, Sparkles, Users, Zap } from "lucide-react";
 
 function formatDate(date: Date): string {
@@ -24,8 +27,39 @@ function formatDate(date: Date): string {
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const { threads, loading: loadingThreads, error } = useThreadsLatest();
-  const { featured: featuredCommunities } = useCommunitiesFeatured();
+  // TanStack Query for latest threads
+  const {
+    data: threads = [],
+    isLoading: loadingThreads,
+    error,
+  } = useQuery({
+    queryKey: ["threads", "latest"],
+    queryFn: async (): Promise<Thread[]> => {
+      const threadRecords = await fetchLatestThreads(5);
+      const transformed: Thread[] = [];
+      for (const threadRecord of threadRecords) {
+        try {
+          const thread = await fetchThread(threadRecord.lens_feed_address);
+          if (thread) transformed.push(thread);
+        } catch {
+          continue;
+        }
+      }
+      return transformed;
+    },
+    staleTime: 1000 * 60 * 2, // 2 minutes
+  });
+
+  // TanStack Query for featured communities
+  const { data: featuredCommunities = [] } = useQuery({
+    queryKey: ["communities", "featured"],
+    queryFn: async (): Promise<Community[]> => {
+      const dbCommunities = await fetchFeaturedCommunities();
+      const populated = await Promise.all(dbCommunities.map(c => fetchCommunity(c.lens_group_address)));
+      return populated.filter(Boolean) as Community[];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
@@ -116,7 +150,7 @@ export default function HomePage() {
                     <p className="mt-1 text-sm text-slate-600">Join the discussion and share your insights</p>
                   </div>
                   <div className="hidden gap-2 sm:flex">
-                    {["All", "Governance", "Research", "Community"].map(category => (
+                    {["All"].map(category => (
                       <button
                         key={category}
                         onClick={() => setActiveCategory(category)}
@@ -152,7 +186,7 @@ export default function HomePage() {
                 ) : error ? (
                   <div className="py-16 text-center">
                     <div className="inline-block rounded-2xl border border-red-200 bg-red-50 p-6">
-                      <p className="font-medium text-red-700">{error}</p>
+                      <p className="font-medium text-red-700">{error.message || "Failed to load threads"}</p>
                     </div>
                   </div>
                 ) : threads.length === 0 ? (
@@ -243,7 +277,7 @@ export default function HomePage() {
           {/* Enhanced Sidebar */}
           <div className="space-y-8 lg:col-span-4">
             {/* Communities Overview */}
-            <div className="overflow-hidden rounded-3xl border border-purple-300/60 bg-white backdrop-blur-sm">
+            {/* <div className="overflow-hidden rounded-3xl border border-purple-300/60 bg-white backdrop-blur-sm">
               <div className="bg-gradient-to-br from-purple-50 to-indigo-50 p-8">
                 <div className="mb-6 flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
@@ -283,7 +317,7 @@ export default function HomePage() {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
-            </div>
+            </div> */}
 
             {/* Trending Pulse */}
             {/* <div className="overflow-hidden rounded-3xl border border-amber-300/60 bg-white shadow-xl shadow-amber-200/30 backdrop-blur-sm">
