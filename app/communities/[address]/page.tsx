@@ -157,8 +157,8 @@ export default function CommunityPage() {
                         onClick={isJoined ? handleLeaveCommunity : handleJoinCommunity}
                         className={`rounded-full px-8 py-3 font-semibold transition-all duration-300 ${
                           isJoined
-                            ? "border border-slate-300 bg-slate-100 text-slate-600 hover:scale-105 hover:bg-slate-200"
-                            : "bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:scale-105 hover:from-brand-600 hover:to-brand-700"
+                            ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"
+                            : "bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:from-brand-600 hover:to-brand-700"
                         }`}
                       >
                         {isJoined ? "Leave Community" : "Join Community"}

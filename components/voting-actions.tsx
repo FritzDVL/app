@@ -124,7 +124,7 @@ export function VotingActions({
       <Button
         variant={hasUserUpvoted ? "secondary" : "ghost"}
         size="sm"
-        className={`rounded-full p-1 hover:bg-green-100 hover:text-green-600 ${hasUserUpvoted ? "bg-green-100 text-green-600" : ""}`}
+        className={`rounded-full p-1 transition-all duration-300 hover:scale-110 hover:bg-green-100 hover:text-green-600 ${hasUserUpvoted ? "bg-green-100 text-green-600" : ""}`}
         onClick={handleUpvote}
         disabled={loading === "up" || loading === "down" || hasUserDownvoted || !isLoggedIn}
         aria-pressed={hasUserUpvoted}
@@ -136,11 +136,11 @@ export function VotingActions({
           <ArrowUp className="h-4 w-4" />
         )}
       </Button>
-      <span className="text-sm font-medium text-gray-600">{scoreState}</span>
+      <span className="text-sm font-medium text-slate-600">{scoreState}</span>
       <Button
         variant={hasUserDownvoted ? "secondary" : "ghost"}
         size="sm"
-        className={`rounded-full p-1 hover:bg-red-100 hover:text-red-600 ${hasUserDownvoted ? "bg-red-100 text-red-600" : ""}`}
+        className={`rounded-full p-1 transition-all duration-300 hover:scale-110 hover:bg-red-100 hover:text-red-600 ${hasUserDownvoted ? "bg-red-100 text-red-600" : ""}`}
         onClick={handleDownvote}
         disabled={loading === "up" || loading === "down" || hasUserUpvoted || !isLoggedIn}
         aria-pressed={hasUserDownvoted}

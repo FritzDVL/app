@@ -28,7 +28,7 @@ export function ThreadNewButton({ communityAddress, isJoined, className = "" }: 
       onClick={handleCreateThread}
       variant="ghost"
       size="sm"
-      className={`text-brand-600 hover:bg-brand-50 ${className}`}
+      className={`rounded-full text-brand-600 ${className}`}
       disabled={!isJoined}
     >
       <PenTool className="mr-2 h-4 w-4" />
