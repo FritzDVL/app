@@ -36,7 +36,7 @@ export default function CommunitiesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
       <Navbar />
 
       <main className="mx-auto max-w-7xl px-4 py-8">
@@ -44,7 +44,7 @@ export default function CommunitiesPage() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Header Card */}
-            <Card className="mb-8 rounded-xl border border-border bg-card shadow-md">
+            <Card className="mb-8 rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
               <CardContent className="p-8">
                 <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                   <div>
@@ -57,7 +57,7 @@ export default function CommunitiesPage() {
                   </div>
 
                   <Link href="/communities/new">
-                    <Button className="rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-6 py-2 text-base font-semibold text-white shadow-sm hover:from-brand-600 hover:to-brand-700">
+                    <Button className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-8 py-3 text-base font-semibold text-white transition-all duration-300 hover:scale-105 hover:from-brand-600 hover:to-brand-700">
                       Create Community
                     </Button>
                   </Link>
@@ -68,7 +68,7 @@ export default function CommunitiesPage() {
                   <div className="relative max-w-md">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <Input
-                      className="rounded-xl border-slate-200/60 bg-white/70 pl-10 backdrop-blur-sm focus:border-brand-400"
+                      className="rounded-full border-slate-300/60 bg-white pl-10 backdrop-blur-sm transition-all duration-300 focus:border-brand-400 focus:bg-white"
                       placeholder="Search communities..."
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
@@ -92,7 +92,7 @@ export default function CommunitiesPage() {
 
             {/* Error Messages */}
             {isError && (
-              <Card className="mb-6 border-red-200 bg-red-50/80 backdrop-blur-sm">
+              <Card className="mb-6 rounded-2xl border-red-300/60 bg-white backdrop-blur-sm">
                 <CardContent className="p-4">
                   <div className="text-sm text-red-700">
                     {error instanceof Error ? error.message : "Failed to fetch communities"}
@@ -102,7 +102,7 @@ export default function CommunitiesPage() {
             )}
 
             {/* Communities Content */}
-            <Card className="rounded-xl border border-border bg-card shadow-md">
+            <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <h2 className="flex items-center text-2xl font-bold text-slate-900">
@@ -133,7 +133,7 @@ export default function CommunitiesPage() {
                       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
                         {filteredCommunities.map(community => (
                           <Link key={community.id} href={`/communities/${community.address}`} className="group">
-                            <Card className="rounded-xl border border-border bg-white/70">
+                            <Card className="rounded-2xl border border-slate-300/60 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-brand-300/60">
                               <CardContent className="p-6">
                                 <div className="mb-4 flex items-start justify-between">
                                   {community.logo ? (
@@ -145,7 +145,7 @@ export default function CommunitiesPage() {
                                       className="h-12 w-12 rounded-full border border-slate-200 bg-white object-cover"
                                     />
                                   ) : (
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-lg font-semibold text-white shadow-lg">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 text-lg font-semibold text-white">
                                       {community.name.charAt(0).toUpperCase()}
                                     </div>
                                   )}
@@ -185,8 +185,8 @@ export default function CommunitiesPage() {
                       </div>
                     ) : (
                       /* Empty State */
-                      <div className="py-16 text-center">
-                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-100 to-brand-200 shadow-lg">
+                      <div className="py-20 text-center">
+                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-100 to-brand-200">
                           <Users className="h-10 w-10 text-slate-400" />
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-slate-900">
@@ -198,7 +198,7 @@ export default function CommunitiesPage() {
                             : "Be the first to create a community and start building an amazing ecosystem!"}
                         </p>
                         <Link href="/communities/new">
-                          <Button className="rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 px-6 py-2 text-base font-semibold text-white shadow-sm hover:from-brand-600 hover:to-brand-700">
+                          <Button className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-8 py-3 text-base font-semibold text-white transition-all duration-300 hover:scale-105 hover:from-brand-600 hover:to-brand-700">
                             Create Community
                           </Button>
                         </Link>
@@ -211,26 +211,26 @@ export default function CommunitiesPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Community Stats */}
-            <Card className="border-0 bg-white/70 shadow-sm backdrop-blur-sm">
+            <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <h3 className="font-semibold text-slate-900">Community Stats</h3>
               </CardHeader>
               <CardContent className="space-y-4 pt-0">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between rounded-2xl bg-blue-50/70 p-3">
                   <span className="text-slate-600">Total Communities</span>
-                  <span className="font-semibold text-slate-900">{communities.length}</span>
+                  <span className="font-bold text-blue-600">{communities.length}</span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between rounded-2xl bg-green-50/70 p-3">
                   <span className="text-slate-600">Active Members</span>
-                  <span className="font-semibold text-slate-900">
+                  <span className="font-bold text-green-600">
                     {communities.reduce((total, c) => total + c.memberCount, 0).toLocaleString()}
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between rounded-2xl bg-purple-50/70 p-3">
                   <span className="text-slate-600">Total Posts</span>
-                  <span className="font-semibold text-slate-900">
+                  <span className="font-bold text-purple-600">
                     {communities.reduce((total, c) => total + (c.postCount || 0), 0).toLocaleString()}
                   </span>
                 </div>
