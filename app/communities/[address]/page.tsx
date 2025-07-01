@@ -89,24 +89,28 @@ export default function CommunityPage() {
     }
   };
 
+  if (isCommunityLoading || isMembershipLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
+        <Navbar />
+        <div className="flex flex-col items-center justify-center py-24">
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-brand-500"></div>
+          <p className="text-lg font-medium text-slate-600">Loading community...</p>
+          <p className="mt-2 text-sm text-slate-400">Fetching data from Lens Protocol</p>
+        </div>
+      </div>
+    );
+  }
+
   // --- Render ---
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
       <Navbar />
 
       {/* Back to Communities Button */}
       <div className="mx-auto mt-4 max-w-7xl px-4">
         <BackNavigationLink href="/communities">Back to Communities</BackNavigationLink>
       </div>
-
-      {/* Loading State */}
-      {(isCommunityLoading || isMembershipLoading) && (
-        <div className="flex flex-col items-center justify-center py-24">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-brand-500"></div>
-          <p className="text-lg font-medium text-slate-600">Loading community...</p>
-          <p className="mt-2 text-sm text-slate-400">Fetching data from Lens Protocol</p>
-        </div>
-      )}
 
       {/* Main Content */}
       {community && !isCommunityLoading && (
@@ -115,7 +119,7 @@ export default function CommunityPage() {
             {/* Main Content */}
             <div className="lg:col-span-3">
               {/* Community Header Card */}
-              <Card className="mb-8 rounded-xl border border-border bg-card shadow-md">
+              <Card className="mb-8 rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
                 <CardContent className="p-8">
                   <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-6 md:space-y-0">
                     <div className="flex h-[100px] w-[100px] items-center justify-center">
@@ -128,7 +132,7 @@ export default function CommunityPage() {
                           className="h-[100px] w-[100px] rounded-full border border-slate-200 bg-white object-cover"
                         />
                       ) : (
-                        <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-white shadow-lg">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-white">
                           {community.name.charAt(0).toUpperCase()}
                         </div>
                       )}
@@ -151,10 +155,10 @@ export default function CommunityPage() {
                       <Button
                         disabled={!isLoggedIn}
                         onClick={isJoined ? handleLeaveCommunity : handleJoinCommunity}
-                        className={`rounded-full px-8 py-3 font-semibold transition-colors ${
+                        className={`rounded-full px-8 py-3 font-semibold transition-all duration-300 ${
                           isJoined
-                            ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"
-                            : "bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:from-brand-600 hover:to-brand-700"
+                            ? "border border-slate-300 bg-slate-100 text-slate-600 hover:scale-105 hover:bg-slate-200"
+                            : "bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:scale-105 hover:from-brand-600 hover:to-brand-700"
                         }`}
                       >
                         {isJoined ? "Leave Community" : "Join Community"}
@@ -171,7 +175,7 @@ export default function CommunityPage() {
 
               {/* Post Thread Form */}
               {isJoined && (
-                <Card className="mb-8 rounded-xl border border-border bg-card shadow-md">
+                <Card className="mb-8 rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-semibold text-slate-900">Start a Discussion</h3>
@@ -184,25 +188,25 @@ export default function CommunityPage() {
                         placeholder="Thread title..."
                         value={newPost.title}
                         onChange={e => setNewPost({ ...newPost, title: e.target.value })}
-                        className="border-slate-200/60 focus:border-brand-400"
+                        className="rounded-full border-slate-300/60 focus:border-brand-400"
                       />
                       <Textarea
                         placeholder="What's on your mind? Share your thoughts, questions, or ideas..."
                         value={newPost.content}
                         onChange={e => setNewPost({ ...newPost, content: e.target.value })}
-                        className="min-h-[120px] border-slate-200/60 focus:border-brand-400"
+                        className="min-h-[120px] rounded-2xl border-slate-300/60 focus:border-brand-400"
                       />
                       <Input
                         placeholder="Tags (comma separated)"
                         value={newPost.tags}
                         onChange={e => setNewPost({ ...newPost, tags: e.target.value })}
-                        className="border-slate-200/60 focus:border-brand-400"
+                        className="rounded-full border-slate-300/60 focus:border-brand-400"
                       />
                       <div className="flex justify-end space-x-3">
                         <Button variant="ghost" onClick={() => setShowPostForm(false)}>
                           Cancel
                         </Button>
-                        <Button className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 font-semibold text-white hover:from-brand-600 hover:to-brand-700">
+                        <Button className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 font-semibold text-white transition-all duration-300 hover:scale-105 hover:from-brand-600 hover:to-brand-700">
                           Post Thread
                         </Button>
                       </div>
@@ -212,7 +216,7 @@ export default function CommunityPage() {
               )}
 
               {/* Threads Content */}
-              <Card className="rounded-xl border border-border bg-card shadow-md">
+              <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
                 <CardHeader className="pb-4">
                   <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                     <h2 className="flex items-center text-2xl font-bold text-slate-900">
@@ -225,7 +229,7 @@ export default function CommunityPage() {
                         variant={sortBy === "hot" ? "default" : "ghost"}
                         size="sm"
                         onClick={() => setSortBy("hot")}
-                        className="rounded-full"
+                        className="rounded-full transition-all duration-300 hover:scale-105"
                       >
                         <Fire className="mr-2 h-4 w-4" />
                         Hot
@@ -234,7 +238,7 @@ export default function CommunityPage() {
                         variant={sortBy === "new" ? "default" : "ghost"}
                         size="sm"
                         onClick={() => setSortBy("new")}
-                        className="rounded-full"
+                        className="rounded-full transition-all duration-300 hover:scale-105"
                       >
                         <Clock className="mr-2 h-4 w-4" />
                         New
@@ -243,7 +247,7 @@ export default function CommunityPage() {
                         variant={sortBy === "top" ? "default" : "ghost"}
                         size="sm"
                         onClick={() => setSortBy("top")}
-                        className="rounded-full"
+                        className="rounded-full transition-all duration-300 hover:scale-105"
                       >
                         <ArrowUp className="mr-2 h-4 w-4" />
                         Top
@@ -256,10 +260,14 @@ export default function CommunityPage() {
                       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-slate-400" />
                       <Input
                         placeholder="Search threads..."
-                        className="rounded-xl border-slate-200/60 bg-white/70 pl-10 backdrop-blur-sm focus:border-brand-400"
+                        className="rounded-full border-slate-300/60 bg-white pl-10 backdrop-blur-sm transition-all duration-300 focus:border-brand-400 focus:bg-white"
                       />
                     </div>
-                    <Button variant="ghost" size="sm" className="rounded-full">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-full transition-all duration-300 hover:scale-105"
+                    >
                       <Filter className="h-4 w-4" />
                     </Button>
                   </div>
@@ -285,7 +293,7 @@ export default function CommunityPage() {
                       {communityThreads.map(thread => (
                         <Card
                           key={thread.id}
-                          className="rounded-xl border border-border bg-white shadow-md transition-all duration-200 hover:shadow-lg"
+                          className="rounded-2xl border border-slate-300/60 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-brand-300/60"
                         >
                           <CardContent className="p-6">
                             <div className="flex items-start space-x-4">
@@ -369,7 +377,7 @@ export default function CommunityPage() {
             </div>
 
             {/* Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Community Rules */}
               <CommunityRules />
 
