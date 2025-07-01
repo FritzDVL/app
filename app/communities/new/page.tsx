@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { CommunityCreationTips } from "@/components/community-creation-tips";
 import { Navbar } from "@/components/navbar";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Button } from "@/components/ui/button";
@@ -96,23 +97,19 @@ export default function NewCommunityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
       <Navbar />
       <main className="mx-auto max-w-7xl px-4 py-8">
         {/* Header with back button and title */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <BackNavigationLink href="/communities">Back to Communities</BackNavigationLink>
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Create a New Community</h2>
-              <p className="text-sm text-slate-500">Start a new space for your interests</p>
-            </div>
           </div>
         </div>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           {/* Main Content Area */}
           <div className="lg:col-span-3">
-            <Card className="rounded-xl border border-border bg-card shadow-md">
+            <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
               <CardHeader>
                 <h1 className="text-2xl font-bold text-slate-900">Community Details</h1>
                 <p className="text-slate-600">Fill in the details to start your new community</p>
@@ -130,7 +127,7 @@ export default function NewCommunityPage() {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="e.g. Lens Developers"
-                      className="h-12 border-slate-200 text-lg focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                       required
                     />
                   </div>
@@ -144,7 +141,7 @@ export default function NewCommunityPage() {
                       name="image"
                       type="file"
                       accept="image/*"
-                      className="w-full border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      className="w-full rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                       onChange={e => {
                         const file = e.target.files?.[0];
                         setFormData({ ...formData, image: file });
@@ -168,7 +165,7 @@ export default function NewCommunityPage() {
                       onChange={handleChange}
                       placeholder="Describe your community..."
                       required
-                      className="min-h-[80px] w-full rounded-lg border border-slate-200 bg-white/80 p-3 text-base focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      className="min-h-[80px] w-full rounded-2xl border border-slate-300/60 bg-white/80 p-3 text-base backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                     />
                   </div>
                   {/* Admin Address */}
@@ -183,7 +180,7 @@ export default function NewCommunityPage() {
                       onChange={handleChange}
                       placeholder="0x... (your wallet address)"
                       required
-                      className="border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                      className="rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                       disabled={!!account?.address}
                     />
                   </div>
@@ -191,7 +188,7 @@ export default function NewCommunityPage() {
                   <div className="flex justify-end">
                     <Button
                       type="submit"
-                      className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 font-semibold text-white shadow-lg hover:from-brand-600 hover:to-brand-700"
+                      className="rounded-full bg-gradient-to-r from-green-500 to-green-600 px-6 font-semibold text-white hover:from-green-600 hover:to-green-700"
                       disabled={
                         loading ||
                         isCreating ||
@@ -216,33 +213,7 @@ export default function NewCommunityPage() {
           </div>
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card className="rounded-xl border border-border bg-card shadow-md">
-              <CardHeader>
-                <h3 className="text-lg font-semibold text-slate-900">Community Creation Tips</h3>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm text-slate-600">
-                <div className="flex items-start space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Pick a clear, descriptive name</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Choose a relevant category</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Write a concise, inviting description</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Use an emoji to make your community stand out</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-red-500">×</span>
-                  <span>No spam or irrelevant content</span>
-                </div>
-              </CardContent>
-            </Card>
+            <CommunityCreationTips />
           </div>
         </div>
       </main>
