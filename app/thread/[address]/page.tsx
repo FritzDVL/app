@@ -122,7 +122,7 @@ export default function ThreadPage() {
   const { isLoggedIn } = useAuthStore();
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
       <Navbar />
       <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
         {/* Back to Community Link */}
@@ -139,22 +139,22 @@ export default function ThreadPage() {
 
         {/* Main Thread */}
         {thread && typeof replies !== "undefined" && (
-          <Card className="rounded-xl border border-border bg-white/40">
+          <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 {/* Thread Icon/Letter */}
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-xl font-bold text-white shadow-lg">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-xl font-bold text-white">
                   {thread.title.charAt(0).toUpperCase()}
                 </div>
                 {/* Main Content */}
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 flex items-start justify-between">
                     <div>
-                      <h1 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-brand-600">
+                      <h1 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-green-600">
                         {thread.title}
                       </h1>
                       {thread.summary && (
-                        <p className="mt-1 max-w-2xl text-base font-medium italic text-brand-700/90">
+                        <p className="mt-1 max-w-2xl text-base font-medium italic text-green-700/90">
                           {thread.summary}
                         </p>
                       )}
@@ -166,7 +166,7 @@ export default function ThreadPage() {
                       >
                         <Avatar className="h-6 w-6">
                           <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                          <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-xs text-white">
+                          <AvatarFallback className="bg-gradient-to-r from-green-400 to-green-600 text-xs text-white">
                             {thread.author.name[0]}
                           </AvatarFallback>
                         </Avatar>
@@ -180,7 +180,7 @@ export default function ThreadPage() {
                     thread.rootPost.metadata.content && (
                       <div className="my-6 flex flex-col gap-2">
                         <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-                          <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-brand-400"></span>
+                          <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
                           <span>
                             Posted on{" "}
                             {thread.rootPost.timestamp
@@ -192,7 +192,7 @@ export default function ThreadPage() {
                           </span>
                         </div>
                         <div
-                          className="prose prose-lg max-w-none whitespace-pre-line rounded-xl p-5 text-gray-800"
+                          className="prose prose-lg max-w-none whitespace-pre-line rounded-2xl bg-slate-50/50 p-5 text-gray-800"
                           dangerouslySetInnerHTML={{
                             __html: removeTrailingEmptyPTags(thread.rootPost.metadata.content),
                           }}
@@ -203,7 +203,11 @@ export default function ThreadPage() {
                     {Array.isArray(thread.tags) &&
                       thread.tags.length > 0 &&
                       thread.tags.map((tag: string) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
+                        <Badge
+                          key={tag}
+                          variant="outline"
+                          className="rounded-full border-slate-300/60 bg-white/80 text-xs backdrop-blur-sm"
+                        >
                           #{tag}
                         </Badge>
                       ))}
@@ -211,7 +215,7 @@ export default function ThreadPage() {
                 </div>
               </div>
               {/* Actions */}
-              <div className="mt-6 flex items-center justify-between border-t border-brand-200/50 pt-4">
+              <div className="mt-6 flex items-center justify-between border-t border-slate-300/60 pt-4">
                 <div className="flex items-center gap-4 text-slate-500">
                   <div className="flex items-center gap-1">
                     <ReplyIcon className="h-4 w-4" />
@@ -244,7 +248,7 @@ export default function ThreadPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-brand-600 hover:text-brand-700"
+                  className="text-green-600 hover:text-green-700"
                   onClick={() => setReplyingTo("main")}
                   disabled={!isLoggedIn}
                 >
