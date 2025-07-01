@@ -5,7 +5,7 @@ import { Sparkles } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="mb-12 text-center">
+    <section className="my-6 mb-12 text-center">
       <div className="mb-6 inline-flex items-center rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm">
         <Sparkles className="mr-2 h-4 w-4 text-brand-500" />
         Powered by Lens Protocol

@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { LoginConnectButton } from "@/components/login-connect-button";
 import { LoginLensAccountsDialog } from "@/components/login-lens-accounts-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLogout } from "@/hooks/use-logout";
 import { useAuthStore } from "@/stores/auth-store";
-import { Bell, Home, LogOut, Menu, Plus, RefreshCw, Search, User, Users, X } from "lucide-react";
+import { Home, LogOut, Menu, Plus, RefreshCw, Search, User, Users, X } from "lucide-react";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -47,17 +46,6 @@ export function Navbar() {
           </span>
         </Link>
 
-        {/* Search Bar - Desktop */}
-        <div className="mx-8 hidden max-w-md flex-1 md:flex">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-slate-400" />
-            <Input
-              placeholder="Search forums, threads, users..."
-              className="rounded-full border-slate-200/60 bg-white/80 pl-10 backdrop-blur-sm transition-all duration-300 focus:border-brand-300 focus:bg-white focus:shadow-lg focus:shadow-slate-200/20"
-            />
-          </div>
-        </div>
-
         {/* Desktop Actions */}
         <div className="hidden items-center space-x-3 md:flex">
           <Link href="/">
@@ -79,33 +67,13 @@ export function Navbar() {
               variant={pathname === "/communities" ? "default" : "ghost"}
               size="sm"
               className={`rounded-full px-4 py-2 transition-all duration-300 ${
-                pathname === "/communities"
-                  ? "bg-brand-600 text-white shadow-lg shadow-brand-200/50 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-200/60"
-                  : "hover:bg-slate-100/80 hover:shadow-md hover:shadow-slate-200/50"
+                pathname === "/communities" ? "bg-orange-600 text-white shadow-lg shadow-orange-200/50" : ""
               }`}
             >
               <Users className="mr-2 h-4 w-4" />
               Communities
             </Button>
           </Link>
-
-          {/* Create Thread Button */}
-          <Button className="rounded-full bg-gradient-to-r from-brand-600 to-brand-700 px-4 py-2 text-white shadow-lg shadow-brand-200/50 transition-all duration-300 hover:from-brand-700 hover:to-brand-800 hover:shadow-xl hover:shadow-brand-200/60">
-            <Plus className="mr-2 h-4 w-4" />
-            Create
-          </Button>
-
-          {/* Notification Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative rounded-full transition-all duration-300 hover:bg-slate-100/80 hover:shadow-md hover:shadow-slate-200/50"
-          >
-            <Bell className="h-5 w-5" />
-            <Badge className="absolute -right-1 -top-1 flex h-5 w-5 animate-pulse items-center justify-center bg-red-500 p-0 text-xs">
-              3
-            </Badge>
-          </Button>
 
           {/* Conditional rendering based on user connection */}
           {account ? (
@@ -193,8 +161,8 @@ export function Navbar() {
                 variant="ghost"
                 className={`w-full justify-start rounded-full transition-all duration-300 ${
                   pathname === "/communities"
-                    ? "bg-brand-600 text-white shadow-md hover:bg-brand-700"
-                    : "hover:bg-slate-100/80 hover:shadow-sm"
+                    ? "bg-orange-600 text-white shadow-md hover:bg-orange-700"
+                    : "hover:bg-orange-100/80 hover:text-orange-700 hover:shadow-sm"
                 }`}
               >
                 <Users className="mr-2 h-4 w-4" />
