@@ -32,15 +32,17 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Coins, Flag, Reply as ReplyIcon, Share } from "lucide-react";
 
 export default function ThreadPage() {
+  // 1. Hooks and state
   const params = useParams();
   const { address: threadAddress } = params;
-
-  // State handling
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
   const [cursor, setCursor] = useState<string | null>(null);
+  const { createReply } = useReplyCreate();
+  const { isLoggedIn } = useAuthStore();
+  const queryClient = useQueryClient();
 
-  // Fetch thread with TanStack Query
+  // 2. Data fetching
   const { data: thread, isLoading: loading } = useQuery({
     queryKey: ["thread", threadAddress],
     queryFn: () => fetchThread(String(threadAddress)),
@@ -49,19 +51,6 @@ export default function ThreadPage() {
     refetchOnWindowFocus: true,
   });
 
-  // Pagination handlers for replies
-  const handlePrev = () => {
-    if (replies && replies.pageInfo && replies.pageInfo.prev) {
-      setCursor(replies.pageInfo.prev);
-    }
-  };
-  const handleNext = () => {
-    if (replies && replies.pageInfo && replies.pageInfo.next) {
-      setCursor(replies.pageInfo.next);
-    }
-  };
-
-  // Fetch replies with TanStack Query (only after thread is loaded)
   const { data: replies = { replies: [], pageInfo: {} }, isLoading: loadingReplies } = useQuery<
     PaginatedRepliesResult,
     Error,
@@ -77,26 +66,30 @@ export default function ThreadPage() {
         return { replies: [], pageInfo: flatReplies.pageInfo };
       }
       const rootPostId = String(thread.rootPost.id);
-
-      // Filter out the root post if present
       const repliesOnly = flatReplies.items.filter(r => r.id !== rootPostId);
-
-      // Sort by createdAt (oldest to newest)
       repliesOnly.sort((a, b) => {
         const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return dateA - dateB;
       });
-
-      // No flattening, just return the straight list
       return {
         replies: repliesOnly,
         pageInfo: flatReplies.pageInfo,
       };
     },
   });
-  const queryClient = useQueryClient();
 
+  // 3. Handlers
+  const handlePrev = () => {
+    if (replies && replies.pageInfo && replies.pageInfo.prev) {
+      setCursor(replies.pageInfo.prev);
+    }
+  };
+  const handleNext = () => {
+    if (replies && replies.pageInfo && replies.pageInfo.next) {
+      setCursor(replies.pageInfo.next);
+    }
+  };
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) {
       throw new Error("Thread or root post not found");
@@ -118,9 +111,7 @@ export default function ThreadPage() {
     }
   };
 
-  const { createReply } = useReplyCreate();
-  const { isLoggedIn } = useAuthStore();
-
+  // 4. Render
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
       <Navbar />
@@ -227,7 +218,7 @@ export default function ThreadPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" className="rounded-full" disabled>
+                  <Button variant="ghost" size="sm">
                     <Share className="mr-2 h-4 w-4" />
                     Share
                   </Button>
