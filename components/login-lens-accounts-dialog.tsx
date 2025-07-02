@@ -64,10 +64,10 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent className="border-0 bg-white/80 shadow-xl backdrop-blur-lg sm:max-w-md">
+      <DialogContent className="border-0 bg-white/90 shadow-lg backdrop-blur-md sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-gray-900">Connect your Lens account</DialogTitle>
-          <DialogDescription className="text-gray-600">Select a Lens profile to continue</DialogDescription>
+          <DialogTitle className="text-xl font-semibold text-slate-900">Connect your Lens account</DialogTitle>
+          <DialogDescription className="text-slate-600">Select a Lens profile to continue</DialogDescription>
         </DialogHeader>
         <div className="py-4">
           {isLoadingAccounts ? (
@@ -76,53 +76,74 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
             </div>
           ) : lensAccounts.length === 0 ? (
             <div className="py-6 text-center">
-              <p className="text-gray-600">No Lens profiles associated with your wallet were found.</p>
-              <p className="mt-2">
-                <a
-                  href="https://hey.xyz/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brand-600 underline transition-colors hover:text-brand-700"
-                >
-                  Create a profile on Lens
-                </a>
-              </p>
+              <div className="rounded-lg border border-slate-200 bg-slate-50/80 p-4">
+                <p className="font-medium text-slate-900">No Lens profiles found</p>
+                <p className="mt-1 text-sm text-slate-600">No Lens profiles associated with your wallet were found.</p>
+                <div className="mt-4">
+                  <a
+                    href="https://hey.xyz/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-brand-600 hover:to-brand-700"
+                  >
+                    Create a profile on Lens
+                  </a>
+                </div>
+              </div>
             </div>
           ) : (
-            <div className="max-h-[300px] space-y-2 overflow-y-auto">
-              {lensAccounts.map(lensAccount => (
-                <div
-                  key={lensAccount.account.address}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white/90 p-3 shadow-sm transition-all duration-200 hover:bg-white"
-                >
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 ring-2 ring-brand-200">
-                      <Image
-                        src={lensAccount.account.metadata?.picture || "/placeholder-user.jpg"}
-                        alt={lensAccount.account.username?.value || "Lens Profile"}
-                        className="rounded-full object-cover"
-                        width={40}
-                        height={40}
-                      />
-                    </Avatar>
-                    <div>
-                      <p className="font-medium text-gray-900">{lensAccount?.account?.metadata?.name}</p>
-                      <p className="text-sm text-gray-600">@{lensAccount.account.username?.value}</p>
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-2 text-white shadow-sm hover:from-brand-600 hover:to-brand-700"
-                    onClick={() => handleLogin(lensAccount.account.address)}
-                    disabled={loggingIn === lensAccount.account.address}
+            <div className="space-y-3">
+              <div className="rounded-lg border border-brand-200 bg-gradient-to-br from-brand-50 to-brand-100/50 p-3">
+                <p className="text-sm font-medium text-slate-900">
+                  {lensAccounts.length} profile{lensAccounts.length === 1 ? "" : "s"} found
+                </p>
+                <p className="text-xs text-slate-600">Choose a profile to continue with LensForum</p>
+              </div>
+              <div className="max-h-[300px] space-y-2 overflow-y-auto">
+                {lensAccounts.map(lensAccount => (
+                  <div
+                    key={lensAccount.account.address}
+                    className="flex items-center justify-between rounded-lg border border-slate-200 bg-white/90 p-3 shadow-sm transition-all duration-200 hover:bg-white hover:shadow-md"
                   >
-                    {loggingIn === lensAccount.account.address ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : null}
-                    Login
-                  </Button>
-                </div>
-              ))}
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10 ring-2 ring-brand-200">
+                        {lensAccount.account.metadata?.picture ? (
+                          <Image
+                            src={lensAccount.account.metadata.picture}
+                            alt={lensAccount.account.username?.value || "Lens Profile"}
+                            className="rounded-full object-cover"
+                            width={40}
+                            height={40}
+                          />
+                        ) : (
+                          <span className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-r from-brand-200 to-brand-400 text-lg font-semibold text-white">
+                            {lensAccount.account.username?.value?.[5]?.toUpperCase() || "?"}
+                          </span>
+                        )}
+                      </Avatar>
+                      <div>
+                        <p className="font-medium text-slate-900">{lensAccount?.account?.metadata?.name}</p>
+                        <p className="text-sm text-slate-600">@{lensAccount.account.username?.value}</p>
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      className="bg-gradient-to-r from-brand-500 to-brand-600 font-semibold text-white hover:from-brand-600 hover:to-brand-700"
+                      onClick={() => handleLogin(lensAccount.account.address)}
+                      disabled={loggingIn === lensAccount.account.address}
+                    >
+                      {loggingIn === lensAccount.account.address ? (
+                        <div className="flex items-center gap-2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
+                          Connecting...
+                        </div>
+                      ) : (
+                        "Connect"
+                      )}
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

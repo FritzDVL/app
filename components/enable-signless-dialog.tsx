@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { enableSignless } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { useSessionClient } from "@lens-protocol/react";
-import { Loader2 } from "lucide-react";
+import { X, Zap } from "lucide-react";
 import { useWalletClient } from "wagmi";
 
 interface EnableSignlessDialogProps {
@@ -40,39 +40,69 @@ export function EnableSignlessDialog({ isOpen, onClose }: EnableSignlessDialogPr
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent className="border-0 bg-white/80 shadow-xl backdrop-blur-lg sm:max-w-md">
+      <DialogContent className="border-0 bg-white/90 shadow-lg backdrop-blur-md sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-gray-900">Enable Signless Experience</DialogTitle>
-          <DialogDescription className="text-gray-600">
+          <DialogTitle className="text-xl font-semibold text-slate-900">Enable Signless Experience</DialogTitle>
+          <DialogDescription className="text-slate-600">
             Enjoy a seamless Lens experience without signing every transaction. You can always change this later in your
             settings.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col items-center gap-4 py-4">
-          <div className="flex items-center gap-3">
-            <span className="font-medium text-gray-900">Signless Mode</span>
-            <span className="ml-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-600">Disabled</span>
+
+        {/* Feature Preview */}
+        <div className="space-y-4 py-4">
+          <div className="rounded-lg border border-brand-200 bg-gradient-to-br from-brand-50 to-brand-100/50 p-4">
+            <div className="flex items-start gap-3">
+              <div className="rounded-full bg-brand-500 p-2">
+                <Zap className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-slate-900">Lightning Fast Actions</h3>
+                <p className="mt-1 text-sm text-slate-600">
+                  Post, comment, and interact without waiting for wallet confirmations
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-2 text-white shadow-sm hover:from-brand-600 hover:to-brand-700"
-              onClick={handleEnableSignless}
-              disabled={isEnableLoading}
-            >
-              {isEnableLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Enable Signless
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="rounded-full border-gray-300 px-4 py-2 text-gray-700"
-              onClick={onClose}
-              disabled={isEnableLoading}
-            >
-              Continue without signless
-            </Button>
+
+          {/* Status Badge */}
+          <div className="flex items-center justify-center gap-2 rounded-lg bg-slate-100/80 p-3">
+            <span className="font-medium text-slate-900">Signless Mode:</span>
+            <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-medium text-slate-600">
+              Currently Disabled
+            </span>
           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1 border-slate-200 bg-white/70 text-slate-700"
+            onClick={onClose}
+            disabled={isEnableLoading}
+          >
+            <X className="mr-2 h-4 w-4" />
+            Skip for now
+          </Button>
+          <Button
+            className="flex-1 bg-gradient-to-r from-brand-500 to-brand-600 font-semibold text-white hover:from-brand-600 hover:to-brand-700"
+            onClick={handleEnableSignless}
+            disabled={isEnableLoading}
+          >
+            {isEnableLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
+                Enabling...
+              </div>
+            ) : (
+              <>
+                <Zap className="mr-2 h-4 w-4" />
+                Enable Signless
+              </>
+            )}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
