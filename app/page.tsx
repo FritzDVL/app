@@ -197,7 +197,7 @@ export default function HomePage() {
                           <div className="min-w-0 flex-1 space-y-4">
                             <div className="flex items-center gap-3">
                               <Link
-                                href={`/user/${thread.author.username}`}
+                                href={`/u/${thread.author.username.replace("lens/", "")}`}
                                 className="flex items-center gap-3 text-sm text-slate-600 transition-colors hover:text-slate-900"
                               >
                                 <div className="relative">
@@ -344,7 +344,7 @@ export default function HomePage() {
               </div>
               <div className="space-y-4">
                 {featuredCommunities.slice(0, 6).map(community => (
-                  <Link key={community.id} href={`/community/${community.address}`} className="group block">
+                  <Link key={community.id} href={`/communities/${community.address}`} className="group block">
                     <div className="-m-3 flex items-center gap-4 rounded-2xl p-3 transition-all hover:bg-slate-100/80">
                       <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-sm font-semibold text-white">
                         {community.logo ? (
