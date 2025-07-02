@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useSignlessStatus } from "@/hooks/use-signless-status";
 import { enableSignless } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { useSessionClient } from "@lens-protocol/react";
@@ -17,7 +16,6 @@ interface EnableSignlessDialogProps {
 
 export function EnableSignlessDialog({ isOpen, onClose }: EnableSignlessDialogProps) {
   const [isEnableLoading, setIsEnableLoading] = useState(false);
-  const { isLoading, enabled } = useSignlessStatus();
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
 
@@ -53,21 +51,17 @@ export function EnableSignlessDialog({ isOpen, onClose }: EnableSignlessDialogPr
         <div className="flex flex-col items-center gap-4 py-4">
           <div className="flex items-center gap-3">
             <span className="font-medium text-gray-900">Signless Mode</span>
-            {enabled ? (
-              <span className="ml-2 rounded-full bg-green-100 px-2 py-1 text-xs text-green-700">Enabled</span>
-            ) : (
-              <span className="ml-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-600">Disabled</span>
-            )}
+            <span className="ml-2 rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-600">Disabled</span>
           </div>
           <div className="flex gap-2">
             <Button
               size="sm"
               className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-2 text-white shadow-sm hover:from-brand-600 hover:to-brand-700"
               onClick={handleEnableSignless}
-              disabled={isLoading || enabled || isEnableLoading}
+              disabled={isEnableLoading}
             >
-              {isLoading || isEnableLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {enabled ? "Enabled" : "Enable Signless"}
+              {isEnableLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Enable Signless
             </Button>
             <Button
               size="sm"
