@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { EnableSignlessDialog } from "@/components/enable-signless-dialog";
 import { LoginLensAccountsDialog } from "@/components/login-lens-accounts-dialog";
+import { useSignlessStatus } from "@/hooks/use-signless-status";
 import { useAuthStore } from "@/stores/auth-store";
 import { ConnectKitProvider } from "connectkit";
 import { useAccount } from "wagmi";
@@ -26,6 +28,8 @@ function ConnectMonitor() {
 // Provider component that wraps the application
 export function ConnectProvider({ children }: { children: React.ReactNode }) {
   const [isLoginLensDialogOpen, setIsLoginLensDialogOpen] = useState(false);
+  const [isEnableSignlessDialogOpen, setIsEnableSignlessDialogOpen] = useState(false);
+  const { enabled: isSignlessEnabled, isLoading: isSignlessLoading } = useSignlessStatus();
 
   const { setWalletAddress, setAccount, setLensSession } = useAuthStore();
 
@@ -42,14 +46,23 @@ export function ConnectProvider({ children }: { children: React.ReactNode }) {
     setWalletAddress(walletAddress);
   };
 
-  const handleClose = () => {
+  const handleCloseLoginLensDialog = () => {
     setIsLoginLensDialogOpen(false);
+    // Only open signless dialog if not already enabled and not loading
+    if (!isSignlessEnabled && !isSignlessLoading) {
+      setIsEnableSignlessDialogOpen(true);
+    }
+  };
+
+  const handleCloseEnableSignlessDialog = () => {
+    setIsEnableSignlessDialogOpen(false);
   };
 
   return (
     <ConnectKitProvider onConnect={({ address }) => handleConnect(address ?? "")} onDisconnect={handleDisconnect}>
       <ConnectMonitor />
-      <LoginLensAccountsDialog isOpen={isLoginLensDialogOpen} onClose={handleClose} />
+      <LoginLensAccountsDialog isOpen={isLoginLensDialogOpen} onClose={handleCloseLoginLensDialog} />
+      <EnableSignlessDialog isOpen={isEnableSignlessDialogOpen} onClose={handleCloseEnableSignlessDialog} />
       {children}
     </ConnectKitProvider>
   );
