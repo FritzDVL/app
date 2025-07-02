@@ -110,6 +110,12 @@ export default function ThreadPage() {
       }
     }
   };
+  const handleShare = () => {
+    if (!thread) return;
+    const url = `https://lens-forum.vercel.app/thread/${thread.address}`;
+    const shareText = `Check out this thread on LensForum: "${thread.title}"\n\n`;
+    window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
+  };
 
   // 4. Render
   return (
@@ -218,7 +224,7 @@ export default function ThreadPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={handleShare}>
                     <Share className="mr-2 h-4 w-4" />
                     Share
                   </Button>
