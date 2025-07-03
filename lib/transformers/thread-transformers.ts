@@ -26,7 +26,7 @@ export async function transformFeedToThread(
   }
 
   return {
-    id: feed.address,
+    id: threadRecord.id,
     address: feed.address,
     community: threadRecord.community?.lens_group_address as Address,
     title: feed.metadata?.name || `Thread ${feed.address.slice(-6)}`,
@@ -42,7 +42,7 @@ export async function transformFeedToThread(
     upvotes: Math.floor(Math.random() * 100) + 10, // TODO: Get real voting data
     downvotes: Math.floor(Math.random() * 10),
     // repliesCount: threadRecord.replies_count || 0,
-    repliesCount: 0,
+    repliesCount: threadRecord.replies_count || 0,
     timeAgo: getTimeAgo(new Date(threadRecord.created_at)),
     tags: [], // TODO: Extract tags from feed metadata
     created_at: threadRecord.created_at,

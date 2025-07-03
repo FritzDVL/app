@@ -96,14 +96,14 @@ export default function ThreadPage() {
       throw new Error("Thread or root post not found");
     }
     if (replyingTo === "main" && replyContent["main"]) {
-      const reply = await createReply(thread?.rootPost?.id, replyContent["main"], threadAddress as Address);
+      const reply = await createReply(thread?.rootPost?.id, replyContent["main"], threadAddress as Address, thread.id);
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, main: "" }));
         queryClient.invalidateQueries({ queryKey: ["replies", threadAddress] });
       }
     } else if (replyingTo && replyContent[replyingTo]) {
-      const reply = await createReply(replyingTo, replyContent[replyingTo], threadAddress as Address);
+      const reply = await createReply(replyingTo, replyContent[replyingTo], threadAddress as Address, thread.id);
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, [replyingTo]: "" }));

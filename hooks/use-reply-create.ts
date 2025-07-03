@@ -1,6 +1,7 @@
-import { lensMainnet } from "@/lib/chains/lens-mainnet";
+// import { lensMainnet } from "@/lib/chains/lens-mainnet";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { storageClient } from "@/lib/grove";
+import { incrementThreadRepliesCount } from "@/lib/supabase";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Address, Reply as ReplyType } from "@/types/common";
@@ -63,12 +64,32 @@ export function useReplyCreate() {
     });
   }
 
+  /**
+   * Increments replies_count for a thread in community_threads by threadId.
+   * Does not throw if increment fails.
+   */
+  async function safeIncrementRepliesCount(threadId?: string) {
+    if (!threadId) return;
+    try {
+      await incrementThreadRepliesCount(threadId);
+    } catch (e) {
+      // Optionally log or toast error, but don't block reply creation
+      console.error("Failed to increment replies_count", e);
+    }
+  }
+
   // --- Main function ---
-  async function createReply(to: string, content: string, feedAddress: Address): Promise<ReplyType | null> {
+  async function createReply(
+    to: string,
+    content: string,
+    feedAddress: Address,
+    threadId: string,
+  ): Promise<ReplyType | null> {
     const metadata = getReplyMetadata(content);
     const replyUri = await uploadReplyMetadata(metadata);
     const replyPost = await createReplyOnLens(replyUri, to, feedAddress);
     const reply = buildReplyObject(replyPost);
+    await safeIncrementRepliesCount(threadId);
     return reply;
   }
 

@@ -241,4 +241,5 @@ export interface CommunityThreadSupabase {
   author: string;
   created_at: string;
   updated_at: string;
+  replies_count: number;
 }
