@@ -103,7 +103,7 @@ export function ThreadReplyCard({
   );
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" id={reply.id}>
       <Card className="rounded-xl border bg-white/80 shadow-sm">
         <CardContent className="p-3">
           <div className="flex items-start gap-2">
