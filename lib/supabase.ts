@@ -1,6 +1,7 @@
 "use server";
 
 import { Address } from "@/types/common";
+import type { ForumStats } from "@/types/common";
 import { CommunitySupabase, CommunityThreadSupabase, Database } from "@/types/supabase";
 import { createClient } from "@supabase/supabase-js";
 
@@ -298,4 +299,27 @@ export async function decrementCommunityMembersCount(communityId: string): Promi
   if (error) {
     throw new Error(`Failed to decrement members_count: ${error.message}`);
   }
+}
+
+/**
+ * Fetches forum-wide stats: total members, total threads, and total communities.
+ * @returns ForumStats object
+ */
+export async function fetchForumStats(): Promise<ForumStats> {
+  // Get total members and total communities in one query
+  const { data: communitiesAgg, error: communitiesError } = await supabase
+    .from("communities")
+    .select("count:id,sum:members_count")
+    .single();
+  if (communitiesError) throw new Error(`Failed to fetch communities stats: ${communitiesError.message}`);
+  const members = Number(communitiesAgg?.sum ?? 0);
+  const communities = Number(communitiesAgg?.count ?? 0);
+
+  // Get total threads in one query
+  const { count: threads, error: threadsError } = await supabase
+    .from("community_threads")
+    .select("id", { count: "exact", head: true });
+  if (threadsError) throw new Error(`Failed to fetch total threads: ${threadsError.message}`);
+
+  return { members, threads: threads ?? 0, communities };
 }
