@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { persistWalletAndAccountToCookie } from "@/app/actions/cookies";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -55,7 +54,6 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
     try {
       await login(lensAcc, () => {
         onClose();
-        persistWalletAndAccountToCookie(address as Address, lensAcc as Address);
       });
     } catch (error) {
       console.error("Error logging in:", error);
