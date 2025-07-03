@@ -59,6 +59,7 @@ export function useReplyCreate() {
       username: account?.username?.value || "",
       avatar: account?.metadata?.picture,
       reputation: account?.score || 0,
+      address: replyPost.author.address,
     });
   }
 
