@@ -275,3 +275,27 @@ export async function incrementThreadRepliesCount(threadId: string): Promise<voi
     throw new Error(`Failed to increment replies_count: ${error.message}`);
   }
 }
+
+/**
+ * Increments the members_count for a community by its id using the increment_community_members_count function
+ * @param communityId - The community's id (uuid)
+ * @returns void
+ */
+export async function incrementCommunityMembersCount(communityId: string): Promise<void> {
+  const { error } = await supabase.rpc("increment_community_members_count", { comm_id: communityId });
+  if (error) {
+    throw new Error(`Failed to increment members_count: ${error.message}`);
+  }
+}
+
+/**
+ * Decrements the members_count for a community by its id using the decrement_community_members_count function
+ * @param communityId - The community's id (uuid)
+ * @returns void
+ */
+export async function decrementCommunityMembersCount(communityId: string): Promise<void> {
+  const { error } = await supabase.rpc("decrement_community_members_count", { comm_id: communityId });
+  if (error) {
+    throw new Error(`Failed to decrement members_count: ${error.message}`);
+  }
+}

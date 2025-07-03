@@ -33,6 +33,7 @@ export type Database = {
           created_at: string;
           id: string;
           lens_group_address: string;
+          members_count: number;
           name: string;
           updated_at: string;
         };
@@ -40,6 +41,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           lens_group_address: string;
+          members_count?: number;
           name: string;
           updated_at?: string;
         };
@@ -47,6 +49,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           lens_group_address?: string;
+          members_count?: number;
           name?: string;
           updated_at?: string;
         };
@@ -98,9 +101,17 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      decrement_community_members_count: {
+        Args: { comm_id: string };
+        Returns: undefined;
+      };
       get_community_thread_count: {
         Args: { community_uuid: string };
         Returns: number;
+      };
+      increment_community_members_count: {
+        Args: { comm_id: string };
+        Returns: undefined;
       };
       increment_replies_count: {
         Args: { thread_id: string };
