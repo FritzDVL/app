@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CommunityCreationTips } from "@/components/community-creation-tips";
 import { Navbar } from "@/components/navbar";
+import { ProtectedRoute } from "@/components/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -97,126 +98,128 @@ export default function NewCommunityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
-      <Navbar />
-      <main className="mx-auto max-w-7xl px-4 py-8">
-        {/* Header with back button and title */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <BackNavigationLink href="/communities">Back to Communities</BackNavigationLink>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
+        <Navbar />
+        <main className="mx-auto max-w-7xl px-4 py-8">
+          {/* Header with back button and title */}
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <BackNavigationLink href="/communities">Back to Communities</BackNavigationLink>
+            </div>
           </div>
-        </div>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-          {/* Main Content Area */}
-          <div className="lg:col-span-3">
-            <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
-              <CardHeader>
-                <h1 className="text-2xl font-bold text-slate-900">Community Details</h1>
-                <p className="text-slate-600">Fill in the details to start your new community</p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-base font-medium text-slate-900">
-                      Community Name
-                    </Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="e.g. Lens Developers"
-                      className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                      required
-                    />
-                  </div>
-                  {/* Image Upload (replaces Emoji) */}
-                  <div className="space-y-2">
-                    <Label htmlFor="image" className="text-base font-medium text-slate-900">
-                      Community Image (optional)
-                    </Label>
-                    <Input
-                      id="image"
-                      name="image"
-                      type="file"
-                      accept="image/*"
-                      className="w-full rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                      onChange={e => {
-                        const file = e.target.files?.[0];
-                        setFormData({ ...formData, image: file });
-                      }}
-                    />
-                    {formData.image && (
-                      <div className="mt-2">
-                        <span className="text-xs text-slate-500">Selected: {formData.image.name}</span>
-                      </div>
-                    )}
-                  </div>
-                  {/* Description */}
-                  <div className="space-y-2">
-                    <Label htmlFor="description" className="text-base font-medium text-slate-900">
-                      Description
-                    </Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      placeholder="Describe your community..."
-                      required
-                      className="min-h-[80px] w-full rounded-2xl border border-slate-300/60 bg-white/80 p-3 text-base backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                    />
-                  </div>
-                  {/* Admin Address */}
-                  <div className="space-y-2">
-                    <Label htmlFor="adminAddress" className="text-base font-medium text-slate-900">
-                      Admin Address
-                    </Label>
-                    <Input
-                      id="adminAddress"
-                      name="adminAddress"
-                      value={formData.adminAddress}
-                      onChange={handleChange}
-                      placeholder="0x... (your wallet address)"
-                      required
-                      className="rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                      disabled={!!account?.address}
-                    />
-                  </div>
-                  {error && <div className="text-sm text-red-600">{error}</div>}
-                  <div className="flex justify-end">
-                    <Button
-                      type="submit"
-                      className="rounded-full bg-gradient-to-r from-green-500 to-green-600 px-6 font-semibold text-white hover:from-green-600 hover:to-green-700"
-                      disabled={
-                        loading ||
-                        isCreating ||
-                        !formData.name.trim() ||
-                        !formData.description.trim() ||
-                        !formData.adminAddress.trim()
-                      }
-                    >
-                      {loading || isCreating ? (
-                        <div className="flex items-center gap-2">
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
-                          Creating...
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+            {/* Main Content Area */}
+            <div className="lg:col-span-3">
+              <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
+                <CardHeader>
+                  <h1 className="text-2xl font-bold text-slate-900">Community Details</h1>
+                  <p className="text-slate-600">Fill in the details to start your new community</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Name */}
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-base font-medium text-slate-900">
+                        Community Name
+                      </Label>
+                      <Input
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="e.g. Lens Developers"
+                        className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                        required
+                      />
+                    </div>
+                    {/* Image Upload (replaces Emoji) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="image" className="text-base font-medium text-slate-900">
+                        Community Image (optional)
+                      </Label>
+                      <Input
+                        id="image"
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                        className="w-full rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          setFormData({ ...formData, image: file });
+                        }}
+                      />
+                      {formData.image && (
+                        <div className="mt-2">
+                          <span className="text-xs text-slate-500">Selected: {formData.image.name}</span>
                         </div>
-                      ) : (
-                        <>Create Community</>
                       )}
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
+                    </div>
+                    {/* Description */}
+                    <div className="space-y-2">
+                      <Label htmlFor="description" className="text-base font-medium text-slate-900">
+                        Description
+                      </Label>
+                      <Textarea
+                        id="description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="Describe your community..."
+                        required
+                        className="min-h-[80px] w-full rounded-2xl border border-slate-300/60 bg-white/80 p-3 text-base backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                      />
+                    </div>
+                    {/* Admin Address */}
+                    <div className="space-y-2">
+                      <Label htmlFor="adminAddress" className="text-base font-medium text-slate-900">
+                        Admin Address
+                      </Label>
+                      <Input
+                        id="adminAddress"
+                        name="adminAddress"
+                        value={formData.adminAddress}
+                        onChange={handleChange}
+                        placeholder="0x... (your wallet address)"
+                        required
+                        className="rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                        disabled={!!account?.address}
+                      />
+                    </div>
+                    {error && <div className="text-sm text-red-600">{error}</div>}
+                    <div className="flex justify-end">
+                      <Button
+                        type="submit"
+                        className="rounded-full bg-gradient-to-r from-green-500 to-green-600 px-6 font-semibold text-white hover:from-green-600 hover:to-green-700"
+                        disabled={
+                          loading ||
+                          isCreating ||
+                          !formData.name.trim() ||
+                          !formData.description.trim() ||
+                          !formData.adminAddress.trim()
+                        }
+                      >
+                        {loading || isCreating ? (
+                          <div className="flex items-center gap-2">
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
+                            Creating...
+                          </div>
+                        ) : (
+                          <>Create Community</>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+            {/* Sidebar */}
+            <div className="space-y-6">
+              <CommunityCreationTips />
+            </div>
           </div>
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <CommunityCreationTips />
-          </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </ProtectedRoute>
   );
 }
