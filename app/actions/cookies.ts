@@ -17,7 +17,10 @@ export async function persistWalletAndAccountToCookie(wallet: Address, lensAccou
   });
 }
 
-export async function getWalletAndAccountFromCookie() {
+export async function getWalletAndAccountFromCookie(): Promise<{
+  walletAddress: Address;
+  lensAccountAddress: Address;
+} | null> {
   const cookieStore = await cookies();
   const session = cookieStore.get("lensforum-session");
   if (!session) return null;
