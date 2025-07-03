@@ -25,6 +25,7 @@ import { useLeaveCommunity } from "@/hooks/use-leave-community";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchThreads } from "@/lib/fetchers/threads";
 import { useAuthStore } from "@/stores/auth-store";
+import { Community } from "@/types/common";
 import { postId } from "@lens-protocol/react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUp, Clock, Filter, FlameIcon as Fire, MessageCircle, Search, Users } from "lucide-react";
@@ -64,8 +65,8 @@ export default function CommunityPage() {
     updateIsMember,
   } = useCommunityMembership(communityAddress);
 
-  const joinCommunity = useJoinCommunity(communityAddress);
-  const leaveCommunity = useLeaveCommunity(communityAddress);
+  const joinCommunity = useJoinCommunity(community as Community);
+  const leaveCommunity = useLeaveCommunity(community as Community);
   const { isLoggedIn } = useAuthStore();
 
   const handleLeaveCommunity = async () => {

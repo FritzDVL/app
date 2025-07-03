@@ -1,4 +1,5 @@
-import { useCommunityMembership } from "@/hooks/use-community-membership";
+import { decrementCommunityMembersCount } from "@/lib/supabase";
+import { Community } from "@/types/common";
 import { evmAddress } from "@lens-protocol/client";
 import { leaveGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
@@ -10,7 +11,7 @@ import { useWalletClient } from "wagmi";
  * Custom hook to leave a Lens Protocol community.
  * Handles wallet interaction, membership state, and toast feedback.
  */
-export function useLeaveCommunity(communityAddress: string) {
+export function useLeaveCommunity(community: Community) {
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
 
@@ -24,10 +25,11 @@ export function useLeaveCommunity(communityAddress: string) {
     const toastIsLeaving = toast.loading("Leaving community...");
     try {
       const result = await leaveGroup(sessionClient.data, {
-        group: evmAddress(communityAddress),
+        group: evmAddress(community.address),
       }).andThen(handleOperationWith(walletClient.data));
 
       if (result.isOk()) {
+        await decrementCommunityMembersCount(community.id);
         toast.success("You have left the community!");
       } else {
         throw new Error(result.error.message);
