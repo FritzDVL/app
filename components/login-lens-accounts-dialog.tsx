@@ -67,7 +67,7 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
       <DialogContent className="border-0 bg-white/90 shadow-lg backdrop-blur-md sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-slate-900">Connect your Lens account</DialogTitle>
-          <DialogDescription className="text-slate-600">Select a Lens profile to continue</DialogDescription>
+          <DialogDescription className="text-slate-600">Select a Lens account to continue</DialogDescription>
         </DialogHeader>
         <div className="py-4">
           {isLoadingAccounts ? (
@@ -77,16 +77,16 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
           ) : lensAccounts.length === 0 ? (
             <div className="py-6 text-center">
               <div className="rounded-lg border border-slate-200 bg-slate-50/80 p-4">
-                <p className="font-medium text-slate-900">No Lens profiles found</p>
-                <p className="mt-1 text-sm text-slate-600">No Lens profiles associated with your wallet were found.</p>
+                <p className="font-medium text-slate-900">No Lens accounts found</p>
+                <p className="mt-1 text-sm text-slate-600">No Lens accounts associated with your wallet were found.</p>
                 <div className="mt-4">
                   <a
-                    href="https://hey.xyz/"
+                    href="https://testnet.hey.xyz/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-brand-600 hover:to-brand-700"
                   >
-                    Create a profile on Lens
+                    Create an Account on Hey Testnet
                   </a>
                 </div>
               </div>
@@ -95,9 +95,9 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
             <div className="space-y-3">
               <div className="rounded-lg border border-brand-200 bg-gradient-to-br from-brand-50 to-brand-100/50 p-3">
                 <p className="text-sm font-medium text-slate-900">
-                  {lensAccounts.length} profile{lensAccounts.length === 1 ? "" : "s"} found
+                  {lensAccounts.length} account{lensAccounts.length === 1 ? "" : "s"} found
                 </p>
-                <p className="text-xs text-slate-600">Choose a profile to continue with LensForum</p>
+                <p className="text-xs text-slate-600">Choose an account to continue with LensForum</p>
               </div>
               <div className="max-h-[300px] space-y-2 overflow-y-auto">
                 {lensAccounts.map(lensAccount => (
@@ -110,7 +110,7 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
                         {lensAccount.account.metadata?.picture ? (
                           <Image
                             src={lensAccount.account.metadata.picture}
-                            alt={lensAccount.account.username?.value || "Lens Profile"}
+                            alt={lensAccount.account.username?.value || "Lens Account"}
                             className="rounded-full object-cover"
                             width={40}
                             height={40}
