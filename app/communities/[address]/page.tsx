@@ -330,7 +330,7 @@ export default function CommunityPage() {
                                       ))}
                                   </div>
 
-                                  <Link href={`/thread/${thread.id}`}>
+                                  <Link href={`/thread/${thread.address}`}>
                                     <h3 className="mb-2 cursor-pointer text-lg font-semibold text-slate-900 transition-colors group-hover:text-brand-600">
                                       {thread.title}
                                     </h3>
