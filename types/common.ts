@@ -83,3 +83,9 @@ export type PaginatedRepliesResult = {
   items: Reply[];
   pageInfo: PageInfo;
 };
+
+export type ForumStats = {
+  members: number;
+  threads: number;
+  communities: number;
+};
