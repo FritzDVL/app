@@ -1,6 +1,24 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/auth-store";
-import { useReadContract } from "wagmi";
+
+// Type for LensReputation API response
+interface LensReputationApiResponse {
+  minted: boolean;
+  nft: {
+    tokenId: string;
+    image: string;
+  } | null;
+  score: {
+    total: number;
+    categories: {
+      protocol: number;
+      network: number;
+      financial: number;
+      testnet: number;
+    };
+  } | null;
+  timestamp: number;
+}
 
 /**
  * Custom hook to check if the user has minted the LensReputation NFT.
@@ -15,7 +33,7 @@ export function useLensReputationNFT() {
 
   useEffect(() => {
     const doCheckAccountHasMintedNFT = async () => {
-      if (!account || !walletAddress) {
+      if (!account?.address || !walletAddress) {
         setHasNFT(null);
         setIsLoading(false);
         return;
@@ -25,12 +43,21 @@ export function useLensReputationNFT() {
       setError(null);
 
       try {
-        // const result = useReadContract({
-        //   abi,
-        //   address: "0x6b175474e89094c44da98b954eedeac495271d0f",
-        //   functionName: "totalSupply",
-        // });
-        setHasNFT(true);
+        const result = await fetch(
+          `https://lensreputation.xyz/api/public/sbt?wallet=${walletAddress}&lensAccountAddress=${account.address}`,
+        );
+        if (result.status === 404) {
+          setHasNFT(false);
+          setIsLoading(false);
+          return;
+        }
+        if (!result.ok) {
+          console.error("Failed to fetch NFT status:", result.statusText);
+          throw new Error("Failed to fetch NFT status");
+        }
+        const data = (await result.json()) as LensReputationApiResponse;
+
+        setHasNFT(data.minted);
       } catch (err) {
         console.error("Error checking NFT ownership:", err);
         if (err instanceof Error) {
