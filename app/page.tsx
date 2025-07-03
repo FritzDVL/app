@@ -7,6 +7,7 @@ import { HeroSection } from "@/components/homepage-hero-section";
 import { Navbar } from "@/components/navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useForumStats } from "@/hooks/use-forum-stats";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchThread } from "@/lib/fetchers/thread";
 import { fetchFeaturedCommunities, fetchLatestThreads } from "@/lib/supabase";
@@ -26,6 +27,9 @@ function formatDate(date: Date): string {
 
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("All");
+
+  // Forum-wide stats
+  const { data: forumStats, isLoading: loadingStats, isError: statsError } = useForumStats();
 
   // TanStack Query for latest threads
   const {
@@ -77,11 +81,20 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="text-xs text-slate-600">Total Members</p>
-                <p className="text-lg font-bold text-slate-900">1,337</p>
-                <div className="flex items-center gap-1 text-xs text-green-600">
+                <p className="text-lg font-bold text-slate-900">
+                  {loadingStats ? (
+                    <span className="animate-pulse text-slate-400">...</span>
+                  ) : statsError ? (
+                    <span className="text-red-500">!</span>
+                  ) : (
+                    (forumStats?.members?.toLocaleString() ?? 0)
+                  )}
+                </p>
+                {/* Optionally, remove the "+12 today" for now, or keep as mock */}
+                {/* <div className="flex items-center gap-1 text-xs text-green-600">
                   <div className="h-1 w-1 rounded-full bg-green-500"></div>
                   <span>+12 today</span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -92,11 +105,19 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="text-xs text-slate-600">Active Threads</p>
-                <p className="text-lg font-bold text-slate-900">284</p>
-                <div className="flex items-center gap-1 text-xs text-green-600">
+                <p className="text-lg font-bold text-slate-900">
+                  {loadingStats ? (
+                    <span className="animate-pulse text-slate-400">...</span>
+                  ) : statsError ? (
+                    <span className="text-red-500">!</span>
+                  ) : (
+                    (forumStats?.threads?.toLocaleString() ?? 0)
+                  )}
+                </p>
+                {/* <div className="flex items-center gap-1 text-xs text-green-600">
                   <div className="h-1 w-1 rounded-full bg-green-500"></div>
                   <span>+8 today</span>
-                </div>
+                </div>  */}
               </div>
             </div>
           </div>
@@ -107,11 +128,19 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="text-xs text-slate-600">Communities</p>
-                <p className="text-lg font-bold text-slate-900">50</p>
-                <div className="flex items-center gap-1 text-xs text-amber-600">
+                <p className="text-lg font-bold text-slate-900">
+                  {loadingStats ? (
+                    <span className="animate-pulse text-slate-400">...</span>
+                  ) : statsError ? (
+                    <span className="text-red-500">!</span>
+                  ) : (
+                    (forumStats?.communities?.toLocaleString() ?? 0)
+                  )}
+                </p>
+                {/* <div className="flex items-center gap-1 text-xs text-amber-600">
                   <div className="h-1 w-1 rounded-full bg-amber-500"></div>
                   <span>+1 community</span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
