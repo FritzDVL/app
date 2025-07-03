@@ -53,7 +53,7 @@ export function useReplyCreate() {
       } else {
         toast.error("Failed to create reply", { description: errorMsg });
       }
-      return;
+      throw new Error(`Failed to create reply: ${errorMsg}`);
     }
     toast.success("Reply posted!");
     return replyRequest.value as Post;
@@ -90,12 +90,17 @@ export function useReplyCreate() {
     feedAddress: Address,
     threadId: string,
   ): Promise<ReplyType | null> {
-    const metadata = getReplyMetadata(content);
-    const replyUri = await uploadReplyMetadata(metadata);
-    const replyPost = await createReplyOnLens(replyUri, to, feedAddress);
-    const reply = buildReplyObject(replyPost);
-    await safeIncrementRepliesCount(threadId);
-    return reply;
+    try {
+      const metadata = getReplyMetadata(content);
+      const replyUri = await uploadReplyMetadata(metadata);
+      const replyPost = await createReplyOnLens(replyUri, to, feedAddress);
+      const reply = buildReplyObject(replyPost);
+      await safeIncrementRepliesCount(threadId);
+      return reply;
+    } catch (error) {
+      console.error("Error creating reply:", error);
+      return null;
+    }
   }
 
   return { createReply };
