@@ -250,7 +250,7 @@ export default function HomePage() {
                             </div>
 
                             <div>
-                              <Link href={`/thread/${thread.id}`}>
+                              <Link href={`/thread/${thread.address}`}>
                                 <h3 className="line-clamp-2 text-lg font-semibold text-slate-900 transition-colors group-hover:text-brand-600">
                                   {thread.title}
                                 </h3>
