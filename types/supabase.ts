@@ -102,6 +102,10 @@ export type Database = {
         Args: { community_uuid: string };
         Returns: number;
       };
+      increment_replies_count: {
+        Args: { thread_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;

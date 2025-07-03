@@ -263,3 +263,15 @@ export async function fetchFeaturedCommunities(): Promise<CommunitySupabase[]> {
 
   return communities || [];
 }
+
+/**
+ * Increments the replies_count for a community thread by its id using the increment_replies_count function
+ * @param threadId - The thread's id (uuid)
+ * @returns void
+ */
+export async function incrementThreadRepliesCount(threadId: string): Promise<void> {
+  const { error } = await supabase.rpc("increment_replies_count", { thread_id: threadId });
+  if (error) {
+    throw new Error(`Failed to increment replies_count: ${error.message}`);
+  }
+}
