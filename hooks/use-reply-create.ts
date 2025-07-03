@@ -47,8 +47,13 @@ export function useReplyCreate() {
       .andThen(txHash => fetchPost(client, { txHash }));
     toast.dismiss(notificationLoading);
     if (replyRequest.isErr()) {
-      toast.error("Failed to create reply", { description: String(replyRequest.error) });
-      throw new Error(`Failed to create reply: ${replyRequest.error}`);
+      const errorMsg = String(replyRequest.error);
+      if (errorMsg.includes("Not all rules satisfied")) {
+        toast.error("First join community to post");
+      } else {
+        toast.error("Failed to create reply", { description: errorMsg });
+      }
+      return;
     }
     toast.success("Reply posted!");
     return replyRequest.value as Post;
