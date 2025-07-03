@@ -1,14 +1,10 @@
 "use client";
 
 import { NFTRequiredDialog } from "@/components/nft-required-dialog";
+import { useLensReputationNFT } from "@/hooks/use-lensreputation-nft";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-}
-
-// MOCK useNFTVerification for testing: always returns not loading and hasNFT false
-function useNFTVerificationMock() {
-  return { hasNFT: false, isLoading: false };
 }
 
 /**
@@ -16,6 +12,17 @@ function useNFTVerificationMock() {
  * Can be used to wrap entire pages or specific components
  */
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  // Always show the required dialog for this simplified version
-  return <NFTRequiredDialog open={true} />;
+  const { hasNFT, isLoading, error } = useLensReputationNFT();
+
+  if (isLoading) {
+    return null;
+  }
+  if (error) {
+    return <div className="py-8 text-center text-red-500">Error checking NFT: {error}</div>;
+  }
+  if (!hasNFT) {
+    return <NFTRequiredDialog open={true} />;
+  }
+
+  return <>{children}</>;
 }
