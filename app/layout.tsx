@@ -1,9 +1,11 @@
 import type React from "react";
 import localFont from "next/font/local";
 import "./globals.css";
+import { HeyLogo } from "@/components/assets/hey-logo";
 import { AppProvider } from "@/components/providers/app-provider";
 import { Web3Provider } from "@/components/providers/web3-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { Mail } from "lucide-react";
 import type { Metadata } from "next";
 
 const customFont = localFont({
@@ -24,11 +26,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Web3Provider>
           <div className="fixed bottom-4 right-4 z-50"></div>
           <AppProvider>{children}</AppProvider>
-          <footer className="mt-12 flex flex-col items-center gap-2 pb-6 pt-8 text-xs text-slate-500">
+          <footer className="mt-12 flex flex-col items-center gap-2 pb-6 pt-5 text-xs text-slate-500">
             <span>
               Made with <span className="text-pink-500">&lt;3</span> by{" "}
               <a
-                href="https://x.com/meketom"
+                href="https://hey.xyz/u/meketom"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-brand-700 hover:underline"
@@ -42,10 +44,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className="transition-colors hover:text-brand-600"
+                className="flex items-center transition-colors hover:text-[##181717]"
               >
-                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.091-.647.35-1.088.636-1.339-2.221-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.987 1.029-2.686-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.202 2.397.1 2.65.64.699 1.028 1.593 1.028 2.686 0 3.847-2.337 4.695-4.566 4.944.359.309.678.919.678 1.852 0 1.336-.012 2.417-.012 2.747 0 .267.18.577.688.48C19.138 20.2 22 16.447 22 12.021 22 6.484 17.523 2 12 2Z" />
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                  className="inline align-middle"
+                >
+                  <title>GitHub</title>
+                  <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
                 </svg>
               </a>
               <a
@@ -55,19 +66,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 aria-label="Hey"
                 className="transition-colors hover:text-brand-600"
               >
-                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.001 2.002c-5.523 0-10 4.477-10 10 0 5.522 4.477 9.999 10 9.999s10-4.477 10-9.999c0-5.523-4.477-10-10-10zm0 18.181c-4.519 0-8.181-3.662-8.181-8.181 0-4.519 3.662-8.181 8.181-8.181 4.519 0 8.181 3.662 8.181 8.181 0 4.519-3.662 8.181-8.181 8.181zm-2.727-7.272c0-.753.611-1.364 1.364-1.364.753 0 1.364.611 1.364 1.364s-.611 1.364-1.364 1.364c-.753 0-1.364-.611-1.364-1.364zm5.454 0c0-.753.611-1.364 1.364-1.364.753 0 1.364.611 1.364 1.364s-.611 1.364-1.364 1.364c-.753 0-1.364-.611-1.364-1.364zm-2.727 2.727c0-.753.611-1.364 1.364-1.364.753 0 1.364.611 1.364 1.364s-.611 1.364-1.364 1.364c-.753 0-1.364-.611-1.364-1.364z" />
-                </svg>
+                <HeyLogo size={16} />
               </a>
               <a
                 href="https://x.com/meketom"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="X (Twitter)"
-                className="transition-colors hover:text-brand-600"
+                className="transition-colors hover:text-[##000000]"
               >
-                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.53 2.47a2.5 2.5 0 0 1 3.535 3.535l-4.25 4.25 4.25 4.25a2.5 2.5 0 0 1-3.535 3.535l-4.25-4.25-4.25 4.25a2.5 2.5 0 0 1-3.535-3.535l4.25-4.25-4.25-4.25A2.5 2.5 0 0 1 6.47 2.47l4.25 4.25 4.25-4.25z" />
+                <svg
+                  width="14"
+                  height="14"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                  className="inline align-middle"
+                >
+                  <title>X</title>
+                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
                 </svg>
               </a>
             </div>
