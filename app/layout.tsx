@@ -5,7 +5,6 @@ import { HeyLogo } from "@/components/assets/hey-logo";
 import { AppProvider } from "@/components/providers/app-provider";
 import { Web3Provider } from "@/components/providers/web3-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { Mail } from "lucide-react";
 import type { Metadata } from "next";
 
 const customFont = localFont({
