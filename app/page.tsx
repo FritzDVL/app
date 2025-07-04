@@ -268,12 +268,12 @@ export default function HomePage() {
                                 </div>
                                 <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-green-600">
                                   {/* Upvote icon (ThumbsUp) using Lucide */}
-                                  <ThumbsUp className="h-4 w-4 text-green-500" />
+                                  <ThumbsUp className="h-4 w-4" />
                                   <span>{thread.upvotes || 0}</span>
                                 </div>
                                 <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-red-600">
                                   {/* Downvote icon (ThumbsDown) using Lucide */}
-                                  <ThumbsDown className="h-4 w-4 text-red-500" />
+                                  <ThumbsDown className="h-4 w-4" />
                                   <span>{thread.downvotes || 0}</span>
                                 </div>
                               </div>
