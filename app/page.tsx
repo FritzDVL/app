@@ -13,7 +13,7 @@ import { fetchThread } from "@/lib/fetchers/thread";
 import { fetchFeaturedCommunities, fetchLatestThreads } from "@/lib/supabase";
 import type { Community, Thread } from "@/types/common";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Clock, Edit3, Heart, MessageCircle, Sparkles, Users } from "lucide-react";
+import { ArrowRight, Clock, Edit3, MessageCircle, Sparkles, ThumbsDown, ThumbsUp, Users } from "lucide-react";
 
 function formatDate(date: Date): string {
   const now = new Date();
@@ -266,9 +266,15 @@ export default function HomePage() {
                                   <MessageCircle className="h-4 w-4" />
                                   <span>{thread.repliesCount || 0} replies</span>
                                 </div>
-                                <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-red-500">
-                                  <Heart className="h-4 w-4" />
-                                  <span>{Math.floor(Math.random() * 50) + 1} likes</span>
+                                <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-green-600">
+                                  {/* Upvote icon (ThumbsUp) using Lucide */}
+                                  <ThumbsUp className="h-4 w-4 text-green-500" />
+                                  <span>{thread.upvotes || 0}</span>
+                                </div>
+                                <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-red-600">
+                                  {/* Downvote icon (ThumbsDown) using Lucide */}
+                                  <ThumbsDown className="h-4 w-4 text-red-500" />
+                                  <span>{thread.downvotes || 0}</span>
                                 </div>
                               </div>
                               {Math.random() > 0.5 && (

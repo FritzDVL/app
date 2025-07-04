@@ -39,8 +39,8 @@ export async function transformFeedToThread(
       address: author.address as Address,
     },
     rootPost,
-    upvotes: Math.floor(Math.random() * 100) + 10, // TODO: Get real voting data
-    downvotes: Math.floor(Math.random() * 10),
+    upvotes: rootPost?.stats.upvotes || 0,
+    downvotes: rootPost?.stats.downvotes || 0,
     // repliesCount: threadRecord.replies_count || 0,
     repliesCount: threadRecord.replies_count || 0,
     timeAgo: getTimeAgo(new Date(threadRecord.created_at)),
