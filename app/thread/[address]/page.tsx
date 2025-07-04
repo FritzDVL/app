@@ -22,12 +22,15 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useCommunityMembership } from "@/hooks/use-community-membership";
+import { useJoinCommunity } from "@/hooks/use-join-community";
 import { useReplyCreate } from "@/hooks/use-reply-create";
+import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchRepliesPaginated } from "@/lib/fetchers/replies";
 import { fetchThread } from "@/lib/fetchers/thread";
 import { removeTrailingEmptyPTags } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
-import { type Address, PaginatedRepliesResult, type ThreadReplyWithDepth } from "@/types/common";
+import { type Address, Community, PaginatedRepliesResult, type ThreadReplyWithDepth } from "@/types/common";
 import { PageSize, PostId } from "@lens-protocol/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Coins, Flag, Reply as ReplyIcon, Share } from "lucide-react";
@@ -51,6 +54,22 @@ export default function ThreadPage() {
     staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
   });
+  const { data: community } = useQuery({
+    queryKey: ["community", thread?.community],
+    queryFn: () => fetchCommunity(thread?.community as Address),
+    enabled: !!thread?.community,
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+
+  // Membership state for this thread's community
+  const communityAddress = thread?.community;
+  const {
+    isMember: isCommunityMember,
+    isLoading: isMembershipLoading,
+    updateIsMember,
+  } = useCommunityMembership(communityAddress || "");
+  const joinCommunity = useJoinCommunity(community as Community);
 
   const { data: replies = { replies: [], pageInfo: {} }, isLoading: loadingReplies } = useQuery<
     PaginatedRepliesResult,
@@ -118,6 +137,9 @@ export default function ThreadPage() {
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
 
+  // Helper: check if user is a member of the thread's community
+  // const isMember = thread?.communityMembership?.isMember;
+
   // 4. Render
   return (
     <ProtectedRoute>
@@ -128,10 +150,33 @@ export default function ThreadPage() {
           <div className="mb-2">
             <BackNavigationLink href={`/communities/${thread?.community || ""}`}>Back to Community</BackNavigationLink>
           </div>
-          {/* Breadcrumb */}
-          <div className="flex items-center space-x-2 text-sm text-gray-500">
-            <span>Thread</span>
-          </div>
+
+          {/* Join Community Banner if not a member */}
+          {thread && !isMembershipLoading && !isCommunityMember && (
+            <div className="mb-6 rounded-2xl border border-slate-300/60 bg-white/80 p-4 backdrop-blur-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600">
+                    <span className="text-xs font-bold text-white">!</span>
+                  </div>
+                  <span className="text-sm font-medium text-slate-700">
+                    Join this community to participate in discussions
+                  </span>
+                </div>
+                <Button
+                  size="sm"
+                  className="rounded-full bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:from-brand-600 hover:to-brand-700"
+                  onClick={async () => {
+                    await joinCommunity();
+                    updateIsMember(true);
+                  }}
+                  disabled={isMembershipLoading}
+                >
+                  {isMembershipLoading ? "Joining..." : "Join Community"}
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Loading/Error State */}
           {loading && <LoadingSpinner text="Loading thread..." />}
