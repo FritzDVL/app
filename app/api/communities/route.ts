@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    let iconUri = "";
+    let iconUri;
     if (file) {
       const acl = immutable(lensTestnet.id);
       const { uri } = await storageClient.uploadFile(file, { acl });
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const groupName = name.replace(/\s+/g, "-").slice(0, 20);
 
     // 1. Build metadata for the group and upload it
-    const groupMetadata = group({ name: groupName, description, icon: iconUri });
+    const groupMetadata = group({ name: groupName, description, ...(iconUri ? { icon: iconUri } : {}) });
     const acl = immutable(lensTestnet.id);
     const { uri } = await storageClient.uploadAsJson(groupMetadata, { acl });
 

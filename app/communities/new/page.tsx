@@ -12,9 +12,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityCreation } from "@/hooks/use-community-create";
+import { incrementCommunityMembersCount } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
+import { evmAddress } from "@lens-protocol/client";
+import { joinGroup } from "@lens-protocol/client/actions";
+import { handleOperationWith } from "@lens-protocol/client/viem";
+import { useSessionClient } from "@lens-protocol/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useWalletClient } from "wagmi";
 
 export default function NewCommunityPage() {
   const router = useRouter();
@@ -35,6 +41,8 @@ export default function NewCommunityPage() {
   // Hooks
   const { isCreating } = useCommunityCreation();
   const { account } = useAuthStore();
+  const sessionClient = useSessionClient();
+  const walletClient = useWalletClient();
 
   // Set adminAddress to account.address if available
   useEffect(() => {
@@ -50,6 +58,12 @@ export default function NewCommunityPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    if (!sessionClient.data || !walletClient.data) {
+      toast.error("Not logged in", {
+        description: "Please log in to create a community.",
+      });
+      return;
+    }
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -77,6 +91,23 @@ export default function NewCommunityPage() {
       }
       const community = result.community;
       if (community && community.id) {
+        // Join the community automatically for admin
+        try {
+          const result = await joinGroup(sessionClient.data, {
+            group: evmAddress(community.address),
+          }).andThen(handleOperationWith(walletClient.data));
+
+          if (result.isOk()) {
+            await incrementCommunityMembersCount(community.id);
+          } else {
+            throw new Error(result.error.message);
+          }
+        } catch (error) {
+          console.error("Error joining/leaving community:", error);
+          toast.error("Action Failed", {
+            description: "Unable to update your membership status. Please try again.",
+          });
+        }
         toast.success("Community created!", {
           description: `Welcome to ${community.name}`,
         });
