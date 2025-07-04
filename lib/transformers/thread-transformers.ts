@@ -1,3 +1,4 @@
+import { storageClient } from "../grove";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { getTimeAgo } from "@/lib/utils";
 import { Address, Thread } from "@/types/common";
@@ -14,6 +15,8 @@ export async function transformFeedToThread(
   author: Account,
 ): Promise<Thread> {
   let rootPost: Post | null = null;
+  let contentData: any = null;
+
   if (threadRecord.root_post_id) {
     // Fetch the root post details if available
     const rootPostRequest = await fetchPost(client, {
@@ -23,6 +26,17 @@ export async function transformFeedToThread(
       throw new Error(`Failed to fetch root post: ${rootPostRequest.error.message}`);
     }
     rootPost = rootPostRequest.value as Post;
+
+    // If we have a contentUri, fetch the content JSON in parallel with the rest of the processing
+    if (rootPost?.contentUri) {
+      const resolvedUrl = storageClient.resolve(rootPost.contentUri);
+      // Start fetching content JSON
+      const contentPromise = fetch(resolvedUrl)
+        .then(res => (res.ok ? res.json() : null))
+        .catch(() => null);
+      // Await the content fetch
+      contentData = await contentPromise;
+    }
   }
 
   return {
@@ -41,10 +55,9 @@ export async function transformFeedToThread(
     rootPost,
     upvotes: rootPost?.stats.upvotes || 0,
     downvotes: rootPost?.stats.downvotes || 0,
-    // repliesCount: threadRecord.replies_count || 0,
     repliesCount: threadRecord.replies_count || 0,
     timeAgo: getTimeAgo(new Date(threadRecord.created_at)),
-    tags: [], // TODO: Extract tags from feed metadata
+    tags: contentData?.lens?.tags || contentData?.tags || [],
     created_at: threadRecord.created_at,
   };
 }

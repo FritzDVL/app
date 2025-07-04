@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { CreateThreadFormData, useThreadCreation } from "@/hooks/use-thread-create";
 import { useAuthStore } from "@/stores/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
-import { Send } from "lucide-react";
+import { Hash, Plus, Send, X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function NewThreadPage() {
@@ -34,6 +34,49 @@ export default function NewThreadPage() {
     tags: "",
     author: account?.address || "", // Ensure author is always a string
   });
+
+  // Enhanced tags state
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+
+  // Common tag suggestions
+  const suggestedTags = [
+    "discussion",
+    "help",
+    "development",
+    "question",
+    "announcement",
+    "tutorial",
+    "feedback",
+    "showcase",
+    "governance",
+    "research",
+  ];
+
+  const addTag = (tag: string) => {
+    const trimmedTag = tag.trim().toLowerCase();
+    if (trimmedTag && !tags.includes(trimmedTag) && tags.length < 5) {
+      const newTags = [...tags, trimmedTag];
+      setTags(newTags);
+      setFormData({ ...formData, tags: newTags.join(",") });
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    const newTags = tags.filter(tag => tag !== tagToRemove);
+    setTags(newTags);
+    setFormData({ ...formData, tags: newTags.join(",") });
+  };
+
+  const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addTag(tagInput);
+    } else if (e.key === "Backspace" && !tagInput && tags.length > 0) {
+      removeTag(tags[tags.length - 1]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +107,7 @@ export default function NewThreadPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-brand-100/40">
         <Navbar />
 
         <main className="mx-auto max-w-7xl px-4 py-6">
@@ -76,7 +119,7 @@ export default function NewThreadPage() {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
             {/* Main Content */}
             <div className="lg:col-span-3">
-              <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
+              <Card className="rounded-3xl border border-brand-200/60 bg-white backdrop-blur-sm">
                 <CardHeader className="pb-4">
                   <h1 className="text-2xl font-medium text-slate-900">Create New Thread</h1>
                   <p className="text-slate-600">Share your thoughts with the community</p>
@@ -93,7 +136,7 @@ export default function NewThreadPage() {
                         value={formData.title}
                         onChange={e => setFormData({ ...formData, title: e.target.value })}
                         placeholder="What's your thread about?"
-                        className="rounded-full border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                        className="rounded-full border-brand-200/40 bg-white/50 backdrop-blur-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
                         required
                       />
                     </div>
@@ -108,7 +151,7 @@ export default function NewThreadPage() {
                         value={formData.summary}
                         onChange={e => setFormData({ ...formData, summary: e.target.value })}
                         placeholder="Brief description (max 100 chars)"
-                        className="rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                        className="rounded-2xl border-brand-200/40 bg-white/50 backdrop-blur-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
                         maxLength={100}
                       />
                     </div>
@@ -118,7 +161,7 @@ export default function NewThreadPage() {
                       <Label htmlFor="content" className="text-sm font-medium text-slate-700">
                         Content
                       </Label>
-                      <div className="rounded-2xl border border-slate-300/60 bg-white/80 p-4 backdrop-blur-sm">
+                      <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm">
                         <TextEditor
                           value={formData.content}
                           onChange={function (value: string): void {
@@ -128,34 +171,83 @@ export default function NewThreadPage() {
                       </div>
                     </div>
 
-                    {/* Tags */}
+                    {/* Enhanced Tags Input */}
                     <div className="space-y-2">
                       <Label htmlFor="tags" className="text-sm font-medium text-slate-700">
-                        Tags (optional)
+                        Tags (optional) {tags.length > 0 && <span className="text-slate-500">({tags.length}/5)</span>}
                       </Label>
-                      <Input
-                        id="tags"
-                        value={formData.tags}
-                        onChange={e => setFormData({ ...formData, tags: e.target.value })}
-                        placeholder="development, discussion, help (comma separated)"
-                        className="rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                      />
-                      {formData.tags && (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {formData.tags.split(",").map(
-                            (tag: string, index: number) =>
-                              tag.trim() && (
-                                <Badge
-                                  key={index}
-                                  variant="outline"
-                                  className="rounded-full border-slate-300/60 bg-white/80 text-slate-600 backdrop-blur-sm"
-                                >
-                                  {tag.trim()}
-                                </Badge>
-                              ),
+
+                      <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-3 backdrop-blur-sm focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
+                        {/* Selected Tags */}
+                        <div className="mb-2 flex flex-wrap gap-2">
+                          {tags.map((tag, index) => (
+                            <Badge
+                              key={index}
+                              variant="secondary"
+                              className="flex items-center gap-1 rounded-full bg-brand-100 text-brand-700 hover:bg-brand-200"
+                            >
+                              <Hash className="h-3 w-3" />
+                              {tag}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-4 w-4 rounded-full p-0 hover:bg-brand-300"
+                                onClick={() => removeTag(tag)}
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </Badge>
+                          ))}
+                        </div>
+
+                        {/* Tag Input */}
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={tagInput}
+                            onChange={e => setTagInput(e.target.value)}
+                            onKeyDown={handleTagInputKeyDown}
+                            placeholder={tags.length === 0 ? "Type a tag and press Enter..." : "Add another tag..."}
+                            className="border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
+                            disabled={tags.length >= 5}
+                          />
+                          {tagInput.trim() && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 rounded-full bg-brand-100 p-0 hover:bg-brand-200"
+                              onClick={() => addTag(tagInput)}
+                            >
+                              <Plus className="h-3 w-3 text-brand-600" />
+                            </Button>
                           )}
                         </div>
-                      )}
+
+                        {/* Suggested Tags */}
+                        {tags.length < 5 && (
+                          <div className="mt-3 border-t border-brand-200 pt-2">
+                            <p className="mb-2 text-xs text-slate-500">Popular tags:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {suggestedTags
+                                .filter(tag => !tags.includes(tag))
+                                .slice(0, 6)
+                                .map(tag => (
+                                  <Button
+                                    key={tag}
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 rounded-full px-2 text-xs text-slate-600 hover:bg-brand-100 hover:text-brand-700"
+                                    onClick={() => addTag(tag)}
+                                  >
+                                    {tag}
+                                  </Button>
+                                ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {/* Submit Button */}
@@ -163,7 +255,7 @@ export default function NewThreadPage() {
                       <Button
                         type="submit"
                         disabled={isCreating || !formData.title.trim() || !formData.content.trim()}
-                        className="rounded-full bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                        className="rounded-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50"
                       >
                         {isCreating ? (
                           <div className="flex items-center gap-2">

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { lensMainnet } from "@/lib/chains/lens-mainnet";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { storageClient } from "@/lib/grove";
 // import { lensMainnet } from '@/lib/chains/lens-mainnet'
@@ -62,7 +61,7 @@ async function uploadThreadContent(
   sessionClient: any,
   walletClient: any,
 ) {
-  const metadata = textOnly({ content: formData.content });
+  const metadata = textOnly({ content: formData.content, tags: formData.tags.split(",").map(tag => tag.trim()) });
   const acl = immutable(lensTestnet.id);
   const { uri } = await storageClient.uploadAsJson(metadata, { acl });
   const result = await post(sessionClient, {
@@ -120,6 +119,7 @@ function buildThreadRecord(
     created_at: new Date().toISOString(),
     community,
     updated_at: new Date().toISOString(),
+    replies_count: 0,
   };
 }
 
