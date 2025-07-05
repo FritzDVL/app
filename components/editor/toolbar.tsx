@@ -1,7 +1,7 @@
 import React from "react";
 import type { EditorExtension } from "@/components/editor/extension";
 import Button from "@/components/editor/toolbar-button";
-import { Bold, CheckSquare, List, ListOrdered } from "lucide-react";
+import { BoldIcon, CheckSquare, ItalicIcon, List, ListOrdered } from "lucide-react";
 import type { Editor } from "prosekit/core";
 import { useEditorDerivedValue } from "prosekit/react";
 
@@ -11,6 +11,11 @@ function getToolbarItems(editor: Editor<EditorExtension>) {
       isActive: editor.marks.bold.isActive(),
       canExec: editor.commands.toggleBold.canExec(),
       command: () => editor.commands.toggleBold(),
+    },
+    italic: {
+      isActive: editor.marks.italic.isActive(),
+      canExec: editor.commands.toggleItalic.canExec(),
+      command: () => editor.commands.toggleItalic(),
     },
     bullet: {
       isActive: editor.nodes.list.isActive({ kind: "bullet" }),
@@ -43,7 +48,15 @@ export function Toolbar() {
           onClick={items.bold.command}
           tooltip="Bold Text"
         >
-          <Bold className="bold h-4 w-4" />
+          <BoldIcon className="bold h-4 w-4" />
+        </Button>
+        <Button
+          pressed={items.italic.isActive}
+          disabled={!items.italic.canExec}
+          onClick={items.italic.command}
+          tooltip="Italic Text"
+        >
+          <ItalicIcon className="bold h-4 w-4" />
         </Button>
         <Button
           pressed={items.bullet.isActive}
