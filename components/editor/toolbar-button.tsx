@@ -1,0 +1,48 @@
+import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
+import { TooltipContent, TooltipRoot, TooltipTrigger } from "prosekit/react/tooltip";
+
+export default function ToolbarButton({
+  pressed,
+  disabled,
+  onClick,
+  tooltip,
+  children,
+}: {
+  pressed?: boolean;
+  disabled?: boolean;
+  onClick?: VoidFunction;
+  tooltip?: string;
+  children: ReactNode;
+}) {
+  return (
+    <TooltipRoot>
+      <TooltipTrigger className="block">
+        <button
+          data-state={pressed ? "on" : "off"}
+          disabled={disabled}
+          onClick={() => onClick?.()}
+          onMouseDown={event => event.preventDefault()}
+          className={cn(
+            // Base styles matching the design - much thinner
+            "relative inline-flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all duration-200",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-200",
+            "disabled:pointer-events-none disabled:opacity-50",
+            // Default state - clean and minimal
+            "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+            // Active/pressed state - subtle highlight
+            "data-[state=on]:bg-gray-100 data-[state=on]:text-gray-900",
+          )}
+        >
+          {children}
+          {tooltip ? <span className="sr-only">{tooltip}</span> : null}
+        </button>
+      </TooltipTrigger>
+      {tooltip ? (
+        <TooltipContent className="rounded-md bg-gray-900 px-2 py-1 text-xs text-white shadow-lg">
+          {tooltip}
+        </TooltipContent>
+      ) : null}
+    </TooltipRoot>
+  );
+}

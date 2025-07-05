@@ -104,28 +104,28 @@ export function ThreadReplyCard({
 
   return (
     <div className="space-y-2" id={reply.id}>
-      <Card className="rounded-xl border bg-white/80 shadow-sm">
-        <CardContent className="p-3">
-          <div className="flex items-start gap-2">
-            <div className="flex flex-col items-center pr-2">
+      <Card className="rounded-lg border border-gray-200 bg-white shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex flex-col items-center">
               <VotingActions postid={postId(reply.id)} score={reply.upvotes - reply.downvotes} />
             </div>
-            <div className="flex-1">
-              {/* Top row: author info right-aligned */}
-              <div className="mb-1 flex items-center justify-end gap-2">
+            <div className="min-w-0 flex-1">
+              {/* Top row: author info */}
+              <div className="mb-2 flex items-center gap-2">
                 <Link
                   href={`/u/${reply.author.username.replace("lens/", "")}`}
-                  className="flex items-center gap-2 hover:text-brand-600"
+                  className="flex items-center gap-2 hover:text-gray-900"
                 >
-                  <Avatar className="h-5 w-5">
+                  <Avatar className="h-6 w-6">
                     <AvatarImage src={reply.author.avatar || "/placeholder.svg"} />
-                    <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-[10px] text-white">
+                    <AvatarFallback className="bg-gray-200 text-xs text-gray-700">
                       {reply.author.name[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-xs font-medium text-gray-900">{reply.author.name}</span>
+                  <span className="text-sm font-medium text-gray-900">{reply.author.name}</span>
                 </Link>
-                <span className="text-xs text-gray-400">
+                <span className="text-sm text-gray-500">
                   {reply.createdAt ? getTimeAgo(new Date(reply.createdAt)) : "Unknown date"}
                 </span>
               </div>
@@ -173,10 +173,10 @@ export function ThreadReplyCard({
                 className="mb-2 max-w-none text-sm text-gray-700 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-200 [&_blockquote]:pl-3 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_li]:mb-1 [&_p]:min-h-[1.2em] [&_pre]:rounded-md [&_pre]:bg-gray-100 [&_pre]:p-2 [&_ul]:ml-4 [&_ul]:list-disc"
                 dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(reply.content) }}
               />
-              {/* Reply button and tip button bottom right */}
-              <div className="mt-2 flex items-end justify-between">
+              {/* Reply button and tip button bottom */}
+              <div className="mt-3 flex items-center justify-between">
                 {/* Tips counter bottom left */}
-                <div className="flex items-center gap-1 text-xs">
+                <div className="flex items-center gap-1 text-sm text-gray-500">
                   <Coins className="h-4 w-4" />
                   <span>{(reply as any).tips ?? 0}</span>
                 </div>
@@ -184,11 +184,11 @@ export function ThreadReplyCard({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="px-2 py-1 text-xs text-brand-600 hover:text-brand-700"
+                    className="h-8 px-3 text-sm text-gray-600 hover:text-gray-900"
                     onClick={() => setReplyingTo(reply.id)}
                     disabled={!isLoggedIn}
                   >
-                    <Reply className="mr-1 h-3 w-3" />
+                    <Reply className="mr-1 h-4 w-4" />
                     Reply
                   </Button>
                   <TipGhoPopover to={reply.id as PostId} />
