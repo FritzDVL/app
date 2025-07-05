@@ -1,5 +1,5 @@
-/* Basic editor styles */
-.tiptap {
+/* Basic editor styles for ProseKit */
+.ProseMirror {
   :first-child {
     margin-top: 0;
   }
@@ -32,22 +32,30 @@
     margin: 0.25em 0;
   }
 
-  /* Heading styles */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    line-height: 1.1;
+  /* Modern heading styles for ProseKit editor */
+  h1 {
+    font-size: 2rem; /* text-3xl */
     margin-top: 2.5rem;
-    text-wrap: pretty;
+    margin-bottom: 1.25rem;
+    color: #18181b; /* text-slate-900 */
+    letter-spacing: -0.02em; /* tracking-tight */
+    line-height: 1.1;
   }
 
-  h1,
   h2 {
-    margin-top: 3.5rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.5rem; /* text-2xl */
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #18181b;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
   }
-  /* ...rest of the CSS... */
+
+  h3 {
+    font-size: 1.25rem; /* text-xl */
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #18181b;
+    line-height: 1.1;
+  }
 }

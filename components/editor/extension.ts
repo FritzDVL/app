@@ -2,6 +2,7 @@ import { defineBaseKeymap } from "prosekit/core";
 import { union } from "prosekit/core";
 import { defineBold } from "prosekit/extensions/bold";
 import { defineDoc } from "prosekit/extensions/doc";
+import { defineHeading } from "prosekit/extensions/heading";
 import { defineItalic } from "prosekit/extensions/italic";
 import { defineList } from "prosekit/extensions/list";
 import { defineParagraph } from "prosekit/extensions/paragraph";
@@ -18,6 +19,7 @@ export function defineExtension() {
     defineUnderline(),
     defineBold(),
     defineList(),
+    defineHeading(),
   );
 }
 

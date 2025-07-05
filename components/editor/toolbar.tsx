@@ -43,6 +43,21 @@ function getToolbarItems(editor: Editor<EditorExtension>) {
       canExec: editor.commands.toggleList.canExec({ kind: "task" }),
       command: () => editor.commands.toggleList({ kind: "task" }),
     },
+    heading1: {
+      isActive: editor.nodes.heading.isActive({ level: 1 }),
+      canExec: editor.commands.toggleHeading.canExec({ level: 1 }),
+      command: () => editor.commands.toggleHeading({ level: 1 }),
+    },
+    heading2: {
+      isActive: editor.nodes.heading.isActive({ level: 2 }),
+      canExec: editor.commands.toggleHeading.canExec({ level: 2 }),
+      command: () => editor.commands.toggleHeading({ level: 2 }),
+    },
+    heading3: {
+      isActive: editor.nodes.heading.isActive({ level: 3 }),
+      canExec: editor.commands.toggleHeading.canExec({ level: 3 }),
+      command: () => editor.commands.toggleHeading({ level: 3 }),
+    },
   };
 }
 
@@ -116,6 +131,51 @@ export function Toolbar() {
               className={items.task.isActive ? "bg-gray-100 font-semibold text-black" : ""}
             >
               <CheckSquare className="mr-2 h-4 w-4" /> Task List
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {/* Headings dropdown button - placed after list dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <span>
+              <Button
+                tooltip="Headings"
+                pressed={items.heading1.isActive || items.heading2.isActive || items.heading3.isActive}
+              >
+                <span className="text-xs font-bold">H</span>
+              </Button>
+            </span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem
+              onSelect={e => {
+                e.preventDefault();
+                items.heading1.command();
+              }}
+              disabled={!items.heading1.canExec}
+              className={items.heading1.isActive ? "bg-gray-100 font-semibold text-black" : ""}
+            >
+              <span className="mr-2 font-bold">H1</span> Heading 1
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={e => {
+                e.preventDefault();
+                items.heading2.command();
+              }}
+              disabled={!items.heading2.canExec}
+              className={items.heading2.isActive ? "bg-gray-100 font-semibold text-black" : ""}
+            >
+              <span className="mr-2 font-bold">H2</span> Heading 2
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={e => {
+                e.preventDefault();
+                items.heading3.command();
+              }}
+              disabled={!items.heading3.canExec}
+              className={items.heading3.isActive ? "bg-gray-100 font-semibold text-black" : ""}
+            >
+              <span className="mr-2 font-bold">H3</span> Heading 3
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
