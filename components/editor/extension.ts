@@ -6,6 +6,7 @@ import { defineItalic } from "prosekit/extensions/italic";
 import { defineList } from "prosekit/extensions/list";
 import { defineParagraph } from "prosekit/extensions/paragraph";
 import { defineText } from "prosekit/extensions/text";
+import { defineUnderline } from "prosekit/extensions/underline";
 
 export function defineExtension() {
   return union(
@@ -14,6 +15,7 @@ export function defineExtension() {
     defineText(),
     defineParagraph(),
     defineItalic(),
+    defineUnderline(),
     defineBold(),
     defineList(),
   );
