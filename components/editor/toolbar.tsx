@@ -1,12 +1,17 @@
 import React from "react";
 import type { EditorExtension } from "@/components/editor/extension";
 import Button from "@/components/editor/toolbar-button";
-import { CheckSquare, ChevronDown, List, ListOrdered } from "lucide-react";
+import { Bold, CheckSquare, List, ListOrdered } from "lucide-react";
 import type { Editor } from "prosekit/core";
 import { useEditorDerivedValue } from "prosekit/react";
 
 function getToolbarItems(editor: Editor<EditorExtension>) {
   return {
+    bold: {
+      isActive: editor.marks.bold.isActive(),
+      canExec: editor.commands.toggleBold.canExec(),
+      command: () => editor.commands.toggleBold(),
+    },
     bullet: {
       isActive: editor.nodes.list.isActive({ kind: "bullet" }),
       canExec: editor.commands.toggleList.canExec({ kind: "bullet" }),
@@ -22,11 +27,6 @@ function getToolbarItems(editor: Editor<EditorExtension>) {
       canExec: editor.commands.toggleList.canExec({ kind: "task" }),
       command: () => editor.commands.toggleList({ kind: "task" }),
     },
-    toggle: {
-      isActive: editor.nodes.list.isActive({ kind: "toggle" }),
-      canExec: editor.commands.toggleList.canExec({ kind: "toggle" }),
-      command: () => editor.commands.toggleList({ kind: "toggle" }),
-    },
   };
 }
 
@@ -37,6 +37,14 @@ export function Toolbar() {
     <div className="mb-1 flex items-center justify-between overflow-hidden rounded-b-xl border-b-0 border-t border-t-gray-200 bg-white p-2 shadow-none">
       {/* Left side - formatting buttons */}
       <div className="flex items-center gap-1">
+        <Button
+          pressed={items.bold.isActive}
+          disabled={!items.bold.canExec}
+          onClick={items.bold.command}
+          tooltip="Bold Text"
+        >
+          <Bold className="bold h-4 w-4" />
+        </Button>
         <Button
           pressed={items.bullet.isActive}
           disabled={!items.bullet.canExec}
@@ -62,15 +70,6 @@ export function Toolbar() {
           tooltip="Task List"
         >
           <CheckSquare className="h-4 w-4" />
-        </Button>
-
-        <Button
-          pressed={items.toggle.isActive}
-          disabled={!items.toggle.canExec}
-          onClick={items.toggle.command}
-          tooltip="Toggle List"
-        >
-          <ChevronDown className="h-4 w-4" />
         </Button>
       </div>
     </div>

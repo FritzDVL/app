@@ -30,8 +30,8 @@ export default function ToolbarButton({
             "disabled:pointer-events-none disabled:opacity-50",
             // Default state - clean and minimal
             "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-            // Active/pressed state - subtle highlight
-            "data-[state=on]:bg-gray-100 data-[state=on]:text-gray-900",
+            // Active/pressed state - more distinct
+            "data-[state=on]:bg-gray-200 data-[state=on]:font-semibold data-[state=on]:text-black data-[state=on]:ring-2 data-[state=on]:ring-gray-300",
           )}
         >
           {children}
