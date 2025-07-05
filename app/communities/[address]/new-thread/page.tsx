@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CommunityRules } from "@/components/community-rules";
+import { TextEditor } from "@/components/editor/text-editor";
 import { Navbar } from "@/components/navbar";
 import { ProtectedRoute } from "@/components/protected-route";
-import { TextEditor } from "@/components/text-editor";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

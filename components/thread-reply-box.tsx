@@ -1,5 +1,5 @@
 import React from "react";
-import { TextEditor } from "@/components/text-editor";
+import { TextEditor } from "@/components/editor/text-editor";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
