@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BoldIcon, CheckSquare, ItalicIcon, List, ListOrdered, Smile, UnderlineIcon } from "lucide-react";
+import { BoldIcon, CheckSquare, Code, ItalicIcon, List, ListOrdered, Smile, UnderlineIcon } from "lucide-react";
 import type { Editor } from "prosekit/core";
 import { useEditor, useEditorDerivedValue } from "prosekit/react";
 
@@ -58,6 +58,11 @@ function getToolbarItems(editor: Editor<EditorExtension>) {
       isActive: editor.nodes.heading.isActive({ level: 3 }),
       canExec: editor.commands.toggleHeading.canExec({ level: 3 }),
       command: () => editor.commands.toggleHeading({ level: 3 }),
+    },
+    codeBlock: {
+      isActive: editor.nodes.codeBlock.isActive(),
+      canExec: editor.commands.setCodeBlock.canExec(),
+      command: () => editor.commands.setCodeBlock(),
     },
   };
 }
@@ -210,6 +215,15 @@ export function Toolbar() {
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
+        {/* Code block button */}
+        <Button
+          pressed={items.codeBlock.isActive}
+          disabled={!items.codeBlock.canExec}
+          onClick={items.codeBlock.command}
+          tooltip="Code Block"
+        >
+          <Code className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
