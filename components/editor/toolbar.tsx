@@ -1,15 +1,16 @@
 import React from "react";
 import type { EditorExtension } from "@/components/editor/extension";
 import Button from "@/components/editor/toolbar-button";
+import { EMOJIS } from "@/components/emojis";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BoldIcon, CheckSquare, ItalicIcon, List, ListOrdered, UnderlineIcon } from "lucide-react";
+import { BoldIcon, CheckSquare, ItalicIcon, List, ListOrdered, Smile, UnderlineIcon } from "lucide-react";
 import type { Editor } from "prosekit/core";
-import { useEditorDerivedValue } from "prosekit/react";
+import { useEditor, useEditorDerivedValue } from "prosekit/react";
 
 function getToolbarItems(editor: Editor<EditorExtension>) {
   return {
@@ -63,6 +64,7 @@ function getToolbarItems(editor: Editor<EditorExtension>) {
 
 export function Toolbar() {
   const items = useEditorDerivedValue(getToolbarItems);
+  const editor = useEditor<EditorExtension>();
 
   return (
     <div className="mb-1 flex items-center justify-between overflow-hidden rounded-b-xl border-b-0 border-t border-t-gray-200 bg-white p-2 shadow-none">
@@ -177,6 +179,35 @@ export function Toolbar() {
             >
               <span className="mr-2 font-bold">H3</span> Heading 3
             </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {/* Emoji picker button */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <span>
+              <Button tooltip="Insert Emoji">
+                <Smile className="h-4 w-4" />
+              </Button>
+            </span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-64 p-2">
+            <div className="grid max-h-56 grid-cols-8 gap-1 overflow-y-auto" role="grid" aria-label="Emoji picker">
+              {EMOJIS.map((emoji, i) => (
+                <button
+                  key={emoji + i}
+                  type="button"
+                  className="flex h-8 w-8 items-center justify-center rounded-md text-xl hover:bg-gray-100 focus:bg-gray-200 focus:outline-none"
+                  tabIndex={0}
+                  aria-label={`Insert emoji ${emoji}`}
+                  onClick={() => {
+                    editor.view.dispatch(editor.view.state.tr.insertText(emoji));
+                    editor.view.focus();
+                  }}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
