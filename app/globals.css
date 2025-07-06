@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Import rich text content styles */
-@import '../styles/rich-text-content.css';
+@import "../styles/rich-text-content.css";
 
 @font-face {
   font-family: "CustomFont";
