@@ -1,0 +1,243 @@
+/* Rich Text Content Styles - Override Tailwind Reset */
+.rich-text-content {
+  /* Reset Tailwind's prose override and restore natural HTML styling */
+  color: inherit;
+  line-height: 1.6;
+}
+
+/* Typography Elements */
+.rich-text-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.rich-text-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.rich-text-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.rich-text-content h4,
+.rich-text-content h5,
+.rich-text-content h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+/* Paragraphs */
+.rich-text-content p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.rich-text-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Lists */
+.rich-text-content ul,
+.rich-text-content ol {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.rich-text-content ul {
+  list-style-type: disc;
+}
+
+.rich-text-content ol {
+  list-style-type: decimal;
+}
+
+.rich-text-content li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.6;
+}
+
+.rich-text-content li > ul,
+.rich-text-content li > ol {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Nested lists */
+.rich-text-content ul ul {
+  list-style-type: circle;
+}
+
+.rich-text-content ul ul ul {
+  list-style-type: square;
+}
+
+/* Text formatting */
+.rich-text-content strong,
+.rich-text-content b {
+  font-weight: 700;
+}
+
+.rich-text-content em,
+.rich-text-content i {
+  font-style: italic;
+}
+
+.rich-text-content u {
+  text-decoration: underline;
+}
+
+.rich-text-content s,
+.rich-text-content strike {
+  text-decoration: line-through;
+}
+
+/* Code */
+.rich-text-content code {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  font-family: ui-monospace, SFMono-Regular, "Roboto Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.875rem;
+  color: #dc2626;
+}
+
+.rich-text-content pre {
+  background-color: #1f2937;
+  color: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, "Roboto Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.rich-text-content pre code {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* Code blocks */
+.rich-text-content .ProseMirror-node-codeblock,
+.rich-text-content [data-node-type="codeBlock"] {
+  position: relative;
+  margin: 1rem 0;
+}
+
+/* Links */
+.rich-text-content a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-decoration-color: #93c5fd;
+  text-underline-offset: 2px;
+  transition: all 0.2s ease;
+}
+
+.rich-text-content a:hover {
+  color: #1d4ed8;
+  text-decoration-color: #2563eb;
+}
+
+/* Blockquotes */
+.rich-text-content blockquote {
+  border-left: 4px solid #e5e7eb;
+  margin: 1rem 0;
+  padding-left: 1rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Horizontal rules */
+.rich-text-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 2rem 0;
+}
+
+/* Images */
+.rich-text-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* Tables */
+.rich-text-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.rich-text-content th,
+.rich-text-content td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+
+.rich-text-content th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+/* Remove margins from first and last elements */
+.rich-text-content > *:first-child {
+  margin-top: 0 !important;
+}
+
+.rich-text-content > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Ensure proper spacing in nested elements */
+.rich-text-content li p {
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-content li p:last-child {
+  margin-bottom: 0;
+}
+
+/* Task lists (if supported) */
+.rich-text-content ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.rich-text-content li[data-type="taskItem"] {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.rich-text-content li[data-type="taskItem"] input[type="checkbox"] {
+  margin-top: 0.2rem;
+}

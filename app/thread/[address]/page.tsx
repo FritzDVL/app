@@ -236,7 +236,7 @@ export default function ThreadPage() {
                             </span>
                           </div>
                           <div
-                            className="prose prose-lg max-w-none whitespace-pre-line rounded-2xl bg-slate-50/50 p-5 text-gray-800"
+                            className="rich-text-content whitespace-pre-line rounded-2xl bg-slate-50/50 p-5 text-gray-800"
                             dangerouslySetInnerHTML={{
                               __html: removeTrailingEmptyPTags(thread.rootPost.metadata.content),
                             }}

@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import rich text content styles */
+@import '../styles/rich-text-content.css';
+
 @font-face {
   font-family: "CustomFont";
   src: url("/3534416bbfdcc9be-s.p.woff2") format("woff2");

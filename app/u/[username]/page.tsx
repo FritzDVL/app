@@ -318,7 +318,7 @@ export default function ProfilePage() {
                       >
                         <div className="space-y-3">
                           {/* Reply Content */}
-                          <div className="prose prose-sm max-w-none text-slate-700">
+                          <div className="rich-text-content text-slate-700">
                             <div dangerouslySetInnerHTML={{ __html: reply.content }} />
                           </div>
 

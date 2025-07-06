@@ -93,7 +93,7 @@ export function ThreadReplyCard({
               </span>
             </div>
             <div
-              className="prose prose-xs max-w-none text-gray-700"
+              className="rich-text-content text-gray-700"
               dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(ctx.content) }}
             />
           </div>
@@ -170,7 +170,7 @@ export function ThreadReplyCard({
               )}
               {/* Content */}
               <div
-                className="mb-2 max-w-none text-sm text-gray-700 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-200 [&_blockquote]:pl-3 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_li]:mb-1 [&_p]:min-h-[1.2em] [&_pre]:rounded-md [&_pre]:bg-gray-100 [&_pre]:p-2 [&_ul]:ml-4 [&_ul]:list-disc"
+                className="rich-text-content mb-2"
                 dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(reply.content) }}
               />
               {/* Reply button and tip button bottom */}
