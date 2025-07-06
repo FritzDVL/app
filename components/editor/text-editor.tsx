@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { defineExtension } from "./extension";
 import "./text-editor.css";
 import BlockHandle from "@/components/editor/block-handle";
@@ -14,36 +14,13 @@ import { createEditor } from "prosekit/core";
 import { ProseKit, useDocChange } from "prosekit/react";
 
 interface TextEditorProps {
-  value: string;
   onChange: (value: string) => void;
 }
 
-export function TextEditor({ value, onChange }: TextEditorProps) {
+export function TextEditor({ onChange }: TextEditorProps) {
   const editor = useMemo(() => {
     return createEditor({ extension: defineExtension() });
   }, []);
-
-  const mountRef = useRef<HTMLDivElement>(null);
-
-  // useEffect(() => {
-  //   if (mountRef.current) {
-  //     editor.mount(mountRef.current);
-  //     return () => {
-  //       editor.unmount();
-  //     };
-  //   }
-  // }, [editor]);
-
-  // Set initial content when value prop changes (only for external updates)
-  // useEffect(() => {
-  //   if (value !== undefined && editor.getDocHTML() !== value) {
-  //     // Only update if the content is actually different to avoid unnecessary updates
-  //     const currentHTML = editor.getDocHTML();
-  //     if (currentHTML !== value) {
-  //       editor.setContent(value);
-  //     }
-  //   }
-  // }, [value, editor]);
 
   // Listen for content changes
   useDocChange(

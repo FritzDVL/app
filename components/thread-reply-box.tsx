@@ -23,7 +23,7 @@ export function ThreadReplyBox({
       </Avatar>
       <div className="min-w-0 flex-1 space-y-3">
         <div className="w-full min-w-0">
-          <TextEditor value={value} onChange={onChange} />
+          <TextEditor onChange={onChange} />
         </div>
         <div className="flex justify-end space-x-2">
           <Button variant="ghost" size="sm" className="h-8 px-3 text-sm" onClick={onCancel}>
