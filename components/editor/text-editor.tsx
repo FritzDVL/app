@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef } from "react";
-import { DEFAULT_CONTENT } from "./default-content";
 import { defineExtension } from "./extension";
 import "./text-editor.css";
 import BlockHandle from "@/components/editor/block-handle";
@@ -21,7 +20,7 @@ interface TextEditorProps {
 
 export function TextEditor({ value, onChange }: TextEditorProps) {
   const editor = useMemo(() => {
-    return createEditor({ extension: defineExtension(), defaultContent: DEFAULT_CONTENT });
+    return createEditor({ extension: defineExtension() });
   }, []);
 
   const mountRef = useRef<HTMLDivElement>(null);
