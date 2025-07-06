@@ -1,48 +1,71 @@
-import React from "react";
-import type { EditorExtension } from "@/components/editor/extension";
-import Button from "@/components/editor/toolbar-button";
-import { EMOJIS } from "@/components/emojis";
+import type { EditorExtension } from "./extension";
+import { ImageUploadPopover } from "./image-upload-popover";
+import Button from "./toolbar-button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { BoldIcon, CheckSquare, Code, ItalicIcon, List, ListOrdered, Smile, UnderlineIcon } from "lucide-react";
+  Bold,
+  Code,
+  Heading1,
+  Heading2,
+  Heading3,
+  Image,
+  IndentDecrease,
+  IndentIncrease,
+  Italic,
+  List,
+  ListChecks,
+  ListCollapse,
+  ListOrdered,
+  Minus,
+  Redo2,
+  SquareCode,
+  Strikethrough,
+  Underline,
+  Undo2,
+} from "lucide-react";
 import type { Editor } from "prosekit/core";
-import { useEditor, useEditorDerivedValue } from "prosekit/react";
+import { useEditorDerivedValue } from "prosekit/react";
 
 function getToolbarItems(editor: Editor<EditorExtension>) {
   return {
+    undo: {
+      isActive: false,
+      canExec: editor.commands.undo.canExec(),
+      command: editor.commands.undo,
+    },
+    redo: {
+      isActive: false,
+      canExec: editor.commands.redo.canExec(),
+      command: editor.commands.redo,
+    },
     bold: {
       isActive: editor.marks.bold.isActive(),
       canExec: editor.commands.toggleBold.canExec(),
-      command: () => editor.commands.toggleBold(),
+      command: editor.commands.toggleBold,
     },
     italic: {
       isActive: editor.marks.italic.isActive(),
       canExec: editor.commands.toggleItalic.canExec(),
-      command: () => editor.commands.toggleItalic(),
+      command: editor.commands.toggleItalic,
     },
     underline: {
       isActive: editor.marks.underline.isActive(),
       canExec: editor.commands.toggleUnderline.canExec(),
-      command: () => editor.commands.toggleUnderline(),
+      command: editor.commands.toggleUnderline,
     },
-    bullet: {
-      isActive: editor.nodes.list.isActive({ kind: "bullet" }),
-      canExec: editor.commands.toggleList.canExec({ kind: "bullet" }),
-      command: () => editor.commands.toggleList({ kind: "bullet" }),
+    strike: {
+      isActive: editor.marks.strike.isActive(),
+      canExec: editor.commands.toggleStrike.canExec(),
+      command: editor.commands.toggleStrike,
     },
-    ordered: {
-      isActive: editor.nodes.list.isActive({ kind: "ordered" }),
-      canExec: editor.commands.toggleList.canExec({ kind: "ordered" }),
-      command: () => editor.commands.toggleList({ kind: "ordered" }),
+    code: {
+      isActive: editor.marks.code.isActive(),
+      canExec: editor.commands.toggleCode.canExec(),
+      command: editor.commands.toggleCode,
     },
-    task: {
-      isActive: editor.nodes.list.isActive({ kind: "task" }),
-      canExec: editor.commands.toggleList.canExec({ kind: "task" }),
-      command: () => editor.commands.toggleList({ kind: "task" }),
+    codeBlock: {
+      isActive: editor.nodes.codeBlock.isActive(),
+      canExec: editor.commands.insertCodeBlock.canExec({ language: "javascript" }),
+      command: () => editor.commands.insertCodeBlock({ language: "javascript" }),
     },
     heading1: {
       isActive: editor.nodes.heading.isActive({ level: 1 }),
@@ -59,172 +82,198 @@ function getToolbarItems(editor: Editor<EditorExtension>) {
       canExec: editor.commands.toggleHeading.canExec({ level: 3 }),
       command: () => editor.commands.toggleHeading({ level: 3 }),
     },
-    codeBlock: {
-      isActive: editor.nodes.codeBlock.isActive(),
-      canExec: editor.commands.setCodeBlock.canExec(),
-      command: () => editor.commands.setCodeBlock(),
+    horizontalRule: {
+      isActive: editor.nodes.horizontalRule.isActive(),
+      canExec: editor.commands.insertHorizontalRule.canExec(),
+      command: editor.commands.insertHorizontalRule,
+    },
+    bulletList: {
+      isActive: editor.nodes.list.isActive({ kind: "bullet" }),
+      canExec: editor.commands.toggleList.canExec({ kind: "bullet" }),
+      command: () => editor.commands.toggleList({ kind: "bullet" }),
+    },
+    orderedList: {
+      isActive: editor.nodes.list.isActive({ kind: "ordered" }),
+      canExec: editor.commands.toggleList.canExec({ kind: "ordered" }),
+      command: () => editor.commands.toggleList({ kind: "ordered" }),
+    },
+    taskList: {
+      isActive: editor.nodes.list.isActive({ kind: "task" }),
+      canExec: editor.commands.toggleList.canExec({ kind: "task" }),
+      command: () => editor.commands.toggleList({ kind: "task" }),
+    },
+    toggleList: {
+      isActive: editor.nodes.list.isActive({ kind: "toggle" }),
+      canExec: editor.commands.toggleList.canExec({ kind: "toggle" }),
+      command: () => editor.commands.toggleList({ kind: "toggle" }),
+    },
+    indentList: {
+      isActive: false,
+      canExec: editor.commands.indentList.canExec(),
+      command: editor.commands.indentList,
+    },
+    dedentList: {
+      isActive: false,
+      canExec: editor.commands.dedentList.canExec(),
+      command: editor.commands.dedentList,
+    },
+    insertImage: {
+      isActive: false,
+      canExec: editor.commands.insertImage.canExec(),
     },
   };
 }
 
-export function Toolbar() {
+export default function Toolbar() {
   const items = useEditorDerivedValue(getToolbarItems);
-  const editor = useEditor<EditorExtension>();
 
   return (
-    <div className="mb-1 flex items-center justify-between overflow-hidden rounded-b-xl border-b-0 border-t border-t-gray-200 bg-white p-2 shadow-none">
-      {/* Left side - formatting buttons */}
-      <div className="flex items-center gap-1">
-        <Button
-          pressed={items.bold.isActive}
-          disabled={!items.bold.canExec}
-          onClick={items.bold.command}
-          tooltip="Bold Text"
-        >
-          <BoldIcon className="h-4 w-4" />
-        </Button>
-        <Button
-          pressed={items.italic.isActive}
-          disabled={!items.italic.canExec}
-          onClick={items.italic.command}
-          tooltip="Italic Text"
-        >
-          <ItalicIcon className="h-4 w-4" />
-        </Button>
-        <Button
-          pressed={items.underline.isActive}
-          disabled={!items.underline.canExec}
-          onClick={items.underline.command}
-          tooltip="Underline Text"
-        >
-          <UnderlineIcon className="h-4 w-4" />
-        </Button>
-        {/* List dropdown button - moved here to be next to underline */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <span>
-              <Button tooltip="Lists" pressed={items.bullet.isActive || items.ordered.isActive || items.task.isActive}>
-                <List className="h-4 w-4" />
-              </Button>
-            </span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuItem
-              onSelect={e => {
-                e.preventDefault();
-                items.bullet.command();
-              }}
-              disabled={!items.bullet.canExec}
-              className={items.bullet.isActive ? "bg-gray-100 font-semibold text-black" : ""}
-            >
-              <List className="mr-2 h-4 w-4" /> Bullet List
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={e => {
-                e.preventDefault();
-                items.ordered.command();
-              }}
-              disabled={!items.ordered.canExec}
-              className={items.ordered.isActive ? "bg-gray-100 font-semibold text-black" : ""}
-            >
-              <ListOrdered className="mr-2 h-4 w-4" /> Numbered List
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={e => {
-                e.preventDefault();
-                items.task.command();
-              }}
-              disabled={!items.task.canExec}
-              className={items.task.isActive ? "bg-gray-100 font-semibold text-black" : ""}
-            >
-              <CheckSquare className="mr-2 h-4 w-4" /> Task List
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        {/* Headings dropdown button - placed after list dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <span>
-              <Button
-                tooltip="Headings"
-                pressed={items.heading1.isActive || items.heading2.isActive || items.heading3.isActive}
-              >
-                <span className="text-xs font-bold">H</span>
-              </Button>
-            </span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuItem
-              onSelect={e => {
-                e.preventDefault();
-                items.heading1.command();
-              }}
-              disabled={!items.heading1.canExec}
-              className={items.heading1.isActive ? "bg-gray-100 font-semibold text-black" : ""}
-            >
-              <span className="mr-2 font-bold">H1</span> Heading 1
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={e => {
-                e.preventDefault();
-                items.heading2.command();
-              }}
-              disabled={!items.heading2.canExec}
-              className={items.heading2.isActive ? "bg-gray-100 font-semibold text-black" : ""}
-            >
-              <span className="mr-2 font-bold">H2</span> Heading 2
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={e => {
-                e.preventDefault();
-                items.heading3.command();
-              }}
-              disabled={!items.heading3.canExec}
-              className={items.heading3.isActive ? "bg-gray-100 font-semibold text-black" : ""}
-            >
-              <span className="mr-2 font-bold">H3</span> Heading 3
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        {/* Emoji picker button */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <span>
-              <Button tooltip="Insert Emoji">
-                <Smile className="h-4 w-4" />
-              </Button>
-            </span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-64 p-2">
-            <div className="grid max-h-56 grid-cols-8 gap-1 overflow-y-auto" role="grid" aria-label="Emoji picker">
-              {EMOJIS.map((emoji, i) => (
-                <button
-                  key={emoji + i}
-                  type="button"
-                  className="flex h-8 w-8 items-center justify-center rounded-md text-xl hover:bg-gray-100 focus:bg-gray-200 focus:outline-none"
-                  tabIndex={0}
-                  aria-label={`Insert emoji ${emoji}`}
-                  onClick={() => {
-                    editor.view.dispatch(editor.view.state.tr.insertText(emoji));
-                    editor.view.focus();
-                  }}
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        {/* Code block button */}
-        <Button
-          pressed={items.codeBlock.isActive}
-          disabled={!items.codeBlock.canExec}
-          onClick={items.codeBlock.command}
-          tooltip="Code Block"
-        >
-          <Code className="h-4 w-4" />
-        </Button>
-      </div>
+    <div className="z-2 box-border flex flex-wrap items-center gap-1 border-b border-l-0 border-r-0 border-t-0 border-solid border-gray-300 bg-gray-50/50 p-2 dark:border-gray-600 dark:bg-gray-900/50">
+      <Button pressed={items.undo.isActive} disabled={!items.undo.canExec} onClick={items.undo.command} tooltip="Undo">
+        <Undo2 className="h-4 w-4" />
+      </Button>
+
+      <Button pressed={items.redo.isActive} disabled={!items.redo.canExec} onClick={items.redo.command} tooltip="Redo">
+        <Redo2 className="h-4 w-4" />
+      </Button>
+
+      <Button pressed={items.bold.isActive} disabled={!items.bold.canExec} onClick={items.bold.command} tooltip="Bold">
+        <Bold className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.italic.isActive}
+        disabled={!items.italic.canExec}
+        onClick={items.italic.command}
+        tooltip="Italic"
+      >
+        <Italic className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.underline.isActive}
+        disabled={!items.underline.canExec}
+        onClick={items.underline.command}
+        tooltip="Underline"
+      >
+        <Underline className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.strike.isActive}
+        disabled={!items.strike.canExec}
+        onClick={items.strike.command}
+        tooltip="Strike"
+      >
+        <Strikethrough className="h-4 w-4" />
+      </Button>
+
+      <Button pressed={items.code.isActive} disabled={!items.code.canExec} onClick={items.code.command} tooltip="Code">
+        <Code className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.codeBlock.isActive}
+        disabled={!items.codeBlock.canExec}
+        onClick={items.codeBlock.command}
+        tooltip="Code Block"
+      >
+        <SquareCode className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.heading1.isActive}
+        disabled={!items.heading1.canExec}
+        onClick={items.heading1.command}
+        tooltip="Heading 1"
+      >
+        <Heading1 className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.heading2.isActive}
+        disabled={!items.heading2.canExec}
+        onClick={items.heading2.command}
+        tooltip="Heading 2"
+      >
+        <Heading2 className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.heading3.isActive}
+        disabled={!items.heading3.canExec}
+        onClick={items.heading3.command}
+        tooltip="Heading 3"
+      >
+        <Heading3 className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.horizontalRule.isActive}
+        disabled={!items.horizontalRule.canExec}
+        onClick={items.horizontalRule.command}
+        tooltip="Divider"
+      >
+        <Minus className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.bulletList.isActive}
+        disabled={!items.bulletList.canExec}
+        onClick={items.bulletList.command}
+        tooltip="Bullet List"
+      >
+        <List className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.orderedList.isActive}
+        disabled={!items.orderedList.canExec}
+        onClick={items.orderedList.command}
+        tooltip="Ordered List"
+      >
+        <ListOrdered className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.taskList.isActive}
+        disabled={!items.taskList.canExec}
+        onClick={items.taskList.command}
+        tooltip="Task List"
+      >
+        <ListChecks className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.toggleList.isActive}
+        disabled={!items.toggleList.canExec}
+        onClick={items.toggleList.command}
+        tooltip="Toggle List"
+      >
+        <ListCollapse className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.indentList.isActive}
+        disabled={!items.indentList.canExec}
+        onClick={items.indentList.command}
+        tooltip="Increase indentation"
+      >
+        <IndentIncrease className="h-4 w-4" />
+      </Button>
+
+      <Button
+        pressed={items.dedentList.isActive}
+        disabled={!items.dedentList.canExec}
+        onClick={items.dedentList.command}
+        tooltip="Decrease indentation"
+      >
+        <IndentDecrease className="h-4 w-4" />
+      </Button>
+
+      <ImageUploadPopover disabled={!items.insertImage.canExec} tooltip="Insert Image">
+        <Image className="h-4 w-4" />
+      </ImageUploadPopover>
     </div>
   );
 }
