@@ -5,7 +5,6 @@ import BlockHandle from "@/components/editor/block-handle";
 import InlineMenu from "@/components/editor/inline-menu";
 import SlashMenu from "@/components/editor/slash-menu";
 import { TableHandle } from "@/components/editor/table-handle";
-import TagMenu from "@/components/editor/tag-menu";
 import Toolbar from "@/components/editor/toolbar";
 import { markdownFromHTML } from "@/lib/prosekit/markdown";
 import "prosekit/basic/style.css";
@@ -44,7 +43,6 @@ export function TextEditor({ onChange }: TextEditorProps) {
           ></div>
           <InlineMenu />
           <SlashMenu />
-          <TagMenu />
           <BlockHandle />
           <TableHandle />
         </div>

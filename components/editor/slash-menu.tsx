@@ -29,13 +29,13 @@ export default function SlashMenu() {
 
         <SlashMenuItem label="Ordered list" kbd="1." onSelect={() => editor.commands.wrapInList({ kind: "ordered" })} />
 
-        <SlashMenuItem label="Task list" kbd="[]" onSelect={() => editor.commands.wrapInList({ kind: "task" })} />
+        {/* <SlashMenuItem label="Task list" kbd="[]" onSelect={() => editor.commands.wrapInList({ kind: "task" })} /> */}
 
-        <SlashMenuItem label="Toggle list" kbd=">>" onSelect={() => editor.commands.wrapInList({ kind: "toggle" })} />
+        {/* <SlashMenuItem label="Toggle list" kbd=">>" onSelect={() => editor.commands.wrapInList({ kind: "toggle" })} /> */}
 
         <SlashMenuItem label="Quote" kbd=">" onSelect={() => editor.commands.setBlockquote()} />
 
-        <SlashMenuItem label="Table" onSelect={() => editor.commands.insertTable({ row: 3, col: 3 })} />
+        {/* <SlashMenuItem label="Table" onSelect={() => editor.commands.insertTable({ row: 3, col: 3 })} /> */}
 
         <SlashMenuItem label="Divider" kbd="---" onSelect={() => editor.commands.insertHorizontalRule()} />
 
