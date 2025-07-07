@@ -19,7 +19,7 @@ const config = createConfig(
     chains: [chains.testnet],
     transports: {
       // RPC URLs for each chain
-      // [lensMainnet.id]: http("https://rpc.lens.xyz"),
+      // [chains.mainnet.id]: http("https://rpc.lens.xyz"),
       [chains.testnet.id]: http("https://rpc.testnet.lens.dev"),
     },
 

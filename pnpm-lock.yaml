@@ -162,8 +162,8 @@ importers:
         specifier: 1.0.4
         version: 1.0.4(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       connectkit:
-        specifier: 1.8.1
-        version: 1.8.1(@babel/core@7.27.4)(@tanstack/react-query@5.80.10(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(wagmi@2.15.6(@tanstack/query-core@5.80.10)(@tanstack/react-query@5.80.10(react@18.3.1))(@types/react@18.3.23)(bufferutil@4.0.9)(immer@10.1.1)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(zod@3.25.67))
+        specifier: 1.9.1
+        version: 1.9.1(@babel/core@7.27.4)(@tanstack/react-query@5.80.10(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(wagmi@2.15.6(@tanstack/query-core@5.80.10)(@tanstack/react-query@5.80.10(react@18.3.1))(@types/react@18.3.23)(bufferutil@4.0.9)(immer@10.1.1)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(zod@3.25.67))
       date-fns:
         specifier: 2.3.0
         version: 2.3.0
@@ -2665,8 +2665,8 @@ packages:
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
-  connectkit@1.8.1:
-    resolution: {integrity: sha512-Zg/oInF2R3/OpXwN+aVgkX2FwWMG5daqdeDZ//u334mwE2mqsr15Gd3D75ThCqMMi70bDJln4+eT7YufiriKIw==}
+  connectkit@1.9.1:
+    resolution: {integrity: sha512-ac9Ki3+HdS3l5NCa6H86y7R+0PqwJ8yzsBQVtWk4/jkFo+JJioetO43A/Q0O7VtxLbfuLLfwDGZ09taePLNzfQ==}
     engines: {node: '>=12.4'}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
@@ -3158,6 +3158,24 @@ packages:
   extension-port-stream@3.0.0:
     resolution: {integrity: sha512-an2S5quJMiy5bnZKEf6AkfH/7r8CzHvhchU40gxN+OM6HPhe7Z9T1FUychcf2M9PpPOO0Hf7BAEfJkw2TDIBDw==}
     engines: {node: '>=12.0.0'}
+
+  family@0.1.3:
+    resolution: {integrity: sha512-5jvm4XrcJU/Hl0Bv9wL6VdzsfW8I20ssFcWmYWrUHVQGZlNqqLGoNqyEVWr3uLaPpdAY0Hn0+J9JWrK7MzeDXQ==}
+    engines: {node: '>=12.4'}
+    peerDependencies:
+      react: 17.x || 18.x || 19.x
+      react-dom: 17.x || 18.x || 19.x
+      viem: 2.x
+      wagmi: 2.x
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      viem:
+        optional: true
+      wagmi:
+        optional: true
 
   fast-copy@3.0.2:
     resolution: {integrity: sha512-dl0O9Vhju8IrcLndv2eU4ldt1ftXMqqfgN4H1cpmGV7P6jeB9FwpN9a2c8DPGE1Ys88rNUJVYDHq73CGAGOPfQ==}
@@ -9044,11 +9062,12 @@ snapshots:
 
   concat-map@0.0.1: {}
 
-  connectkit@1.8.1(@babel/core@7.27.4)(@tanstack/react-query@5.80.10(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(wagmi@2.15.6(@tanstack/query-core@5.80.10)(@tanstack/react-query@5.80.10(react@18.3.1))(@types/react@18.3.23)(bufferutil@4.0.9)(immer@10.1.1)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(zod@3.25.67)):
+  connectkit@1.9.1(@babel/core@7.27.4)(@tanstack/react-query@5.80.10(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(wagmi@2.15.6(@tanstack/query-core@5.80.10)(@tanstack/react-query@5.80.10(react@18.3.1))(@types/react@18.3.23)(bufferutil@4.0.9)(immer@10.1.1)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(zod@3.25.67)):
     dependencies:
       '@tanstack/react-query': 5.80.10(react@18.3.1)
       buffer: 6.0.3
       detect-browser: 5.3.0
+      family: 0.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(wagmi@2.15.6(@tanstack/query-core@5.80.10)(@tanstack/react-query@5.80.10(react@18.3.1))(@types/react@18.3.23)(bufferutil@4.0.9)(immer@10.1.1)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(zod@3.25.67))
       framer-motion: 6.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       qrcode: 1.5.4
       react: 18.3.1
@@ -9682,6 +9701,13 @@ snapshots:
     dependencies:
       readable-stream: 3.6.2
       webextension-polyfill: 0.10.0
+
+  family@0.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(wagmi@2.15.6(@tanstack/query-core@5.80.10)(@tanstack/react-query@5.80.10(react@18.3.1))(@types/react@18.3.23)(bufferutil@4.0.9)(immer@10.1.1)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(zod@3.25.67)):
+    optionalDependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      viem: 2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67)
+      wagmi: 2.15.6(@tanstack/query-core@5.80.10)(@tanstack/react-query@5.80.10(react@18.3.1))(@types/react@18.3.23)(bufferutil@4.0.9)(immer@10.1.1)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.31.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(zod@3.25.67)
 
   fast-copy@3.0.2: {}
 
