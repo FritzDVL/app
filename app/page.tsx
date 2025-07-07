@@ -5,7 +5,7 @@ import { FeaturedCommunities } from "@/components/home/featured-communities";
 import { HeroSection } from "@/components/home/hero-section";
 import { LatestThreads } from "@/components/home/latest-threads";
 import { StatsBar } from "@/components/home/stats-bar";
-import { Navbar } from "@/components/layout/navbar";
+import { Container } from "@/components/layout/container";
 import { useForumStats } from "@/hooks/common/use-forum-stats";
 import { useFeaturedCommunities } from "@/hooks/queries/use-featured-communities";
 import { useLatestThreads } from "@/hooks/queries/use-latest-threads";
@@ -24,8 +24,7 @@ export default function HomePage() {
   const { data: featuredCommunities = [] } = useFeaturedCommunities();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100/40">
-      <Navbar />
+    <Container>
       <HeroSection />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <StatsBar loadingStats={loadingStats} statsError={statsError} forumStats={forumStats ?? undefined} />
@@ -45,6 +44,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }
