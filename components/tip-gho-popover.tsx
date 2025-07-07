@@ -71,7 +71,6 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
 
   useEffect(() => {
     if (account) {
-      console.log("Account found:", account);
       // Check if the account has a Tipping Account Action
       for (const action of account.actions) {
         switch (action.__typename) {
