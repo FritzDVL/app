@@ -1,6 +1,7 @@
 import type React from "react";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Container } from "@/components/layout/container";
 import { Footer } from "@/components/layout/footer";
 import { AppProvider } from "@/components/providers/app-provider";
 import { Web3Provider } from "@/components/providers/web3-provider";
@@ -24,7 +25,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${customFont.variable} font-custom`} suppressHydrationWarning>
         <Web3Provider>
           <div className="fixed bottom-4 right-4 z-50"></div>
-          <AppProvider>{children}</AppProvider>
+          <AppProvider>
+            <Container>{children}</Container>
+          </AppProvider>
           <Footer />
           <Toaster />
         </Web3Provider>
