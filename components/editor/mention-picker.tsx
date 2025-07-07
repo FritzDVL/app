@@ -62,7 +62,7 @@ export default function MentionPicker() {
     editor.commands.insertMention({
       id: account.address,
       value: "@" + account.displayUsername,
-      kind: "account",
+      kind: "user",
     });
     editor.commands.insertText({ text: " " });
   };

@@ -2,6 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { VotingActions } from "./voting-actions";
+import { ContentRenderer } from "@/components/content-renderer";
 import { TipGhoPopover } from "@/components/tip-gho-popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -169,10 +170,7 @@ export function ThreadReplyCard({
                 </div>
               )}
               {/* Content */}
-              <div
-                className="rich-text-content mb-2"
-                dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(reply.content) }}
-              />
+              <ContentRenderer content={removeTrailingEmptyPTags(reply.content)} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
               <div className="mt-3 flex items-center justify-between">
                 {/* Tips counter bottom left */}
