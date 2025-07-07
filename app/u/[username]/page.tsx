@@ -10,38 +10,20 @@ import { RecentActivity } from "@/components/account/recent-activity";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProfileAccount } from "@/hooks/account/use-profile-account";
-import { fetchCommunitiesJoined } from "@/lib/fetchers/communities";
-import { fetchLatestRepliesByAuthor } from "@/lib/fetchers/replies";
+import { useProfileJoinedCommunities } from "@/hooks/queries/use-profile-joined-communities";
+import { useProfileReplies } from "@/hooks/queries/use-profile-replies";
 import { Account } from "@lens-protocol/client";
-import { useQuery } from "@tanstack/react-query";
 
 export default function ProfilePage() {
   const params = useParams();
   const username = params.username as string;
   const [activeTab, setActiveTab] = useState("recent");
 
-  // Use the new hook
   const { lensAccount, stats, isLoading } = useProfileAccount(username);
-
-  const { data: userReplies = [], isLoading: loadingReplies } = useQuery({
-    queryKey: ["latestReplies", lensAccount?.address],
-    queryFn: async () => {
-      if (!lensAccount?.address) return [];
-      return fetchLatestRepliesByAuthor(lensAccount.address, 10);
-    },
-    enabled: !!lensAccount?.address,
-    staleTime: 1000 * 60 * 2, // 2 minutes
-  });
-
-  const { data: joinedCommunities = [], isLoading: loadingCommunities } = useQuery({
-    queryKey: ["joinedCommunities", lensAccount?.address],
-    queryFn: async () => {
-      if (!lensAccount?.address) return [];
-      return fetchCommunitiesJoined(lensAccount.address);
-    },
-    enabled: !!lensAccount?.address,
-    staleTime: 1000 * 60 * 2,
-  });
+  const { data: userReplies = [], isLoading: loadingReplies } = useProfileReplies(lensAccount?.address);
+  const { data: joinedCommunities = [], isLoading: loadingCommunities } = useProfileJoinedCommunities(
+    lensAccount?.address,
+  );
 
   if (isLoading) {
     return (
