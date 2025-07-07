@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useCommunityCreation } from "@/hooks/use-community-create";
+import { useCommunityCreation } from "@/hooks/communities/use-community-create";
 import { incrementCommunityMembersCount } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
 import { evmAddress } from "@lens-protocol/client";

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useLogin } from "@/hooks/use-login";
+import { useLogin } from "@/hooks/auth/use-login";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { Address } from "@/types/common";
 import { fetchAccountsAvailable } from "@lens-protocol/client/actions";

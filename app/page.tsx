@@ -7,7 +7,7 @@ import { Navbar } from "@/components/home/navbar";
 import { HeroSection } from "@/components/home/hero-section";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useForumStats } from "@/hooks/use-forum-stats";
+import { useForumStats } from "@/hooks/common/use-forum-stats";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchThread } from "@/lib/fetchers/thread";
 import { fetchFeaturedCommunities, fetchLatestThreads } from "@/lib/supabase";

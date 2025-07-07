@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { useLogout } from "@/hooks/use-logout";
+import { useLogout } from "@/hooks/auth/use-logout";
 import { useAuthStore } from "@/stores/auth-store";
 import { Home, LogOut, Menu, Plus, RefreshCw, Search, User, Users, X } from "lucide-react";
 

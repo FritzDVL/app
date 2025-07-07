@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { EditorExtension } from "./extension";
-import useMentionQuery, { MentionAccount } from "@/hooks/use-mention-query";
+import useMentionQuery, { MentionAccount } from "@/hooks/editor/use-mention-query";
 import { Check, ChevronRight, Search, Users } from "lucide-react";
 import { useEditor } from "prosekit/react";
 import {

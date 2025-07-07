@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useLogout } from "@/hooks/use-logout";
+import { useLogout } from "@/hooks/auth/use-logout";
 import { useAuthStore } from "@/stores/auth-store";
 import { ConnectKitButton } from "connectkit";
 import { ChevronDown, Loader2, LogOut, User, Wallet } from "lucide-react";

@@ -23,9 +23,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useCommunityMembership } from "@/hooks/use-community-membership";
-import { useJoinCommunity } from "@/hooks/use-join-community";
-import { useReplyCreate } from "@/hooks/use-reply-create";
+import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
+import { useJoinCommunity } from "@/hooks/communities/use-join-community";
+import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchRepliesPaginated } from "@/lib/fetchers/replies";
 import { fetchThread } from "@/lib/fetchers/thread";
