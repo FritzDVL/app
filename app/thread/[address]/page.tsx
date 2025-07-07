@@ -29,7 +29,6 @@ import { useReplyCreate } from "@/hooks/use-reply-create";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { fetchRepliesPaginated } from "@/lib/fetchers/replies";
 import { fetchThread } from "@/lib/fetchers/thread";
-import { removeTrailingEmptyPTags } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { type Address, Community, PaginatedRepliesResult, type ThreadReplyWithDepth } from "@/types/common";
 import { PageSize, PostId } from "@lens-protocol/client";
