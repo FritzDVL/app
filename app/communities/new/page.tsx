@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CommunityCreationTips } from "@/components/community-creation-tips";
-import { Navbar } from "@/components/navbar";
-import { ProtectedRoute } from "@/components/protected-route";
+import { CommunityCreationTips } from "@/components/communities/community-creation-tips";
+import { Navbar } from "@/components/home/navbar";
+import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";

@@ -1,4 +1,4 @@
-import { ThreadReplyCard } from "@/components/thread-reply-card";
+import { ThreadReplyCard } from "@/components/thread/thread-reply-card";
 import { Reply } from "@/types/common";
 
 interface ThreadRepliesProps {

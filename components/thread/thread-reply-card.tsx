@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Link from "next/link";
+import { VotingActions } from "../shared/voting-actions";
 import { ThreadReplyBox } from "./thread-reply-box";
-import { VotingActions } from "./voting-actions";
-import { ContentRenderer } from "@/components/content-renderer";
-import { TipGhoPopover } from "@/components/tip-gho-popover";
+import { ContentRenderer } from "@/components/shared/content-renderer";
+import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

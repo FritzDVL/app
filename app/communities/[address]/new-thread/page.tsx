@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CommunityRules } from "@/components/community-rules";
+import { CommunityRules } from "@/components/communities/community-rules";
 import { TextEditor } from "@/components/editor/text-editor";
-import { Navbar } from "@/components/navbar";
-import { ProtectedRoute } from "@/components/protected-route";
+import { Navbar } from "@/components/home/navbar";
+import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

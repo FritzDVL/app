@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Navbar } from "@/components/navbar";
-import { ProtectedRoute } from "@/components/protected-route";
+import { Navbar } from "@/components/home/navbar";
+import { ProtectedRoute } from "@/components/pages/protected-route";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

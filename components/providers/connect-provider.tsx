@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EnableSignlessDialog } from "@/components/enable-signless-dialog";
-import { LoginLensAccountsDialog } from "@/components/login-lens-accounts-dialog";
+import { LoginLensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
+import { EnableSignlessDialog } from "@/components/auth/enable-signless-dialog";
 import { useSignlessStatus } from "@/hooks/use-signless-status";
 import { useAuthStore } from "@/stores/auth-store";
 import { ConnectKitProvider } from "connectkit";

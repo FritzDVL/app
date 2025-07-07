@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { LoginLensAccountsDialog } from "@/components/login-lens-accounts-dialog";
+import { LoginLensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ThreadReplyBox } from "./thread-reply-box";
+import { ThreadReplyBox } from "@/components/thread/thread-reply-box";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

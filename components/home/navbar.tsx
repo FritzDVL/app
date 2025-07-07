@@ -4,8 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LoginConnectButton } from "@/components/login-connect-button";
-import { LoginLensAccountsDialog } from "@/components/login-lens-accounts-dialog";
+import { LoginConnectButton } from "@/components/auth/login-connect-button";
+import { LoginLensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
