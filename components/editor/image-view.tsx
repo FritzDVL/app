@@ -1,4 +1,5 @@
 import { type SyntheticEvent, useEffect, useState } from "react";
+import Image from "next/image";
 import { ArrowDownRight, ImageOff, LoaderCircle } from "lucide-react";
 import { UploadTask } from "prosekit/extensions/file";
 import type { ImageAttrs } from "prosekit/extensions/image";
@@ -84,7 +85,12 @@ export default function ImageView(props: ReactNodeViewProps) {
       className="outline-solid group relative my-2 box-border flex max-h-[600px] min-h-[64px] min-w-[64px] max-w-full items-center justify-center overflow-hidden outline-2 outline-transparent data-[selected]:outline-blue-500"
     >
       {url && !error && (
-        <img src={url} onLoad={handleImageLoad} className="h-full max-h-full w-full max-w-full object-contain" />
+        <Image
+          src={url}
+          onLoad={handleImageLoad}
+          className="h-full max-h-full w-full max-w-full object-contain"
+          alt="Image"
+        />
       )}
       {uploading && !error && (
         <div className="absolute bottom-0 left-0 m-1 flex content-center items-center gap-2 rounded bg-gray-800/60 p-1.5 text-xs text-white/80 transition">

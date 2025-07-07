@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Navbar } from "@/components/home/navbar";
 import { HeroSection } from "@/components/home/hero-section";
+import { Navbar } from "@/components/home/navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useForumStats } from "@/hooks/common/use-forum-stats";
