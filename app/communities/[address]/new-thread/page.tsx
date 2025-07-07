@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreateThreadFormData, useThreadCreation } from "@/hooks/use-thread-create";
+import { CreateThreadFormData, useThreadCreation } from "@/hooks/threads/use-thread-create";
 import { useAuthStore } from "@/stores/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
 import { Hash, Plus, Send, X } from "lucide-react";
