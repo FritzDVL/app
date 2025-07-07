@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { LeaveCommunityDialog } from "@/components/communities/community-leave-dialog";
 import { CommunityModerators } from "@/components/communities/community-moderators";
 import { CommunityRules } from "@/components/communities/community-rules";
-import { Navbar } from "@/components/home/navbar";
+import { Navbar } from "@/components/layout/navbar";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { VotingActions } from "@/components/shared/voting-actions";
 import { ThreadNewButton } from "@/components/thread/thread-new-button";

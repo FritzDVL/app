@@ -4,7 +4,7 @@ import { useState } from "react";
 import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Navbar } from "@/components/home/navbar";
+import { Navbar } from "@/components/layout/navbar";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";

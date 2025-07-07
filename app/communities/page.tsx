@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Navbar } from "@/components/home/navbar";
+import { Navbar } from "@/components/layout/navbar";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";

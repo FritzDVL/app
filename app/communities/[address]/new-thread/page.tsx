@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CommunityRules } from "@/components/communities/community-rules";
 import { TextEditor } from "@/components/editor/text-editor";
-import { Navbar } from "@/components/home/navbar";
+import { Navbar } from "@/components/layout/navbar";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";

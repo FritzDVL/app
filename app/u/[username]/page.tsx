@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Navbar } from "@/components/home/navbar";
+import { Navbar } from "@/components/layout/navbar";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
