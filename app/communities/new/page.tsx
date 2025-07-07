@@ -58,13 +58,14 @@ export default function NewCommunityPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!sessionClient.data || !walletClient.data) {
       toast.error("Not logged in", {
         description: "Please log in to create a community.",
       });
-      return;
+      throw new Error("Not logged in");
     }
-    e.preventDefault();
+
     setLoading(true);
     setError(null);
     const toastLoading = toast.loading("Creating community...");
@@ -87,23 +88,18 @@ export default function NewCommunityPage() {
           description: result.error || "Please try again.",
         });
         setLoading(false);
-        return;
+        throw new Error(result.error || "Community creation failed");
       }
       const community = result.community;
       if (community && community.id) {
         // Join the community automatically for admin
-        try {
-          const result = await joinGroup(sessionClient.data, {
-            group: evmAddress(community.address),
-          }).andThen(handleOperationWith(walletClient.data));
-
-          if (result.isOk()) {
-            await incrementCommunityMembersCount(community.id);
-          } else {
-            throw new Error(result.error.message);
-          }
-        } catch (error) {
-          console.error("Error joining/leaving community:", error);
+        const joinResult = await joinGroup(sessionClient.data, {
+          group: evmAddress(community.address),
+        }).andThen(handleOperationWith(walletClient.data));
+        if (joinResult.isOk()) {
+          await incrementCommunityMembersCount(community.id);
+        } else {
+          console.error("Error joining/leaving community:", joinResult.error);
           toast.error("Action Failed", {
             description: "Unable to update your membership status. Please try again.",
           });
