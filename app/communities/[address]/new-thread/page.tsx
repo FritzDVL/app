@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CommunityRules } from "@/components/communities/community-rules";
 import { TextEditor } from "@/components/editor/text-editor";
-import { Navbar } from "@/components/layout/navbar";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Badge } from "@/components/ui/badge";
@@ -107,181 +106,177 @@ export default function NewThreadPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-brand-100/40">
-        <Navbar />
+      <main className="mx-auto max-w-7xl px-4 py-6">
+        {/* Header */}
+        <div className="mb-6 flex items-center">
+          <BackNavigationLink href={`/communities/${communityAddress}`}>Back to Community</BackNavigationLink>
+        </div>
 
-        <main className="mx-auto max-w-7xl px-4 py-6">
-          {/* Header */}
-          <div className="mb-6 flex items-center">
-            <BackNavigationLink href={`/communities/${communityAddress}`}>Back to Community</BackNavigationLink>
-          </div>
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <Card className="rounded-3xl border border-brand-200/60 bg-white backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <h1 className="text-2xl font-medium text-slate-900">Create New Thread</h1>
+                <p className="text-slate-600">Share your thoughts with the community</p>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Title */}
+                  <div className="space-y-2">
+                    <Label htmlFor="title" className="text-sm font-medium text-slate-700">
+                      Title
+                    </Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={e => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="What's your thread about?"
+                      className="rounded-full border-brand-200/40 bg-white/50 backdrop-blur-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
+                      required
+                    />
+                  </div>
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-            {/* Main Content */}
-            <div className="lg:col-span-3">
-              <Card className="rounded-3xl border border-brand-200/60 bg-white backdrop-blur-sm">
-                <CardHeader className="pb-4">
-                  <h1 className="text-2xl font-medium text-slate-900">Create New Thread</h1>
-                  <p className="text-slate-600">Share your thoughts with the community</p>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Title */}
-                    <div className="space-y-2">
-                      <Label htmlFor="title" className="text-sm font-medium text-slate-700">
-                        Title
-                      </Label>
-                      <Input
-                        id="title"
-                        value={formData.title}
-                        onChange={e => setFormData({ ...formData, title: e.target.value })}
-                        placeholder="What's your thread about?"
-                        className="rounded-full border-brand-200/40 bg-white/50 backdrop-blur-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
-                        required
+                  {/* Summary */}
+                  <div className="space-y-2">
+                    <Label htmlFor="summary" className="text-sm font-medium text-slate-700">
+                      Summary
+                    </Label>
+                    <Input
+                      id="summary"
+                      value={formData.summary}
+                      onChange={e => setFormData({ ...formData, summary: e.target.value })}
+                      placeholder="Brief description (max 100 chars)"
+                      className="rounded-2xl border-brand-200/40 bg-white/50 backdrop-blur-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
+                      maxLength={100}
+                    />
+                  </div>
+
+                  {/* Content Editor */}
+                  <div className="space-y-2">
+                    <Label htmlFor="content" className="text-sm font-medium text-slate-700">
+                      Content
+                    </Label>
+                    <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm">
+                      <TextEditor
+                        onChange={function (value: string): void {
+                          setFormData({ ...formData, content: value });
+                        }}
                       />
                     </div>
+                  </div>
 
-                    {/* Summary */}
-                    <div className="space-y-2">
-                      <Label htmlFor="summary" className="text-sm font-medium text-slate-700">
-                        Summary
-                      </Label>
-                      <Input
-                        id="summary"
-                        value={formData.summary}
-                        onChange={e => setFormData({ ...formData, summary: e.target.value })}
-                        placeholder="Brief description (max 100 chars)"
-                        className="rounded-2xl border-brand-200/40 bg-white/50 backdrop-blur-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
-                        maxLength={100}
-                      />
-                    </div>
+                  {/* Enhanced Tags Input */}
+                  <div className="space-y-2">
+                    <Label htmlFor="tags" className="text-sm font-medium text-slate-700">
+                      Tags (optional) {tags.length > 0 && <span className="text-slate-500">({tags.length}/5)</span>}
+                    </Label>
 
-                    {/* Content Editor */}
-                    <div className="space-y-2">
-                      <Label htmlFor="content" className="text-sm font-medium text-slate-700">
-                        Content
-                      </Label>
-                      <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm">
-                        <TextEditor
-                          onChange={function (value: string): void {
-                            setFormData({ ...formData, content: value });
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Enhanced Tags Input */}
-                    <div className="space-y-2">
-                      <Label htmlFor="tags" className="text-sm font-medium text-slate-700">
-                        Tags (optional) {tags.length > 0 && <span className="text-slate-500">({tags.length}/5)</span>}
-                      </Label>
-
-                      <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-3 backdrop-blur-sm focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
-                        {/* Selected Tags */}
-                        <div className="mb-2 flex flex-wrap gap-2">
-                          {tags.map((tag, index) => (
-                            <Badge
-                              key={index}
-                              variant="secondary"
-                              className="flex items-center gap-1 rounded-full bg-brand-100 text-brand-700 hover:bg-brand-200"
-                            >
-                              <Hash className="h-3 w-3" />
-                              {tag}
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="h-4 w-4 rounded-full p-0 hover:bg-brand-300"
-                                onClick={() => removeTag(tag)}
-                              >
-                                <X className="h-3 w-3" />
-                              </Button>
-                            </Badge>
-                          ))}
-                        </div>
-
-                        {/* Tag Input */}
-                        <div className="flex items-center gap-2">
-                          <Input
-                            value={tagInput}
-                            onChange={e => setTagInput(e.target.value)}
-                            onKeyDown={handleTagInputKeyDown}
-                            placeholder={tags.length === 0 ? "Type a tag and press Enter..." : "Add another tag..."}
-                            className="border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
-                            disabled={tags.length >= 5}
-                          />
-                          {tagInput.trim() && (
+                    <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-3 backdrop-blur-sm focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
+                      {/* Selected Tags */}
+                      <div className="mb-2 flex flex-wrap gap-2">
+                        {tags.map((tag, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="flex items-center gap-1 rounded-full bg-brand-100 text-brand-700 hover:bg-brand-200"
+                          >
+                            <Hash className="h-3 w-3" />
+                            {tag}
                             <Button
                               type="button"
-                              size="sm"
                               variant="ghost"
-                              className="h-6 w-6 rounded-full bg-brand-100 p-0 hover:bg-brand-200"
-                              onClick={() => addTag(tagInput)}
+                              size="sm"
+                              className="h-4 w-4 rounded-full p-0 hover:bg-brand-300"
+                              onClick={() => removeTag(tag)}
                             >
-                              <Plus className="h-3 w-3 text-brand-600" />
+                              <X className="h-3 w-3" />
                             </Button>
-                          )}
-                        </div>
+                          </Badge>
+                        ))}
+                      </div>
 
-                        {/* Suggested Tags */}
-                        {tags.length < 5 && (
-                          <div className="mt-3 border-t border-brand-200 pt-2">
-                            <p className="mb-2 text-xs text-slate-500">Popular tags:</p>
-                            <div className="flex flex-wrap gap-1">
-                              {suggestedTags
-                                .filter(tag => !tags.includes(tag))
-                                .slice(0, 6)
-                                .map(tag => (
-                                  <Button
-                                    key={tag}
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-6 rounded-full px-2 text-xs text-slate-600 hover:bg-brand-100 hover:text-brand-700"
-                                    onClick={() => addTag(tag)}
-                                  >
-                                    {tag}
-                                  </Button>
-                                ))}
-                            </div>
-                          </div>
+                      {/* Tag Input */}
+                      <div className="flex items-center gap-2">
+                        <Input
+                          value={tagInput}
+                          onChange={e => setTagInput(e.target.value)}
+                          onKeyDown={handleTagInputKeyDown}
+                          placeholder={tags.length === 0 ? "Type a tag and press Enter..." : "Add another tag..."}
+                          className="border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
+                          disabled={tags.length >= 5}
+                        />
+                        {tagInput.trim() && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 rounded-full bg-brand-100 p-0 hover:bg-brand-200"
+                            onClick={() => addTag(tagInput)}
+                          >
+                            <Plus className="h-3 w-3 text-brand-600" />
+                          </Button>
                         )}
                       </div>
-                    </div>
 
-                    {/* Submit Button */}
-                    <div className="flex justify-end pt-4">
-                      <Button
-                        type="submit"
-                        disabled={isCreating || !formData.title.trim() || !formData.content.trim()}
-                        className="rounded-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50"
-                      >
-                        {isCreating ? (
-                          <div className="flex items-center gap-2">
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
-                            Publishing...
+                      {/* Suggested Tags */}
+                      {tags.length < 5 && (
+                        <div className="mt-3 border-t border-brand-200 pt-2">
+                          <p className="mb-2 text-xs text-slate-500">Popular tags:</p>
+                          <div className="flex flex-wrap gap-1">
+                            {suggestedTags
+                              .filter(tag => !tags.includes(tag))
+                              .slice(0, 6)
+                              .map(tag => (
+                                <Button
+                                  key={tag}
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 rounded-full px-2 text-xs text-slate-600 hover:bg-brand-100 hover:text-brand-700"
+                                  onClick={() => addTag(tag)}
+                                >
+                                  {tag}
+                                </Button>
+                              ))}
                           </div>
-                        ) : (
-                          <>
-                            <Send className="mr-2 h-4 w-4" />
-                            Publish Thread
-                          </>
-                        )}
-                      </Button>
+                        </div>
+                      )}
                     </div>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
+                  </div>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Guidelines */}
-              <CommunityRules variant="posting" />
-            </div>
+                  {/* Submit Button */}
+                  <div className="flex justify-end pt-4">
+                    <Button
+                      type="submit"
+                      disabled={isCreating || !formData.title.trim() || !formData.content.trim()}
+                      className="rounded-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50"
+                    >
+                      {isCreating ? (
+                        <div className="flex items-center gap-2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
+                          Publishing...
+                        </div>
+                      ) : (
+                        <>
+                          <Send className="mr-2 h-4 w-4" />
+                          Publish Thread
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
           </div>
-        </main>
-      </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Guidelines */}
+            <CommunityRules variant="posting" />
+          </div>
+        </div>
+      </main>
     </ProtectedRoute>
   );
 }
