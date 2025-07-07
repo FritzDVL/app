@@ -5,6 +5,7 @@ import { CommunitiesHeader } from "@/components/communities/communities-header";
 import { CommunitiesList } from "@/components/communities/communities-list";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { useCommunities } from "@/hooks/queries/use-communities";
+import { CommunitiesSidebar } from "@/components/communities/communities-sidebar";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,9 +31,9 @@ export default function CommunitiesPage() {
             />
           </div>
           {/* Sidebar */}
-          {/* <div className="space-y-8">
-            <CommunitiesSidebar />
-          </div> */}
+          <div className="space-y-8">
+            <CommunitiesSidebar communities={communities}/>
+          </div>
         </div>
       </main>
     </ProtectedRoute>
