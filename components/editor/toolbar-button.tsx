@@ -19,6 +19,7 @@ export default function ToolbarButton({
     <TooltipRoot>
       <TooltipTrigger className="block">
         <button
+          type="button"
           data-state={pressed ? "on" : "off"}
           disabled={disabled}
           onClick={() => onClick?.()}

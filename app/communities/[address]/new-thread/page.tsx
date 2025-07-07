@@ -163,7 +163,6 @@ export default function NewThreadPage() {
                       </Label>
                       <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm">
                         <TextEditor
-                          value={formData.content}
                           onChange={function (value: string): void {
                             setFormData({ ...formData, content: value });
                           }}
