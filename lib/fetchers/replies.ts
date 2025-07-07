@@ -37,6 +37,7 @@ export async function fetchReplies(threadAddress: string): Promise<Reply[]> {
             username: author.username?.value || "unknown",
             avatar: author.metadata?.picture || "",
             reputation: author.score || 0,
+            address: author.address,
           }),
         );
       }
@@ -87,6 +88,7 @@ export async function fetchRepliesPaginated(
             username: author.username?.value || "unknown",
             avatar: author.metadata?.picture || "",
             reputation: author.score || 0,
+            address: author.address,
           }),
         );
       }
@@ -131,6 +133,7 @@ export async function fetchLatestRepliesByAuthor(author: Address, limit: number 
           username: post.author.username?.value || "unknown",
           avatar: post.author.metadata?.picture || "",
           reputation: post.author.score || 0,
+          address: post.author.address,
         }),
       );
     }

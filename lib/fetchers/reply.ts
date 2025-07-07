@@ -27,6 +27,7 @@ export async function fetchReply(replyId: string): Promise<Reply | null> {
         username: author.username?.value || "unknown",
         avatar: author.metadata?.picture || "",
         reputation: author.score || 0,
+        address: author.address,
       });
     }
   } catch {
