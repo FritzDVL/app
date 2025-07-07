@@ -1,4 +1,4 @@
-import { storageClient } from "../grove";
+import { storageClient } from "../grove/client";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { getTimeAgo } from "@/lib/utils";
 import { Address, Thread } from "@/types/common";

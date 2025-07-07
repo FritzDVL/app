@@ -1,6 +1,6 @@
 // import { lensMainnet } from "@/lib/chains/lens-mainnet";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
-import { storageClient } from "@/lib/grove";
+import { storageClient } from "@/lib/grove/client";
 import { incrementThreadRepliesCount } from "@/lib/supabase";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { useAuthStore } from "@/stores/auth-store";

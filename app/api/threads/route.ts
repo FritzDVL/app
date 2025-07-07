@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminSessionClient } from "@/lib/clients/admin-session";
 import { ADMIN_USER_ADDRESS } from "@/lib/constants";
-import { storageClient } from "@/lib/grove";
+import { storageClient } from "@/lib/grove/client";
 import { persistCommunityThread } from "@/lib/supabase";
 import { adminWallet } from "@/lib/wallets/admin-wallet";
 import { immutable } from "@lens-chain/storage-client";

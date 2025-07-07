@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
-import { storageClient } from "@/lib/grove";
+import { storageClient } from "@/lib/grove/client";
 // import { lensMainnet } from '@/lib/chains/lens-mainnet'
 // import { client } from '@/lib/clients/lens-protocol-mainnet'
 // import { storageClient } from '@/lib/grove'
