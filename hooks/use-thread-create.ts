@@ -29,7 +29,7 @@ export interface CreateThreadFormData {
   title: string;
   summary: string;
   content: string;
-  tags: string;
+  tags?: string; // Now optional
   author: Address;
 }
 
@@ -43,7 +43,7 @@ async function createThreadApi(communityAddress: string, formData: CreateThreadF
       title: formData.title,
       summary: formData.summary,
       content: formData.content,
-      tags: formData.tags,
+      tags: formData.tags || "", // fallback to empty string if undefined
       author: formData.author,
     }),
   });
@@ -61,7 +61,10 @@ async function uploadThreadContent(
   sessionClient: any,
   walletClient: any,
 ) {
-  const metadata = textOnly({ content: formData.content, tags: formData.tags.split(",").map(tag => tag.trim()) });
+  const metadata = textOnly({
+    content: formData.content,
+    tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : [],
+  });
   const acl = immutable(lensTestnet.id);
   const { uri } = await storageClient.uploadAsJson(metadata, { acl });
   const result = await post(sessionClient, {
@@ -120,6 +123,8 @@ function buildThreadRecord(
     community,
     updated_at: new Date().toISOString(),
     replies_count: 0,
+    // tags is not required here, but if needed:
+    // tags: formData.tags || "",
   };
 }
 
@@ -165,7 +170,9 @@ export function useThreadCreation() {
       const rootPost = await fetchThreadRootPost(postedFeed.id);
       // 6. Build thread record and thread instance
       const threadRecord = buildThreadRecord(formData, data, postedFeed, community);
-      const newThread = transformFormDataToThread(formData, threadRecord, communityAddress, author, rootPost);
+      // Ensure tags is always a string for transformFormDataToThread
+      const safeFormData = { ...formData, tags: formData.tags || "" };
+      const newThread = transformFormDataToThread(safeFormData, threadRecord, communityAddress, author, rootPost);
       if (onSuccess) {
         onSuccess(newThread);
       }
