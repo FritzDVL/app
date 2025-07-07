@@ -1,5 +1,6 @@
 import { customBreakHandler } from "./helpers/remark-break-handler";
 import { rehypeJoinParagraph } from "@/lib/prosekit/helpers/rehype-join-paragraph";
+import { rehypeMentionToMarkdownLink } from "@/lib/prosekit/helpers/rehype-mention-to-markdown-link";
 import { remarkLinkProtocol } from "@/lib/prosekit/helpers/remark-link-protocol";
 import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
@@ -18,6 +19,7 @@ export const markdownFromHTML = (html: string): string => {
   const markdown = unified()
     .use(rehypeParse)
     .use(rehypeJoinParagraph)
+    .use(rehypeMentionToMarkdownLink)
     .use(rehypeRemark, { newlines: true })
     .use(remarkLinkProtocol)
     .use(remarkStringify, {

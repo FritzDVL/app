@@ -3,11 +3,11 @@ import { defineExtension } from "./extension";
 import "./text-editor.css";
 import BlockHandle from "@/components/editor/block-handle";
 import InlineMenu from "@/components/editor/inline-menu";
-import MentionPicker from "@/components/editor/mention-picker";
 import SlashMenu from "@/components/editor/slash-menu";
 import { TableHandle } from "@/components/editor/table-handle";
 import TagMenu from "@/components/editor/tag-menu";
 import Toolbar from "@/components/editor/toolbar";
+import { markdownFromHTML } from "@/lib/prosekit/markdown";
 import "prosekit/basic/style.css";
 import "prosekit/basic/typography.css";
 import { createEditor } from "prosekit/core";
@@ -26,7 +26,9 @@ export function TextEditor({ onChange }: TextEditorProps) {
   useDocChange(
     () => {
       const html = editor.getDocHTML();
-      onChange(html);
+      const record = markdownFromHTML(html);
+      onChange(record);
+      // onChange(html); // fallback to HTML for now
     },
     { editor },
   );
@@ -42,7 +44,6 @@ export function TextEditor({ onChange }: TextEditorProps) {
           ></div>
           <InlineMenu />
           <SlashMenu />
-          <MentionPicker />
           <TagMenu />
           <BlockHandle />
           <TableHandle />
