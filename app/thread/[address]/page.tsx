@@ -4,6 +4,7 @@ import { useState } from "react";
 import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import ContentRenderer from "@/components/content-renderer";
 import { Navbar } from "@/components/navbar";
 import { ProtectedRoute } from "@/components/protected-route";
 import { ThreadReplyBox } from "@/components/thread-reply-box";
@@ -235,11 +236,9 @@ export default function ThreadPage() {
                                 : "Unknown date"}
                             </span>
                           </div>
-                          <div
+                          <ContentRenderer
+                            content={thread.rootPost.metadata.content}
                             className="rich-text-content whitespace-pre-line rounded-2xl bg-slate-50/50 p-5 text-gray-800"
-                            dangerouslySetInnerHTML={{
-                              __html: removeTrailingEmptyPTags(thread.rootPost.metadata.content),
-                            }}
                           />
                         </div>
                       )}
