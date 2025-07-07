@@ -1,3 +1,4 @@
+import { uploadImage } from "@/lib/grove/upload-image";
 import { insertNode, union } from "prosekit/core";
 import { defineFileDropHandler, defineFilePasteHandler } from "prosekit/extensions/file";
 
@@ -11,26 +12,28 @@ export function defineImageFileHandlers() {
       if (!file.type.startsWith("image/")) {
         return false;
       }
-      // Start async upload to Grove
-      // TODO: Pass file to uploadToGrove when implemented
-      uploadToGrove(/* file */).then(url => {
-        const command = insertNode({
-          type: "image",
-          attrs: { src: url },
+      uploadImage(file)
+        .then(url => {
+          const command = insertNode({
+            type: "image",
+            attrs: { src: url.gatewayUrl },
+          });
+          command(view.state, view.dispatch, view);
+        })
+        .catch(error => {
+          console.error("Failed to upload image:", error);
         });
-        command(view.state, view.dispatch, view);
-      });
-      return false;
+      return true;
     }),
     defineFileDropHandler(({ view, file, pos }) => {
       if (!file.type.startsWith("image/")) {
         return false;
       }
       // TODO: Pass file to uploadToGrove when implemented
-      uploadToGrove(/* file */).then(url => {
+      uploadImage(file).then(url => {
         const command = insertNode({
           type: "image",
-          attrs: { src: url },
+          attrs: { src: url.gatewayUrl },
           pos,
         });
         command(view.state, view.dispatch, view);
@@ -38,17 +41,4 @@ export function defineImageFileHandlers() {
       return false;
     }),
   );
-}
-
-// Scaffold for Grove upload logic
-async function uploadToGrove(/* file: File */): Promise<string> {
-  // TODO: Implement Grove upload logic here
-  // Example:
-  // const formData = new FormData();
-  // formData.append("file", file);
-  // const response = await fetch("/api/grove/upload", { method: "POST", body: formData });
-  // if (!response.ok) throw new Error("Failed to upload to Grove");
-  // const data = await response.json();
-  // return data.url;
-  throw new Error("Grove upload not implemented");
 }

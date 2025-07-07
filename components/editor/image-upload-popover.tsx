@@ -1,6 +1,7 @@
 import { type FC, type ReactNode, useState } from "react";
 import type { EditorExtension } from "./extension";
 import Button from "./toolbar-button";
+import { uploadImage } from "@/lib/grove/upload-image";
 import { useEditor } from "prosekit/react";
 import { PopoverContent, PopoverRoot, PopoverTrigger } from "prosekit/react/popover";
 
@@ -16,12 +17,20 @@ export const ImageUploadPopover: FC<{
 
   const editor = useEditor<EditorExtension>();
 
-  const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = event => {
+  const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = async event => {
     const file = event.target.files?.[0];
 
     if (file) {
-      setObjectUrl(URL.createObjectURL(file));
-      setWebUrl("");
+      try {
+        // Upload to Grove and get the gateway URL
+        const result = await uploadImage(file);
+        setObjectUrl(result.gatewayUrl);
+        setWebUrl("");
+      } catch (error) {
+        setObjectUrl("");
+        // Optionally show error to user
+        console.error("Failed to upload image to Grove:", error);
+      }
     } else {
       setObjectUrl("");
     }
@@ -46,9 +55,11 @@ export const ImageUploadPopover: FC<{
   };
 
   const handleSubmit = () => {
-    editor.commands.insertImage({ src: url });
-    deferResetState();
-    setOpen(false);
+    if (url) {
+      editor.commands.insertImage({ src: url });
+      deferResetState();
+      setOpen(false);
+    }
   };
 
   const handleOpenChange = (open: boolean) => {
