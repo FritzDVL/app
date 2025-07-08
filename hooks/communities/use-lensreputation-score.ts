@@ -15,7 +15,15 @@ export interface LensReputationScore {
   timestampDate: Date | undefined;
 }
 
-export function useLensReputationScore() {
+export interface UseLensReputationScoreResult {
+  reputation: LensReputationScore;
+  isLoading: boolean;
+  error: unknown;
+  canCreateCommunity: boolean;
+  canCreateThread: boolean;
+}
+
+export function useLensReputationScore(): UseLensReputationScoreResult {
   const { account, walletAddress } = useAuthStore();
 
   const result = useReadContract({
@@ -39,7 +47,15 @@ export function useLensReputationScore() {
     if (!isNaN(timestamp)) {
       timestampDate = new Date(timestamp * 1000);
     }
+  } else {
+    // If the user has not minted the NFT, set score and timestamp to undefined
+    score = undefined;
+    timestamp = undefined;
+    timestampDate = undefined;
   }
+
+  const canCreateCommunity = typeof score === "number" && score >= 700;
+  const canCreateThread = typeof score === "number" && score >= 400;
 
   return {
     reputation: {
@@ -49,5 +65,7 @@ export function useLensReputationScore() {
     },
     isLoading: result.isLoading,
     error: result.error,
+    canCreateCommunity,
+    canCreateThread,
   };
 }
