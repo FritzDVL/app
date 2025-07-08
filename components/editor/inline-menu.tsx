@@ -154,20 +154,22 @@ export default function InlineMenu() {
         className="w-xs relative z-10 box-border flex flex-col items-stretch gap-y-2 rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-800 dark:bg-gray-950 [&:not([data-state])]:hidden"
       >
         {linkMenuOpen && (
-          <form
-            onSubmit={event => {
-              event.preventDefault();
-              const target = event.target as HTMLFormElement | null;
-              const href = target?.querySelector("input")?.value?.trim();
-              handleLinkUpdate(href);
+          <div
+            onKeyDown={event => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                const target = event.target as HTMLInputElement | null;
+                const href = target?.value?.trim();
+                handleLinkUpdate(href);
+              }
             }}
           >
             <input
               placeholder="Paste the link..."
               defaultValue={items.link.currentLink}
               className="box-border flex h-9 w-full rounded-md border border-solid border-gray-200 bg-white px-3 py-2 text-sm outline-none ring-0 ring-transparent transition file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:placeholder:text-gray-500 dark:focus-visible:ring-gray-300"
-            ></input>
-          </form>
+            />
+          </div>
         )}
         {items.link.isActive && (
           <button
