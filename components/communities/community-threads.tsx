@@ -14,11 +14,17 @@ import { Address } from "@/types/common";
 import { postId } from "@lens-protocol/react";
 import { ArrowUp, Clock, Filter, Flame, MessageCircle, Search } from "lucide-react";
 
-export function CommunityThreads({ communityAddress }: { communityAddress: string }) {
+export function CommunityThreads({
+  communityAddress,
+  isJoined = true,
+}: {
+  communityAddress: string;
+  isJoined?: boolean;
+}) {
   const [sortBy, setSortBy] = useState("hot");
 
   const { data: threads = [], isLoading: areThreadsLoading } = useCommunityThreads(communityAddress);
-  const { isMember: isJoined } = useCommunityMembership(communityAddress);
+  const { isMember: isJoinedStatus } = useCommunityMembership(communityAddress);
 
   return (
     <>
@@ -28,7 +34,7 @@ export function CommunityThreads({ communityAddress }: { communityAddress: strin
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-slate-900">Start a Discussion</h3>
-              <ThreadNewButton communityAddress={communityAddress as Address} isJoined={isJoined} />
+              <ThreadNewButton communityAddress={communityAddress as Address} isJoined={isJoinedStatus} />
             </div>
           </CardHeader>
         </Card>

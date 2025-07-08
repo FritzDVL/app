@@ -1,45 +1,30 @@
-import { useState } from "react";
 import Image from "next/image";
 import { LeaveCommunityDialog } from "@/components/communities/community-leave-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
-import { useJoinCommunity } from "@/hooks/communities/use-join-community";
-import { useLeaveCommunity } from "@/hooks/communities/use-leave-community";
 import { useCommunity } from "@/hooks/queries/use-community";
 import { useAuthStore } from "@/stores/auth-store";
-import { Community } from "@/types/common";
 import { MessageCircle, Users } from "lucide-react";
 
-export function CommunityHeader({ communityAddress }: { communityAddress: string }) {
-  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
-
+export function CommunityHeader({
+  communityAddress,
+  isJoined,
+  onJoin,
+  onLeave,
+  showLeaveDialog,
+  setShowLeaveDialog,
+  confirmLeaveCommunity,
+}: {
+  communityAddress: string;
+  isJoined: boolean;
+  onJoin: () => void;
+  onLeave: () => void;
+  showLeaveDialog: boolean;
+  setShowLeaveDialog: (open: boolean) => void;
+  confirmLeaveCommunity: () => void;
+}) {
   const { data: community, isLoading } = useCommunity(communityAddress);
-  const { isMember: isJoined, updateIsMember } = useCommunityMembership(communityAddress);
-  const joinCommunity = useJoinCommunity(community as Community);
-  const leaveCommunity = useLeaveCommunity(community as Community);
   const { isLoggedIn } = useAuthStore();
-
-  // --- Handlers ---
-  const handleJoinCommunity = async () => {
-    try {
-      await joinCommunity();
-      updateIsMember(true);
-    } catch (error) {
-      console.error("Error joining community:", error);
-    }
-  };
-
-  const handleLeaveCommunity = async () => setShowLeaveDialog(true);
-
-  const confirmLeaveCommunity = async () => {
-    try {
-      await leaveCommunity();
-      updateIsMember(false);
-    } catch (error) {
-      console.error("Error leaving community:", error);
-    }
-  };
 
   // --- Render ---
   if (isLoading || !community) return null;
@@ -80,7 +65,7 @@ export function CommunityHeader({ communityAddress }: { communityAddress: string
           <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
             <Button
               disabled={!isLoggedIn}
-              onClick={isJoined ? handleLeaveCommunity : handleJoinCommunity}
+              onClick={isJoined ? onLeave : onJoin}
               className={`rounded-full px-8 py-3 font-semibold transition-all duration-300 ${
                 isJoined
                   ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"
