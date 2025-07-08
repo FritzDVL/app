@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { CommunitiesHeader } from "@/components/communities/communities-header";
 import { CommunitiesList } from "@/components/communities/communities-list";
+import { CommunitiesSidebar } from "@/components/communities/communities-sidebar";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { useCommunities } from "@/hooks/queries/use-communities";
-import { CommunitiesSidebar } from "@/components/communities/communities-sidebar";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,14 +17,10 @@ export default function CommunitiesPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <CommunitiesHeader
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              total={communities.length}
-            />
+            <CommunitiesHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} total={communities.length} />
             <CommunitiesList
               searchQuery={searchQuery}
-              communities={communities.map((c) => ({ ...c, logo: c.logo ?? undefined }))}
+              communities={communities.map(c => ({ ...c, logo: c.logo ?? undefined }))}
               isLoading={isLoading}
               isError={isError}
               error={error}
@@ -32,7 +28,7 @@ export default function CommunitiesPage() {
           </div>
           {/* Sidebar */}
           <div className="space-y-8">
-            <CommunitiesSidebar communities={communities}/>
+            <CommunitiesSidebar communities={communities} />
           </div>
         </div>
       </main>
