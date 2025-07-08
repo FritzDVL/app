@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ReputationStatusBanner } from "@/components/shared/reputation-status-banner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
 import { useCommunityCreation } from "@/hooks/communities/use-community-create";
 import { incrementCommunityMembersCount } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
@@ -36,6 +38,7 @@ export function CommunityCreateForm() {
   const { account } = useAuthStore();
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
+  const { reputation, canCreateCommunity } = useLensReputationScore();
 
   // --- Effects ---
   useEffect(() => {
@@ -57,6 +60,21 @@ export function CommunityCreateForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check reputation requirements
+    if (!canCreateCommunity) {
+      if (reputation.score === undefined) {
+        toast.error("LensReputation NFT Required", {
+          description: "You need to mint the LensReputation NFT to create communities.",
+        });
+      } else {
+        toast.error("Insufficient Reputation", {
+          description: `You need a reputation score of 700 or higher to create communities. Your current score is ${reputation.score}.`,
+        });
+      }
+      return;
+    }
+
     if (!sessionClient.data || !walletClient.data) {
       toast.error("Not logged in", { description: "Please log in to create a community." });
       throw new Error("Not logged in");
@@ -180,6 +198,13 @@ export function CommunityCreateForm() {
               disabled={!!account?.address}
             />
           </div>
+          {/* Reputation Status */}
+          <ReputationStatusBanner
+            reputation={reputation}
+            canPerformAction={canCreateCommunity}
+            actionType="communities"
+            requiredScore={700}
+          />
           {error && <div className="text-sm text-red-600">{error}</div>}
           <div className="flex justify-end">
             <Button
@@ -188,6 +213,7 @@ export function CommunityCreateForm() {
               disabled={
                 loading ||
                 isCreating ||
+                !canCreateCommunity ||
                 !formData.name.trim() ||
                 !formData.description.trim() ||
                 !formData.adminAddress.trim()
