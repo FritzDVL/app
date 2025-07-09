@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
 import { useCommunityThreads } from "@/hooks/queries/use-community-threads";
 import { Address } from "@/types/common";
 import { postId } from "@lens-protocol/react";
@@ -24,7 +23,6 @@ export function CommunityThreads({
   const [sortBy, setSortBy] = useState("hot");
 
   const { data: threads = [], isLoading: areThreadsLoading } = useCommunityThreads(communityAddress);
-  const { isMember: isJoinedStatus } = useCommunityMembership(communityAddress);
 
   return (
     <>
@@ -34,7 +32,7 @@ export function CommunityThreads({
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-slate-900">Start a Discussion</h3>
-              <ThreadNewButton communityAddress={communityAddress as Address} isJoined={isJoinedStatus} />
+              <ThreadNewButton communityAddress={communityAddress as Address} isJoined={isJoined} />
             </div>
           </CardHeader>
         </Card>
