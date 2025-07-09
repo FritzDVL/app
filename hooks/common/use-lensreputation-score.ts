@@ -1,75 +1,83 @@
+import { useEffect, useState } from "react";
 import { lensReputationAbi } from "../../lib/lensreputation/abi";
-import { useAuthStore } from "@/stores/auth-store";
+import { publicClient } from "@/lib/clients/viem";
 import { Address } from "@/types/common";
-import { useReadContract } from "wagmi";
+import { readContract } from "viem/actions";
 
 const LENS_REPUTATION_ADDRESS = "0x0FfDAE7f5087a98db8D670f8BeB9797AA321a32B" as Address;
 
 /**
  * Custom hook to fetch the LensReputation score for the connected user on LensMainnet.
- * Handles the response and returns score, timestamp, loading, and error states.
+ * Handles the response and returns score, loading, and error states.
  */
-export interface LensReputationScore {
-  score: number | undefined;
-  timestamp: number | undefined;
-  timestampDate: Date | undefined;
-}
-
 export interface UseLensReputationScoreResult {
-  reputation: LensReputationScore;
+  reputation: number | undefined;
   isLoading: boolean;
   error: unknown;
   canCreateCommunity: boolean;
   canCreateThread: boolean;
 }
 
-export function useLensReputationScore(
-  walletAddressParam?: Address,
-  lensAccountParam?: Address,
-): UseLensReputationScoreResult {
-  const { account, walletAddress } = useAuthStore();
-  const resolvedWalletAddress = walletAddressParam || walletAddress;
-  const resolvedAccount = lensAccountParam || account?.address;
+export function useLensReputationScore(walletAddress?: Address, lensAccount?: Address): UseLensReputationScoreResult {
+  const [reputation, setReputation] = useState<number | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<unknown>(undefined);
 
-  const result = useReadContract({
-    address: LENS_REPUTATION_ADDRESS,
-    abi: lensReputationAbi,
-    functionName: "getScoreByAddress",
-    args: [resolvedWalletAddress, resolvedAccount],
-    query: {
-      enabled: Boolean(resolvedWalletAddress && resolvedAccount),
-      staleTime: 1000 * 60 * 5,
-    },
-  });
-
-  let score: number | undefined = undefined;
-  let timestamp: number | undefined = undefined;
-  let timestampDate: Date | undefined = undefined;
-
-  if (result.data && Array.isArray(result.data)) {
-    score = Number(result.data[0]);
-    timestamp = Number(result.data[1]);
-    if (!isNaN(timestamp)) {
-      timestampDate = new Date(timestamp * 1000);
+  useEffect(() => {
+    // Reset state if addresses are missing
+    if (!walletAddress || !lensAccount) {
+      setReputation(undefined);
+      setIsLoading(false);
+      setError(undefined);
+      return;
     }
-  } else {
-    // If the user has not minted the NFT, set score and timestamp to undefined
-    score = undefined;
-    timestamp = undefined;
-    timestampDate = undefined;
-  }
 
-  const canCreateCommunity = typeof score === "number" && score >= 700;
-  const canCreateThread = typeof score === "number" && score >= 400;
+    let cancelled = false;
+
+    async function fetchScore() {
+      setIsLoading(true);
+      setError(undefined);
+
+      try {
+        const result = await readContract(publicClient, {
+          address: LENS_REPUTATION_ADDRESS,
+          abi: lensReputationAbi,
+          functionName: "getScoreByAddress",
+          args: [walletAddress, lensAccount],
+        });
+        if (!cancelled) {
+          // Narrow result type to expected shape
+          const { score } = result as { score: number | string };
+          const scoreNumber = Number(score);
+          setReputation(scoreNumber);
+        }
+      } catch (err) {
+        console.error("Error fetching LensReputation score:", err);
+        if (!cancelled) {
+          setError(err);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    fetchScore();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [walletAddress, lensAccount]);
+
+  // Calculate permissions based on score
+  const canCreateCommunity = typeof reputation === "number" && reputation >= 700;
+  const canCreateThread = typeof reputation === "number" && reputation >= 400;
 
   return {
-    reputation: {
-      score,
-      timestamp,
-      timestampDate,
-    },
-    isLoading: result.isLoading,
-    error: result.error,
+    reputation,
+    isLoading,
+    error,
     canCreateCommunity,
     canCreateThread,
   };

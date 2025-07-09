@@ -13,6 +13,7 @@ import { useProfileAccount } from "@/hooks/account/use-profile-account";
 import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
 import { useProfileJoinedCommunities } from "@/hooks/queries/use-profile-joined-communities";
 import { useProfileReplies } from "@/hooks/queries/use-profile-replies";
+import { Address } from "@/types/common";
 import { Account } from "@lens-protocol/client";
 
 export default function ProfilePage() {
@@ -25,7 +26,10 @@ export default function ProfilePage() {
   const { data: joinedCommunities = [], isLoading: loadingCommunities } = useProfileJoinedCommunities(
     lensAccount?.address,
   );
-  const { reputation } = useLensReputationScore(lensAccount?.address);
+  const { reputation } = useLensReputationScore(
+    lensAccount?.address as Address | undefined,
+    lensAccount?.address as Address | undefined,
+  );
 
   if (isLoading) {
     return (

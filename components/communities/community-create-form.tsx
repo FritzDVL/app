@@ -10,6 +10,7 @@ import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score"
 import { useCommunityCreation } from "@/hooks/communities/use-community-create";
 import { incrementCommunityMembersCount } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
+import { Address } from "@/types/common";
 import { evmAddress } from "@lens-protocol/client";
 import { joinGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
@@ -35,11 +36,10 @@ export function CommunityCreateForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { isCreating } = useCommunityCreation();
-  const { account } = useAuthStore();
+  const { account, walletAddress } = useAuthStore();
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
-  const { reputation, canCreateCommunity } = useLensReputationScore();
-
+  const { reputation, canCreateCommunity } = useLensReputationScore(walletAddress as Address, account?.address);
   // --- Effects ---
   useEffect(() => {
     if (account?.address) {
@@ -63,13 +63,13 @@ export function CommunityCreateForm() {
 
     // Check reputation requirements
     if (!canCreateCommunity) {
-      if (reputation.score === undefined) {
+      if (reputation === undefined) {
         toast.error("LensReputation NFT Required", {
           description: "You need to mint the LensReputation NFT to create communities.",
         });
       } else {
         toast.error("Insufficient Reputation", {
-          description: `You need a reputation score of 700 or higher to create communities. Your current score is ${reputation.score}.`,
+          description: `You need a reputation score of 700 or higher to create communities. Your current score is ${reputation}.`,
         });
       }
       return;
