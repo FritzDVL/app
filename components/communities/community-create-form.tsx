@@ -100,9 +100,9 @@ export function CommunityCreateForm() {
       }
       const community = result.community;
       if (community && community.id) {
-        const joinResult = await joinGroup(sessionClient.data, { group: evmAddress(community.address) }).andThen(
-          handleOperationWith(walletClient.data),
-        );
+        const joinResult = await joinGroup(sessionClient.data, { group: evmAddress(community.address) })
+          .andThen(handleOperationWith(walletClient.data))
+          .andThen(sessionClient.data.waitForTransaction);
         if (joinResult.isOk()) {
           await incrementCommunityMembersCount(community.id);
         } else {
