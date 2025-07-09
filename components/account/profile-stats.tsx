@@ -1,4 +1,6 @@
-import { FileText, ShieldCheck, UserPlus, Users } from "lucide-react";
+import React from "react";
+import { LensReputationLogo } from "../assets/lensreputation-logo";
+import { FileText, UserPlus, Users } from "lucide-react";
 
 interface ProfileStatsProps {
   followers: number;
@@ -28,7 +30,7 @@ export function ProfileStats({ followers, following, posts, reputation, loading 
     {
       label: "Reputation",
       value: reputation,
-      icon: <ShieldCheck className="h-4 w-4 text-brand-500" />,
+      icon: <LensReputationLogo size={16} />, // Use the LensReputation logo here
     },
   ];
 
@@ -37,8 +39,16 @@ export function ProfileStats({ followers, following, posts, reputation, loading 
       {stats.map(stat => (
         <div key={stat.label} className="rounded-2xl border border-slate-300/60 bg-white p-3 backdrop-blur-sm">
           <div className="flex flex-col items-center text-center">
-            <div className="mb-1 flex items-center justify-center">{stat.icon}</div>
-            <div className="text-2xl font-extrabold text-slate-900">{stat.value}</div>
+            <div className="mb-1 flex items-center justify-center">
+              {stat.label === "Reputation" ? (
+                <span className="mr-2">
+                  <LensReputationLogo size={28} />
+                </span>
+              ) : (
+                <span className="mr-2">{React.cloneElement(stat.icon, { className: "h-7 w-7 text-brand-500" })}</span>
+              )}
+              <span className="text-2xl font-extrabold text-slate-900">{stat.value}</span>
+            </div>
             <div className="mt-0.5 text-xs text-slate-500">{stat.label}</div>
           </div>
         </div>
