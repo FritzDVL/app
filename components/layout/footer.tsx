@@ -16,7 +16,7 @@ export function Footer() {
       </span>
       <div className="flex gap-4">
         <a
-          href="https://github.com/meketom"
+          href="https://github.com/lens-forum"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub"
@@ -36,7 +36,7 @@ export function Footer() {
           </svg>
         </a>
         <a
-          href="https://hey.com/meketom"
+          href="https://hey.xyz/u/lensforum"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Hey"
@@ -45,7 +45,7 @@ export function Footer() {
           <HeyLogo size={16} />
         </a>
         <a
-          href="https://x.com/meketom"
+          href="https://x.com/lensforum"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="X (Twitter)"
