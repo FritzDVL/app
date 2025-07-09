@@ -2,61 +2,128 @@ import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { fetchAllCommunities, fetchCommunity } from "@/lib/supabase";
 import { transformGroupToCommunity } from "@/lib/transformers/community-transformers";
 import { Address, Community, Moderator } from "@/types/common";
-import { GroupStatsResponse, evmAddress } from "@lens-protocol/client";
+import { Group, GroupStatsResponse, evmAddress } from "@lens-protocol/client";
 import { fetchAdminsFor, fetchGroup, fetchGroupStats, fetchGroups } from "@lens-protocol/client/actions";
 
+type GroupResult = {
+  address: string;
+  result: Group | null;
+};
+
+type GroupStatsResult = {
+  address: string;
+  result: GroupStatsResponse | null;
+};
+
+type AdminsResult = {
+  address: string;
+  result: Moderator[];
+};
+
 /**
- * Fetches communities from the database, enriches them with Lens Protocol data, and returns a Community[] array.
+ * Optimized version that batches all Lens Protocol API calls for better performance.
  */
 export async function fetchCommunities(): Promise<Community[]> {
-  const dbCommunities = await fetchAllCommunities();
-  if (!dbCommunities.length) return [];
+  try {
+    // 1. Fetch all communities from database (single query)
+    const dbCommunities = await fetchAllCommunities();
+    if (!dbCommunities.length) return [];
 
-  const communitiesData: Community[] = [];
+    // 2. Extract unique addresses for batching
+    const communityAddresses = dbCommunities.map(community => evmAddress(community.lens_group_address));
 
-  for (const dbCommunity of dbCommunities) {
-    try {
-      // Parallelize all Lens Protocol fetches
-      const [groupResult, groupStatsResult, adminsResult] = await Promise.all([
-        fetchGroup(client, { group: evmAddress(dbCommunity.lens_group_address) }),
-        fetchGroupStats(client, { group: evmAddress(dbCommunity.lens_group_address) }),
-        fetchAdminsFor(client, { address: evmAddress(dbCommunity.lens_group_address) }),
-      ]);
-      if (groupResult.isErr()) {
-        console.warn(`Failed to fetch group ${dbCommunity.lens_group_address}:`, groupResult.error.message);
+    // 3. Batch fetch all groups in parallel
+    const groupPromises = communityAddresses.map(address =>
+      fetchGroup(client, { group: address }).then(result => ({
+        address,
+        result: result.isOk() ? result.value : null,
+      })),
+    );
+
+    // 4. Batch fetch all group stats in parallel
+    const statsPromises = communityAddresses.map(address =>
+      fetchGroupStats(client, { group: address }).then(result => ({
+        address,
+        result: result.isOk() ? (result.value as GroupStatsResponse) : null,
+      })),
+    );
+
+    // 5. Batch fetch all admins in parallel
+    const adminsPromises = communityAddresses.map(address =>
+      fetchAdminsFor(client, { address }).then(result => {
+        const moderators: Moderator[] = result.isOk()
+          ? result.value.items.map(admin => ({
+              username: admin.account.username?.value || "",
+              address: admin.account.address,
+              picture: admin.account.metadata?.picture,
+              displayName: admin.account.username?.localName || "",
+            }))
+          : [];
+        return {
+          address,
+          result: moderators,
+        };
+      }),
+    );
+
+    // 6. Wait for all batched requests to complete
+    const [groupResults, statsResults, adminsResults] = await Promise.all([
+      Promise.all(groupPromises),
+      Promise.all(statsPromises),
+      Promise.all(adminsPromises),
+    ]);
+
+    // 7. Create lookup maps for O(1) access
+    const groupMap = new Map<string, Group | null>();
+    (groupResults as GroupResult[]).forEach(({ address, result }) => {
+      groupMap.set(address, result);
+    });
+
+    const statsMap = new Map<string, GroupStatsResponse | null>();
+    (statsResults as GroupStatsResult[]).forEach(({ address, result }) => {
+      statsMap.set(address, result);
+    });
+
+    const adminsMap = new Map<string, Moderator[]>();
+    (adminsResults as AdminsResult[]).forEach(({ address, result }) => {
+      adminsMap.set(address, result);
+    });
+
+    // 8. Transform communities using cached data
+    const communitiesData: Community[] = [];
+    for (const dbCommunity of dbCommunities) {
+      try {
+        const address = evmAddress(dbCommunity.lens_group_address);
+        const group = groupMap.get(address);
+        const groupStats = statsMap.get(address);
+        const moderators = adminsMap.get(address) || [];
+
+        if (!group || !groupStats) {
+          console.warn(`Missing data for community ${dbCommunity.lens_group_address}:`, {
+            hasGroup: !!group,
+            hasStats: !!groupStats,
+          });
+          continue;
+        }
+
+        communitiesData.push(transformGroupToCommunity(group, groupStats, dbCommunity, moderators));
+      } catch (error) {
+        console.warn(`Error transforming community ${dbCommunity.lens_group_address}:`, error);
         continue;
       }
-      const group = groupResult.value;
-      if (!group) {
-        console.warn(`Group ${dbCommunity.lens_group_address} returned null`);
-        continue;
-      }
-      if (groupStatsResult.isErr()) {
-        console.warn(
-          `Failed to fetch group stats for ${dbCommunity.lens_group_address}:`,
-          groupStatsResult.error.message,
-        );
-        continue;
-      }
-      const groupStats = groupStatsResult.value as GroupStatsResponse;
-      if (adminsResult.isOk()) {
-        const admins = adminsResult.value.items;
-        const transformedModerators: Moderator[] = admins.map(admin => ({
-          username: admin.account.username?.value || "",
-          address: admin.account.address,
-          picture: admin.account.metadata?.picture,
-          displayName: admin.account.username?.localName || "",
-        }));
-        communitiesData.push(transformGroupToCommunity(group, groupStats, dbCommunity, transformedModerators));
-      }
-    } catch (groupError) {
-      console.warn(`Error fetching group ${dbCommunity.lens_group_address}:`, groupError);
-      continue;
     }
+
+    return communitiesData;
+  } catch (error) {
+    console.error("Failed to fetch communities (optimized):", error);
+    throw error;
   }
-  return communitiesData;
 }
 
+/**
+ * Fetches communities that a specific member has joined.
+ * This function is already somewhat optimized as it uses the Lens API filter.
+ */
 export async function fetchCommunitiesJoined(member: Address): Promise<Community[]> {
   try {
     const result = await fetchGroups(client, {
@@ -75,34 +142,78 @@ export async function fetchCommunitiesJoined(member: Address): Promise<Community
     if (!items || items.length === 0) {
       return [];
     }
+
+    // Extract unique addresses for batching
+    const groupAddresses = items.map(group => evmAddress(group.address));
+
+    // Batch fetch database communities
+    const dbCommunitiesPromises = items.map(group => fetchCommunity(group.address));
+
+    // Batch fetch group stats
+    const statsPromises = groupAddresses.map(address =>
+      fetchGroupStats(client, { group: address }).then(result => ({
+        address,
+        result: result.isOk() ? (result.value as GroupStatsResponse) : null,
+      })),
+    );
+
+    // Batch fetch admins
+    const adminsPromises = groupAddresses.map(address =>
+      fetchAdminsFor(client, { address }).then(result => {
+        const moderators: Moderator[] = result.isOk()
+          ? result.value.items.map(admin => ({
+              username: admin.account.username?.value || "",
+              address: admin.account.address,
+              picture: admin.account.metadata?.picture,
+              displayName: admin.account.username?.localName || "",
+            }))
+          : [];
+        return {
+          address,
+          result: moderators,
+        };
+      }),
+    );
+
+    // Wait for all batched requests to complete
+    const [dbCommunities, statsResults, adminsResults] = await Promise.all([
+      Promise.all(dbCommunitiesPromises),
+      Promise.all(statsPromises),
+      Promise.all(adminsPromises),
+    ]);
+
+    // Create lookup maps
+    const statsMap = new Map<string, GroupStatsResponse | null>();
+    (statsResults as GroupStatsResult[]).forEach(({ address, result }) => {
+      statsMap.set(address, result);
+    });
+
+    const adminsMap = new Map<string, Moderator[]>();
+    (adminsResults as AdminsResult[]).forEach(({ address, result }) => {
+      adminsMap.set(address, result);
+    });
+
+    // Transform communities
     const communities: Community[] = [];
-    for (const group of items) {
-      const dbCommunity = await fetchCommunity(group.address);
+    for (let i = 0; i < items.length; i++) {
+      const group = items[i];
+      const dbCommunity = dbCommunities[i];
+
       if (!dbCommunity) {
         console.warn(`No database community found for group ${group.address}`);
         continue;
       }
 
-      const groupStatsResult = await fetchGroupStats(client, { group: evmAddress(group.address) });
-      if (groupStatsResult.isErr()) {
-        console.error(`Failed to fetch stats for group ${group.address}:`, groupStatsResult.error);
+      const groupStats = statsMap.get(evmAddress(group.address));
+      if (!groupStats) {
+        console.warn(`Failed to fetch stats for group ${group.address}`);
         continue;
       }
-      const groupStats = groupStatsResult.value as GroupStatsResponse;
 
-      const adminsResult = await fetchAdminsFor(client, { address: evmAddress(group.address) });
-      let moderators: Moderator[] = [];
-      if (adminsResult.isOk()) {
-        moderators = adminsResult.value.items.map(admin => ({
-          username: admin.account.username?.value || "",
-          address: admin.account.address,
-          picture: admin.account.metadata?.picture,
-          displayName: admin.account.username?.localName || "",
-        }));
-      }
-
+      const moderators = adminsMap.get(evmAddress(group.address)) || [];
       communities.push(transformGroupToCommunity(group, groupStats, dbCommunity, moderators));
     }
+
     return communities;
   } catch (error) {
     console.error("Error fetching joined communities:", error);
