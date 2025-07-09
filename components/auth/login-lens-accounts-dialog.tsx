@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLogin } from "@/hooks/auth/use-login";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { HEY_URL } from "@/lib/constants";
 import { Address } from "@/types/common";
 import { fetchAccountsAvailable } from "@lens-protocol/client/actions";
 import { AccountAvailable, evmAddress } from "@lens-protocol/react";
@@ -81,12 +82,12 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
                 <p className="mt-1 text-sm text-slate-600">No Lens accounts associated with your wallet were found.</p>
                 <div className="mt-4">
                   <a
-                    href="https://testnet.hey.xyz/"
+                    href={HEY_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-brand-600 hover:to-brand-700"
                   >
-                    Create an Account on Hey Testnet
+                    Create an Account on Hey
                   </a>
                 </div>
               </div>

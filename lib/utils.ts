@@ -1,3 +1,4 @@
+import { GROVE_API_URL } from "./constants";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -26,4 +27,9 @@ export function getTimeAgo(date: Date): string {
  */
 export function removeTrailingEmptyPTags(html: string): string {
   return html.replace(/(?:<p>\s*<\/p>)+$/g, "");
+}
+
+export function groveLensUrlToHttp(url?: string): string {
+  if (!url) return "";
+  return url.startsWith("lens://") ? url.replace("lens://", GROVE_API_URL) : url;
 }

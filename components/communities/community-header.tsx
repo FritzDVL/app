@@ -3,6 +3,7 @@ import { LeaveCommunityDialog } from "@/components/communities/community-leave-d
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCommunity } from "@/hooks/queries/use-community";
+import { groveLensUrlToHttp } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { MessageCircle, Users } from "lucide-react";
 
@@ -36,7 +37,7 @@ export function CommunityHeader({
           <div className="flex h-[100px] w-[100px] items-center justify-center">
             {community.logo ? (
               <Image
-                src={community.logo.replace("lens://", "https://api.grove.storage/")}
+                src={groveLensUrlToHttp(community.logo)}
                 alt={community.name}
                 width={100}
                 height={100}

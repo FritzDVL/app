@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { groveLensUrlToHttp } from "@/lib/utils";
 import { Community } from "@/types/common";
 import { ArrowRight } from "lucide-react";
 
@@ -27,7 +28,7 @@ export function FeaturedCommunities({ featuredCommunities }: FeaturedCommunities
               <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-sm font-semibold text-white">
                 {community.logo ? (
                   <Image
-                    src={community.logo.replace("lens://", "https://api.grove.storage/")}
+                    src={groveLensUrlToHttp(community.logo)}
                     alt={community.name}
                     width={36}
                     height={36}

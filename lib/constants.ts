@@ -14,3 +14,7 @@ export const TESTNET_ADMIN_USER_ADDRESS: Address = "0xeE111B6D0E758A75E586D944cd
 export const APP_ADDRESS: Address = TESTNET_APP_ADDRESS;
 export const BASE_FEED_ADDRESS: Address = TESTNET_BASE_FEED_ADDRESS;
 export const ADMIN_USER_ADDRESS: Address = TESTNET_ADMIN_USER_ADDRESS;
+
+// Common URLs
+export const HEY_URL = "https://hey.xyz/";
+export const GROVE_API_URL = "https://api.grove.storage/";

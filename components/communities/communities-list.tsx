@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { groveLensUrlToHttp } from "@/lib/utils";
 import { MessageSquare, Search, Users } from "lucide-react";
 
 interface Community {
@@ -66,7 +67,7 @@ export function CommunitiesList({ communities, isLoading, isError, error, search
                         <div className="mb-4 flex items-start justify-between">
                           {community.logo ? (
                             <Image
-                              src={community.logo.replace("lens://", "https://api.grove.storage/")}
+                              src={groveLensUrlToHttp(community.logo) || ""}
                               alt={community.name}
                               width={64}
                               height={64}
