@@ -10,6 +10,7 @@ import { RecentActivity } from "@/components/account/recent-activity";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProfileAccount } from "@/hooks/account/use-profile-account";
+import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
 import { useProfileJoinedCommunities } from "@/hooks/queries/use-profile-joined-communities";
 import { useProfileReplies } from "@/hooks/queries/use-profile-replies";
 import { Account } from "@lens-protocol/client";
@@ -24,6 +25,7 @@ export default function ProfilePage() {
   const { data: joinedCommunities = [], isLoading: loadingCommunities } = useProfileJoinedCommunities(
     lensAccount?.address,
   );
+  const { reputation } = useLensReputationScore(lensAccount?.address);
 
   if (isLoading) {
     return (
@@ -64,7 +66,7 @@ export default function ProfilePage() {
           followers={stats.followers}
           following={stats.following}
           posts={stats.posts}
-          reputation={lensAccount?.score || 0}
+          reputation={reputation.score || 0}
           loading={stats.loading}
         />
 

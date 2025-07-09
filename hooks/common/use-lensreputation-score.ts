@@ -23,16 +23,21 @@ export interface UseLensReputationScoreResult {
   canCreateThread: boolean;
 }
 
-export function useLensReputationScore(): UseLensReputationScoreResult {
+export function useLensReputationScore(
+  walletAddressParam?: Address,
+  lensAccountParam?: Address,
+): UseLensReputationScoreResult {
   const { account, walletAddress } = useAuthStore();
+  const resolvedWalletAddress = walletAddressParam || walletAddress;
+  const resolvedAccount = lensAccountParam || account?.address;
 
   const result = useReadContract({
     address: LENS_REPUTATION_ADDRESS,
     abi: lensReputationAbi,
     functionName: "getScoreByAddress",
-    args: [walletAddress, account?.address],
+    args: [resolvedWalletAddress, resolvedAccount],
     query: {
-      enabled: Boolean(walletAddress && account?.address),
+      enabled: Boolean(resolvedWalletAddress && resolvedAccount),
       staleTime: 1000 * 60 * 5,
     },
   });
