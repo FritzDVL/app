@@ -255,8 +255,8 @@ export async function fetchFeaturedCommunities(): Promise<CommunitySupabase[]> {
   const { data: communities, error } = await supabase
     .from("communities")
     .select("*")
-    .order("created_at", { ascending: true })
-    .limit(3);
+    .eq("featured", 1)
+    .order("created_at", { ascending: true });
 
   if (error) {
     throw new Error(`Failed to fetch featured communities: ${error.message}`);
