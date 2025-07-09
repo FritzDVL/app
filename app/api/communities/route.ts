@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { lensMainnet } from "@/lib/chains/lens-mainnet";
 import { getAdminSessionClient } from "@/lib/clients/admin-session";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { storageClient } from "@/lib/grove/client";
@@ -11,7 +12,6 @@ import { Group, evmAddress } from "@lens-protocol/client";
 import { createGroup, fetchAdminsFor, fetchGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { group } from "@lens-protocol/metadata";
-import { lensTestnet } from "viem/chains";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     let iconUri;
     if (file) {
-      const acl = immutable(lensTestnet.id);
+      const acl = immutable(lensMainnet.id);
       const { uri } = await storageClient.uploadFile(file, { acl });
       iconUri = uri;
     }
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     // 1. Build metadata for the group and upload it
     const groupMetadata = group({ name: groupName, description, ...(iconUri ? { icon: iconUri } : {}) });
-    const acl = immutable(lensTestnet.id);
+    const acl = immutable(lensMainnet.id);
     const { uri } = await storageClient.uploadAsJson(groupMetadata, { acl });
 
     // 2. Create the group on Lens Protocol

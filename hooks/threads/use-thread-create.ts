@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { lensMainnet } from "@/lib/chains/lens-mainnet";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { storageClient } from "@/lib/grove/client";
 // import { lensMainnet } from '@/lib/chains/lens-mainnet'
@@ -18,7 +19,6 @@ import { Post, evmAddress, useSessionClient } from "@lens-protocol/react";
 // import { feed } from '@lens-protocol/metadata'
 // import { immutable } from '@lens-chain/storage-client'
 import { toast } from "sonner";
-import { lensTestnet } from "viem/chains";
 // import { evmAddress } from '@lens-protocol/client'
 // import { createFeed, fetchFeed } from '@lens-protocol/client/actions'
 // import { handleOperationWith } from '@lens-protocol/client/viem'
@@ -65,7 +65,7 @@ async function uploadThreadContent(
     content: formData.content,
     tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : [],
   });
-  const acl = immutable(lensTestnet.id);
+  const acl = immutable(lensMainnet.id);
   const { uri } = await storageClient.uploadAsJson(metadata, { acl });
   const result = await post(sessionClient, {
     contentUri: uri,

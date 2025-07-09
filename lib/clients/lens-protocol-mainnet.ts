@@ -1,9 +1,9 @@
-import { PublicClient, testnet } from "@lens-protocol/client";
+import { PublicClient, mainnet } from "@lens-protocol/client";
 
 const storage = typeof window !== "undefined" ? window.localStorage : undefined;
 
 export const client = PublicClient.create({
-  environment: testnet,
+  environment: mainnet,
   origin: "https://lens-forum.vercel.app/",
   storage,
 });

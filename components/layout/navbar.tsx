@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { TestnetBanner } from "../shared/testnet-banner";
+// import { TestnetBanner } from "../shared/testnet-banner";
 import { LoginConnectButton } from "@/components/auth/login-connect-button";
 import { LoginLensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -31,7 +31,7 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/80 px-4 py-3 shadow-xl shadow-slate-200/20 backdrop-blur-md">
       {/* Test Environment Banner */}
-      <TestnetBanner />
+      {/* <TestnetBanner /> */}
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         {/* Logo */}
         <Link href="/" className="group flex items-center space-x-2">

@@ -16,11 +16,11 @@ const queryClient = new QueryClient();
 const config = createConfig(
   getDefaultConfig({
     // Chains supported by your application
-    chains: [chains.testnet],
+    chains: [chains.mainnet],
     transports: {
       // RPC URLs for each chain
-      // [chains.mainnet.id]: http("https://rpc.lens.xyz"),
-      [chains.testnet.id]: http("https://rpc.testnet.lens.dev"),
+      [chains.mainnet.id]: http("https://rpc.lens.xyz"),
+      // [chains.testnet.id]: http("https://rpc.testnet.lens.dev"),
     },
 
     // WalletConnect project ID (required)
@@ -30,8 +30,8 @@ const config = createConfig(
     appName: "LensForum",
 
     // Optional app information
-    appUrl: "https://lens-forum.vercel.app/",
-    appIcon: "https://lens-forum.vercel.app/logo.png",
+    appUrl: "https://lensforum.xyz/",
+    appIcon: "https://lensforum.xyz/logo.png",
   }),
 );
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { lensMainnet } from "@/lib/chains/lens-mainnet";
 import { getAdminSessionClient } from "@/lib/clients/admin-session";
 import { ADMIN_USER_ADDRESS } from "@/lib/constants";
 import { storageClient } from "@/lib/grove/client";
@@ -9,7 +10,6 @@ import { evmAddress } from "@lens-protocol/client";
 import { createFeed, fetchFeed } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { feed } from "@lens-protocol/metadata";
-import { lensTestnet } from "viem/chains";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       name: title,
       description: summary || "",
     });
-    const acl = immutable(lensTestnet.id);
+    const acl = immutable(lensMainnet.id);
     // 2. Upload metadata to storage (e.g., Grove/IPFS)
     const { uri } = await storageClient.uploadAsJson(metadata, { acl });
     // 3. Create the feed on Lens Protocol

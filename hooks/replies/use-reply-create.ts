@@ -1,4 +1,5 @@
 // import { lensMainnet } from "@/lib/chains/lens-mainnet";
+import { lensMainnet } from "@/lib/chains/lens-mainnet";
 import { client } from "@/lib/clients/lens-protocol-mainnet";
 import { storageClient } from "@/lib/grove/client";
 import { incrementThreadRepliesCount } from "@/lib/supabase";
@@ -12,7 +13,6 @@ import { handleOperationWith } from "@lens-protocol/client/viem";
 import { textOnly } from "@lens-protocol/metadata";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
-import { lensTestnet } from "viem/chains";
 import { useWalletClient } from "wagmi";
 
 export function useReplyCreate() {
@@ -26,7 +26,7 @@ export function useReplyCreate() {
   }
 
   async function uploadReplyMetadata(metadata: any) {
-    const acl = immutable(lensTestnet.id);
+    const acl = immutable(lensMainnet.id);
     const { uri: replyUri } = await storageClient.uploadAsJson(metadata, { acl });
     return replyUri;
   }
