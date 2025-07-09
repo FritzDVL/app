@@ -5,11 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useThreadReplies(threadAddress: string | undefined, cursor: string | null, threadRootPostId?: string) {
   return useQuery<PaginatedRepliesResult, Error, { replies: ThreadReplyWithDepth[]; pageInfo: any }>({
-    queryKey: ["replies", threadAddress, cursor],
+    queryKey: ["replies", threadAddress, cursor, threadRootPostId],
     queryFn: () => fetchRepliesPaginated(String(threadAddress), PageSize.Fifty, cursor),
     enabled: !!threadAddress,
-    staleTime: 60 * 1000,
-    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 5, // Increased to 5 minutes for better performance
+    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    retry: 2, // Retry failed requests twice
     select: (flatReplies: PaginatedRepliesResult) => {
       if (!threadRootPostId) {
         return { replies: [], pageInfo: flatReplies.pageInfo };
