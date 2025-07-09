@@ -25,7 +25,7 @@ export function FeaturedCommunities({ featuredCommunities }: FeaturedCommunities
         {featuredCommunities.slice(0, 6).map(community => (
           <Link key={community.id} href={`/communities/${community.address}`} className="group block">
             <div className="-m-3 flex items-center gap-4 rounded-2xl p-3 transition-all hover:bg-slate-100/80">
-              <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-sm font-semibold text-white">
+              <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-sm font-semibold text-white">
                 {community.logo ? (
                   <Image
                     src={groveLensUrlToHttp(community.logo)}
