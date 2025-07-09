@@ -98,3 +98,61 @@ export function transformFormDataToThread(
     }),
   };
 }
+
+/**
+ * Optimized transform function that accepts pre-fetched root post to avoid redundant API calls
+ */
+export async function transformFeedToThreadOptimized(
+  feed: Feed,
+  threadRecord: CommunityThreadSupabase,
+  author: Account,
+  rootPost: Post | null = null,
+): Promise<Thread> {
+  let contentData: any = null;
+
+  // If rootPost is provided, use it; otherwise fetch it
+  if (!rootPost && threadRecord.root_post_id) {
+    const rootPostRequest = await fetchPost(client, {
+      post: threadRecord.root_post_id,
+    });
+    if (rootPostRequest.isErr()) {
+      throw new Error(`Failed to fetch root post: ${rootPostRequest.error.message}`);
+    }
+    rootPost = rootPostRequest.value as Post;
+  }
+
+  // Fetch content JSON if we have a root post with contentUri
+  if (rootPost?.contentUri) {
+    try {
+      const resolvedUrl = storageClient.resolve(rootPost.contentUri);
+      const contentResponse = await fetch(resolvedUrl);
+      if (contentResponse.ok) {
+        contentData = await contentResponse.json();
+      }
+    } catch (error) {
+      console.warn(`Failed to fetch content for thread ${threadRecord.lens_feed_address}:`, error);
+    }
+  }
+
+  return {
+    id: threadRecord.id,
+    address: feed.address,
+    community: threadRecord.community?.lens_group_address as Address,
+    title: feed.metadata?.name || `Thread ${feed.address.slice(-6)}`,
+    summary: feed.metadata?.description || "No content available",
+    author: {
+      name: author.username?.localName || "Unknown Author",
+      username: author.username?.value || "unknown",
+      avatar: author.metadata?.picture || "",
+      reputation: author.score || 0,
+      address: author.address as Address,
+    },
+    rootPost,
+    upvotes: rootPost?.stats.upvotes || 0,
+    downvotes: rootPost?.stats.downvotes || 0,
+    repliesCount: threadRecord.replies_count || 0,
+    timeAgo: getTimeAgo(new Date(threadRecord.created_at)),
+    tags: contentData?.lens?.tags || contentData?.tags || [],
+    created_at: threadRecord.created_at,
+  };
+}

@@ -16,7 +16,7 @@ export default function HomePage() {
   // Forum-wide stats
   const { data: forumStats, isLoading: loadingStats, isError: statsError } = useForumStats();
 
-  // Latest threads (custom hook)
+  // Latest threads (optimized custom hook)
   const { data: threads = [], isLoading: loadingThreads, error } = useLatestThreads(5);
 
   // Featured communities (custom hook)
