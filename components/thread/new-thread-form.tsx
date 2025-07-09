@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
 import { CreateThreadFormData, useThreadCreation } from "@/hooks/threads/use-thread-create";
 import { useAuthStore } from "@/stores/auth-store";
+import { Address } from "@/types/common";
 import { useQueryClient } from "@tanstack/react-query";
 import { Hash, Plus, Send, X } from "lucide-react";
 import { toast } from "sonner";
@@ -20,10 +21,10 @@ interface NewThreadFormProps {
 
 export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
   const { createThread, isCreating } = useThreadCreation();
-  const { account } = useAuthStore();
+  const { account, walletAddress } = useAuthStore();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { reputation, canCreateThread } = useLensReputationScore();
+  const { reputation, canCreateThread } = useLensReputationScore(walletAddress as Address, account?.address);
 
   const [formData, setFormData] = useState<CreateThreadFormData>({
     title: "",
@@ -74,13 +75,13 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
 
     // Check reputation requirements
     if (!canCreateThread) {
-      if (reputation.score === undefined) {
+      if (reputation === undefined) {
         toast.error("LensReputation NFT Required", {
           description: "You need to mint the LensReputation NFT to create threads.",
         });
       } else {
         toast.error("Insufficient Reputation", {
-          description: `You need a reputation score of 400 or higher to create threads. Your current score is ${reputation.score}.`,
+          description: `You need a reputation score of 400 or higher to create threads. Your current score is ${reputation}.`,
         });
       }
       return;
