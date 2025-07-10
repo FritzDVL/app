@@ -33,6 +33,7 @@ export function ThreadRepliesList({ threadAddress }: { threadAddress: string }) 
       setReplyContent={setReplyContent}
       handleReply={handleReply}
       rootPostId={thread.rootPost?.id || ""}
+      threadAddress={threadAddress}
     />
   );
 }

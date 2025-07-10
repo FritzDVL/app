@@ -9,6 +9,7 @@ interface ThreadRepliesProps {
   setReplyContent: (fn: (c: any) => any) => void;
   handleReply: (parentId: string, content: string) => Promise<void>;
   rootPostId: string;
+  threadAddress: string;
 }
 
 export function ThreadReplies({
@@ -19,6 +20,7 @@ export function ThreadReplies({
   setReplyContent,
   handleReply,
   rootPostId,
+  threadAddress,
 }: ThreadRepliesProps) {
   // Organize replies by parentReplyId
   const repliesByParent: { [parentId: string]: Reply[] } = {};
@@ -40,6 +42,7 @@ export function ThreadReplies({
           setReplyContent={setReplyContent}
           handleReply={handleReply}
           rootPostId={rootPostId}
+          threadAddress={threadAddress}
         >
           {renderReplies(reply.id, depth + 1)}
         </ThreadReplyCard>

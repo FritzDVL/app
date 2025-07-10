@@ -8,12 +8,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { fetchReply } from "@/lib/fetchers/reply";
+import { fetchRepliesByParentId } from "@/lib/fetchers/reply";
 import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { Reply as ReplyType } from "@/types/common";
 import { PostId } from "@lens-protocol/client";
 import { postId } from "@lens-protocol/react";
-import { Coins, Reply } from "lucide-react";
+import { Coins, MessageSquare, Reply } from "lucide-react";
 
 export function ThreadReplyCard({
   reply,
@@ -21,9 +22,10 @@ export function ThreadReplyCard({
   replyContent,
   setReplyingTo,
   setReplyContent,
-  handleReply, // <-- add this prop
+  handleReply,
   children,
-  rootPostId, // <-- new prop for root post id
+  rootPostId,
+  threadAddress,
 }: {
   reply: ReplyType & { _depth?: number };
   replyingTo: string | null;
@@ -33,12 +35,18 @@ export function ThreadReplyCard({
   handleReply: (parentId: string, content: string) => Promise<void>;
   children?: React.ReactNode;
   depth?: number;
-  rootPostId: string; // <-- new prop
+  rootPostId: string;
+  threadAddress: string;
 }) {
   // State for showing context
   const [showContext, setShowContext] = useState(false);
   const [contextChain, setContextChain] = useState<ReplyType[]>([]);
   const [loadingContext, setLoadingContext] = useState(false);
+
+  // State and logic for showing child replies
+  const [showReplies, setShowReplies] = useState(false);
+  const [childReplies, setChildReplies] = useState<ReplyType[]>([]);
+  const [loadingReplies, setLoadingReplies] = useState(false);
 
   const { isLoggedIn } = useAuthStore();
 
@@ -68,6 +76,22 @@ export function ThreadReplyCard({
       }
     } finally {
       setLoadingContext(false);
+    }
+  };
+
+  // Handler to show/hide child replies
+  const handleShowReplies = async () => {
+    if (!showReplies) {
+      setLoadingReplies(true);
+      try {
+        const replies = await fetchRepliesByParentId(reply.id, threadAddress);
+        setChildReplies(replies);
+        setShowReplies(true);
+      } finally {
+        setLoadingReplies(false);
+      }
+    } else {
+      setShowReplies(false);
     }
   };
 
@@ -173,10 +197,28 @@ export function ThreadReplyCard({
               <ContentRenderer content={removeTrailingEmptyPTags(reply.content)} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
               <div className="mt-3 flex items-center justify-between">
-                {/* Tips counter bottom left */}
-                <div className="flex items-center gap-1 text-sm text-gray-500">
-                  <Coins className="h-4 w-4" />
-                  <span>{(reply as any).tips ?? 0}</span>
+                {/* Tips counter and replies button bottom left */}
+                <div className="flex items-center gap-2">
+                  {/* Button to show child replies */}
+                  <button
+                    className={
+                      `flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-all duration-200 ` +
+                      (showReplies
+                        ? "border border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100"
+                        : "border border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-700")
+                    }
+                    onClick={handleShowReplies}
+                    disabled={loadingReplies}
+                    title={showReplies ? "Hide replies" : "Show replies"}
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                    <span>{loadingReplies ? "..." : childReplies.length || "0"}</span>
+                  </button>
+
+                  <div className="flex items-center gap-1 text-sm text-gray-500">
+                    <Coins className="h-4 w-4" />
+                    <span>{(reply as any).tips ?? 0}</span>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -212,6 +254,25 @@ export function ThreadReplyCard({
                     setReplyContent(c => ({ ...c, [reply.id]: trimmed }));
                   }}
                 />
+              )}
+
+              {/* Recursive rendering of child replies */}
+              {showReplies && childReplies.length > 0 && (
+                <div className="mt-4 space-y-3 border-l-2 border-brand-100 pl-4">
+                  {childReplies.map(child => (
+                    <ThreadReplyCard
+                      key={child.id}
+                      reply={child}
+                      replyingTo={replyingTo}
+                      replyContent={replyContent}
+                      setReplyingTo={setReplyingTo}
+                      setReplyContent={setReplyContent}
+                      handleReply={handleReply}
+                      rootPostId={rootPostId}
+                      threadAddress={threadAddress}
+                    />
+                  ))}
+                </div>
               )}
             </div>
           </div>

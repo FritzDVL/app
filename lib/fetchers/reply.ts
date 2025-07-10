@@ -1,4 +1,5 @@
 import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { fetchReplies } from "@/lib/fetchers/replies";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { Reply } from "@/types/common";
 import { Post as LensPost, evmAddress, postId } from "@lens-protocol/client";
@@ -34,4 +35,14 @@ export async function fetchReply(replyId: string): Promise<Reply | null> {
     return null;
   }
   return null;
+}
+
+/**
+ * Fetches all replies whose parentReplyId matches the given parentId.
+ * Requires threadAddress para buscar en el hilo correcto.
+ */
+export async function fetchRepliesByParentId(parentId: string, threadAddress?: string): Promise<Reply[]> {
+  if (!threadAddress) return [];
+  const allReplies = await fetchReplies(threadAddress);
+  return allReplies.filter(r => r.parentReplyId === parentId);
 }
