@@ -2,6 +2,7 @@ import React from "react";
 import { TextEditor } from "@/components/editor/text-editor";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/auth-store";
 import { MessageCircle } from "lucide-react";
 
 export function ThreadReplyBox({
@@ -15,10 +16,11 @@ export function ThreadReplyBox({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const { account } = useAuthStore();
   return (
     <div className="mt-3 flex w-full min-w-0 items-start space-x-3">
       <Avatar className="h-8 w-8 flex-shrink-0">
-        <AvatarImage src="/placeholder.svg?height=32&width=32" />
+        <AvatarImage src={account?.metadata?.picture} />
         <AvatarFallback className="bg-gray-200 text-gray-700">U</AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1 space-y-3">
