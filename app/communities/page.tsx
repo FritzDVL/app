@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CommunitiesHeader } from "@/components/communities/communities-header";
 import { CommunitiesList } from "@/components/communities/communities-list";
-import { CommunitiesSidebar } from "@/components/communities/communities-sidebar";
+import { CommunitiesStats } from "@/components/communities/communities-stats";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { useCommunities } from "@/hooks/queries/use-communities";
 
@@ -28,7 +28,7 @@ export default function CommunitiesPage() {
           </div>
           {/* Sidebar */}
           <div className="space-y-8">
-            <CommunitiesSidebar communities={communities} />
+            <CommunitiesStats communities={communities} />
           </div>
         </div>
       </main>

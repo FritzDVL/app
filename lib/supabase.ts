@@ -114,14 +114,18 @@ export async function persistCommunity(lensGroupAddress: string, name: string): 
 export async function fetchAllCommunities(): Promise<CommunitySupabase[]> {
   const { data: communities, error } = await supabase
     .from("communities")
-    .select("*")
+    .select("*, threads_count:community_threads(count)")
     .order("created_at", { ascending: false });
 
   if (error) {
     throw new Error(`Failed to fetch communities: ${error.message}`);
   }
 
-  return communities || [];
+  // threads_count will be an array with a single object { count: number }
+  return (communities || []).map(c => ({
+    ...c,
+    threads_count: c.threads_count?.[0]?.count ?? 0,
+  }));
 }
 
 /**
