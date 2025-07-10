@@ -23,7 +23,10 @@ type AdminsResult = {
 /**
  * Optimized version that batches all Lens Protocol API calls for better performance.
  */
-export async function fetchCommunities(): Promise<Community[]> {
+export async function fetchCommunities(
+  sortBy: keyof Community | null = null,
+  sortOrder: "asc" | "desc" = "desc",
+): Promise<Community[]> {
   try {
     // 1. Fetch all communities from database (single query)
     const dbCommunities = await fetchAllCommunities();
@@ -111,6 +114,22 @@ export async function fetchCommunities(): Promise<Community[]> {
         console.warn(`Error transforming community ${dbCommunity.lens_group_address}:`, error);
         continue;
       }
+    }
+
+    // Sort if requested
+    if (sortBy) {
+      communitiesData.sort((a, b) => {
+        const aValue = a[sortBy];
+        const bValue = b[sortBy];
+        if (aValue === undefined || bValue === undefined) return 0;
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+        }
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return sortOrder === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        }
+        return 0;
+      });
     }
 
     return communitiesData;
