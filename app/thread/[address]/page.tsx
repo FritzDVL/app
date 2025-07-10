@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import { CommunityJoinBanner } from "@/components/communities/community-join-banner";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { ThreadMainCard } from "@/components/thread/thread-main-card";
 import { ThreadRepliesList } from "@/components/thread/thread-replies-list";
 import { ThreadRepliesPagination } from "@/components/thread/thread-replies-pagination";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
+import { useCommunity } from "@/hooks/queries/use-community";
 import { useThread } from "@/hooks/queries/use-thread";
 import { useThreadReplies } from "@/hooks/queries/use-thread-replies";
 import { Address } from "@/types/common";
@@ -16,8 +18,9 @@ export default function ThreadPage() {
   const { address: threadAddress } = params;
   const [cursor, setCursor] = useState<string | null>(null);
 
-  // Fetch replies pageInfo for pagination
+  // Fetch thread and community data
   const { data: thread } = useThread(threadAddress as Address);
+  const { data: community } = useCommunity(thread?.community || "");
   const { data: replies } = useThreadReplies(threadAddress as string, cursor);
 
   return (
@@ -28,6 +31,10 @@ export default function ThreadPage() {
             Back to Community
           </BackNavigationLink>
         </div>
+
+        {/* Community Join Banner - shown if user is not a member */}
+        {community && <CommunityJoinBanner community={community} />}
+
         <ThreadMainCard threadAddress={threadAddress as string} />
         <ThreadRepliesList threadAddress={threadAddress as string} />
         <ThreadRepliesPagination
