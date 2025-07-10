@@ -4,6 +4,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThread } from "@/hooks/queries/use-thread";
 import { useThreadReplies } from "@/hooks/queries/use-thread-replies";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function ThreadRepliesList({ threadAddress }: { threadAddress: string }) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -11,6 +12,7 @@ export function ThreadRepliesList({ threadAddress }: { threadAddress: string }) 
   const { createReply } = useReplyCreate();
   const { data: thread } = useThread(threadAddress);
   const { data: replies, isLoading } = useThreadReplies(threadAddress, null, thread?.rootPost?.id);
+  const queryClient = useQueryClient();
 
   const handleReply = async (parentId: string, content: string) => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
@@ -18,6 +20,8 @@ export function ThreadRepliesList({ threadAddress }: { threadAddress: string }) 
       await createReply(parentId, content, threadAddress as any, thread.id);
       setReplyingTo(null);
       setReplyContent(c => ({ ...c, [parentId]: "" }));
+      // Invalidate thread replies query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["replies", threadAddress] });
     }
   };
 

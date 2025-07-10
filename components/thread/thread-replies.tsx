@@ -22,19 +22,12 @@ export function ThreadReplies({
   rootPostId,
   threadAddress,
 }: ThreadRepliesProps) {
-  // Organize replies by parentReplyId
-  const repliesByParent: { [parentId: string]: Reply[] } = {};
-  for (const reply of replies) {
-    const parentId = reply.parentReplyId || rootPostId;
-    if (!repliesByParent[parentId]) repliesByParent[parentId] = [];
-    repliesByParent[parentId].push(reply);
-  }
-
-  // Recursive render with indentation for nesting
-  function renderReplies(parentId: string, depth = 0) {
-    return (repliesByParent[parentId] || []).map(reply => (
-      <div key={reply.id}>
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold text-gray-900">{replies.length} Replies</h3>
+      {replies.map(reply => (
         <ThreadReplyCard
+          key={reply.id}
           reply={reply}
           replyingTo={replyingTo}
           replyContent={replyContent}
@@ -43,17 +36,8 @@ export function ThreadReplies({
           handleReply={handleReply}
           rootPostId={rootPostId}
           threadAddress={threadAddress}
-        >
-          {renderReplies(reply.id, depth + 1)}
-        </ThreadReplyCard>
-      </div>
-    ));
-  }
-
-  return (
-    <div className="space-y-4">
-      <h3 className="text-xl font-bold text-gray-900">{replies.length} Replies</h3>
-      {renderReplies(rootPostId)}
+        />
+      ))}
     </div>
   );
 }
