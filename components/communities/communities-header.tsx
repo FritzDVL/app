@@ -1,7 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Search, Users, X } from "lucide-react";
 
 interface CommunitiesHeaderProps {
   total: number;
@@ -31,24 +31,25 @@ export function CommunitiesHeader({ total, searchQuery, setSearchQuery }: Commun
         {/* Search Bar */}
         <div className="mt-6">
           <div className="relative max-w-md">
-            <input
-              className="rounded-full border-slate-300/60 bg-white pl-10 backdrop-blur-sm transition-all duration-300 focus:border-brand-400 focus:bg-white"
-              placeholder="Search communities..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-            />
-            {searchQuery && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                className="w-full rounded-xl border border-slate-300/60 bg-gradient-to-r from-white/90 to-slate-50/90 py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-500 backdrop-blur-sm transition-all duration-300 focus:border-brand-400/60 focus:bg-white focus:shadow-md focus:shadow-brand-500/10 focus:outline-none focus:ring-1 focus:ring-brand-400/20"
+                placeholder="Search communities..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 w-6 p-0 hover:bg-slate-100"
+                  className="absolute right-1.5 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full p-0 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
                   onClick={() => setSearchQuery("")}
                 >
-                  ×
+                  <X className="h-3.5 w-3.5" />
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
