@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { EnableSignlessDialog } from "@/components/auth/enable-signless-dialog";
 import { LoginLensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
-import { useSignlessStatus } from "@/hooks/common/use-signless-status";
 import { useAuthStore } from "@/stores/auth-store";
 import { ConnectKitProvider } from "connectkit";
 import { useAccount } from "wagmi";
@@ -29,7 +28,6 @@ function ConnectMonitor() {
 export function ConnectProvider({ children }: { children: React.ReactNode }) {
   const [isLoginLensDialogOpen, setIsLoginLensDialogOpen] = useState(false);
   const [isEnableSignlessDialogOpen, setIsEnableSignlessDialogOpen] = useState(false);
-  const { enabled: isSignlessEnabled, isLoading: isSignlessLoading } = useSignlessStatus();
 
   const { setWalletAddress, setAccount, setLensSession } = useAuthStore();
 
@@ -48,10 +46,7 @@ export function ConnectProvider({ children }: { children: React.ReactNode }) {
 
   const handleCloseLoginLensDialog = () => {
     setIsLoginLensDialogOpen(false);
-    // Only open signless dialog if not already enabled and not loading
-    if (!isSignlessEnabled && !isSignlessLoading) {
-      setIsEnableSignlessDialogOpen(true);
-    }
+    setIsEnableSignlessDialogOpen(true);
   };
 
   const handleCloseEnableSignlessDialog = () => {
