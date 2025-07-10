@@ -65,6 +65,11 @@ export function Footer() {
           </svg>
         </a>
       </div>
+      <div className="mt-2">
+        <a href="/terms" className="text-slate-500 hover:underline">
+          Terms and Conditions
+        </a>
+      </div>
     </footer>
   );
 }
