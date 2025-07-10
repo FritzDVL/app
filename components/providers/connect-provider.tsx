@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EnableSignlessDialog } from "@/components/auth/enable-signless-dialog";
 import { LoginLensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
 import { useAuthStore } from "@/stores/auth-store";
 import { ConnectKitProvider } from "connectkit";
@@ -27,7 +26,6 @@ function ConnectMonitor() {
 // Provider component that wraps the application
 export function ConnectProvider({ children }: { children: React.ReactNode }) {
   const [isLoginLensDialogOpen, setIsLoginLensDialogOpen] = useState(false);
-  const [isEnableSignlessDialogOpen, setIsEnableSignlessDialogOpen] = useState(false);
 
   const { setWalletAddress, setAccount, setLensSession } = useAuthStore();
 
@@ -46,18 +44,12 @@ export function ConnectProvider({ children }: { children: React.ReactNode }) {
 
   const handleCloseLoginLensDialog = () => {
     setIsLoginLensDialogOpen(false);
-    setIsEnableSignlessDialogOpen(true);
-  };
-
-  const handleCloseEnableSignlessDialog = () => {
-    setIsEnableSignlessDialogOpen(false);
   };
 
   return (
     <ConnectKitProvider onConnect={({ address }) => handleConnect(address ?? "")} onDisconnect={handleDisconnect}>
       <ConnectMonitor />
       <LoginLensAccountsDialog isOpen={isLoginLensDialogOpen} onClose={handleCloseLoginLensDialog} />
-      <EnableSignlessDialog isOpen={isEnableSignlessDialogOpen} onClose={handleCloseEnableSignlessDialog} />
       {children}
     </ConnectKitProvider>
   );

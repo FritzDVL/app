@@ -20,7 +20,7 @@ interface LoginLensAccountsDialogProps {
 }
 
 export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDialogProps) {
-  const [loggingIn, setLoggingIn] = useState<string | null>(null);
+  const [loggingIn, setLoggingIn] = useState<AccountAvailable | null>(null);
   const [lensAccounts, setLensAccounts] = useState<AccountAvailable[]>([]);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
 
@@ -50,10 +50,10 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
     }
   }, [status, address]);
 
-  const handleLogin = async (lensAcc: string) => {
-    setLoggingIn(lensAcc);
+  const handleLogin = async (lensAccount: AccountAvailable) => {
+    setLoggingIn(lensAccount);
     try {
-      await login(lensAcc, () => {
+      await login(lensAccount, () => {
         onClose();
       });
     } catch (error) {
@@ -130,7 +130,7 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
                     <Button
                       size="sm"
                       className="bg-gradient-to-r from-brand-500 to-brand-600 font-semibold text-white hover:from-brand-600 hover:to-brand-700"
-                      onClick={() => handleLogin(lensAccount.account.address)}
+                      onClick={() => handleLogin(lensAccount)}
                       disabled={loggingIn === lensAccount.account.address}
                     >
                       {loggingIn === lensAccount.account.address ? (

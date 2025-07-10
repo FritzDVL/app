@@ -4,7 +4,7 @@ import { APP_ADDRESS } from "@/lib/constants";
 import { useAuthStore } from "@/stores/auth-store";
 import { fetchAccount } from "@lens-protocol/client/actions";
 import { signMessageWith } from "@lens-protocol/client/viem";
-import { evmAddress, useLogin as useLensLogin } from "@lens-protocol/react";
+import { AccountAvailable, evmAddress, useLogin as useLensLogin } from "@lens-protocol/react";
 import { useAccount, useWalletClient } from "wagmi";
 
 export function useLogin() {
@@ -16,7 +16,7 @@ export function useLogin() {
   const { data: walletClient } = useWalletClient();
 
   const login = useCallback(
-    async (address: string, onLoginSuccess?: () => void) => {
+    async (lensAccount: AccountAvailable, onLoginSuccess?: () => void) => {
       if (walletStatus !== "connected") {
         console.error("Wallet is not connected");
         return;
@@ -29,28 +29,42 @@ export function useLogin() {
 
       setIsLoading(true);
       try {
-        console.log("Logging in with address:", address);
-        const authenticated = await loginLens({
-          accountOwner: {
-            account: evmAddress(address),
-            app: evmAddress(APP_ADDRESS),
-            owner: evmAddress(walletAddress || ""),
-          },
-          signMessage: signMessageWith(walletClient),
-        });
+        let authenticated;
+        if (lensAccount.__typename == "AccountOwned") {
+          authenticated = await loginLens({
+            accountOwner: {
+              account: evmAddress(lensAccount.account.address),
+              app: evmAddress(APP_ADDRESS),
+              owner: evmAddress(walletAddress || ""),
+            },
+            signMessage: signMessageWith(walletClient),
+          });
+        } else if (lensAccount.__typename === "AccountManaged") {
+          authenticated = await loginLens({
+            accountManager: {
+              account: evmAddress(lensAccount.account.address),
+              app: evmAddress(APP_ADDRESS),
+              manager: evmAddress(walletAddress || ""),
+            },
+            signMessage: signMessageWith(walletClient),
+          });
+        }
+        if (!authenticated) {
+          throw new Error("Authentication failed");
+        }
 
         if (authenticated.isErr()) {
           throw new Error(`Authentication failed: ${authenticated.error.message}`);
         }
 
         // Set lens session
-        setLensSession(authenticated.value);
+        setLensSession(authenticated.value); // TODO: Ensure authenticated.value matches AuthenticatedUser type
 
         // Fetch account details
         const result = await fetchAccount(client, {
-          address: evmAddress(address),
+          address: evmAddress(lensAccount.account.address),
         });
-        console.log("Fetched account:", result);
+
         if (result.isOk()) {
           setAccount(result.value);
           onLoginSuccess?.();
