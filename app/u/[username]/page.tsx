@@ -27,7 +27,7 @@ export default function ProfilePage() {
     lensAccount?.address,
   );
   const { reputation } = useLensReputationScore(
-    lensAccount?.address as Address | undefined,
+    lensAccount?.owner as Address | undefined,
     lensAccount?.address as Address | undefined,
   );
 
@@ -70,7 +70,7 @@ export default function ProfilePage() {
           followers={stats.followers}
           following={stats.following}
           posts={stats.posts}
-          reputation={reputation.score || 0}
+          reputation={reputation || 0}
           loading={stats.loading}
         />
 
