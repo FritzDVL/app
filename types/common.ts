@@ -66,6 +66,7 @@ export interface Reply {
   tips: number;
   createdAt: string;
   parentReplyId?: string;
+  repliesCount: number;
 }
 
 // Represents a reply with depth for flattened threaded display

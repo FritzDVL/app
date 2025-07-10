@@ -212,7 +212,7 @@ export function ThreadReplyCard({
                     title={showReplies ? "Hide replies" : "Show replies"}
                   >
                     <MessageSquare className="h-3.5 w-3.5" />
-                    <span>{loadingReplies ? "..." : childReplies.length || "0"}</span>
+                    <span>{loadingReplies ? "..." : reply.repliesCount || "0"}</span>
                   </button>
 
                   <div className="flex items-center gap-1 text-sm text-gray-500">
