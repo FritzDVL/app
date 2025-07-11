@@ -72,7 +72,7 @@ export function useLensReputationScore(walletAddress?: Address, lensAccount?: Ad
 
   // Calculate permissions based on score
   const canCreateCommunity = typeof reputation === "number" && reputation >= 700;
-  const canCreateThread = typeof reputation === "number" && reputation >= 200;
+  const canCreateThread = typeof reputation === "number" && reputation >= 400;
 
   return {
     reputation,

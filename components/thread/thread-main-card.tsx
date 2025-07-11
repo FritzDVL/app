@@ -114,7 +114,7 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
           </div>
         </div>
         {/* Actions */}
-        <div className="mt-6 flex items-center justify-between border-t border-slate-300/60 pt-4">
+        <div className="mt-6 flex flex-col gap-3 border-t border-slate-300/60 pt-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4 text-slate-500">
             <div className="flex items-center gap-1">
               <ReplyIcon className="h-4 w-4" />
@@ -125,20 +125,29 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
               <span className="text-sm">{thread.rootPost?.stats.tips}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={handleShare}>
+          <div className="flex w-full min-w-0 flex-wrap gap-2 sm:w-auto sm:gap-2">
+            <Button variant="ghost" size="sm" onClick={handleShare} className="min-w-0 flex-1 sm:flex-none">
               <Share className="mr-2 h-4 w-4" />
-              Share
+              <span className="truncate">Share</span>
             </Button>
-            <Button variant="ghost" size="sm" className="rounded-full" disabled>
+            <Button variant="ghost" size="sm" className="min-w-0 flex-1 rounded-full sm:flex-none" disabled>
               <Bookmark className="mr-2 h-4 w-4" />
-              Save
+              <span className="truncate">Save</span>
             </Button>
-            <Button variant="ghost" size="sm" className="rounded-full text-red-500 hover:text-red-600" disabled>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="min-w-0 flex-1 rounded-full text-red-500 hover:text-red-600 sm:flex-none"
+              disabled
+            >
               <Flag className="mr-2 h-4 w-4" />
-              Report
+              <span className="truncate">Report</span>
             </Button>
-            {postId && <TipGhoPopover to={postId} />}
+            {postId && (
+              <div className="min-w-0 flex-1 sm:flex-none">
+                <TipGhoPopover to={postId} />
+              </div>
+            )}
           </div>
         </div>
         {/* Main thread reply button and contextual reply box */}
