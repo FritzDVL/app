@@ -25,10 +25,10 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <StatsBar loadingStats={loadingStats} statsError={statsError} forumStats={forumStats ?? undefined} />
-        <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-8">
+        <div className="grid w-full gap-8 lg:grid-cols-12 lg:gap-12">
+          <div className="w-full min-w-0 lg:col-span-8">
             <LatestThreads
               threads={threads}
               loadingThreads={loadingThreads}
@@ -38,7 +38,7 @@ export default function HomePage() {
               formatDate={getTimeAgo}
             />
           </div>
-          <div className="space-y-8 lg:col-span-4">
+          <div className="w-full min-w-0 space-y-8 lg:col-span-4">
             <FeaturedCommunities featuredCommunities={featuredCommunities} />
           </div>
         </div>

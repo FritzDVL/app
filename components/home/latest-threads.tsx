@@ -22,9 +22,9 @@ export function LatestThreads({
   formatDate,
 }: LatestThreadsProps) {
   return (
-    <div className="mb-8 overflow-hidden rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
-      <div className="border-b border-slate-200/80 bg-gradient-to-r from-slate-100/90 to-white px-8 py-6">
-        <div className="flex items-center justify-between">
+    <div className="x-auto mb-8 w-full max-w-full overflow-hidden rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
+      <div className="border-b border-slate-200/80 bg-gradient-to-r from-slate-100/90 to-white px-4 py-4 sm:px-8 sm:py-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-2xl font-bold text-slate-900">Latest Conversations</h2>
@@ -52,7 +52,7 @@ export function LatestThreads({
           </div>
         </div>
       </div>
-      <div className="p-8">
+      <div className="w-full max-w-full overflow-x-auto p-4 sm:p-8">
         {loadingThreads ? (
           <div className="space-y-6">
             {[...Array(3)].map((_, i) => (
@@ -87,15 +87,15 @@ export function LatestThreads({
             </Button>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="w-full max-w-full space-y-6">
             {threads.map(thread => (
               <div
                 key={thread.id}
-                className="group cursor-pointer rounded-2xl border border-slate-300/60 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-brand-300/60"
+                className="group w-full min-w-0 cursor-pointer rounded-2xl border border-slate-300/60 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-brand-300/60 sm:p-6"
               >
-                <div className="flex gap-4">
-                  <div className="min-w-0 flex-1 space-y-4">
-                    <div className="flex items-center gap-3">
+                <div className="flex w-full min-w-0 flex-col gap-4 sm:flex-row sm:gap-4">
+                  <div className="w-full min-w-0 flex-1 space-y-4">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
                       <Link
                         href={`/u/${thread.author.username.replace("lens/", "")}`}
                         className="flex items-center gap-3 text-sm text-slate-600 transition-colors hover:text-slate-900"
@@ -110,7 +110,7 @@ export function LatestThreads({
                         </div>
                         <span className="font-medium">{thread.author.username}</span>
                       </Link>
-                      <span className="text-slate-300">•</span>
+                      <span className="text-slate-300 sm:inline">•</span>
                       <span className="flex items-center gap-1 text-sm text-slate-500">
                         <Clock className="h-3 w-3" />
                         {formatDate(new Date(thread.created_at))}
@@ -124,8 +124,8 @@ export function LatestThreads({
                         {thread.summary && <p className="mt-2 line-clamp-2 text-sm text-slate-600">{thread.summary}</p>}
                       </Link>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-6 text-sm text-slate-500">
+                    <div className="flex w-full max-w-full flex-wrap items-center justify-between gap-4">
+                      <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500">
                         <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-brand-600">
                           <MessageCircle className="h-4 w-4" />
                           <span>{thread.repliesCount || 0} replies</span>

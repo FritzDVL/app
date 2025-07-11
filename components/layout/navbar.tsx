@@ -29,10 +29,10 @@ export function Navbar() {
   const { logout } = useLogout();
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/80 px-4 py-3 shadow-xl shadow-slate-200/20 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full max-w-full overflow-x-hidden border-b border-slate-200/60 bg-white/80 px-4 py-3 shadow-xl shadow-slate-200/20 backdrop-blur-md">
       {/* Test Environment Banner */}
       {/* <TestnetBanner /> */}
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between">
         {/* Logo */}
         <Link href="/" className="group flex items-center space-x-2">
           <div className="flex h-8 w-8 items-center justify-center">
