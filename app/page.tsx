@@ -7,20 +7,26 @@ import { LatestThreads } from "@/components/home/latest-threads";
 import { StatsBar } from "@/components/home/stats-bar";
 import { useForumStats } from "@/hooks/common/use-forum-stats";
 import { useFeaturedCommunities } from "@/hooks/queries/use-featured-communities";
+import { useFeaturedThreads } from "@/hooks/queries/use-featured-threads";
 import { useLatestThreads } from "@/hooks/queries/use-latest-threads";
 import { getTimeAgo } from "@/lib/utils";
 
 export default function HomePage() {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState("Featured");
 
   // Forum-wide stats
   const { data: forumStats, isLoading: loadingStats, isError: statsError } = useForumStats();
 
   // Latest threads (optimized custom hook)
   const { data: threads = [], isLoading: loadingThreads, error } = useLatestThreads(5);
+  const { data: featuredThreads = [], isLoading: loadingFeaturedThreads } = useFeaturedThreads(5);
 
   // Featured communities (custom hook)
   const { data: featuredCommunities = [] } = useFeaturedCommunities();
+
+  // Thread list to show depending on category
+  const showThreads = activeCategory === "Featured" ? featuredThreads : threads;
+  const showLoading = activeCategory === "Featured" ? loadingFeaturedThreads : loadingThreads;
 
   return (
     <>
@@ -30,8 +36,8 @@ export default function HomePage() {
         <div className="grid w-full gap-8 lg:grid-cols-12 lg:gap-12">
           <div className="w-full min-w-0 lg:col-span-8">
             <LatestThreads
-              threads={threads}
-              loadingThreads={loadingThreads}
+              threads={showThreads}
+              loadingThreads={showLoading}
               error={error}
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}

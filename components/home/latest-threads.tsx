@@ -36,7 +36,7 @@ export function LatestThreads({
             <p className="mt-1 text-sm text-slate-600">Join the discussion and share your insights</p>
           </div>
           <div className="hidden gap-2 sm:flex">
-            {["All"].map(category => (
+            {["Featured", "All"].map(category => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}

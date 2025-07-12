@@ -1,5 +1,5 @@
 import { client } from "@/lib/clients/lens-protocol";
-import { fetchCommunityThreads, fetchLatestThreads } from "@/lib/supabase";
+import { fetchCommunityThreads, fetchFeaturedThreads, fetchLatestThreads } from "@/lib/supabase";
 import { transformFeedToThreadOptimized } from "@/lib/transformers/thread-transformers";
 import { Thread } from "@/types/common";
 import { Account, Feed, Post, evmAddress } from "@lens-protocol/client";
@@ -136,6 +136,21 @@ export async function fetchLatestThreadsOptimized(limit: number = 5): Promise<Th
     return await fetchThreadsBatched(threadRecords);
   } catch (error) {
     console.error("Failed to fetch latest threads (optimized):", error);
+    throw error;
+  }
+}
+
+/**
+ * Optimized version of featured threads fetcher that batches Lens Protocol API calls
+ * for better performance.
+ */
+export async function fetchFeaturedThreadsOptimized(limit: number = 5): Promise<Thread[]> {
+  try {
+    // 1. Fetch featured thread records from database (single query)
+    const threadRecords = await fetchFeaturedThreads(limit);
+    return await fetchThreadsBatched(threadRecords);
+  } catch (error) {
+    console.error("Failed to fetch featured threads (optimized):", error);
     throw error;
   }
 }

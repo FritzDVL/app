@@ -270,6 +270,22 @@ export async function fetchFeaturedCommunities(): Promise<CommunitySupabase[]> {
 }
 
 /**
+ * Fetches threads with featured=true from the database
+ * @param limit - Number of threads to fetch (default: 5)
+ * @returns Array of thread records
+ */
+export async function fetchFeaturedThreads(limit: number = 5): Promise<any[]> {
+  const { data, error } = await supabase
+    .from("community_threads")
+    .select("*")
+    .eq("featured", true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
+/**
  * Increments the replies_count for a community thread by its id using the increment_replies_count function
  * @param threadId - The thread's id (uuid)
  * @returns void
