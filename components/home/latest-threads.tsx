@@ -27,7 +27,7 @@ export function LatestThreads({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold text-slate-900">Latest Conversations</h2>
+              <h2 className="text-2xl font-bold text-slate-900">Active threads</h2>
               <div className="relative">
                 <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
                 <div className="absolute inset-0 h-2 w-2 animate-ping rounded-full bg-green-400 opacity-75"></div>
