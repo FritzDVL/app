@@ -11,7 +11,7 @@ const lensMainnetClient = PublicClient.create({
 
 const lensTestnetClient = PublicClient.create({
   environment: testnet,
-  origin: "https://lensforum.xyz/",
+  origin: "http://localhost:3000/",
   storage,
 });
 
