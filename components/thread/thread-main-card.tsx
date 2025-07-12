@@ -94,7 +94,7 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
                   </div>
                   <ContentRenderer
                     content={thread.rootPost.metadata.content}
-                    className="rich-text-content whitespace-pre-line rounded-2xl bg-slate-50/50 p-5 text-gray-800"
+                    className="rich-text-content rounded-2xl bg-slate-50/50 p-5 text-gray-800"
                   />
                 </div>
               )}
