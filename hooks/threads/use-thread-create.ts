@@ -2,9 +2,6 @@ import { useState } from "react";
 import { lensChain } from "@/lib/chains/lens";
 import { client } from "@/lib/clients/lens-protocol";
 import { storageClient } from "@/lib/grove/client";
-// import { lensMainnet } from '@/lib/chains/lens-mainnet'
-// import { client } from '@/lib/clients/lens-protocol-mainnet'
-// import { storageClient } from '@/lib/grove'
 import { fetchCommunity } from "@/lib/supabase";
 import { persistRootPostId } from "@/lib/supabase";
 import { transformFormDataToThread } from "@/lib/transformers/thread-transformers";
@@ -16,13 +13,7 @@ import { post } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { textOnly } from "@lens-protocol/metadata";
 import { Post, evmAddress, useSessionClient } from "@lens-protocol/react";
-// import { feed } from '@lens-protocol/metadata'
-// import { immutable } from '@lens-chain/storage-client'
 import { toast } from "sonner";
-// import { evmAddress } from '@lens-protocol/client'
-// import { createFeed, fetchFeed } from '@lens-protocol/client/actions'
-// import { handleOperationWith } from '@lens-protocol/client/viem'
-// import { useSessionClient } from '@lens-protocol/react'
 import { useWalletClient } from "wagmi";
 
 export interface CreateThreadFormData {
