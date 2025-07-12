@@ -1,10 +1,6 @@
+import { client } from "@/lib/clients/lens-protocol";
 import { adminSigner } from "@/lib/wallets/admin-wallet";
-import { ChallengeRequest, PublicClient, type SessionClient, mainnet } from "@lens-protocol/client";
-
-const client = PublicClient.create({
-  environment: mainnet,
-  origin: "https://localhsot:3000",
-});
+import { ChallengeRequest, type SessionClient } from "@lens-protocol/client";
 
 let cachedSessionClient: SessionClient | null = null;
 let lastSessionTime: number | null = null;
