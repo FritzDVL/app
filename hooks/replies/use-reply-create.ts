@@ -1,6 +1,6 @@
 // import { lensMainnet } from "@/lib/chains/lens-mainnet";
-import { lensMainnet } from "@/lib/chains/lens-mainnet";
-import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { lensChain } from "@/lib/chains/lens";
+import { client } from "@/lib/clients/lens-protocol";
 import { storageClient } from "@/lib/grove/client";
 import { incrementThreadRepliesCount } from "@/lib/supabase";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
@@ -26,7 +26,7 @@ export function useReplyCreate() {
   }
 
   async function uploadReplyMetadata(metadata: any) {
-    const acl = immutable(lensMainnet.id);
+    const acl = immutable(lensChain.id);
     const { uri: replyUri } = await storageClient.uploadAsJson(metadata, { acl });
     return replyUri;
   }

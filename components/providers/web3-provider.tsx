@@ -1,8 +1,8 @@
 "use client";
 
 import { ConnectProvider } from "@/components/providers/connect-provider";
-// import { lensMainnet } from "@/lib/chains/lens-mainnet";
-import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { client } from "@/lib/clients/lens-protocol";
+import { Env, getCurrentEnv } from "@/lib/env";
 import { chains } from "@lens-chain/sdk/viem";
 import { LensProvider } from "@lens-protocol/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -12,15 +12,20 @@ import { WagmiProvider, createConfig, http } from "wagmi";
 // Create a new query client for TanStack Query
 const queryClient = new QueryClient();
 
+const env = getCurrentEnv();
+const isMainnet = env === Env.MAINNET;
+
+const selectedChain = isMainnet ? chains.mainnet : chains.testnet;
+const selectedRpc = isMainnet ? http("https://rpc.lens.xyz") : http("https://rpc.testnet.lens.dev");
+
 // Create Wagmi config using ConnectKit's default configuration
 const config = createConfig(
   getDefaultConfig({
     // Chains supported by your application
-    chains: [chains.mainnet],
+    chains: [selectedChain],
     transports: {
       // RPC URLs for each chain
-      [chains.mainnet.id]: http("https://rpc.lens.xyz"),
-      // [chains.testnet.id]: http("https://rpc.testnet.lens.dev"),
+      [selectedChain.id]: selectedRpc,
     },
 
     // WalletConnect project ID (required)

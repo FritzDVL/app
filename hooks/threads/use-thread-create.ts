@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { lensMainnet } from "@/lib/chains/lens-mainnet";
-import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { lensChain } from "@/lib/chains/lens";
+import { client } from "@/lib/clients/lens-protocol";
 import { storageClient } from "@/lib/grove/client";
 // import { lensMainnet } from '@/lib/chains/lens-mainnet'
 // import { client } from '@/lib/clients/lens-protocol-mainnet'
@@ -65,7 +65,7 @@ async function uploadThreadContent(
     content: formData.content,
     tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : [],
   });
-  const acl = immutable(lensMainnet.id);
+  const acl = immutable(lensChain.id);
   const { uri } = await storageClient.uploadAsJson(metadata, { acl });
   const result = await post(sessionClient, {
     contentUri: uri,

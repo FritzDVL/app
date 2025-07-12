@@ -1,4 +1,4 @@
-import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { client } from "@/lib/clients/lens-protocol";
 import { fetchReplies } from "@/lib/fetchers/replies";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { Reply } from "@/types/common";

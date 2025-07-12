@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { client } from "@/lib/clients/lens-protocol";
 import { fetchAccounts } from "@lens-protocol/client/actions";
 import { AccountsOrderBy } from "@lens-protocol/react";
 

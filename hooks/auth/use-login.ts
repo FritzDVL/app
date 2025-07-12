@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { client } from "@/lib/clients/lens-protocol";
 import { APP_ADDRESS } from "@/lib/constants";
 import { useAuthStore } from "@/stores/auth-store";
 import { fetchAccount } from "@lens-protocol/client/actions";

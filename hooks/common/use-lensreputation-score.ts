@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { lensReputationAbi } from "../../lib/lensreputation/abi";
 import { publicClient } from "@/lib/clients/viem";
+import { Env, getCurrentEnv } from "@/lib/env";
 import { Address } from "@/types/common";
 import { readContract } from "viem/actions";
 
@@ -23,9 +24,19 @@ export function useLensReputationScore(walletAddress?: Address, lensAccount?: Ad
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<unknown>(undefined);
 
+  const env = getCurrentEnv();
+  const isTestnet = env === Env.TESTNET;
+
   useEffect(() => {
     // Reset state if addresses are missing
     if (!walletAddress || !lensAccount) {
+      setReputation(undefined);
+      setIsLoading(false);
+      setError(undefined);
+      return;
+    }
+
+    if (isTestnet) {
       setReputation(undefined);
       setIsLoading(false);
       setError(undefined);
@@ -68,11 +79,11 @@ export function useLensReputationScore(walletAddress?: Address, lensAccount?: Ad
     return () => {
       cancelled = true;
     };
-  }, [walletAddress, lensAccount]);
+  }, [walletAddress, lensAccount, isTestnet]);
 
   // Calculate permissions based on score
-  const canCreateCommunity = typeof reputation === "number" && reputation >= 700;
-  const canCreateThread = typeof reputation === "number" && reputation >= 400;
+  const canCreateCommunity = isTestnet || (typeof reputation === "number" && reputation >= 700);
+  const canCreateThread = isTestnet || (typeof reputation === "number" && reputation >= 400);
 
   return {
     reputation,

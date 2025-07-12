@@ -1,7 +1,7 @@
-import { lensMainnet } from "../chains/lens-mainnet";
+import { lensChain } from "@/lib/chains/lens";
 import { createPublicClient, http } from "viem";
 
 export const publicClient = createPublicClient({
-  chain: lensMainnet,
+  chain: lensChain,
   transport: http(),
 });

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { lensMainnet } from "@/lib/chains/lens-mainnet";
+import { lensChain } from "@/lib/chains/lens";
 import { getAdminSessionClient } from "@/lib/clients/admin-session";
-import { client } from "@/lib/clients/lens-protocol-mainnet";
+import { client } from "@/lib/clients/lens-protocol";
 import { storageClient } from "@/lib/grove/client";
 import { persistCommunity } from "@/lib/supabase";
 import { transformGroupToCommunity } from "@/lib/transformers/community-transformers";
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     let iconUri;
     if (file) {
-      const acl = immutable(lensMainnet.id);
+      const acl = immutable(lensChain.id);
       const { uri } = await storageClient.uploadFile(file, { acl });
       iconUri = uri;
     }
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     // 1. Build metadata for the group and upload it
     const groupMetadata = group({ name: groupName, description, ...(iconUri ? { icon: iconUri } : {}) });
-    const acl = immutable(lensMainnet.id);
+    const acl = immutable(lensChain.id);
     const { uri } = await storageClient.uploadAsJson(groupMetadata, { acl });
 
     // 2. Create the group on Lens Protocol

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { lensMainnet } from "@/lib/chains/lens-mainnet";
+import { lensChain } from "@/lib/chains/lens";
 import { getAdminSessionClient } from "@/lib/clients/admin-session";
 import { ADMIN_USER_ADDRESS } from "@/lib/constants";
 import { storageClient } from "@/lib/grove/client";
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       name: title,
       description: summary || "",
     });
-    const acl = immutable(lensMainnet.id);
+    const acl = immutable(lensChain.id);
     // 2. Upload metadata to storage (e.g., Grove/IPFS)
     const { uri } = await storageClient.uploadAsJson(metadata, { acl });
     // 3. Create the feed on Lens Protocol
