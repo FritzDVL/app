@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ContentRenderer from "../shared/content-renderer";
 import { MessageCircle } from "lucide-react";
 
 interface RecentActivityProps {
@@ -23,8 +24,8 @@ export function RecentActivity({ replies, loading }: RecentActivityProps) {
             className="group relative rounded-2xl border border-slate-200/60 bg-white/60 p-5 backdrop-blur-sm"
           >
             <div className="space-y-3">
-              <div className="rich-text-content text-slate-700">
-                <div dangerouslySetInnerHTML={{ __html: reply.content }} />
+              <div className="text-slate-700">
+                <ContentRenderer className="rich-text-content" content={reply.content} />
               </div>
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-4 text-slate-500">
