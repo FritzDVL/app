@@ -36,7 +36,7 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
   };
   const handleShare = () => {
     if (!thread) return;
-    const url = `https://lens-forum.vercel.app/thread/${thread.address}`;
+    const url = `https://lensforum.xyz/thread/${thread.address}`;
     const shareText = `Check out this thread on LensForum: \"${thread.title}\"\n\n`;
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
