@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { lensChain } from "@/lib/chains/lens";
 import { client } from "@/lib/clients/lens-protocol";
+import { addThreadContentPrefix } from "@/lib/content/thread";
 import { storageClient } from "@/lib/grove/client";
 import { fetchCommunity } from "@/lib/supabase";
 import { persistRootPostId } from "@/lib/supabase";
@@ -11,7 +12,8 @@ import { immutable } from "@lens-chain/storage-client";
 import { fetchAccount, fetchPost } from "@lens-protocol/client/actions";
 import { post } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
-import { textOnly } from "@lens-protocol/metadata";
+import { article } from "@lens-protocol/metadata";
+import { MetadataAttributeType } from "@lens-protocol/metadata";
 import { Post, evmAddress, useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
@@ -52,10 +54,20 @@ async function uploadThreadContent(
   sessionClient: any,
   walletClient: any,
 ) {
-  const metadata = textOnly({
-    content: formData.content,
+  const attributes: any[] = [];
+  attributes.push({ key: "author", type: MetadataAttributeType.STRING, value: formData.author });
+  attributes.push({ key: "subtitle", type: MetadataAttributeType.STRING, value: formData.summary });
+
+  const threadUrl = `https://lensforum.xyz/thread/${lensFeedAddress}`;
+  const contentWithPrefix = addThreadContentPrefix(formData.content, threadUrl);
+
+  const metadata = article({
+    title: formData.title,
+    content: contentWithPrefix,
     tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : [],
+    attributes,
   });
+
   const acl = immutable(lensChain.id);
   const { uri } = await storageClient.uploadAsJson(metadata, { acl });
   const result = await post(sessionClient, {

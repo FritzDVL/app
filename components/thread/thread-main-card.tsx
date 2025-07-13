@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
+import { ArticleMetadataContent } from "./article-metadata-content";
+import { TextOnlyMetadataContent } from "./text-only-metadata-content";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { ThreadReplyBox } from "@/components/thread/thread-reply-box";
@@ -10,9 +12,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThread } from "@/hooks/queries/use-thread";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
+import { removeThreadContentPrefix } from "@/lib/content/thread";
 import { useAuthStore } from "@/stores/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Coins, Flag, Reply as ReplyIcon, Share } from "lucide-react";
+
+function getThreadContent(thread: any): string {
+  const metadata = thread?.rootPost?.metadata;
+  if (metadata && typeof metadata === "object" && "content" in metadata) {
+    return metadata.content ?? "";
+  }
+  return "";
+}
 
 export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -75,29 +86,16 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
                 </Link>
               </div>
             </div>
-            {thread.rootPost &&
-              typeof thread.rootPost.metadata === "object" &&
-              "content" in thread.rootPost.metadata &&
-              thread.rootPost.metadata.content && (
-                <div className="my-6 flex flex-col gap-2">
-                  <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-                    <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
-                    <span>
-                      Posted on{" "}
-                      {thread.rootPost.timestamp
-                        ? new Date(thread.rootPost.timestamp).toLocaleString("en-US", {
-                            dateStyle: "long",
-                            timeStyle: "short",
-                          })
-                        : "Unknown date"}
-                    </span>
-                  </div>
-                  <ContentRenderer
-                    content={thread.rootPost.metadata.content}
-                    className="rich-text-content rounded-2xl bg-slate-50/50 p-5 text-gray-800"
-                  />
-                </div>
-              )}
+            {thread.rootPost?.metadata?.__typename === "TextOnlyMetadata" ? (
+              <TextOnlyMetadataContent thread={thread} />
+            ) : thread.rootPost?.metadata?.__typename === "ArticleMetadata" ? (
+              <ArticleMetadataContent content={removeThreadContentPrefix(getThreadContent(thread))} />
+            ) : (
+              <ContentRenderer
+                content={removeThreadContentPrefix(getThreadContent(thread))}
+                className="rich-text-content whitespace-pre-line rounded-2xl bg-slate-50/50 p-5 text-gray-800"
+              />
+            )}
             <div className="mb-2 flex flex-wrap items-center gap-2">
               {Array.isArray(thread.tags) &&
                 thread.tags.length > 0 &&
