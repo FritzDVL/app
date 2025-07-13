@@ -11,8 +11,8 @@ export function addThreadContentPrefix(content: string, threadUrl: string): stri
  * Removes the LensForum thread prefix from the given content if present.
  */
 export function removeThreadContentPrefix(content: string): string {
-  const regex = new RegExp(`^${THREAD_CONTENT_PREFIX}https:\/\/lensforum\.xyz\/thread\/[^\s]+\s*\n\n?`, "i");
-  return content.replace(regex, "");
+  // Match only the prefix and URL at the start, up to the first double newline
+  return content.replace(/^LensForum Thread: https:\/\/lensforum\.xyz\/thread\/[\w\d]+\s*\n\n/, "");
 }
 
 export { THREAD_CONTENT_PREFIX };

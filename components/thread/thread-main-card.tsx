@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArticleMetadataContent } from "./article-metadata-content";
-import { TextOnlyMetadataContent } from "./text-only-metadata-content";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { ThreadReplyBox } from "@/components/thread/thread-reply-box";
@@ -86,16 +84,10 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
                 </Link>
               </div>
             </div>
-            {thread.rootPost?.metadata?.__typename === "TextOnlyMetadata" ? (
-              <TextOnlyMetadataContent thread={thread} />
-            ) : thread.rootPost?.metadata?.__typename === "ArticleMetadata" ? (
-              <ArticleMetadataContent content={removeThreadContentPrefix(getThreadContent(thread))} />
-            ) : (
-              <ContentRenderer
-                content={removeThreadContentPrefix(getThreadContent(thread))}
-                className="rich-text-content whitespace-pre-line rounded-2xl bg-slate-50/50 p-5 text-gray-800"
-              />
-            )}
+            <ContentRenderer
+              content={removeThreadContentPrefix(getThreadContent(thread))}
+              className="rich-text-content rounded-2xl bg-slate-50/50 p-5 text-gray-800"
+            />
             <div className="mb-2 flex flex-wrap items-center gap-2">
               {Array.isArray(thread.tags) &&
                 thread.tags.length > 0 &&
