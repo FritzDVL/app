@@ -92,7 +92,7 @@ export function Navbar() {
                 >
                   <DropdownMenuItem
                     asChild
-                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-900 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-200"
+                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-900 focus:bg-yellow-100 focus:text-yellow-900 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-200"
                   >
                     <Link href={`/u/${account.username?.localName || "user"}`}>
                       <User className="mr-2 h-4 w-4 text-brand-500" />
@@ -101,7 +101,7 @@ export function Navbar() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => setShowLensDialog(true)}
-                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-900 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-200"
+                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-900 focus:bg-yellow-100 focus:text-yellow-900 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-200"
                   >
                     <RefreshCw className="mr-2 h-4 w-4 text-brand-500" />
                     Switch account
@@ -109,7 +109,7 @@ export function Navbar() {
                   <DropdownMenuSeparator className="bg-border" />
                   <DropdownMenuItem
                     onClick={logout}
-                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-red-50 hover:text-red-600 focus:bg-yellow-100 focus:text-yellow-900 dark:hover:bg-red-900/20 dark:hover:text-red-400"
                   >
                     <LogOut className="mr-2 h-4 w-4 text-red-500" />
                     Logout
