@@ -14,20 +14,67 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
+  :root {
+    --background: 0 0% 100%; /* white */
+    --foreground: 0 0% 3.9%; /* almost black */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 0 0% 3.9%; /* almost black */
+    --popover: 0 0% 100%; /* white */
+    --popover-foreground: 0 0% 3.9%; /* almost black */
+    --primary: 142 76% 36%; /* brand green (#22c55e) */
+    --primary-foreground: 0 0% 98%; /* almost white */
+    --secondary: 0 0% 96.1%; /* light gray */
+    --secondary-foreground: 0 0% 9%; /* dark gray */
+    --muted: 0 0% 96.1%; /* light gray */
+    --muted-foreground: 0 0% 45.1%; /* medium gray */
+    --accent: 0 0% 96.1%; /* light gray */
+    --accent-foreground: 0 0% 9%; /* dark gray */
+    --destructive: 0 84.2% 60.2%; /* red */
+    --destructive-foreground: 0 0% 98%; /* almost white */
+    --border: 0 0% 89.8%; /* very light gray */
+    --input: 0 0% 89.8%; /* very light gray */
+    --ring: 0 0% 3.9%; /* almost black */
+    --radius: 0.5rem;
   }
+
+  .dark {
+    --background: 0 0% 3.9%; /* almost black */
+    --foreground: 0 0% 98%; /* almost white */
+    --card: 0 0% 3.9%; /* almost black */
+    --card-foreground: 0 0% 98%; /* almost white */
+    --popover: 0 0% 3.9%; /* almost black */
+    --popover-foreground: 0 0% 98%; /* almost white */
+    --primary: 142 76% 36%; /* brand green (#22c55e) */
+    --primary-foreground: 0 0% 98%; /* almost white */
+    --secondary: 0 0% 14.9%; /* dark gray */
+    --secondary-foreground: 0 0% 98%; /* almost white */
+    --muted: 0 0% 14.9%; /* dark gray */
+    --muted-foreground: 0 0% 63.9%; /* medium-light gray */
+    --accent: 0 0% 14.9%; /* dark gray */
+    --accent-foreground: 0 0% 98%; /* almost white */
+    --destructive: 0 62.8% 30.6%; /* dark red */
+    --destructive-foreground: 0 0% 98%; /* almost white */
+    --border: 0 0% 14.9%; /* dark gray */
+    --input: 0 0% 14.9%; /* dark gray */
+    --ring: 0 0% 83.1%; /* light gray */
+  }
+
   html {
     @apply w-full max-w-full overflow-x-hidden;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
   }
   body {
     @apply w-full max-w-full overflow-x-hidden bg-background font-custom text-foreground;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
   }
 }
 
 @layer components {
   .gradient-card {
     @apply border border-white/20 bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-sm;
+    @apply dark:border-gray-700/20 dark:from-gray-800/80 dark:to-gray-900/40;
   }
 
   .gradient-button {
@@ -36,16 +83,6 @@
 
   .animate-float {
     animation: float 3s ease-in-out infinite;
-  }
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
   }
 
   .animate-pulse-slow {
@@ -64,5 +101,15 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
 }

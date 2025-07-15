@@ -1,4 +1,3 @@
-import tailwindcssLineClamp from "@tailwindcss/line-clamp";
 import tailwindcssTypography from "@tailwindcss/typography";
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
@@ -17,78 +16,53 @@ const config: Config = {
         custom: ["var(--font-custom)", "system-ui", "sans-serif"],
       },
       colors: {
-        // Fresh, light theme with green brand (logo-inspired), white backgrounds, and colored cards
-        brand: {
-          50: "#f0fdf4",
-          100: "#dcfce7",
-          200: "#bbf7d0",
-          300: "#86efac",
-          400: "#4ade80",
-          500: "#22c55e", // Main green (logo)
-          600: "#16a34a",
-          700: "#15803d",
-          800: "#166534",
-          900: "#14532d",
-          950: "#052e16",
-        },
-        background: {
-          DEFAULT: "#f8fafc", // soft white
-          light: "#ffffff", // pure white for sections
-        },
-        foreground: {
-          DEFAULT: "#18181b", // dark for contrast
-          light: "#4ade80", // green accent for highlights
-        },
+        // CSS variable colors for theme system
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         card: {
-          DEFAULT: "#e6f9f3", // soft mint green for cards
-          green: "#dcfce7", // light green card
-          yellow: "#fef9c3", // light yellow card
-          pink: "#fce7f3", // light pink card
-          foreground: "#18181b",
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
         popover: {
-          DEFAULT: "#f1f5f9",
-          foreground: "#18181b",
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "#22c55e", // green
-          foreground: "#fff",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#0ea5e9", // blue accent
-          foreground: "#fff",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         muted: {
-          DEFAULT: "#f1f5f9", // very light gray
-          foreground: "#64748b",
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "#fbbf24", // yellow accent
-          foreground: "#fff",
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         destructive: {
-          DEFAULT: "#ef4444", // strong red
-          foreground: "#fff",
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
-        border: "#e5e7eb",
-        input: "#e5e7eb",
-        ring: "#22c55e",
-        chart: {
-          1: "#22c55e",
-          2: "#0ea5e9",
-          3: "#fbbf24",
-          4: "#f472b6",
-          5: "#f59e42",
-        },
-        sidebar: {
-          DEFAULT: "#e0f2fe",
-          foreground: "#18181b",
-          primary: "#22c55e",
-          "primary-foreground": "#fff",
-          accent: "#0ea5e9",
-          "accent-foreground": "#fff",
-          border: "#bae6fd",
-          ring: "#22c55e",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        // Brand colors (main green theme)
+        brand: {
+          50: "#f0fdf4", // mint
+          100: "#dcfce7", // light mint
+          200: "#bbf7d0", // pale green
+          300: "#86efac", // light green
+          400: "#4ade80", // green
+          500: "#22c55e", // brand green (logo)
+          600: "#16a34a", // dark green
+          700: "#15803d", // darker green
+          800: "#166534", // deep green
+          900: "#14532d", // forest green
+          950: "#052e16", // almost black green
         },
       },
       borderRadius: {
@@ -98,20 +72,12 @@ const config: Config = {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
@@ -120,6 +86,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [tailwindcssAnimate, tailwindcssLineClamp, tailwindcssTypography],
+  plugins: [tailwindcssAnimate, tailwindcssTypography],
 };
+
 export default config;

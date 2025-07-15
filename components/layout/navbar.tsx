@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 // import { TestnetBanner } from "../shared/testnet-banner";
 import { LoginConnectButton } from "@/components/auth/login-connect-button";
 import { LoginLensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +30,7 @@ export function Navbar() {
   const { logout } = useLogout();
 
   return (
-    <nav className="sticky top-0 z-50 w-full max-w-full overflow-x-hidden border-b border-slate-200/60 bg-white/80 px-4 py-3 shadow-xl shadow-slate-200/20 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full max-w-full overflow-x-hidden border-b border-gray-200 bg-white/80 px-4 py-3 shadow-xl backdrop-blur-md dark:border-gray-700 dark:bg-gray-900/80">
       {/* Test Environment Banner */}
       {/* <TestnetBanner /> */}
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between">
@@ -44,7 +45,7 @@ export function Navbar() {
               className="rounded-lg transition-all duration-300 group-hover:shadow-brand-200/50"
             />
           </div>
-          <span className="bg-gradient-to-r from-brand-600 to-brand-700 bg-clip-text text-xl font-bold text-transparent transition-all duration-300 group-hover:from-brand-500 group-hover:to-brand-600 group-hover:drop-shadow-sm">
+          <span className="bg-gradient-to-r from-brand-600 to-brand-700 bg-clip-text text-xl font-bold text-transparent transition-all duration-300 group-hover:from-brand-500 group-hover:to-brand-600 group-hover:drop-shadow-sm dark:from-brand-400 dark:to-brand-500">
             LensForum
           </span>
         </Link>
@@ -53,13 +54,9 @@ export function Navbar() {
         <div className="hidden items-center space-x-3 md:flex">
           <Link href="/">
             <Button
-              variant={pathname === "/" ? "default" : "ghost"}
+              variant={pathname === "/" ? "default" : "yellow"}
               size="sm"
-              className={`rounded-full px-4 py-2 transition-all duration-300 ${
-                pathname === "/"
-                  ? "bg-brand-600 text-white shadow-lg shadow-brand-200/50 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-200/60"
-                  : ""
-              }`}
+              className="rounded-full px-4 py-2 transition-all duration-300"
             >
               <Home className="mr-2 h-4 w-4" />
               Home
@@ -67,70 +64,69 @@ export function Navbar() {
           </Link>
           <Link href="/communities">
             <Button
-              variant={pathname === "/communities" ? "default" : "ghost"}
+              variant={pathname === "/communities" ? "default" : "yellow"}
               size="sm"
-              className={`rounded-full px-4 py-2 transition-all duration-300 ${
-                pathname === "/communities"
-                  ? "bg-brand-600 text-white shadow-lg shadow-brand-200/50 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-200/60"
-                  : ""
-              }`}
+              className="rounded-full px-4 py-2 transition-all duration-300"
             >
               <Users className="mr-2 h-4 w-4" />
               Communities
             </Button>
           </Link>
 
-          {/* Conditional rendering based on user connection */}
-          {account ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Avatar className="h-8 w-8 cursor-pointer border-2 border-slate-200/60 bg-white/80 shadow-md transition-all duration-300 hover:scale-105 hover:border-brand-300 hover:shadow-lg hover:shadow-brand-100/50">
-                  <AvatarImage src={account.metadata?.picture || "/placeholder.svg?height=32&width=32"} />
-                  <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 font-semibold text-white">
-                    {account.username?.localName?.charAt(0).toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-[200px] border border-slate-200/60 bg-white/95 shadow-xl shadow-slate-200/20 backdrop-blur-md"
-              >
-                <DropdownMenuItem
-                  asChild
-                  className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-slate-100/80"
+          {/* Theme Toggle and Conditional rendering based on user connection */}
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            {account ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="h-8 w-8 cursor-pointer border-2 border-slate-200/60 bg-white/80 shadow-md transition-all duration-300 hover:scale-105 hover:border-brand-300 hover:shadow-lg hover:shadow-brand-100/50 dark:border-gray-600 dark:bg-gray-800">
+                    <AvatarImage src={account.metadata?.picture || "/placeholder.svg?height=32&width=32"} />
+                    <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 font-semibold text-white">
+                      {account.username?.localName?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-[200px] border border-border bg-white shadow-xl dark:bg-gray-800"
                 >
-                  <Link href={`/u/${account.username?.localName || "user"}`}>
-                    <User className="mr-2 h-4 w-4 text-brand-500" />
-                    Go to profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setShowLensDialog(true)}
-                  className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-slate-100/80"
-                >
-                  <RefreshCw className="mr-2 h-4 w-4 text-brand-500" />
-                  Switch account
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-slate-200/60" />
-                <DropdownMenuItem
-                  onClick={logout}
-                  className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-red-50/80 hover:text-red-600"
-                >
-                  <LogOut className="mr-2 h-4 w-4 text-red-500" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <LoginConnectButton />
-          )}
+                  <DropdownMenuItem
+                    asChild
+                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-900 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-200"
+                  >
+                    <Link href={`/u/${account.username?.localName || "user"}`}>
+                      <User className="mr-2 h-4 w-4 text-brand-500" />
+                      Go to profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setShowLensDialog(true)}
+                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-900 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-200"
+                  >
+                    <RefreshCw className="mr-2 h-4 w-4 text-brand-500" />
+                    Switch account
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-border" />
+                  <DropdownMenuItem
+                    onClick={logout}
+                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                  >
+                    <LogOut className="mr-2 h-4 w-4 text-red-500" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <LoginConnectButton />
+            )}
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full transition-all duration-300 hover:bg-slate-100/80 hover:shadow-md md:hidden"
+          className="rounded-full transition-all duration-300 hover:bg-accent hover:text-accent-foreground md:hidden"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -139,13 +135,13 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="mt-4 rounded-2xl border-t border-slate-200/60 bg-white/90 pb-4 shadow-lg shadow-slate-200/20 backdrop-blur-md md:hidden">
+        <div className="mt-4 rounded-2xl border-t border-border bg-white pb-4 shadow-lg backdrop-blur-md dark:bg-gray-800 md:hidden">
           <div className="space-y-3 pt-4">
             <div className="relative px-3">
-              <Search className="absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 transform text-slate-400" />
+              <Search className="absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
               <Input
                 placeholder="Search..."
-                className="rounded-full border-slate-200/60 bg-white/80 pl-10 backdrop-blur-sm transition-all duration-300 focus:bg-white focus:shadow-md focus:shadow-slate-200/20"
+                className="rounded-full border-border bg-background pl-10 transition-all duration-300 focus:bg-background focus:shadow-md"
               />
             </div>
             <Link href="/" className="block px-3">
@@ -154,7 +150,7 @@ export function Navbar() {
                 className={`w-full justify-start rounded-full transition-all duration-300 ${
                   pathname === "/"
                     ? "bg-brand-600 text-white shadow-md hover:bg-brand-700"
-                    : "hover:bg-slate-100/80 hover:shadow-sm"
+                    : "hover:bg-accent hover:text-accent-foreground"
                 }`}
               >
                 <Home className="mr-2 h-4 w-4" />
@@ -166,8 +162,8 @@ export function Navbar() {
                 variant="ghost"
                 className={`w-full justify-start rounded-full transition-all duration-300 ${
                   pathname === "/communities"
-                    ? "bg-orange-600 text-white shadow-md hover:bg-orange-700"
-                    : "hover:bg-orange-100/80 hover:text-orange-700 hover:shadow-sm"
+                    ? "bg-brand-600 text-white shadow-md hover:bg-brand-700"
+                    : "hover:bg-accent hover:text-accent-foreground"
                 }`}
               >
                 <Users className="mr-2 h-4 w-4" />
@@ -178,7 +174,7 @@ export function Navbar() {
               <Link href={`/u/${account.username?.localName || "user"}`} className="block px-3">
                 <Button
                   variant="ghost"
-                  className="w-full justify-start rounded-full transition-all duration-300 hover:bg-slate-100/80 hover:shadow-sm"
+                  className="w-full justify-start rounded-full transition-all duration-300 hover:bg-accent hover:text-accent-foreground"
                 >
                   <User className="mr-2 h-4 w-4" />
                   Profile
@@ -186,7 +182,7 @@ export function Navbar() {
               </Link>
             ) : (
               <div className="px-3">
-                <div className="rounded-full bg-gradient-to-r from-brand-50 to-white p-1 shadow-md backdrop-blur-sm">
+                <div className="rounded-full bg-gradient-to-r from-brand-50 to-white p-1 shadow-md backdrop-blur-sm dark:from-gray-800 dark:to-gray-700">
                   <LoginConnectButton />
                 </div>
               </div>

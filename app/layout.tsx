@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/container";
 import { Footer } from "@/components/layout/footer";
 import { AppProvider } from "@/components/providers/app-provider";
 import { Web3Provider } from "@/components/providers/web3-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 
@@ -21,16 +22,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${customFont.variable} font-custom`} suppressHydrationWarning>
-        <Web3Provider>
-          <div className="fixed bottom-4 right-4 z-50"></div>
-          <AppProvider>
-            <Container>{children}</Container>
-          </AppProvider>
-          <Footer />
-          <Toaster />
-        </Web3Provider>
+    <html lang="en" suppressHydrationWarning className="bg-white dark:bg-gray-900">
+      <body
+        className={`${customFont.variable} bg-white font-custom text-gray-900 dark:bg-gray-900 dark:text-gray-100`}
+        suppressHydrationWarning
+        style={{ overscrollBehavior: "none" }}
+      >
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          <Web3Provider>
+            <AppProvider>
+              <Container>{children}</Container>
+            </AppProvider>
+            <Footer />
+            <Toaster />
+          </Web3Provider>
+        </ThemeProvider>
       </body>
     </html>
   );
