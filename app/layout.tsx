@@ -2,7 +2,6 @@ import type React from "react";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Container } from "@/components/layout/container";
-import { Footer } from "@/components/layout/footer";
 import { AppProvider } from "@/components/providers/app-provider";
 import { Web3Provider } from "@/components/providers/web3-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
@@ -33,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <AppProvider>
               <Container>{children}</Container>
             </AppProvider>
-            <Footer />
             <Toaster />
           </Web3Provider>
         </ThemeProvider>
