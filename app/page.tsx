@@ -33,19 +33,21 @@ export default function HomePage() {
       <HeroSection />
       <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <StatsBar loadingStats={loadingStats} statsError={statsError} forumStats={forumStats ?? undefined} />
-        <div className="grid w-full gap-8 lg:grid-cols-12 lg:gap-12">
-          <div className="w-full min-w-0 lg:col-span-8">
-            <LatestThreads
-              threads={showThreads}
-              loadingThreads={showLoading}
-              error={error}
-              activeCategory={activeCategory}
-              setActiveCategory={setActiveCategory}
-              formatDate={getTimeAgo}
-            />
-          </div>
-          <div className="w-full min-w-0 space-y-8 lg:col-span-4">
-            <FeaturedCommunities featuredCommunities={featuredCommunities} />
+        <div className="w-full">
+          <div className="flex flex-col lg:flex-row">
+            <div className="w-full gap-8 lg:w-2/3 lg:pr-4">
+              <LatestThreads
+                threads={showThreads}
+                loadingThreads={showLoading}
+                error={error}
+                activeCategory={activeCategory}
+                setActiveCategory={setActiveCategory}
+                formatDate={getTimeAgo}
+              />
+            </div>
+            <div className="w-full gap-8 lg:w-1/3 lg:pl-4">
+              <FeaturedCommunities featuredCommunities={featuredCommunities} />
+            </div>
           </div>
         </div>
       </div>

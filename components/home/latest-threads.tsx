@@ -22,7 +22,7 @@ export function LatestThreads({
   formatDate,
 }: LatestThreadsProps) {
   return (
-    <div className="x-auto mb-8 w-full max-w-full overflow-hidden rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800 sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
+    <div className="mb-8 w-full max-w-none overflow-hidden rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800 md:max-w-none">
       <div className="border-b border-slate-200/80 bg-gradient-to-r from-slate-100/90 to-white px-4 py-4 dark:border-gray-700/50 dark:from-gray-800/50 dark:to-gray-800 sm:px-8 sm:py-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
