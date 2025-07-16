@@ -11,7 +11,7 @@ interface CommunityModeratorsProps {
 
 export function CommunityModerators({ moderators }: CommunityModeratorsProps) {
   return (
-    <Card className="motion-preset-fade-in rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
+    <Card className="motion-preset-fade-in rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardHeader>
         <h3 className="text-lg font-semibold">Moderators</h3>
       </CardHeader>

@@ -57,13 +57,13 @@ export function CommunityRules({ title, rules, className = "", variant = "commun
   const getNumberIcon = (index: number) => <span className="mt-0.5 text-sm font-bold text-blue-500">{index + 1}.</span>;
 
   return (
-    <Card className={`rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm ${className}`}>
+    <Card className={`rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800 ${className}`}>
       <CardHeader className="pb-3">
-        <h3 className="text-lg font-medium text-slate-900">{title || defaultTitle}</h3>
+        <h3 className="text-lg font-medium text-foreground">{title || defaultTitle}</h3>
       </CardHeader>
       <CardContent>
         {normalizedRules.length > 0 ? (
-          <div className="space-y-2 text-sm text-slate-600">
+          <div className="space-y-2 text-sm text-muted-foreground">
             {normalizedRules.map((rule, index) => (
               <div key={index} className="flex items-center space-x-2">
                 {variant === "posting" ? getIcon(rule.type) : getNumberIcon(index)}

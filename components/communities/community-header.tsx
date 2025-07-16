@@ -31,7 +31,7 @@ export function CommunityHeader({
   if (isLoading || !community) return null;
 
   return (
-    <Card className="mb-8 rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
+    <Card className="mb-8 rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardContent className="p-8">
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-6 md:space-y-0">
           <div className="flex h-[100px] w-[100px] items-center justify-center">
@@ -44,15 +44,15 @@ export function CommunityHeader({
                 className="h-[100px] w-[100px] rounded-full border border-slate-200 bg-white object-cover"
               />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-white">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-foreground">
                 {community.name.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="mb-2 truncate text-3xl font-bold text-slate-900">{community.name}</h1>
-            <p className="mb-4 max-w-2xl truncate text-slate-600">{community.description}</p>
-            <div className="flex items-center space-x-6 text-sm text-slate-500">
+            <h1 className="mb-2 truncate text-3xl font-bold text-foreground">{community.name}</h1>
+            <p className="mb-4 max-w-2xl truncate text-muted-foreground">{community.description}</p>
+            <div className="flex items-center space-x-6 text-sm text-muted-foreground">
               <div className="flex items-center">
                 <Users className="mr-2 h-4 w-4" />
                 {community.memberCount.toLocaleString()} members
