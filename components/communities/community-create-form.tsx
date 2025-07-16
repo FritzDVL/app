@@ -126,16 +126,16 @@ export function CommunityCreateForm() {
 
   // --- Render ---
   return (
-    <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
+    <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardHeader>
-        <h1 className="text-2xl font-bold text-slate-900">Community Details</h1>
-        <p className="text-slate-600">Fill in the details to start your new community</p>
+        <h1 className="text-2xl font-bold text-foreground">Community Details</h1>
+        <p className="text-muted-foreground">Fill in the details to start your new community</p>
       </CardHeader>
       <CardContent className="space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-base font-medium text-slate-900">
+            <Label htmlFor="name" className="text-base font-medium text-foreground">
               Community Name
             </Label>
             <Input
@@ -144,13 +144,13 @@ export function CommunityCreateForm() {
               value={formData.name}
               onChange={handleChange}
               placeholder="e.g. Lens Developers"
-              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               required
             />
           </div>
           {/* Image Upload (replaces Emoji) */}
           <div className="space-y-2">
-            <Label htmlFor="image" className="text-base font-medium text-slate-900">
+            <Label htmlFor="image" className="text-base font-medium text-foreground">
               Community Image (optional)
             </Label>
             <Input
@@ -158,18 +158,18 @@ export function CommunityCreateForm() {
               name="image"
               type="file"
               accept="image/*"
-              className="w-full rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               onChange={handleImageChange}
             />
             {formData.image && (
               <div className="mt-2">
-                <span className="text-xs text-slate-500">Selected: {formData.image.name}</span>
+                <span className="text-xs text-foreground">Selected: {formData.image.name}</span>
               </div>
             )}
           </div>
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-base font-medium text-slate-900">
+            <Label htmlFor="description" className="text-base font-medium text-foreground">
               Description
             </Label>
             <Textarea
@@ -179,12 +179,12 @@ export function CommunityCreateForm() {
               onChange={handleChange}
               placeholder="Describe your community..."
               required
-              className="min-h-[80px] w-full rounded-2xl border border-slate-300/60 bg-white/80 p-3 text-base backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="min-h-[80px] w-full rounded-2xl bg-white p-3 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:bg-gray-700"
             />
           </div>
           {/* Admin Address */}
           <div className="space-y-2">
-            <Label htmlFor="adminAddress" className="text-base font-medium text-slate-900">
+            <Label htmlFor="adminAddress" className="text-base font-medium text-foreground">
               Admin Address
             </Label>
             <Input
@@ -194,7 +194,7 @@ export function CommunityCreateForm() {
               onChange={handleChange}
               placeholder="0x... (your wallet address)"
               required
-              className="rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="rounded-2xl border-slate-300/60 bg-white/80 text-muted-foreground backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               disabled={!!account?.address}
             />
           </div>
@@ -209,7 +209,7 @@ export function CommunityCreateForm() {
           <div className="flex justify-end">
             <Button
               type="submit"
-              className="rounded-full bg-gradient-to-r from-green-500 to-green-600 px-6 font-semibold text-white hover:from-green-600 hover:to-green-700"
+              className="rounded-full bg-gradient-to-r from-green-500 to-green-600 px-6 font-semibold text-white hover:from-green-600 hover:to-green-700 dark:bg-gray-700"
               disabled={
                 loading ||
                 isCreating ||

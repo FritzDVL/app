@@ -26,11 +26,11 @@ export function CommunityCreationTips({ className = "", tips = DEFAULT_TIPS }: C
   };
 
   return (
-    <Card className={`rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm ${className}`}>
+    <Card className={`rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800 ${className}`}>
       <CardHeader>
-        <h3 className="text-lg font-semibold text-slate-900">Community Creation Tips</h3>
+        <h3 className="text-lg font-semibold text-foreground">Community Creation Tips</h3>
       </CardHeader>
-      <CardContent className="space-y-3 text-sm text-slate-600">
+      <CardContent className="space-y-3 text-sm text-foreground">
         {tips.map((tip, index) => (
           <div key={index} className="flex items-start space-x-2">
             {getIcon(tip.type)}
