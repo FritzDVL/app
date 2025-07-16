@@ -58,26 +58,36 @@ export function MentionPopover({ username, children }: MentionPopoverProps) {
 
               {/* Bio */}
               {profile.metadata?.bio && (
-                <p className="mb-4 line-clamp-3 text-sm text-gray-700 dark:text-gray-300">{profile.metadata.bio}</p>
+                <p className="mb-4 line-clamp-3 text-sm text-gray-700 dark:text-gray-300">
+                  {profile.metadata.bio.length > 150
+                    ? `${profile.metadata.bio.slice(0, 150)}...`
+                    : profile.metadata.bio}
+                </p>
               )}
 
               {/* Stats */}
-              <div className="mb-4 flex items-center gap-4 text-sm">
+              <div className="mb-3 flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                   <Users className="h-4 w-4" />
                   <span className="font-medium text-gray-900 dark:text-gray-100">{stats.followers}</span>
                   <span>followers</span>
                 </div>
                 <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                  <Calendar className="h-4 w-4" />
-                  <span>
-                    Joined{" "}
-                    {new Date(profile.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{stats.following}</span>
+                  <span>following</span>
                 </div>
+              </div>
+
+              {/* Joined Date */}
+              <div className="mb-4 flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+                <Calendar className="h-4 w-4" />
+                <span>
+                  Joined{" "}
+                  {new Date(profile.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
               </div>
             </div>
           ) : (
