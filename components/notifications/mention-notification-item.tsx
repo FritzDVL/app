@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ContentRenderer from "@/components/shared/content-renderer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getTimeAgo } from "@/lib/utils";
 import type { MentionNotification } from "@lens-protocol/client";
@@ -58,9 +59,10 @@ export function MentionNotificationItem({ notification }: { notification: Mentio
           </div>
           {postContent && (
             <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 dark:border-gray-700 dark:bg-gray-800/30">
-              <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-                &ldquo;{postContent.length > 150 ? postContent.slice(0, 150) + "..." : postContent}&rdquo;
-              </p>
+              <ContentRenderer
+                content={postContent.length > 150 ? postContent.slice(0, 150) + "..." : postContent}
+                className="text-sm leading-relaxed text-gray-700 dark:text-gray-300"
+              />
             </div>
           )}
         </div>

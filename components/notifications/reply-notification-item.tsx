@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import ContentRenderer from "@/components/shared/content-renderer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { storageClient } from "@/lib/grove/client";
 import { getTimeAgo } from "@/lib/utils";
@@ -69,7 +70,10 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
           </div>
           {content && (
             <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 dark:border-gray-700 dark:bg-gray-800/30">
-              <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">&ldquo;{content}&rdquo;</p>
+              <ContentRenderer
+                content={content.length > 150 ? content.slice(0, 150) + "..." : content}
+                className="text-sm leading-relaxed text-gray-700 dark:text-gray-300"
+              />
             </div>
           )}
         </div>
