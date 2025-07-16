@@ -136,7 +136,7 @@ export function VotingActions({
           <ArrowUp className="h-4 w-4" />
         )}
       </Button>
-      <span className="text-sm font-medium text-slate-600">{scoreState}</span>
+      <span className="text-sm font-medium text-muted-foreground">{scoreState}</span>
       <Button
         variant={hasUserDownvoted ? "secondary" : "ghost"}
         size="sm"
