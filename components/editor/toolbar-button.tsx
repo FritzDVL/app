@@ -30,12 +30,9 @@ export default function ToolbarButton({
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1",
             "disabled:pointer-events-none disabled:opacity-50",
             // Default state - better contrast
-            "border border-transparent text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+            "border border-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground",
             // Active/pressed state - clear visual feedback
-            "data-[state=on]:border-blue-200 data-[state=on]:bg-blue-100 data-[state=on]:text-blue-700 data-[state=on]:shadow-sm",
-            // Dark mode support
-            "dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100",
-            "dark:data-[state=on]:border-blue-700 dark:data-[state=on]:bg-blue-900/50 dark:data-[state=on]:text-blue-300",
+            "data-[state=on]:border-primary/20 data-[state=on]:bg-primary/10 data-[state=on]:text-primary data-[state=on]:shadow-sm",
           )}
         >
           {children}
