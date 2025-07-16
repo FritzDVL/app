@@ -23,15 +23,17 @@ export function CommunityJoinBanner({ community }: CommunityJoinBannerProps) {
   }
 
   return (
-    <div className="mb-6 rounded-3xl border border-brand-200/60 bg-gradient-to-br from-brand-50/80 to-brand-100/50 p-6 shadow-sm backdrop-blur-sm">
+    <div className="mb-6 rounded-3xl bg-white p-4 shadow-sm backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-brand-500/10 to-brand-600/10 ring-2 ring-brand-200/50">
             <Users className="h-6 w-6 text-brand-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">Join {community.name}</h3>
-            <p className="text-sm text-slate-600">Join this community to participate in discussions and stay updated</p>
+            <h3 className="text-lg font-semibold text-foreground">Join {community.name}</h3>
+            <p className="text-sm text-muted-foreground">
+              Join this community to participate in discussions and stay updated
+            </p>
           </div>
         </div>
         <Button
