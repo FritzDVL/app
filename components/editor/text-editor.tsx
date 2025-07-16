@@ -3,6 +3,7 @@ import { defineExtension } from "./extension";
 import "./text-editor.css";
 import BlockHandle from "@/components/editor/block-handle";
 import InlineMenu from "@/components/editor/inline-menu";
+import MentionPicker from "@/components/editor/mention-picker";
 import SlashMenu from "@/components/editor/slash-menu";
 import { TableHandle } from "@/components/editor/table-handle";
 import Toolbar from "@/components/editor/toolbar";
@@ -45,6 +46,7 @@ export function TextEditor({ onChange }: TextEditorProps) {
           <SlashMenu />
           <BlockHandle />
           <TableHandle />
+          <MentionPicker />
         </div>
       </div>
     </ProseKit>

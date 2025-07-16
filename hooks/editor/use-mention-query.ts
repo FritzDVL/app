@@ -15,10 +15,18 @@ export type MentionAccount = {
 
 const useMentionQuery = (query: string): MentionAccount[] => {
   const [results, setResults] = useState<MentionAccount[]>([]);
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 150);
+    return () => clearTimeout(handler);
+  }, [query]);
 
   useEffect(() => {
     async function doSearchAccounts() {
-      if (!query) {
+      if (!debouncedQuery) {
         setResults([]);
         return;
       }
@@ -26,7 +34,7 @@ const useMentionQuery = (query: string): MentionAccount[] => {
       const result = await fetchAccounts(client, {
         filter: {
           searchBy: {
-            localNameQuery: query,
+            localNameQuery: debouncedQuery,
           },
         },
         orderBy: AccountsOrderBy.BestMatch,
@@ -59,7 +67,7 @@ const useMentionQuery = (query: string): MentionAccount[] => {
     }
 
     doSearchAccounts();
-  }, [query]);
+  }, [debouncedQuery]);
 
   return results;
 };
