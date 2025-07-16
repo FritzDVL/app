@@ -34,7 +34,7 @@ export function TextEditor({ onChange }: TextEditorProps) {
 
   return (
     <ProseKit editor={editor}>
-      <div className="color-black dark:color-white box-border flex h-full min-h-36 w-full flex-col overflow-x-hidden overflow-y-hidden rounded-md border border-solid border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-950">
+      <div className="color-black dark:color-white box-border flex h-full min-h-36 w-full flex-col overflow-x-hidden overflow-y-hidden rounded-md border border-solid border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-700">
         <Toolbar />
         <div className="relative box-border w-full flex-1 overflow-y-scroll">
           <div

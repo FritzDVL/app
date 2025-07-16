@@ -143,7 +143,7 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
               value={formData.summary}
               onChange={e => setFormData({ ...formData, summary: e.target.value })}
               placeholder="Brief description (max 100 chars)"
-              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
+              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 dark:bg-gray-700"
               maxLength={100}
             />
           </div>
@@ -152,7 +152,7 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
             <Label htmlFor="content" className="text-sm font-medium text-foreground">
               Content
             </Label>
-            <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm">
+            <div className="rounded-2xl border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm dark:bg-gray-800">
               <TextEditor onChange={value => setFormData({ ...formData, content: value })} />
             </div>
           </div>
