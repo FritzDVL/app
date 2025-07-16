@@ -65,10 +65,10 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent className="border-0 bg-white/90 shadow-lg backdrop-blur-md sm:max-w-md">
+      <DialogContent className="border-0 bg-white shadow-lg backdrop-blur-md dark:border-gray-600/60 dark:bg-gray-700 sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-slate-900">Connect your Lens account</DialogTitle>
-          <DialogDescription className="text-slate-600">Select a Lens account to continue</DialogDescription>
+          <DialogTitle className="text-xl font-semibold text-foreground">Connect your Lens account</DialogTitle>
+          <DialogDescription className="text-muted-foreground">Select a Lens account to continue</DialogDescription>
         </DialogHeader>
         <div className="py-4">
           {isLoadingAccounts ? (
@@ -77,9 +77,11 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
             </div>
           ) : lensAccounts.length === 0 ? (
             <div className="py-6 text-center">
-              <div className="rounded-lg border border-slate-200 bg-slate-50/80 p-4">
-                <p className="font-medium text-slate-900">No Lens accounts found</p>
-                <p className="mt-1 text-sm text-slate-600">No Lens accounts associated with your wallet were found.</p>
+              <div className="rounded-lg border border-slate-200 bg-slate-50/80 p-4 dark:border-gray-700/60 dark:bg-gray-800/80">
+                <p className="font-medium text-foreground">No Lens accounts found</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  No Lens accounts associated with your wallet were found.
+                </p>
                 <div className="mt-4">
                   <a
                     href={HEY_URL}
@@ -94,17 +96,19 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="rounded-lg border border-brand-200 bg-gradient-to-br from-brand-50 to-brand-100/50 p-3">
-                <p className="text-sm font-medium text-slate-900">
+              <div className="rounded-lg border border-brand-200 bg-gradient-to-br from-brand-50 to-brand-100/50 p-3 dark:border-brand-700/50 dark:from-brand-900/30 dark:to-brand-900/20">
+                <p className="text-sm font-medium text-slate-900 dark:text-gray-100">
                   {lensAccounts.length} account{lensAccounts.length === 1 ? "" : "s"} found
                 </p>
-                <p className="text-xs text-slate-600">Choose an account to continue with LensForum</p>
+                <p className="text-xs text-slate-600 dark:text-gray-400">
+                  Choose an account to continue with LensForum
+                </p>
               </div>
               <div className="max-h-[300px] space-y-2 overflow-y-auto">
                 {lensAccounts.map(lensAccount => (
                   <div
                     key={lensAccount.account.address}
-                    className="flex items-center justify-between rounded-lg border border-slate-200 bg-white/90 p-3 shadow-sm transition-all duration-200 hover:bg-white hover:shadow-md"
+                    className="flex items-center justify-between rounded-lg border border-slate-200 bg-white/90 p-3 shadow-sm transition-all duration-200 hover:bg-white hover:shadow-md dark:border-gray-700/60 dark:bg-gray-800/90 dark:hover:bg-gray-800"
                   >
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10 ring-2 ring-brand-200">
@@ -123,8 +127,12 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
                         )}
                       </Avatar>
                       <div>
-                        <p className="font-medium text-slate-900">{lensAccount?.account?.metadata?.name}</p>
-                        <p className="text-sm text-slate-600">@{lensAccount.account.username?.value}</p>
+                        <p className="font-medium text-slate-900 dark:text-gray-100">
+                          {lensAccount?.account?.metadata?.name}
+                        </p>
+                        <p className="text-sm text-slate-600 dark:text-gray-400">
+                          @{lensAccount.account.username?.value}
+                        </p>
                       </div>
                     </div>
                     <Button
