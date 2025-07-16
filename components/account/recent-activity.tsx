@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ContentRenderer from "../shared/content-renderer";
-import { MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 
 interface RecentActivityProps {
   replies: any[];
@@ -21,10 +21,10 @@ export function RecentActivity({ replies, loading }: RecentActivityProps) {
         {replies.map((reply: any) => (
           <div
             key={reply.id}
-            className="group relative rounded-2xl border border-slate-200/60 bg-white/60 p-5 backdrop-blur-sm"
+            className="group relative rounded-2xl border bg-white p-5 backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800"
           >
             <div className="space-y-3">
-              <div className="text-slate-700">
+              <div className="text-foreground">
                 <ContentRenderer className="rich-text-content" content={reply.content} />
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -60,9 +60,10 @@ export function RecentActivity({ replies, loading }: RecentActivityProps) {
                 {reply.thread && (
                   <Link
                     href={`/thread/${reply.thread}`}
-                    className="rounded-lg bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-100"
+                    className="flex shrink-0 items-center gap-1 text-sm font-medium text-brand-600 hover:text-brand-700"
                   >
                     View Thread
+                    <ArrowRight className="h-3 w-3 shrink-0" />
                   </Link>
                 )}
               </div>
