@@ -1,107 +1,18 @@
-import { useState } from "react";
 import { NotificationItem } from "@/components/notifications/notification-item";
+import { Notification } from "@lens-protocol/client";
 import { Bell } from "lucide-react";
-
-// Mock notification data - replace with actual Lens API data later
-const mockNotifications = [
-  {
-    id: "1",
-    type: "mention" as const,
-    createdAt: "2025-07-16T10:30:00Z",
-    actor: {
-      username: "alice",
-      name: "Alice Cooper",
-      avatar: null,
-    },
-    content: {
-      text: "Great discussion on decentralized governance! @danieltome what are your thoughts on this?",
-      threadTitle: "The Future of DeFi Governance",
-    },
-  },
-  {
-    id: "2",
-    type: "comment" as const,
-    createdAt: "2025-07-16T09:15:00Z",
-    actor: {
-      username: "bob_lens",
-      name: "Bob Smith",
-      avatar: null,
-    },
-    content: {
-      text: "I completely agree with your points about user experience. This is exactly what the ecosystem needs.",
-      threadTitle: "Improving UX in Web3 Applications",
-    },
-  },
-  {
-    id: "3",
-    type: "reaction" as const,
-    createdAt: "2025-07-16T08:45:00Z",
-    actor: {
-      username: "charlie_dev",
-      name: "Charlie Wilson",
-      avatar: null,
-    },
-    content: {
-      reactionType: "upvote" as const,
-      threadTitle: "Building Scalable dApps with Lens Protocol",
-    },
-  },
-  {
-    id: "4",
-    type: "mention" as const,
-    createdAt: "2025-07-15T16:20:00Z",
-    actor: {
-      username: "diana_web3",
-      name: "Diana Rodriguez",
-      avatar: null,
-    },
-    content: {
-      text: "Hey @danieltome, would love to get your input on this proposal for community governance.",
-      threadTitle: "Community Governance Proposal v2",
-    },
-  },
-  {
-    id: "5",
-    type: "comment" as const,
-    createdAt: "2025-07-15T14:10:00Z",
-    actor: {
-      username: "eve_crypto",
-      name: "Eve Thompson",
-      avatar: null,
-    },
-    content: {
-      text: "This is a game-changer! The implementation details you shared are very helpful.",
-      threadTitle: "New Feature: Real-time Notifications",
-    },
-  },
-  {
-    id: "6",
-    type: "reaction" as const,
-    createdAt: "2025-07-15T12:30:00Z",
-    actor: {
-      username: "frank_builder",
-      name: "Frank Martinez",
-      avatar: null,
-    },
-    content: {
-      reactionType: "downvote" as const,
-      threadTitle: "Controversial Take on Gas Fees",
-    },
-  },
-];
 
 interface NotificationsListProps {
   filter: "all" | "mentions" | "comments" | "reactions";
+  notifications: Notification[];
 }
 
-export function NotificationsList({ filter }: NotificationsListProps) {
-  const [notifications] = useState(mockNotifications);
-
+export function NotificationsList({ filter, notifications }: NotificationsListProps) {
   const filteredNotifications = notifications.filter(notification => {
     if (filter === "all") return true;
-    if (filter === "mentions") return notification.type === "mention";
-    if (filter === "comments") return notification.type === "comment";
-    if (filter === "reactions") return notification.type === "reaction";
+    if (filter === "mentions") return notification.__typename === "MentionNotification";
+    if (filter === "comments") return notification.__typename === "CommentNotification";
+    if (filter === "reactions") return notification.__typename === "ReactionNotification";
     return true;
   });
 
@@ -125,8 +36,8 @@ export function NotificationsList({ filter }: NotificationsListProps) {
 
   return (
     <div className="space-y-2">
-      {filteredNotifications.map(notification => (
-        <NotificationItem key={notification.id} notification={notification} />
+      {filteredNotifications.map((notification: Notification, idx: number) => (
+        <NotificationItem key={idx} notification={notification} />
       ))}
     </div>
   );
