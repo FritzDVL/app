@@ -23,7 +23,7 @@ export function ThreadTextEditor({
   return (
     <div className="space-y-2">
       {/* Formatting Toolbar */}
-      <div className="flex items-center space-x-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
+      <div className="flex items-center space-x-2 rounded-lg border bg-muted p-2">
         <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
           <Bold className="h-4 w-4" />
         </Button>
@@ -39,7 +39,7 @@ export function ThreadTextEditor({
         <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
           <Quote className="h-4 w-4" />
         </Button>
-        <div className="h-4 w-px bg-slate-300"></div>
+        <div className="h-4 w-px bg-border"></div>
         {onImageUpload && (
           <label htmlFor="replyImageUpload">
             <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>

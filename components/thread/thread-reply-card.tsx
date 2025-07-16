@@ -129,7 +129,7 @@ export function ThreadReplyCard({
 
   return (
     <div className="space-y-2" id={reply.id}>
-      <Card className="rounded-lg border border-gray-200 bg-white shadow-sm">
+      <Card className="rounded-lg bg-white shadow-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <div className="flex flex-col items-center">
@@ -137,20 +137,20 @@ export function ThreadReplyCard({
             </div>
             <div className="min-w-0 flex-1">
               {/* Top row: author info */}
-              <div className="mb-2 flex items-center gap-2">
+              <div className="mb-6 flex items-center gap-2">
                 <Link
                   href={`/u/${reply.author.username.replace("lens/", "")}`}
                   className="flex items-center gap-2 hover:text-gray-900"
                 >
                   <Avatar className="h-6 w-6">
                     <AvatarImage src={reply.author.avatar || "/placeholder.svg"} />
-                    <AvatarFallback className="bg-gray-200 text-xs text-gray-700">
+                    <AvatarFallback className="bg-muted text-xs text-muted-foreground">
                       {reply.author.name[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium text-gray-900">{reply.author.name}</span>
+                  <span className="text-sm font-medium text-foreground">{reply.author.name}</span>
                 </Link>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-muted-foreground">
                   {reply.createdAt ? getTimeAgo(new Date(reply.createdAt)) : "Unknown date"}
                 </span>
               </div>
@@ -224,7 +224,7 @@ export function ThreadReplyCard({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 px-3 text-sm text-gray-600 hover:text-gray-900"
+                    className="h-8 px-3 text-sm text-primary hover:text-gray-900"
                     onClick={() => setReplyingTo(reply.id)}
                     disabled={!isLoggedIn}
                   >

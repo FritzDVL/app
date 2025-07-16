@@ -56,7 +56,7 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
   const postId = thread.rootPost?.id;
 
   return (
-    <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
+    <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-xl font-bold text-white">
@@ -65,14 +65,16 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
           <div className="min-w-0 flex-1">
             <div className="mb-1 flex items-start justify-between">
               <div>
-                <h1 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-green-600">
+                <h1 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">
                   {thread.title}
                 </h1>
                 {thread.summary && (
-                  <p className="mt-1 max-w-2xl text-base font-medium italic text-green-700/90">{thread.summary}</p>
+                  <p className="mt-1 max-w-2xl text-base font-medium italic text-green-700/90 dark:text-green-400/90">
+                    {thread.summary}
+                  </p>
                 )}
               </div>
-              <div className="ml-4 flex items-center gap-2 text-sm text-slate-500">
+              <div className="ml-4 flex items-center gap-2 text-sm text-muted-foreground">
                 <Link href={`/u/${thread.author.username.replace("lens/", "")}`} className="flex items-center gap-2">
                   <Avatar className="h-6 w-6">
                     <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
@@ -85,7 +87,7 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
               </div>
             </div>
             <div className="my-6 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                 <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
                 <span>
                   Posted on{" "}
@@ -99,18 +101,14 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
               </div>
               <ContentRenderer
                 content={removeThreadContentPrefix(getThreadContent(thread))}
-                className="rich-text-content rounded-2xl bg-slate-50/50 p-5 text-gray-800"
+                className="rich-text-content rounded-2xl bg-muted/50 p-5 text-muted-foreground"
               />
             </div>
             <div className="mb-2 flex flex-wrap items-center gap-2">
               {Array.isArray(thread.tags) &&
                 thread.tags.length > 0 &&
                 thread.tags.map((tag: string) => (
-                  <Badge
-                    key={tag}
-                    variant="outline"
-                    className="rounded-full border-slate-300/60 bg-white/80 text-xs backdrop-blur-sm"
-                  >
+                  <Badge key={tag} variant="outline" className="rounded-full bg-card/80 text-xs backdrop-blur-sm">
                     #{tag}
                   </Badge>
                 ))}
@@ -118,8 +116,8 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
           </div>
         </div>
         {/* Actions */}
-        <div className="mt-6 flex flex-col gap-3 border-t border-slate-300/60 pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4 text-slate-500">
+        <div className="mt-6 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4 text-muted-foreground">
             <div className="flex items-center gap-1">
               <ReplyIcon className="h-4 w-4" />
               <span className="text-sm">{thread.repliesCount}</span>

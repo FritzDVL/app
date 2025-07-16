@@ -24,7 +24,7 @@ export function ThreadReplies({
 }: ThreadRepliesProps) {
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-gray-900">{replies.length} Replies</h3>
+      <h3 className="text-xl font-bold text-foreground">{replies.length} Replies</h3>
       {replies.map(reply => (
         <ThreadReplyCard
           key={reply.id}
