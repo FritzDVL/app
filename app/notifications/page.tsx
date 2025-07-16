@@ -28,7 +28,7 @@ export default function NotificationsPage() {
         }
         const result = await fetchNotifications(sessionClient.data);
         if (result.isErr()) {
-          setError(result.error.message || "Error fetching notifications");
+          setError(result.error.message || "Error loading notifications");
           setNotifications([]);
         } else {
           setNotifications(result.value.items as Notification[]);
@@ -49,7 +49,7 @@ export default function NotificationsPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Notifications</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Stay updated with mentions, replies, and votes on your posts
+            Stay up to date with mentions, replies and reactions to your posts
           </p>
         </div>
       </div>
@@ -73,7 +73,7 @@ export default function NotificationsPage() {
                 />
               </svg>
             </div>
-            <h3 className="mb-2 text-lg font-medium text-red-900 dark:text-red-100">Failed to load notifications</h3>
+            <h3 className="mb-2 text-lg font-medium text-red-900 dark:text-red-100">Error loading notifications</h3>
             <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
           </div>
         </div>

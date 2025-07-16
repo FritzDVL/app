@@ -6,13 +6,38 @@ import { PostReactionType } from "@lens-protocol/client";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 export function ReactionNotificationItem({ notification }: { notification: ReactionNotification }) {
-  const reaction = notification.reactions[0];
-  const author = (reaction as any).account || (reaction as any).by || notification.post.author;
+  const reactions = notification.reactions;
   const post = notification.post;
-  const reactionType = (reaction as any).type || (reaction as any).reaction || PostReactionType.Upvote;
-  const authorUsername = author.username?.value || author.username?.localName;
+
+  // Get first reaction details
+  const firstReaction = reactions[0];
+  const firstAuthor = (firstReaction as any).account || (firstReaction as any).by || notification.post.author;
+  const reactionType = (firstReaction as any).type || (firstReaction as any).reaction || PostReactionType.Upvote;
+  const firstAuthorUsername = firstAuthor.username?.value || firstAuthor.username?.localName;
 
   const isUpvote = reactionType === PostReactionType.Upvote;
+  const totalReactions = reactions.length;
+  const additionalReactions = totalReactions - 1;
+
+  // Get multiple authors for avatar display (max 3)
+  const displayAuthors = reactions.slice(0, 3).map(reaction => ({
+    author: (reaction as any).account || (reaction as any).by || notification.post.author,
+    reaction,
+  }));
+
+  // Build the reaction message
+  const getReactionMessage = () => {
+    const authorName = firstAuthor.metadata?.name || firstAuthor.username?.localName;
+    const actionWord = isUpvote ? "upvoted" : "downvoted";
+
+    if (additionalReactions === 0) {
+      return `${authorName} ${actionWord} your post`;
+    } else if (additionalReactions === 1) {
+      return `${authorName} and 1 other ${actionWord} your post`;
+    } else {
+      return `${authorName} and ${additionalReactions} others ${actionWord} your post`;
+    }
+  };
 
   // Extract post title from metadata based on type
   const postTitle =
@@ -25,16 +50,66 @@ export function ReactionNotificationItem({ notification }: { notification: React
   return (
     <div className="group rounded-xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
       <div className="flex items-start gap-4">
-        {author && authorUsername && (
-          <Link href={`/u/${authorUsername}`} className="flex-shrink-0">
-            <Avatar className="h-12 w-12 ring-2 ring-gray-200 transition-all duration-300 group-hover:ring-brand-300 dark:ring-gray-700">
-              <AvatarImage src={author.metadata?.picture || undefined} />
-              <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 font-semibold text-white">
-                {author.metadata?.name?.[0]?.toUpperCase() || author.username?.localName?.[0]?.toUpperCase() || "?"}
-              </AvatarFallback>
-            </Avatar>
-          </Link>
-        )}
+        {/* Multiple avatars display */}
+        <div className="flex-shrink-0">
+          {displayAuthors.length === 1 ? (
+            // Single avatar
+            firstAuthor &&
+            firstAuthorUsername && (
+              <Link href={`/u/${firstAuthorUsername}`}>
+                <Avatar className="h-12 w-12 ring-2 ring-gray-200 transition-all duration-300 group-hover:ring-brand-300 dark:ring-gray-700">
+                  <AvatarImage src={firstAuthor.metadata?.picture || undefined} />
+                  <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 font-semibold text-white">
+                    {firstAuthor.metadata?.name?.[0]?.toUpperCase() ||
+                      firstAuthor.username?.localName?.[0]?.toUpperCase() ||
+                      "?"}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
+            )
+          ) : (
+            // Multiple avatars stacked
+            <div className="flex">
+              {displayAuthors.map((item, index) => {
+                const { author } = item;
+                const username = author.username?.value || author.username?.localName;
+                return (
+                  <div key={index} className={`${index > 0 ? "-ml-2" : ""} relative`}>
+                    {username ? (
+                      <Link href={`/u/${username}`}>
+                        <Avatar className="h-10 w-10 ring-2 ring-white transition-all duration-300 group-hover:ring-brand-300 dark:ring-gray-800">
+                          <AvatarImage src={author.metadata?.picture || undefined} />
+                          <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-sm font-semibold text-white">
+                            {author.metadata?.name?.[0]?.toUpperCase() ||
+                              author.username?.localName?.[0]?.toUpperCase() ||
+                              "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Link>
+                    ) : (
+                      <Avatar className="h-10 w-10 ring-2 ring-white dark:ring-gray-800">
+                        <AvatarImage src={author.metadata?.picture || undefined} />
+                        <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-sm font-semibold text-white">
+                          {author.metadata?.name?.[0]?.toUpperCase() ||
+                            author.username?.localName?.[0]?.toUpperCase() ||
+                            "?"}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                  </div>
+                );
+              })}
+              {/* Show "+N" if there are more than 3 reactions */}
+              {totalReactions > 3 && (
+                <div className="relative -ml-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-500 text-xs font-semibold text-white ring-2 ring-white dark:ring-gray-800">
+                    +{totalReactions - 3}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-start justify-between">
             <div className="flex items-center gap-2">
@@ -46,9 +121,7 @@ export function ReactionNotificationItem({ notification }: { notification: React
                 )}
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                  {author.metadata?.name || author.username?.localName} {isUpvote ? "upvoted" : "downvoted"} your post
-                </h3>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">{getReactionMessage()}</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   <span className="font-medium text-gray-900 dark:text-gray-100">&ldquo;{postTitle}&rdquo;</span>
                 </p>

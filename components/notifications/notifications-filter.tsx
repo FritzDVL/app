@@ -11,7 +11,7 @@ export function NotificationsFilter({ currentFilter, onFilterChange }: Notificat
     { key: "all" as const, label: "All", icon: Bell, count: 12 },
     { key: "mentions" as const, label: "Mentions", icon: Users, count: 3 },
     { key: "comments" as const, label: "Replies", icon: MessageCircle, count: 7 },
-    { key: "reactions" as const, label: "Votes", icon: ArrowUp, count: 2 },
+    { key: "reactions" as const, label: "Reactions", icon: ArrowUp, count: 2 },
   ];
 
   return (

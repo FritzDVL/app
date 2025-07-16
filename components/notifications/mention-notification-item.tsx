@@ -47,9 +47,9 @@ export function MentionNotificationItem({ notification }: { notification: Mentio
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                   {author.metadata?.name || author.username?.localName} mentioned you
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-medium text-gray-900 dark:text-gray-100">&ldquo;{postTitle}&rdquo;</span>
-                </p>
+                {/* <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">in &ldquo;{postTitle}&rdquo;</span>
+                </p> */}
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -58,7 +58,9 @@ export function MentionNotificationItem({ notification }: { notification: Mentio
           </div>
           {postContent && (
             <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 dark:border-gray-700 dark:bg-gray-800/30">
-              <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">&ldquo;{postContent}&rdquo;</p>
+              <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                &ldquo;{postContent.length > 150 ? postContent.slice(0, 150) + "..." : postContent}&rdquo;
+              </p>
             </div>
           )}
         </div>
