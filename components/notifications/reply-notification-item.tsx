@@ -9,7 +9,7 @@ import { MessageCircle } from "lucide-react";
 export function ReplyNotificationItem({ notification }: { notification: CommentNotification }) {
   const [content, setContent] = useState<string | null>(null);
   const { author, timestamp } = notification.comment;
-
+  console.log("ReplyNotificationItem", notification);
   useEffect(() => {
     const doFetchReplyContent = async () => {
       const replyUrl = storageClient.resolve(notification.comment.contentUri);
@@ -48,9 +48,19 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                   @{author?.username?.localName} replied to your post
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-medium text-gray-900 dark:text-gray-100">in &ldquo; LERERERER &rdquo;</span>
-                </p>
+                {notification.comment.feed.metadata && (
+                  <Link href={`/thread/${notification.comment.feed.address}`} className="text-inherit hover:underline">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
+                        in &ldquo;{" "}
+                        {(notification.comment.feed.metadata.description?.length ?? 0) > 150
+                          ? (notification.comment.feed.metadata.description?.slice(0, 150) ?? "") + "..."
+                          : (notification.comment.feed.metadata.description ?? "")}{" "}
+                        &rdquo;
+                      </span>
+                    </p>
+                  </Link>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-2">
