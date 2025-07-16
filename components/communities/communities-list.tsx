@@ -26,13 +26,18 @@ interface CommunitiesListProps {
 
 export function CommunitiesList({ communities, isLoading, isError, error, searchQuery }: CommunitiesListProps) {
   return (
-    <Card className="rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm">
+    <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <h2 className="flex items-center text-2xl font-bold text-slate-900">
-            <Users className="mr-3 h-6 w-6 text-brand-500" />
-            All Communities
-          </h2>
+        <div className="border-b border-slate-200/80 bg-gradient-to-r from-slate-100/90 to-white px-4 py-4 dark:border-gray-700/50 dark:from-gray-800/50 dark:to-gray-800 sm:px-8 sm:py-6">
+          <div className="flex items-center justify-between">
+            <h2 className="flex items-center text-2xl font-bold text-foreground">
+              <Users className="mr-3 h-6 w-6 text-brand-500" />
+              All Communities
+            </h2>
+          </div>
+          <p className="mt-2 text-sm text-slate-600 dark:text-gray-400">
+            Discover and join communities to share ideas, collaborate, and connect with others who share your interests.
+          </p>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
@@ -62,7 +67,7 @@ export function CommunitiesList({ communities, isLoading, isError, error, search
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
                 {communities.map(community => (
                   <Link key={community.id} href={`/communities/${community.address}`} className="group">
-                    <Card className="rounded-2xl border border-slate-300/60 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-brand-300/60">
+                    <Card className="group w-full min-w-0 cursor-pointer rounded-2xl border bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800 sm:p-6">
                       <CardContent className="p-6">
                         <div className="mb-4 flex items-start justify-between">
                           {community.logo ? (
@@ -79,18 +84,18 @@ export function CommunitiesList({ communities, isLoading, isError, error, search
                             </div>
                           )}
                         </div>
-                        <h3 className="mb-2 text-lg font-semibold text-slate-900 transition-colors group-hover:text-brand-600">
+                        <h3 className="mb-2 text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
                           {community.name}
                         </h3>
-                        <p className="mb-4 line-clamp-2 text-sm text-slate-600">{community.description}</p>
+                        <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{community.description}</p>
                         <div className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-1 text-slate-500">
+                          <div className="flex items-center gap-1 text-muted-foreground">
                             <Users className="h-4 w-4" />
                             <span>{community.memberCount.toLocaleString()}</span>
                           </div>
                         </div>
                         {community.postCount !== undefined && (
-                          <div className="mt-3 flex items-center gap-1 text-xs text-slate-500">
+                          <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
                             <MessageSquare className="h-3 w-3" />
                             <span>{community.postCount.toLocaleString()} posts</span>
                           </div>
