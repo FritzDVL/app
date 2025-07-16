@@ -1,5 +1,6 @@
 import React from "react";
-import { htmlFromMarkdown } from "@/lib/prosekit/markdown";
+import MentionsRenderer from "@/components/shared/mentions-renderer";
+import ReactMarkdown from "react-markdown";
 
 interface ContentRendererProps {
   content: string;
@@ -7,8 +8,22 @@ interface ContentRendererProps {
 }
 
 export function ContentRenderer({ content, className }: ContentRendererProps) {
-  const html = htmlFromMarkdown(content);
-  return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+  return (
+    <div className={className}>
+      <ReactMarkdown
+        components={{
+          text: ({ children }) => <MentionsRenderer content={children as string} />,
+          p: ({ children }) => (
+            <p>
+              <MentionsRenderer content={children as string} />
+            </p>
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
 }
 
 export default ContentRenderer;
