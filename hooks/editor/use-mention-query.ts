@@ -20,7 +20,7 @@ const useMentionQuery = (query: string): MentionAccount[] => {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 150);
+    }, 300);
     return () => clearTimeout(handler);
   }, [query]);
 
