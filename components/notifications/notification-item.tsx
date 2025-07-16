@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp, MessageCircle, Users } from "lucide-react";
 
 interface NotificationActor {
@@ -18,7 +17,6 @@ interface NotificationContent {
 interface Notification {
   id: string;
   type: "mention" | "comment" | "reaction";
-  isRead: boolean;
   createdAt: string;
   actor: NotificationActor;
   content: NotificationContent;
@@ -26,17 +24,10 @@ interface Notification {
 
 interface NotificationItemProps {
   notification: Notification;
-  onMarkAsRead: (id: string) => void;
 }
 
-export function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps) {
-  const { type, isRead, createdAt, actor, content } = notification;
-
-  const handleClick = () => {
-    if (!isRead) {
-      onMarkAsRead(notification.id);
-    }
-  };
+export function NotificationItem({ notification }: NotificationItemProps) {
+  const { type, createdAt, actor, content } = notification;
 
   const getIcon = () => {
     switch (type) {
@@ -80,14 +71,7 @@ export function NotificationItem({ notification, onMarkAsRead }: NotificationIte
   };
 
   return (
-    <div
-      className={`group rounded-xl border p-4 transition-all duration-300 hover:shadow-md ${
-        isRead
-          ? "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
-          : "border-brand-200 bg-brand-50/50 dark:border-brand-700 dark:bg-brand-900/20"
-      }`}
-      onClick={handleClick}
-    >
+    <div className="group rounded-xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
       <div className="flex items-start gap-4">
         {/* Avatar */}
         <Link href={`/u/${actor.username}`} className="flex-shrink-0">
@@ -128,7 +112,6 @@ export function NotificationItem({ notification, onMarkAsRead }: NotificationIte
 
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-500 dark:text-gray-400">{formatTimeAgo(createdAt)}</span>
-              {!isRead && <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-brand-500"></span>}
             </div>
           </div>
 
@@ -136,23 +119,6 @@ export function NotificationItem({ notification, onMarkAsRead }: NotificationIte
           {content.text && (
             <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 dark:border-gray-700 dark:bg-gray-800/30">
               <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">&ldquo;{content.text}&rdquo;</p>
-            </div>
-          )}
-
-          {/* Mark as read button for unread notifications */}
-          {!isRead && (
-            <div className="mt-3 flex justify-end">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={e => {
-                  e.stopPropagation();
-                  onMarkAsRead(notification.id);
-                }}
-                className="text-xs text-brand-600 hover:bg-brand-100 hover:text-brand-700 dark:text-brand-400 dark:hover:bg-brand-900/30"
-              >
-                Mark as read
-              </Button>
             </div>
           )}
         </div>

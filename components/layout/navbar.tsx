@@ -75,7 +75,7 @@ export function Navbar() {
 
           {/* Theme Toggle and Conditional rendering based on user connection */}
           <div className="flex items-center gap-3">
-            {account && (
+            {/* {account && (
               <Link href="/notifications">
                 <Button
                   variant={pathname === "/notifications" ? "default" : "yellow"}
@@ -86,7 +86,7 @@ export function Navbar() {
                   <Bell className="h-5 w-5" />
                 </Button>
               </Link>
-            )}
+            )} */}
             <ThemeToggle />
             {account ? (
               <DropdownMenu>

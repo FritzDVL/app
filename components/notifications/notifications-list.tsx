@@ -7,7 +7,6 @@ const mockNotifications = [
   {
     id: "1",
     type: "mention" as const,
-    isRead: false,
     createdAt: "2025-07-16T10:30:00Z",
     actor: {
       username: "alice",
@@ -22,7 +21,6 @@ const mockNotifications = [
   {
     id: "2",
     type: "comment" as const,
-    isRead: false,
     createdAt: "2025-07-16T09:15:00Z",
     actor: {
       username: "bob_lens",
@@ -37,7 +35,6 @@ const mockNotifications = [
   {
     id: "3",
     type: "reaction" as const,
-    isRead: true,
     createdAt: "2025-07-16T08:45:00Z",
     actor: {
       username: "charlie_dev",
@@ -52,7 +49,6 @@ const mockNotifications = [
   {
     id: "4",
     type: "mention" as const,
-    isRead: true,
     createdAt: "2025-07-15T16:20:00Z",
     actor: {
       username: "diana_web3",
@@ -67,7 +63,6 @@ const mockNotifications = [
   {
     id: "5",
     type: "comment" as const,
-    isRead: true,
     createdAt: "2025-07-15T14:10:00Z",
     actor: {
       username: "eve_crypto",
@@ -82,7 +77,6 @@ const mockNotifications = [
   {
     id: "6",
     type: "reaction" as const,
-    isRead: true,
     createdAt: "2025-07-15T12:30:00Z",
     actor: {
       username: "frank_builder",
@@ -101,7 +95,7 @@ interface NotificationsListProps {
 }
 
 export function NotificationsList({ filter }: NotificationsListProps) {
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const [notifications] = useState(mockNotifications);
 
   const filteredNotifications = notifications.filter(notification => {
     if (filter === "all") return true;
@@ -110,12 +104,6 @@ export function NotificationsList({ filter }: NotificationsListProps) {
     if (filter === "reactions") return notification.type === "reaction";
     return true;
   });
-
-  const handleMarkAsRead = (id: string) => {
-    setNotifications(prev =>
-      prev.map(notification => (notification.id === id ? { ...notification, isRead: true } : notification)),
-    );
-  };
 
   if (filteredNotifications.length === 0) {
     return (
@@ -138,7 +126,7 @@ export function NotificationsList({ filter }: NotificationsListProps) {
   return (
     <div className="space-y-2">
       {filteredNotifications.map(notification => (
-        <NotificationItem key={notification.id} notification={notification} onMarkAsRead={handleMarkAsRead} />
+        <NotificationItem key={notification.id} notification={notification} />
       ))}
     </div>
   );
