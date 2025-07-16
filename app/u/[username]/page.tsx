@@ -48,11 +48,13 @@ export default function ProfilePage() {
 
   if (!lensAccount && !isLoading) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-8 text-center">
-        <Card className="mx-auto max-w-md rounded-3xl border border-slate-300/60 bg-white/70 backdrop-blur-sm">
+      <div className="mx-auto min-h-screen max-w-6xl px-4 py-8 text-center">
+        <Card className="dark:bg-border-700/60 mx-auto max-w-md rounded-3xl bg-white backdrop-blur-sm dark:bg-gray-800">
           <CardContent className="p-8">
-            <h1 className="mb-4 text-2xl font-bold text-slate-900">Profile not found</h1>
-            <p className="text-slate-700">The user @{username} could not be found or is not connected to Lens.</p>
+            <h1 className="mb-4 text-2xl font-bold text-foreground">Profile not found</h1>
+            <p className="text-muted-foreground">
+              The user @{username} could not be found or is not connected to Lens.
+            </p>
           </CardContent>
         </Card>
       </div>

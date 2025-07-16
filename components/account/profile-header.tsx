@@ -40,32 +40,32 @@ export function ProfileHeader({ lensAccount, username }: ProfileHeaderProps) {
               {(lensAccount?.metadata?.name || lensAccount?.username?.localName || username)[0].toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 rounded-3xl border border-slate-300/60 bg-white/70 p-6 backdrop-blur-sm">
+          <div className="flex-1 rounded-3xl bg-card/70 p-6 backdrop-blur-sm">
             <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
               <div>
                 <div className="mb-2 flex items-center space-x-3">
-                  <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">
+                  <h1 className="text-2xl font-bold text-foreground md:text-3xl">
                     {lensAccount?.metadata?.name || lensAccount?.username?.localName || username}
                   </h1>
                 </div>
                 <p className="mb-2 font-medium text-green-600">@{lensAccount?.username?.localName || username}</p>
-                <p className="max-w-2xl text-slate-700">{lensAccount?.metadata?.bio || "No bio available"}</p>
+                <p className="max-w-2xl text-muted-foreground">{lensAccount?.metadata?.bio || "No bio available"}</p>
               </div>
             </div>
             {/* Stats Row */}
             <div className="mt-4 flex items-center space-x-6 border-t border-slate-200/60 pt-4">
-              <div className="flex items-center text-sm text-slate-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <Calendar className="mr-1 h-4 w-4" />
                 {lensAccount?.createdAt
                   ? new Date(lensAccount.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long" })
                   : "Unknown date"}
               </div>
-              <div className="flex items-center text-sm text-slate-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <MapPin className="mr-1 h-4 w-4" />
                 {lensAccount?.metadata?.attributes?.find(attr => attr.key === "location" || attr.key === "city")
                   ?.value || "Location not set"}
               </div>
-              <div className="flex items-center text-sm text-slate-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <LinkIcon className="mr-1 h-4 w-4" />
                 <a
                   href={

@@ -6,11 +6,11 @@ interface ProfileTabsProps {
 export function ProfileTabs({ activeTab, setActiveTab }: ProfileTabsProps) {
   return (
     <div className="flex items-center justify-center">
-      <div className="flex items-center space-x-1 rounded-2xl bg-slate-100/80 p-1">
+      <div className="flex items-center space-x-1 rounded-2xl bg-white p-1 dark:border-gray-700/60 dark:bg-gray-800">
         <button
           onClick={() => setActiveTab("recent")}
           className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
-            activeTab === "recent" ? "bg-white text-slate-900 shadow-sm" : "text-slate-600 hover:text-slate-900"
+            activeTab === "recent" ? "bg-primary text-foreground shadow-sm" : "text-slate-600 hover:text-foreground"
           }`}
         >
           Recent Activity
@@ -18,7 +18,9 @@ export function ProfileTabs({ activeTab, setActiveTab }: ProfileTabsProps) {
         <button
           onClick={() => setActiveTab("forums")}
           className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
-            activeTab === "forums" ? "bg-white text-slate-900 shadow-sm" : "text-slate-600 hover:text-slate-900"
+            activeTab === "forums"
+              ? "bg-primary text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           Communities
