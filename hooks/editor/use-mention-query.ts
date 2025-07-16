@@ -58,7 +58,7 @@ const useMentionQuery = (query: string): MentionAccount[] => {
             address: account.address,
             displayUsername: account.username?.localName || "",
             name: account.metadata?.name || "",
-            picture: account.metadata?.picture || "",
+            picture: account.metadata?.picture,
             username: account.username?.value,
           }),
         );

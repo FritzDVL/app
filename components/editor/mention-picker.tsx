@@ -2,7 +2,7 @@ import { useState } from "react";
 import Image from "next/image";
 import type { EditorExtension } from "./extension";
 import useMentionQuery, { MentionAccount } from "@/hooks/editor/use-mention-query";
-import { Check, ChevronRight, Search, Users } from "lucide-react";
+import { ChevronRight, Search, Users } from "lucide-react";
 import { useEditor } from "prosekit/react";
 import {
   AutocompleteEmpty,
@@ -23,15 +23,19 @@ const MentionItem = ({ onSelect, account }: MentionItemProps) => {
       onSelect={onSelect}
     >
       <div className="relative flex-shrink-0">
-        <Image
-          alt={account.displayUsername}
-          className="h-6 w-6 rounded-full border border-white bg-gray-100 object-cover shadow-sm ring-1 ring-brand-100/40 group-hover:border-brand-200 group-hover:ring-brand-200/60 group-data-[focused]:border-brand-300 group-data-[focused]:ring-brand-300/70 dark:border-gray-600 dark:ring-gray-600/30"
-          height="24"
-          src={account.picture}
-          width="24"
-        />
-        {/* Online indicator, smaller */}
-        <div className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border border-white bg-brand-500 ring-1 ring-brand-200/40 dark:border-gray-800 dark:ring-gray-600/30" />
+        {account.picture ? (
+          <Image
+            alt={account.displayUsername}
+            className="h-6 w-6 rounded-full border border-white bg-gray-100 object-cover shadow-sm ring-1 ring-brand-100/40 group-hover:border-brand-200 group-hover:ring-brand-200/60 group-data-[focused]:border-brand-300 group-data-[focused]:ring-brand-300/70 dark:border-gray-600 dark:ring-gray-600/30"
+            height="24"
+            src={account.picture}
+            width="24"
+          />
+        ) : (
+          <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white bg-gray-100 text-xs font-bold text-brand-600 shadow-sm ring-1 ring-brand-100/40 dark:border-gray-600 dark:bg-gray-700 dark:text-brand-300 dark:ring-gray-600/30">
+            {account.name?.charAt(0).toUpperCase() || "?"}
+          </span>
+        )}
       </div>
       <span className="truncate text-xs font-medium text-gray-900 group-hover:text-brand-700 group-data-[focused]:text-brand-800 dark:text-white dark:group-hover:text-brand-300 dark:group-data-[focused]:text-brand-200">
         {account.name}
@@ -40,9 +44,9 @@ const MentionItem = ({ onSelect, account }: MentionItemProps) => {
         </span>
       </span>
       {/* Verified badge, smaller */}
-      <span className="flex-shrink-0 rounded bg-brand-500/10 p-0.5 ring-1 ring-brand-500/10">
+      {/* <span className="flex-shrink-0 rounded bg-brand-500/10 p-0.5 ring-1 ring-brand-500/10">
         <Check className="h-2 w-2 text-brand-600 dark:text-brand-400" strokeWidth={3} />
-      </span>
+      </span> */}
       {/* Arrow indicator, smaller */}
       <span className="flex-shrink-0 pl-1">
         <ChevronRight className="h-2.5 w-2.5 text-gray-300 group-hover:text-brand-400 group-data-[focused]:text-brand-500 dark:text-gray-500 dark:group-hover:text-brand-400" />
@@ -61,7 +65,7 @@ export default function MentionPicker() {
   const handleAccountInsert = (account: MentionAccount) => {
     editor.commands.insertMention({
       id: account.address,
-      value: "@" + account.displayUsername,
+      value: "@lens/" + account.displayUsername,
       kind: "user",
     });
     editor.commands.insertText({ text: " " });
