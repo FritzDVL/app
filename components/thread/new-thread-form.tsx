@@ -112,16 +112,16 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
   };
 
   return (
-    <Card className="rounded-3xl border border-brand-200/60 bg-white backdrop-blur-sm">
+    <Card className="rounded-3xl border border-brand-200/60 bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardHeader className="pb-4">
-        <h1 className="text-2xl font-medium text-slate-900">Create New Thread</h1>
-        <p className="text-slate-600">Share your thoughts with the community</p>
+        <h1 className="text-2xl font-medium text-foreground">Create New Thread</h1>
+        <p className="text-muted-foreground">Share your thoughts with the community</p>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-sm font-medium text-slate-700">
+            <Label htmlFor="title" className="text-sm font-medium text-foreground">
               Title
             </Label>
             <Input
@@ -129,13 +129,13 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
               placeholder="What's your thread about?"
-              className="rounded-full border-brand-200/40 bg-white/50 backdrop-blur-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
+              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               required
             />
           </div>
           {/* Summary */}
           <div className="space-y-2">
-            <Label htmlFor="summary" className="text-sm font-medium text-slate-700">
+            <Label htmlFor="summary" className="text-sm font-medium text-foreground">
               Summary
             </Label>
             <Input
@@ -143,13 +143,13 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
               value={formData.summary}
               onChange={e => setFormData({ ...formData, summary: e.target.value })}
               placeholder="Brief description (max 100 chars)"
-              className="rounded-2xl border-brand-200/40 bg-white/50 backdrop-blur-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
+              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               maxLength={100}
             />
           </div>
           {/* Content Editor */}
           <div className="space-y-2">
-            <Label htmlFor="content" className="text-sm font-medium text-slate-700">
+            <Label htmlFor="content" className="text-sm font-medium text-foreground">
               Content
             </Label>
             <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm">
@@ -158,18 +158,14 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
           </div>
           {/* Tags Input */}
           <div className="space-y-2">
-            <Label htmlFor="tags" className="text-sm font-medium text-slate-700">
+            <Label htmlFor="tags" className="text-sm font-medium text-foreground">
               Tags (optional) {tags.length > 0 && <span className="text-slate-500">({tags.length}/5)</span>}
             </Label>
-            <div className="rounded-2xl border border-brand-200/40 bg-white/50 p-3 backdrop-blur-sm focus-within:border-brand-400 focus-within:ring-2 focus-within:ring-brand-100">
+            <div className="rounded-2xl border bg-white/80 p-3 backdrop-blur-sm focus-within:ring-2 dark:bg-gray-700">
               {/* Selected Tags */}
               <div className="mb-2 flex flex-wrap gap-2">
                 {tags.map((tag, index) => (
-                  <Badge
-                    key={index}
-                    variant="secondary"
-                    className="flex items-center gap-1 rounded-full bg-brand-100 text-brand-700 hover:bg-brand-200"
-                  >
+                  <Badge key={index} variant="secondary" className="flex items-center gap-1 rounded-full bg-brand-100">
                     <Hash className="h-3 w-3" />
                     {tag}
                     <Button
@@ -185,7 +181,7 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
                 ))}
               </div>
               {/* Tag Input */}
-              <div className="flex items-center gap-2">
+              <div className="flex h-12 items-center gap-2 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700">
                 <Input
                   value={tagInput}
                   onChange={e => setTagInput(e.target.value)}
@@ -209,7 +205,7 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
               {/* Suggested Tags */}
               {tags.length < 5 && (
                 <div className="mt-3 border-t border-brand-200 pt-2">
-                  <p className="mb-2 text-xs text-slate-500">Popular tags:</p>
+                  <p className="mb-2 text-xs text-foreground">Popular tags:</p>
                   <div className="flex flex-wrap gap-1">
                     {suggestedTags
                       .filter(tag => !tags.includes(tag))
@@ -220,7 +216,7 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="h-6 rounded-full px-2 text-xs text-slate-600 hover:bg-brand-100 hover:text-brand-700"
+                          className="h-6 rounded-full px-2 text-xs text-muted-foreground hover:bg-brand-100 hover:text-brand-700"
                           onClick={() => addTag(tag)}
                         >
                           {tag}
