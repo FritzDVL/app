@@ -18,7 +18,7 @@ export function ThemeToggle() {
   const handleToggle = () => setTheme(isDark ? "light" : "dark");
 
   return (
-    <Button variant="yellow" size="icon" className="h-9 w-9" aria-label="Toggle theme" onClick={handleToggle}>
+    <Button variant="yellow" size="icon" className="h-10 w-10" aria-label="Toggle theme" onClick={handleToggle}>
       {mounted ? isDark ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" /> : null}
       <span className="sr-only">Toggle theme</span>
     </Button>

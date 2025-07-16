@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLogout } from "@/hooks/auth/use-logout";
 import { useAuthStore } from "@/stores/auth-store";
-import { Home, LogOut, Menu, Plus, RefreshCw, Search, User, Users, X } from "lucide-react";
+import { Bell, Home, LogOut, Menu, Plus, RefreshCw, Search, User, Users, X } from "lucide-react";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -75,6 +75,18 @@ export function Navbar() {
 
           {/* Theme Toggle and Conditional rendering based on user connection */}
           <div className="flex items-center gap-3">
+            {account && (
+              <Link href="/notifications">
+                <Button
+                  variant={pathname === "/notifications" ? "default" : "yellow"}
+                  size="icon"
+                  className="relative p-2 transition-all duration-300"
+                  aria-label="Notifications"
+                >
+                  <Bell className="h-5 w-5" />
+                </Button>
+              </Link>
+            )}
             <ThemeToggle />
             {account ? (
               <DropdownMenu>
@@ -170,6 +182,25 @@ export function Navbar() {
                 Communities
               </Button>
             </Link>
+            {account && (
+              <Link href="/notifications" className="block px-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`relative rounded-full transition-all duration-300 ${
+                    pathname === "/notifications"
+                      ? "bg-brand-600 text-white shadow-md hover:bg-brand-700"
+                      : "hover:bg-accent hover:text-accent-foreground"
+                  }`}
+                  aria-label="Notifications"
+                >
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
+                    3
+                  </span>
+                </Button>
+              </Link>
+            )}
             {account ? (
               <Link href={`/u/${account.username?.localName || "user"}`} className="block px-3">
                 <Button
