@@ -1,4 +1,4 @@
-import { Post } from "@lens-protocol/client";
+import { AccountMention, Post } from "@lens-protocol/client";
 
 export type Address = `0x${string}`;
 
@@ -64,6 +64,7 @@ export interface Reply {
   upvotes: number;
   downvotes: number;
   tips: number;
+  mentions?: AccountMention[];
   createdAt: string;
   parentReplyId?: string;
   repliesCount: number;

@@ -94,7 +94,7 @@ export function ThreadReplyCard({
       setShowReplies(false);
     }
   };
-
+  console.log(reply);
   // Context chain UI
   const ContextChain = () => (
     <div className="mb-2 flex flex-col gap-2">
