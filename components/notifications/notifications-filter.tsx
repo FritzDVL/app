@@ -1,18 +1,26 @@
 import { Button } from "@/components/ui/button";
+import type { Notification } from "@lens-protocol/client";
 import { ArrowUp, Bell, MessageCircle, Users } from "lucide-react";
 
 interface NotificationsFilterProps {
   currentFilter: "all" | "mentions" | "comments" | "reactions";
   onFilterChange: (filter: "all" | "mentions" | "comments" | "reactions") => void;
-  counters: {
-    all: number;
-    mentions: number;
-    comments: number;
-    reactions: number;
-  };
+  notifications: Notification[];
 }
 
-export function NotificationsFilter({ currentFilter, onFilterChange, counters }: NotificationsFilterProps) {
+function getNotificationCounters(notifications: Notification[]) {
+  const counters = { all: 0, mentions: 0, comments: 0, reactions: 0 };
+  for (const n of notifications) {
+    counters.all++;
+    if (n.__typename === "MentionNotification") counters.mentions++;
+    else if (n.__typename === "CommentNotification") counters.comments++;
+    else if (n.__typename === "ReactionNotification") counters.reactions++;
+  }
+  return counters;
+}
+
+export function NotificationsFilter({ currentFilter, onFilterChange, notifications }: NotificationsFilterProps) {
+  const counters = getNotificationCounters(notifications);
   const filters = [
     { key: "all" as const, label: "All", icon: Bell, count: counters.all },
     { key: "mentions" as const, label: "Mentions", icon: Users, count: counters.mentions },

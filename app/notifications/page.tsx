@@ -1,62 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NotificationsFilter } from "@/components/notifications/notifications-filter";
 import { NotificationsList } from "@/components/notifications/notifications-list";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { APP_ADDRESS, BASE_FEED_ADDRESS } from "@/lib/constants";
-import type { Notification } from "@lens-protocol/client";
-import { fetchNotifications } from "@lens-protocol/client/actions";
-import { NotificationType, evmAddress, useSessionClient } from "@lens-protocol/react";
+import { useNotifications } from "@/hooks/notifications/use-notifications";
+import { useSessionClient } from "@lens-protocol/react";
 
 export default function NotificationsPage() {
   const [filter, setFilter] = useState<"all" | "mentions" | "comments" | "reactions">("all");
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const sessionClient = useSessionClient();
-
-  useEffect(() => {
-    async function loadNotifications() {
-      setLoading(true);
-      setError(null);
-      try {
-        if (!sessionClient.data) {
-          setError("You must be logged in to view notifications.");
-          setNotifications([]);
-          setLoading(false);
-          return;
-        }
-        const result = await fetchNotifications(sessionClient.data, {
-          filter: {
-            notificationTypes: [NotificationType.Mentioned, NotificationType.Commented, NotificationType.Reacted],
-            apps: [APP_ADDRESS],
-            feeds: [{ feed: evmAddress(BASE_FEED_ADDRESS) }],
-          },
-        });
-        if (result.isErr()) {
-          setError(result.error.message || "Error loading notifications");
-          setNotifications([]);
-        } else {
-          setNotifications(result.value.items as Notification[]);
-        }
-      } catch (e: any) {
-        setError(e.message || "Unknown error");
-        setNotifications([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadNotifications();
-  }, [sessionClient.data]);
-
-  const counters = { all: 0, mentions: 0, comments: 0, reactions: 0 };
-  for (const n of notifications) {
-    counters.all++;
-    if (n.__typename === "MentionNotification") counters.mentions++;
-    else if (n.__typename === "CommentNotification") counters.comments++;
-    else if (n.__typename === "ReactionNotification") counters.reactions++;
-  }
+  const { notifications, loading, error } = useNotifications(sessionClient);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
@@ -70,7 +24,7 @@ export default function NotificationsPage() {
       </div>
 
       <div className="mb-6">
-        <NotificationsFilter currentFilter={filter} onFilterChange={setFilter} counters={counters} />
+        <NotificationsFilter currentFilter={filter} onFilterChange={setFilter} notifications={notifications} />
       </div>
 
       {loading ? (
