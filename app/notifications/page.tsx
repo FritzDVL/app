@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { NotificationsFilter } from "@/components/notifications/notifications-filter";
 import { NotificationsList } from "@/components/notifications/notifications-list";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { APP_ADDRESS, BASE_FEED_ADDRESS } from "@/lib/constants";
 import type { Notification } from "@lens-protocol/client";
 import { fetchNotifications } from "@lens-protocol/client/actions";
-import { useSessionClient } from "@lens-protocol/react";
+import { NotificationType, evmAddress, useSessionClient } from "@lens-protocol/react";
 
 export default function NotificationsPage() {
   const [filter, setFilter] = useState<"all" | "mentions" | "comments" | "reactions">("all");
@@ -26,7 +27,13 @@ export default function NotificationsPage() {
           setLoading(false);
           return;
         }
-        const result = await fetchNotifications(sessionClient.data);
+        const result = await fetchNotifications(sessionClient.data, {
+          filter: {
+            notificationTypes: [NotificationType.Mentioned, NotificationType.Commented, NotificationType.Reacted],
+            apps: [APP_ADDRESS],
+            feeds: [{ feed: evmAddress(BASE_FEED_ADDRESS) }],
+          },
+        });
         if (result.isErr()) {
           setError(result.error.message || "Error loading notifications");
           setNotifications([]);
