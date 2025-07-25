@@ -4,14 +4,20 @@ import { ArrowUp, Bell, MessageCircle, Users } from "lucide-react";
 interface NotificationsFilterProps {
   currentFilter: "all" | "mentions" | "comments" | "reactions";
   onFilterChange: (filter: "all" | "mentions" | "comments" | "reactions") => void;
+  counters: {
+    all: number;
+    mentions: number;
+    comments: number;
+    reactions: number;
+  };
 }
 
-export function NotificationsFilter({ currentFilter, onFilterChange }: NotificationsFilterProps) {
+export function NotificationsFilter({ currentFilter, onFilterChange, counters }: NotificationsFilterProps) {
   const filters = [
-    { key: "all" as const, label: "All", icon: Bell, count: 12 },
-    { key: "mentions" as const, label: "Mentions", icon: Users, count: 3 },
-    { key: "comments" as const, label: "Replies", icon: MessageCircle, count: 7 },
-    { key: "reactions" as const, label: "Reactions", icon: ArrowUp, count: 2 },
+    { key: "all" as const, label: "All", icon: Bell, count: counters.all },
+    { key: "mentions" as const, label: "Mentions", icon: Users, count: counters.mentions },
+    { key: "comments" as const, label: "Replies", icon: MessageCircle, count: counters.comments },
+    { key: "reactions" as const, label: "Reactions", icon: ArrowUp, count: counters.reactions },
   ];
 
   return (

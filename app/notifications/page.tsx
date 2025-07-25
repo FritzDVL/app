@@ -50,6 +50,14 @@ export default function NotificationsPage() {
     loadNotifications();
   }, [sessionClient.data]);
 
+  const counters = { all: 0, mentions: 0, comments: 0, reactions: 0 };
+  for (const n of notifications) {
+    counters.all++;
+    if (n.__typename === "MentionNotification") counters.mentions++;
+    else if (n.__typename === "CommentNotification") counters.comments++;
+    else if (n.__typename === "ReactionNotification") counters.reactions++;
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
@@ -62,7 +70,7 @@ export default function NotificationsPage() {
       </div>
 
       <div className="mb-6">
-        <NotificationsFilter currentFilter={filter} onFilterChange={setFilter} />
+        <NotificationsFilter currentFilter={filter} onFilterChange={setFilter} counters={counters} />
       </div>
 
       {loading ? (
