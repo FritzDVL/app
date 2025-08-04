@@ -4,13 +4,19 @@ import type { Notification } from "@lens-protocol/client";
 import { fetchNotifications } from "@lens-protocol/client/actions";
 import { NotificationType, useSessionClient } from "@lens-protocol/react";
 
-export function useNotifications(sessionClient: ReturnType<typeof useSessionClient>) {
+export function useNotifications() {
+  const sessionClient = useSessionClient();
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadNotifications() {
+      // Don't fetch if session is still loading
+      if (sessionClient.loading) {
+        return;
+      }
+
       setLoading(true);
       setError(null);
       try {
@@ -19,12 +25,14 @@ export function useNotifications(sessionClient: ReturnType<typeof useSessionClie
           setNotifications([]);
           return;
         }
+
         const result = await fetchNotifications(sessionClient.data, {
           filter: {
             notificationTypes: [NotificationType.Mentioned, NotificationType.Commented, NotificationType.Reacted],
             apps: [APP_ADDRESS],
           },
         });
+
         if (result.isErr()) {
           setError(result.error.message || "Error loading notifications");
           setNotifications([]);
@@ -39,7 +47,11 @@ export function useNotifications(sessionClient: ReturnType<typeof useSessionClie
       }
     }
     loadNotifications();
-  }, [sessionClient.data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionClient.data]); // Intentionally omitting sessionClient.loading to prevent flickering
 
-  return { notifications, loading, error };
+  // If session is still loading, show loading state
+  const isLoading = sessionClient.loading || loading;
+
+  return { notifications, loading: isLoading, error };
 }

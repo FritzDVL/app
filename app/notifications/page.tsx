@@ -6,12 +6,10 @@ import { NotificationsFilter } from "@/components/notifications/notifications-fi
 import { NotificationsList } from "@/components/notifications/notifications-list";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useNotifications } from "@/hooks/notifications/use-notifications";
-import { useSessionClient } from "@lens-protocol/react";
 
 export default function NotificationsPage() {
   const [filter, setFilter] = useState<"all" | "mentions" | "comments" | "reactions">("all");
-  const sessionClient = useSessionClient();
-  const { notifications, loading, error } = useNotifications(sessionClient);
+  const { notifications, loading, error } = useNotifications();
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
