@@ -1,4 +1,4 @@
-import { storageClient } from "@/lib/grove/client";
+import { storageClient } from "@/lib/external/grove/client";
 import { chains } from "@lens-chain/sdk/viem";
 import { immutable } from "@lens-chain/storage-client";
 

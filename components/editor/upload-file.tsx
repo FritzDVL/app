@@ -1,4 +1,4 @@
-import { uploadImage } from "@/lib/grove/upload-image";
+import { uploadImage } from "@/lib/external/grove/upload-image";
 import { insertNode, union } from "prosekit/core";
 import { defineFileDropHandler, defineFilePasteHandler } from "prosekit/extensions/file";
 

@@ -7,7 +7,7 @@ import MentionPicker from "@/components/editor/mention-picker";
 import SlashMenu from "@/components/editor/slash-menu";
 import { TableHandle } from "@/components/editor/table-handle";
 import Toolbar from "@/components/editor/toolbar";
-import { markdownFromHTML } from "@/lib/prosekit/markdown";
+import { markdownFromHTML } from "@/lib/external/prosekit/markdown";
 import "prosekit/basic/style.css";
 import "prosekit/basic/typography.css";
 import { createEditor } from "prosekit/core";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { lensChain } from "@/lib/chains/lens";
 import { client } from "@/lib/clients/lens-protocol";
 import { addThreadContentPrefix } from "@/lib/content/thread";
-import { storageClient } from "@/lib/grove/client";
+import { storageClient } from "@/lib/external/grove/client";
 import { fetchCommunity } from "@/lib/supabase";
 import { persistRootPostId } from "@/lib/supabase";
 import { transformFormDataToThread } from "@/lib/transformers/thread-transformers";

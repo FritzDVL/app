@@ -1,7 +1,7 @@
 import { customBreakHandler } from "./helpers/remark-break-handler";
-import { rehypeJoinParagraph } from "@/lib/prosekit/helpers/rehype-join-paragraph";
-import { rehypeMentionToMarkdownLink } from "@/lib/prosekit/helpers/rehype-mention-to-markdown-link";
-import { remarkLinkProtocol } from "@/lib/prosekit/helpers/remark-link-protocol";
+import { rehypeJoinParagraph } from "@/lib/external/prosekit/helpers/rehype-join-paragraph";
+import { rehypeMentionToMarkdownLink } from "@/lib/external/prosekit/helpers/rehype-mention-to-markdown-link";
+import { remarkLinkProtocol } from "@/lib/external/prosekit/helpers/remark-link-protocol";
 import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import remarkHtml from "remark-html";
