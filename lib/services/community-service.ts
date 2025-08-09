@@ -3,6 +3,7 @@
  * Orchestrates community operations using existing API and external layer
  */
 import { CreateCommunityFormData } from "@/lib/domain/communities/types";
+import { fetchFeaturedCommunities } from "@/lib/external/supabase/communities";
 import { fetchCommunities, fetchCommunitiesJoined } from "@/lib/fetchers/communities";
 import { fetchCommunity } from "@/lib/fetchers/community";
 import { Address, Community } from "@/types/common";
@@ -136,6 +137,33 @@ export async function getJoinedCommunities(memberAddress: Address): Promise<Comm
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to fetch joined communities",
+    };
+  }
+}
+
+/**
+ * Gets featured communities using existing fetchers and external layer
+ */
+export async function getFeaturedCommunities(): Promise<CommunitiesResult> {
+  try {
+    // Get featured community records from database
+    const dbCommunities = await fetchFeaturedCommunities();
+
+    // Populate with full community data from Lens Protocol
+    const populated = await Promise.all(dbCommunities.map(c => fetchCommunity(c.lens_group_address)));
+
+    // Filter out any failed fetches
+    const featuredCommunities = populated.filter(Boolean) as Community[];
+
+    return {
+      success: true,
+      communities: featuredCommunities,
+    };
+  } catch (error) {
+    console.error("Failed to fetch featured communities:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to fetch featured communities",
     };
   }
 }
