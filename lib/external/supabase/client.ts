@@ -1,3 +1,5 @@
+"use server";
+
 /**
  * Supabase Client Configuration
  * External layer for database connection and client setup
@@ -12,7 +14,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Missing Supabase environment variables");
 }
 
+// Create the client instance
+const _supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+
 /**
- * Supabase client instance with proper typing
+ * Server action to get the Supabase client instance
+ * This allows us to keep the client server-side while following Next.js "use server" rules
  */
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+export async function supabaseClient() {
+  return _supabaseClient;
+}

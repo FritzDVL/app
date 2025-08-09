@@ -1,8 +1,10 @@
+"use server";
+
 /**
  * Forum Statistics Operations
  * External layer for forum-wide statistics from Supabase
  */
-import { supabase } from "./client";
+import { supabaseClient } from "./client";
 import type { ForumStats } from "@/types/common";
 
 /**
@@ -10,6 +12,8 @@ import type { ForumStats } from "@/types/common";
  * @returns ForumStats object
  */
 export async function fetchForumStats(): Promise<ForumStats> {
+  const supabase = await supabaseClient();
+
   // Get total communities
   const { count: communities, error: communitiesError } = await supabase
     .from("communities")

@@ -1,8 +1,10 @@
+"use server";
+
 /**
  * Community Database Operations
  * External layer for community-related Supabase operations
  */
-import { supabase } from "./client";
+import { supabaseClient } from "./client";
 import { CommunitySupabase } from "@/types/supabase";
 
 /**
@@ -12,6 +14,8 @@ import { CommunitySupabase } from "@/types/supabase";
  * @returns The created community record
  */
 export async function persistCommunity(lensGroupAddress: string, name: string): Promise<CommunitySupabase> {
+  const supabase = await supabaseClient();
+
   // Check if community already exists
   const { data: existingCommunity, error: fetchError } = await supabase
     .from("communities")
@@ -51,6 +55,8 @@ export async function persistCommunity(lensGroupAddress: string, name: string): 
  * @returns Array of community records with their Lens group addresses
  */
 export async function fetchAllCommunities(): Promise<CommunitySupabase[]> {
+  const supabase = await supabaseClient();
+
   const { data: communities, error } = await supabase
     .from("communities")
     .select("*, threads_count:community_threads(count)")
@@ -73,6 +79,8 @@ export async function fetchAllCommunities(): Promise<CommunitySupabase[]> {
  * @returns The community record or null if not found
  */
 export async function fetchCommunity(lensGroupAddress: string): Promise<CommunitySupabase | null> {
+  const supabase = await supabaseClient();
+
   const { data: community, error } = await supabase
     .from("communities")
     .select("*, threads_count:community_threads(count)")
@@ -100,6 +108,8 @@ export async function fetchCommunity(lensGroupAddress: string): Promise<Communit
  * @returns Array of featured community records
  */
 export async function fetchFeaturedCommunities(): Promise<CommunitySupabase[]> {
+  const supabase = await supabaseClient();
+
   const { data: communities, error } = await supabase
     .from("communities")
     .select("*")
@@ -119,6 +129,8 @@ export async function fetchFeaturedCommunities(): Promise<CommunitySupabase[]> {
  * @returns void
  */
 export async function incrementCommunityMembersCount(communityId: string): Promise<void> {
+  const supabase = await supabaseClient();
+
   const { error } = await supabase.rpc("increment_community_members_count", { comm_id: communityId });
   if (error) {
     throw new Error(`Failed to increment members_count: ${error.message}`);
@@ -131,6 +143,8 @@ export async function incrementCommunityMembersCount(communityId: string): Promi
  * @returns void
  */
 export async function decrementCommunityMembersCount(communityId: string): Promise<void> {
+  const supabase = await supabaseClient();
+
   const { error } = await supabase.rpc("decrement_community_members_count", { comm_id: communityId });
   if (error) {
     throw new Error(`Failed to decrement members_count: ${error.message}`);

@@ -1,8 +1,10 @@
+"use server";
+
 /**
  * Thread Database Operations
  * External layer for thread-related Supabase operations
  */
-import { supabase } from "./client";
+import { supabaseClient } from "@/lib/external/supabase/client";
 import { Address } from "@/types/common";
 import { CommunitySupabase, CommunityThreadSupabase } from "@/types/supabase";
 
@@ -18,6 +20,8 @@ export async function persistCommunityThread(
   lensFeedAddress: string,
   author: Address,
 ): Promise<CommunityThreadSupabase> {
+  const supabase = await supabaseClient();
+
   // First, ensure the community exists in our database
   let community: CommunitySupabase;
 
@@ -62,6 +66,8 @@ export async function persistCommunityThread(
  * @returns Array of thread records with their Lens feed addresses
  */
 export async function fetchCommunityThreads(communityLensAddress: string): Promise<CommunityThreadSupabase[]> {
+  const supabase = await supabaseClient();
+
   // First get the community
   const { data: community, error: communityError } = await supabase
     .from("communities")
@@ -97,6 +103,8 @@ export async function fetchCommunityThreads(communityLensAddress: string): Promi
  * @returns The thread record or null if not found
  */
 export async function fetchThread(lensFeedAddress: string): Promise<CommunityThreadSupabase | null> {
+  const supabase = await supabaseClient();
+
   const { data: thread, error } = await supabase
     .from("community_threads")
     .select("*, community:communities(*)")
@@ -121,6 +129,8 @@ export async function fetchThread(lensFeedAddress: string): Promise<CommunityThr
  * @returns void
  */
 export async function persistRootPostId(threadId: string, rootPostId: string): Promise<void> {
+  const supabase = await supabaseClient();
+
   const { error } = await supabase
     .from("community_threads")
     .update({ root_post_id: rootPostId })
@@ -138,6 +148,8 @@ export async function persistRootPostId(threadId: string, rootPostId: string): P
  * @returns Array of thread records with their Lens feed addresses
  */
 export async function fetchLatestThreads(limit: number = 5): Promise<CommunityThreadSupabase[]> {
+  const supabase = await supabaseClient();
+
   const { data: threads, error } = await supabase
     .from("community_threads")
     .select("*, community:communities(*)")
@@ -157,6 +169,8 @@ export async function fetchLatestThreads(limit: number = 5): Promise<CommunityTh
  * @returns Array of thread records
  */
 export async function fetchFeaturedThreads(limit: number = 5): Promise<CommunityThreadSupabase[]> {
+  const supabase = await supabaseClient();
+
   const { data, error } = await supabase
     .from("community_threads")
     .select("*, community:communities(*)")
@@ -177,6 +191,8 @@ export async function fetchFeaturedThreads(limit: number = 5): Promise<Community
  * @returns void
  */
 export async function incrementThreadRepliesCount(threadId: string): Promise<void> {
+  const supabase = await supabaseClient();
+
   const { error } = await supabase.rpc("increment_replies_count", { thread_id: threadId });
   if (error) {
     throw new Error(`Failed to increment replies_count: ${error.message}`);
