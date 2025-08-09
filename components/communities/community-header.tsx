@@ -3,7 +3,7 @@ import { LeaveCommunityDialog } from "@/components/communities/community-leave-d
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCommunity } from "@/hooks/queries/use-community";
-import { groveLensUrlToHttp } from "@/lib/utils";
+import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { MessageCircle, Users } from "lucide-react";
 

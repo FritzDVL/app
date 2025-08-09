@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { fetchReply } from "@/lib/fetchers/reply";
 import { fetchRepliesByParentId } from "@/lib/fetchers/reply";
-import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/utils";
+import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/shared/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { Reply as ReplyType } from "@/types/common";
 import { PostId } from "@lens-protocol/client";

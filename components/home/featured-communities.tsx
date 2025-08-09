@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { groveLensUrlToHttp } from "@/lib/utils";
+import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import { Community } from "@/types/common";
 import { ArrowRight } from "lucide-react";
 

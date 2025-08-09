@@ -3,7 +3,7 @@ import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { storageClient } from "@/lib/grove/client";
-import { getTimeAgo } from "@/lib/utils";
+import { getTimeAgo } from "@/lib/shared/utils";
 import type { CommentNotification } from "@lens-protocol/client";
 import { MessageCircle } from "lucide-react";
 

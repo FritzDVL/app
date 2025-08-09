@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { groveLensUrlToHttp } from "@/lib/utils";
+import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import type { Community } from "@/types/common";
 import { Users } from "lucide-react";
 
