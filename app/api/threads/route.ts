@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminSessionClient } from "@/lib/clients/admin-session";
 import { storageClient } from "@/lib/external/grove/client";
+import { getAdminSessionClient } from "@/lib/external/lens/admin-session";
 import { lensChain } from "@/lib/external/lens/chain";
 import { adminWallet } from "@/lib/external/wallets/admin-wallet";
 import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
