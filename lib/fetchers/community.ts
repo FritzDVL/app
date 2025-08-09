@@ -1,5 +1,5 @@
 import { client } from "@/lib/external/lens/protocol-client";
-import { fetchCommunity as fetchCommunityDb } from "@/lib/supabase";
+import { fetchCommunity as fetchCommunityDb } from "@/lib/external/supabase/communities";
 import { transformGroupToCommunity } from "@/lib/transformers/community-transformers";
 import { Community, Moderator } from "@/types/common";
 import { GroupStatsResponse, evmAddress } from "@lens-protocol/client";

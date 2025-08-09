@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { fetchFeaturedCommunities } from "@/lib/external/supabase/communities";
 import { fetchCommunity } from "@/lib/fetchers/community";
-import { fetchFeaturedCommunities } from "@/lib/supabase";
 import { Community } from "@/types/common";
 
 /**

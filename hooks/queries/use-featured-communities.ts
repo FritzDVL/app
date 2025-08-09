@@ -1,5 +1,5 @@
+import { fetchFeaturedCommunities } from "@/lib/external/supabase/communities";
 import { fetchCommunity } from "@/lib/fetchers/community";
-import { fetchFeaturedCommunities } from "@/lib/supabase";
 import type { Community } from "@/types/common";
 import { useQuery } from "@tanstack/react-query";
 

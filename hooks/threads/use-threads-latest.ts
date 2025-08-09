@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { fetchLatestThreads } from "@/lib/external/supabase/threads";
 import { fetchThread } from "@/lib/fetchers/thread";
-import { fetchLatestThreads } from "@/lib/supabase";
 import type { Thread } from "@/types/common";
 
 export function useThreadsLatest(limit: number = 5) {

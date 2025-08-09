@@ -1,5 +1,5 @@
 import { client } from "@/lib/external/lens/protocol-client";
-import { fetchCommunityThreads, fetchFeaturedThreads, fetchLatestThreads } from "@/lib/supabase";
+import { fetchCommunityThreads, fetchFeaturedThreads, fetchLatestThreads } from "@/lib/external/supabase/threads";
 import { transformFeedToThreadOptimized } from "@/lib/transformers/thread-transformers";
 import { Thread } from "@/types/common";
 import { Account, Feed, Post, evmAddress } from "@lens-protocol/client";

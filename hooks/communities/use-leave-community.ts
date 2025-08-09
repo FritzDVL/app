@@ -1,4 +1,4 @@
-import { decrementCommunityMembersCount } from "@/lib/supabase";
+import { decrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { Community } from "@/types/common";
 import { evmAddress } from "@lens-protocol/client";
 import { leaveGroup } from "@lens-protocol/client/actions";

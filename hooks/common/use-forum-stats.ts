@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchForumStats } from "@/lib/supabase";
+import { fetchForumStats } from "@/lib/external/supabase/stats";
 import type { ForumStats } from "@/types/common";
 
 /**

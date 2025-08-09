@@ -2,7 +2,7 @@
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
-import { incrementThreadRepliesCount } from "@/lib/supabase";
+import { incrementThreadRepliesCount } from "@/lib/external/supabase/threads";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Address, Reply as ReplyType } from "@/types/common";

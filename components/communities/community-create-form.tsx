@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
 import { useCommunityCreation } from "@/hooks/communities/use-community-create";
-import { incrementCommunityMembersCount } from "@/lib/supabase";
+import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
 import { evmAddress } from "@lens-protocol/client";
