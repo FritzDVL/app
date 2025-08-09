@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addThreadContentPrefix } from "@/lib/content/thread";
+import { addThreadContentPrefix } from "@/lib/domain/threads/content";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
