@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLogin } from "@/hooks/auth/use-login";
 import { client } from "@/lib/clients/lens-protocol";
-import { HEY_URL } from "@/lib/constants";
+import { HEY_URL } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
 import { fetchAccountsAvailable } from "@lens-protocol/client/actions";
 import { AccountAvailable, evmAddress } from "@lens-protocol/react";

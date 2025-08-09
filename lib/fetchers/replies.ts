@@ -1,4 +1,4 @@
-import { APP_ADDRESS } from "../constants";
+import { APP_ADDRESS } from "../shared/constants";
 import { client } from "@/lib/clients/lens-protocol";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { Address, PaginatedRepliesResult, Reply } from "@/types/common";

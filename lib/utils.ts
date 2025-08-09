@@ -1,4 +1,4 @@
-import { GROVE_API_URL } from "./constants";
+import { GROVE_API_URL } from "./shared/constants";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 

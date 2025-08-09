@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { APP_ADDRESS } from "@/lib/constants";
+import { APP_ADDRESS } from "@/lib/shared/constants";
 import type { Notification } from "@lens-protocol/client";
 import { fetchNotifications } from "@lens-protocol/client/actions";
 import { NotificationType, useSessionClient } from "@lens-protocol/react";
