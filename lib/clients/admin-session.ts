@@ -1,4 +1,4 @@
-import { client } from "@/lib/clients/lens-protocol";
+import { client } from "@/lib/external/lens/protocol-client";
 import { adminSigner } from "@/lib/external/wallets/admin-wallet";
 import { ChallengeRequest, type SessionClient } from "@lens-protocol/client";
 

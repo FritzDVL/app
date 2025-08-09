@@ -1,4 +1,4 @@
-import { client } from "@/lib/clients/lens-protocol";
+import { client } from "@/lib/external/lens/protocol-client";
 import { fetchAllCommunities, fetchCommunity } from "@/lib/supabase";
 import { transformGroupToCommunity } from "@/lib/transformers/community-transformers";
 import { Address, Community, Moderator } from "@/types/common";

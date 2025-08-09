@@ -1,8 +1,8 @@
 "use client";
 
 import { ConnectProvider } from "@/components/providers/connect-provider";
-import { client } from "@/lib/clients/lens-protocol";
 import { Env, getCurrentEnv } from "@/lib/env";
+import { client } from "@/lib/external/lens/protocol-client";
 import { chains } from "@lens-chain/sdk/viem";
 import { LensProvider } from "@lens-protocol/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

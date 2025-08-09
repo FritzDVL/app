@@ -1,5 +1,5 @@
 import { APP_ADDRESS } from "../shared/constants";
-import { client } from "@/lib/clients/lens-protocol";
+import { client } from "@/lib/external/lens/protocol-client";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { Address, PaginatedRepliesResult, Reply } from "@/types/common";
 import { Account, Post as LensPost, PageSize, evmAddress } from "@lens-protocol/client";

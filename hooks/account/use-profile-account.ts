@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { client } from "@/lib/clients/lens-protocol";
+import { client } from "@/lib/external/lens/protocol-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { Account } from "@lens-protocol/client";
 import { fetchAccount, fetchAccountStats } from "@lens-protocol/client/actions";

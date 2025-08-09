@@ -1,5 +1,5 @@
-import { client } from "@/lib/clients/lens-protocol";
 import { storageClient } from "@/lib/external/grove/client";
+import { client } from "@/lib/external/lens/protocol-client";
 import { getTimeAgo } from "@/lib/shared/utils";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";

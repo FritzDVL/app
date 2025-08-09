@@ -1,4 +1,4 @@
-import { client } from "@/lib/clients/lens-protocol";
+import { client } from "@/lib/external/lens/protocol-client";
 import { fetchCommunityThreads, fetchFeaturedThreads, fetchLatestThreads } from "@/lib/supabase";
 import { transformFeedToThreadOptimized } from "@/lib/transformers/thread-transformers";
 import { Thread } from "@/types/common";
