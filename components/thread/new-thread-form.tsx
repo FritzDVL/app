@@ -8,7 +8,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
-import { CreateThreadFormData, useThreadCreation } from "@/hooks/threads/use-thread-create";
+import { useThreadCreation } from "@/hooks/threads/use-thread-create";
+import { CreateThreadFormData } from "@/lib/domain/threads/types";
+import { validateCreateThreadForm } from "@/lib/domain/threads/validation";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
 import { useQueryClient } from "@tanstack/react-query";
@@ -87,21 +89,23 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
       return;
     }
 
-    if (!formData.title.trim()) {
-      toast.error("Validation Error", { description: "Please enter a thread title." });
+    // Validate form data using domain validation
+    if (!account?.address) {
+      toast.error("Authentication Error", { description: "User address not found" });
       return;
     }
-    if (!formData.summary.trim()) {
-      toast.error("Validation Error", { description: "Please enter a summary." });
+
+    const formDataWithAuthor = { ...formData, author: account.address };
+    const validation = validateCreateThreadForm(formDataWithAuthor);
+
+    if (!validation.isValid) {
+      const firstError = validation.errors[0];
+      toast.error("Validation Error", { description: firstError.message });
       return;
     }
-    if (!formData.content.trim()) {
-      toast.error("Validation Error", { description: "Please enter thread content." });
-      return;
-    }
+
     try {
-      if (!account?.address) throw new Error("User address not found");
-      await createThread(communityAddress, { ...formData, author: account.address }, () => {
+      await createThread(communityAddress, formDataWithAuthor, () => {
         setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
       });
       await queryClient.invalidateQueries({ queryKey: ["threads", communityAddress] });

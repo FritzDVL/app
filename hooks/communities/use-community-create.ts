@@ -1,11 +1,6 @@
 import { useState } from "react";
+import { CreateCommunityFormData } from "@/lib/domain/communities/types";
 import { toast } from "sonner";
-
-export interface CreateCommunityFormData {
-  name: string;
-  description: string;
-  adminAddress: string;
-}
 
 export function useCommunityCreation() {
   const [isCreating, setIsCreating] = useState(false);

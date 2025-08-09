@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { addThreadContentPrefix } from "@/lib/domain/threads/content";
+import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
@@ -17,14 +18,6 @@ import { MetadataAttributeType } from "@lens-protocol/metadata";
 import { Post, evmAddress, useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
-
-export interface CreateThreadFormData {
-  title: string;
-  summary: string;
-  content: string;
-  tags?: string; // Now optional
-  author: Address;
-}
 
 // Helper: Call backend API to create thread
 async function createThreadApi(communityAddress: string, formData: CreateThreadFormData) {
