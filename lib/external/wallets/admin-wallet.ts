@@ -1,5 +1,5 @@
 // import { lensMainnet } from "../chains/lens-mainnet";
-import { lensChain } from "@/lib/chains/lens";
+import { lensChain } from "@/lib/external/lens/chain";
 import { Address } from "@/types/common";
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";

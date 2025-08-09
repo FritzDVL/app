@@ -1,4 +1,4 @@
-import { lensChain } from "@/lib/chains/lens";
+import { lensChain } from "@/lib/external/lens/chain";
 import { createPublicClient, http } from "viem";
 
 export const publicClient = createPublicClient({

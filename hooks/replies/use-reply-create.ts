@@ -1,7 +1,7 @@
 // import { lensMainnet } from "@/lib/chains/lens-mainnet";
-import { lensChain } from "@/lib/chains/lens";
 import { client } from "@/lib/clients/lens-protocol";
 import { storageClient } from "@/lib/external/grove/client";
+import { lensChain } from "@/lib/external/lens/chain";
 import { incrementThreadRepliesCount } from "@/lib/supabase";
 import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { useAuthStore } from "@/stores/auth-store";
