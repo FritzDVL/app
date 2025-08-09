@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { client } from "@/lib/external/lens/protocol-client";
+import { getAccountByUsername, getAccountStats } from "@/lib/services/account-service";
 import { useAuthStore } from "@/stores/auth-store";
 import { Account } from "@lens-protocol/client";
-import { fetchAccount, fetchAccountStats } from "@lens-protocol/client/actions";
-import { evmAddress } from "@lens-protocol/react";
 
 export interface LensAccountStats {
   followers: number;
@@ -32,17 +30,11 @@ export function useProfileAccount(username: string) {
         setLensAccount(account);
         await fetchStats(account.address);
       } else {
-        try {
-          const accountResult = await fetchAccount(client, {
-            username: { localName: username },
-          });
-          if (accountResult.isOk() && accountResult.value) {
-            setLensAccount(accountResult.value);
-            await fetchStats(accountResult.value.address);
-          } else {
-            setLensAccount(null);
-          }
-        } catch {
+        const accountResult = await getAccountByUsername(username);
+        if (accountResult.success && accountResult.account) {
+          setLensAccount(accountResult.account);
+          await fetchStats(accountResult.account.address);
+        } else {
           setLensAccount(null);
         }
       }
@@ -52,20 +44,14 @@ export function useProfileAccount(username: string) {
 
     const fetchStats = async (address: string) => {
       setStats(prev => ({ ...prev, loading: true }));
-      try {
-        const statsResult = await fetchAccountStats(client, {
-          account: evmAddress(address),
+
+      const statsResult = await getAccountStats(address);
+      if (statsResult.success && statsResult.stats) {
+        setStats({
+          ...statsResult.stats,
+          loading: false,
         });
-        if (statsResult.isOk() && statsResult.value) {
-          const s = statsResult.value;
-          setStats({
-            followers: s.graphFollowStats?.followers || 0,
-            following: s.graphFollowStats?.following || 0,
-            posts: s.feedStats?.posts || 0,
-            loading: false,
-          });
-        }
-      } catch {
+      } else {
         setStats({ followers: 0, following: 0, posts: 0, loading: false });
       }
     };
