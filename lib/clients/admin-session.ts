@@ -1,5 +1,5 @@
 import { client } from "@/lib/clients/lens-protocol";
-import { adminSigner } from "@/lib/wallets/admin-wallet";
+import { adminSigner } from "@/lib/external/wallets/admin-wallet";
 import { ChallengeRequest, type SessionClient } from "@lens-protocol/client";
 
 let cachedSessionClient: SessionClient | null = null;
