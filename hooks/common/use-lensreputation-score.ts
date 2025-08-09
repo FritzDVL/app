@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { lensReputationAbi } from "../../lib/lensreputation/abi";
-import { publicClient } from "@/lib/clients/viem";
+import { publicClient } from "@/lib/external/lens/chain-client";
 import { Env, getCurrentEnv } from "@/lib/env";
 import { Address } from "@/types/common";
 import { readContract } from "viem/actions";
