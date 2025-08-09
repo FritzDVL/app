@@ -4,9 +4,10 @@
  */
 import { decrementCommunityMembersCount, incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { Community } from "@/types/common";
-import { evmAddress } from "@lens-protocol/client";
+import { SessionClient, evmAddress } from "@lens-protocol/client";
 import { fetchGroup, joinGroup, leaveGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
+import { WalletClient } from "viem";
 
 export interface MembershipResult {
   success: boolean;
@@ -25,16 +26,9 @@ export interface JoinLeaveResult {
  */
 export async function checkCommunityMembership(
   communityAddress: string,
-  sessionClient: any,
+  sessionClient: SessionClient,
 ): Promise<MembershipResult> {
   try {
-    if (!sessionClient) {
-      return {
-        success: false,
-        error: "No session client available",
-      };
-    }
-
     const groupResult = await fetchGroup(sessionClient, {
       group: evmAddress(communityAddress),
     });
@@ -66,17 +60,10 @@ export async function checkCommunityMembership(
  */
 export async function joinCommunity(
   community: Community,
-  sessionClient: any,
-  walletClient: any,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
 ): Promise<JoinLeaveResult> {
   try {
-    if (!sessionClient) {
-      return {
-        success: false,
-        error: "No session client available",
-      };
-    }
-
     const result = await joinGroup(sessionClient, {
       group: evmAddress(community.address),
     }).andThen(handleOperationWith(walletClient));
@@ -107,17 +94,10 @@ export async function joinCommunity(
  */
 export async function leaveCommunity(
   community: Community,
-  sessionClient: any,
-  walletClient: any,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
 ): Promise<JoinLeaveResult> {
   try {
-    if (!sessionClient) {
-      return {
-        success: false,
-        error: "No session client available",
-      };
-    }
-
     const result = await leaveGroup(sessionClient, {
       group: evmAddress(community.address),
     }).andThen(handleOperationWith(walletClient));
