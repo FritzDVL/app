@@ -12,7 +12,7 @@ import {
   fetchGroupStatsFromLens,
   fetchGroupsBatch,
   fetchGroupsByFilter,
-} from "@/lib/external/lens/primitives/communities";
+} from "@/lib/external/lens/primitives/groups";
 import {
   fetchAllCommunities,
   fetchCommunity as fetchCommunityDb,
