@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { CreateCommunityFormData } from "@/lib/domain/communities/types";
+import { createCommunity } from "@/lib/services/community-service";
 import { toast } from "sonner";
+
+// Re-export for convenience
+export type { CreateCommunityFormData };
 
 export function useCommunityCreation() {
   const [isCreating, setIsCreating] = useState(false);
 
-  const createCommunity = async (
+  const createCommunityAction = async (
     formData: CreateCommunityFormData,
-    onSuccess?: (community: any) => void, // Use 'any' since the API returns a plain object
+    imageFile?: File,
+    onSuccess?: (community: any) => void,
   ): Promise<void> => {
     setIsCreating(true);
 
@@ -17,25 +22,17 @@ export function useCommunityCreation() {
     });
 
     try {
-      // Call API route to create the community
-      const response = await fetch("/api/communities", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "community",
-          name: formData.name,
-          description: formData.description,
-          adminAddress: formData.adminAddress,
-        }),
-      });
-      const result = await response.json();
-      if (!response.ok || !result.success) {
+      // Use the community service for all business logic
+      const result = await createCommunity(formData, imageFile);
+
+      if (!result.success) {
         toast.error("Creation Failed", {
           id: loadingToastId,
           description: result.error || "Failed to create community.",
         });
         throw new Error(result.error || "Failed to create community.");
       }
+
       // Use the returned community object
       const newCommunity = result.community;
       onSuccess?.(newCommunity);
@@ -56,7 +53,7 @@ export function useCommunityCreation() {
   };
 
   return {
-    createCommunity,
+    createCommunity: createCommunityAction,
     isCreating,
   };
 }

@@ -35,11 +35,12 @@ export function CommunityCreateForm() {
   // --- Hooks ---
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { isCreating } = useCommunityCreation();
+  const { createCommunity, isCreating } = useCommunityCreation();
   const { account, walletAddress } = useAuthStore();
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
   const { reputation, canCreateCommunity } = useLensReputationScore(walletAddress as Address, account?.address);
+
   // --- Effects ---
   useEffect(() => {
     if (account?.address) {
@@ -77,50 +78,46 @@ export function CommunityCreateForm() {
 
     if (!sessionClient.data || !walletClient.data) {
       toast.error("Not logged in", { description: "Please log in to create a community." });
-      throw new Error("Not logged in");
+      return;
     }
+
     setLoading(true);
     setError(null);
-    const toastLoading = toast.loading("Creating community...");
+
     try {
-      const form = new FormData();
-      form.append("name", formData.name);
-      form.append("description", formData.description);
-      form.append("adminAddress", formData.adminAddress);
-      if (formData.image) {
-        form.append("image", formData.image);
-      }
-      const response = await fetch("/api/communities", { method: "POST", body: form });
-      const result = await response.json();
-      if (!response.ok || !result.success) {
-        setError(result.error || "Community creation failed. Please try again.");
-        toast.error("Community creation failed", { description: result.error || "Please try again." });
-        setLoading(false);
-        throw new Error(result.error || "Community creation failed");
-      }
-      const community = result.community;
-      if (community && community.id) {
-        const joinResult = await joinGroup(sessionClient.data, { group: evmAddress(community.address) })
-          .andThen(handleOperationWith(walletClient.data))
-          .andThen(sessionClient.data.waitForTransaction);
-        if (joinResult.isOk()) {
-          await incrementCommunityMembersCount(community.id);
-        } else {
-          console.error("Error joining/leaving community:", joinResult.error);
-          toast.error("Action Failed", { description: "Unable to update your membership status. Please try again." });
-        }
-        toast.success("Community created!", { description: `Welcome to ${community.name}` });
-        await queryClient.invalidateQueries({ queryKey: ["communities"] });
-        router.push(`/communities/${community.address}`);
-      } else {
-        setError("Community creation failed. Please try again.");
-      }
+      // Use the community service through the hook
+      await createCommunity(
+        {
+          name: formData.name,
+          description: formData.description,
+          adminAddress: formData.adminAddress as Address,
+        },
+        formData.image,
+        async community => {
+          // Success callback - handle community creation success
+          if (community && community.id) {
+            const joinResult = await joinGroup(sessionClient.data!, {
+              group: evmAddress(community.address),
+            }).andThen(handleOperationWith(walletClient.data!));
+
+            if (joinResult.isOk()) {
+              await incrementCommunityMembersCount(community.id);
+            } else {
+              console.error("Error joining community:", joinResult.error);
+              toast.error("Action Failed", {
+                description: "Unable to update your membership status. Please try again.",
+              });
+            }
+
+            await queryClient.invalidateQueries({ queryKey: ["communities"] });
+            router.push(`/communities/${community.address}`);
+          }
+        },
+      );
     } catch (err: any) {
       setError(err.message || "Failed to create community");
-      toast.error("Community creation failed", { description: err.message || "Failed to create community" });
     } finally {
       setLoading(false);
-      toast.dismiss(toastLoading);
     }
   };
 
@@ -148,7 +145,8 @@ export function CommunityCreateForm() {
               required
             />
           </div>
-          {/* Image Upload (replaces Emoji) */}
+
+          {/* Image Upload */}
           <div className="space-y-2">
             <Label htmlFor="image" className="text-base font-medium text-foreground">
               Community Image (optional)
@@ -167,6 +165,7 @@ export function CommunityCreateForm() {
               </div>
             )}
           </div>
+
           {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className="text-base font-medium text-foreground">
@@ -182,6 +181,7 @@ export function CommunityCreateForm() {
               className="min-h-[80px] w-full rounded-2xl bg-white p-3 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:bg-gray-700"
             />
           </div>
+
           {/* Admin Address */}
           <div className="space-y-2">
             <Label htmlFor="adminAddress" className="text-base font-medium text-foreground">
@@ -198,6 +198,7 @@ export function CommunityCreateForm() {
               disabled={!!account?.address}
             />
           </div>
+
           {/* Reputation Status */}
           <ReputationStatusBanner
             reputation={reputation}
@@ -205,7 +206,9 @@ export function CommunityCreateForm() {
             actionType="communities"
             requiredScore={700}
           />
+
           {error && <div className="text-sm text-red-600">{error}</div>}
+
           <div className="flex justify-end">
             <Button
               type="submit"
@@ -225,7 +228,7 @@ export function CommunityCreateForm() {
                   Creating...
                 </div>
               ) : (
-                <>Create Community</>
+                "Create Community"
               )}
             </Button>
           </div>

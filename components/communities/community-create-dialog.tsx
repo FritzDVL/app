@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CreateCommunityFormData, useCommunityCreation } from "@/hooks/communities/use-community-create";
+import { Address } from "@/types/common";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,18 +28,22 @@ export function CommunityCreateDialog({ onCommunityCreated }: CommunityCreateDia
   const [formData, setFormData] = useState<CreateCommunityFormData>({
     name: "",
     description: "",
-    adminAddress: "",
+    adminAddress: "0x" as Address,
   });
 
   const { createCommunity, isCreating } = useCommunityCreation();
 
   const handleCreateCommunity = async () => {
     try {
-      await createCommunity(formData, newCommunity => {
-        onCommunityCreated(newCommunity);
-      });
+      await createCommunity(
+        formData,
+        undefined, // no image file
+        (newCommunity: any) => {
+          onCommunityCreated(newCommunity);
+        },
+      );
 
-      setFormData({ name: "", description: "", adminAddress: "" });
+      setFormData({ name: "", description: "", adminAddress: "0x" as Address });
       setIsDialogOpen(false);
       setError(null);
       toast.success("Community created successfully!");
@@ -126,7 +131,7 @@ export function CommunityCreateDialog({ onCommunityCreated }: CommunityCreateDia
               onChange={e =>
                 setFormData({
                   ...formData,
-                  adminAddress: e.target.value,
+                  adminAddress: e.target.value as Address,
                 })
               }
               placeholder="0x..."
