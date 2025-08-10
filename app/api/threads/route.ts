@@ -3,7 +3,7 @@ import { storageClient } from "@/lib/external/grove/client";
 import { getAdminSessionClient } from "@/lib/external/lens/admin-session";
 import { lensChain } from "@/lib/external/lens/chain";
 import { persistCommunityThread } from "@/lib/external/supabase/threads";
-import { adminWallet } from "@/lib/external/wallets/admin-wallet";
+import { getAdminWallet } from "@/lib/external/wallets/admin-wallet";
 import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
 import { immutable } from "@lens-chain/storage-client";
 import { evmAddress } from "@lens-protocol/client";
@@ -18,8 +18,9 @@ export async function POST(req: NextRequest) {
     if (!communityAddress || !title || !content || !author) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
-    // Get admin session
+    // Get admin session and wallet
     const adminSessionClient = await getAdminSessionClient();
+    const adminWallet = await getAdminWallet();
     // 1. Build metadata for the thread
     const metadata = feed({
       name: title,
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Thread created on Lens Protocol and persisted.",
-      feed,
+      feed: createdFeed,
       threadRecord,
     });
   } catch (error) {

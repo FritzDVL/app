@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { CreateCommunityFormData } from "@/lib/domain/communities/types";
-import { createCommunity } from "@/lib/services/community/create-community";
 import { toast } from "sonner";
 
 // Re-export for convenience
@@ -22,10 +21,24 @@ export function useCommunityCreation() {
     });
 
     try {
-      // Use the community service for all business logic
-      const result = await createCommunity(formData, imageFile);
+      // Create FormData for API call
+      const apiFormData = new FormData();
+      apiFormData.append("name", formData.name);
+      apiFormData.append("description", formData.description);
+      apiFormData.append("adminAddress", formData.adminAddress);
+      if (imageFile) {
+        apiFormData.append("image", imageFile);
+      }
 
-      if (!result.success) {
+      // Call the API route
+      const response = await fetch("/api/communities", {
+        method: "POST",
+        body: apiFormData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
         toast.error("Creation Failed", {
           id: loadingToastId,
           description: result.error || "Failed to create community.",

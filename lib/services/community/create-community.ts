@@ -1,3 +1,5 @@
+"use server";
+
 /**
  * Create Community Service
  * Creates a community using the full business logic
@@ -9,7 +11,7 @@ import { getAdminSessionClient } from "@/lib/external/lens/admin-session";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
 import { persistCommunity } from "@/lib/external/supabase/communities";
-import { adminWallet } from "@/lib/external/wallets/admin-wallet";
+import { getAdminWallet } from "@/lib/external/wallets/admin-wallet";
 import { Moderator } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
 import { Group, evmAddress } from "@lens-protocol/client";
@@ -43,7 +45,10 @@ export async function createCommunity(
     // 2. Get admin session client
     const adminSessionClient = await getAdminSessionClient();
 
-    // 3. Prepare group name for metadata (no spaces, max 20 chars)
+    // 3. Get admin wallet
+    const adminWallet = await getAdminWallet();
+
+    // 4. Prepare group name for metadata (no spaces, max 20 chars)
     const groupName = formData.name.replace(/\s+/g, "-").slice(0, 20);
 
     // 4. Build metadata for the group and upload it

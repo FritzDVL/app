@@ -1,5 +1,5 @@
 import { client } from "@/lib/external/lens/protocol-client";
-import { adminSigner } from "@/lib/external/wallets/admin-wallet";
+import { getAdminSigner } from "@/lib/external/wallets/admin-wallet";
 import { ChallengeRequest, type SessionClient } from "@lens-protocol/client";
 
 let cachedSessionClient: SessionClient | null = null;
@@ -15,6 +15,10 @@ export async function getAdminSessionClient(): Promise<SessionClient> {
   if (cachedSessionClient && lastSessionTime && now - lastSessionTime < SESSION_TTL_MS) {
     return cachedSessionClient;
   }
+
+  // Get the admin signer
+  const adminSigner = await getAdminSigner();
+  console.log("Admin signer address:", adminSigner.address);
 
   // Prepare the challenge request for builder admin
   const challengeRequest: ChallengeRequest = {
@@ -47,15 +51,3 @@ export async function getAdminSessionClient(): Promise<SessionClient> {
   lastSessionTime = now;
   return cachedSessionClient;
 }
-
-// Example usage.
-// if (require.main === module) {
-//   (async () => {
-//     try {
-//       await getAdminSessionClient();
-//       console.log("Admin authenticated successfully.");
-//     } catch (err) {
-//       console.error("Admin authentication failed:", err);
-//     }
-//   })();
-// }
