@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getFeaturedCommunities } from "@/lib/services/community-service";
+import { getFeaturedCommunities } from "@/lib/services/community/get-featured-communities";
 import { Community } from "@/types/common";
 
 /**

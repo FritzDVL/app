@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { checkCommunityMembership } from "@/lib/services/membership-service";
+import { checkCommunityMembership } from "@/lib/services/membership/check-community-membership";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 

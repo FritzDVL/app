@@ -1,4 +1,4 @@
-import { leaveCommunity } from "@/lib/services/membership-service";
+import { leaveCommunity } from "@/lib/services/membership/leave-community";
 import { Community } from "@/types/common";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";

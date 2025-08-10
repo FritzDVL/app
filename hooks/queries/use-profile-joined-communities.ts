@@ -1,4 +1,4 @@
-import { getCommunitiesJoined } from "@/lib/services/community-service";
+import { getCommunitiesJoined } from "@/lib/services/community/get-communities-joined";
 import { Address } from "@/types/common";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";

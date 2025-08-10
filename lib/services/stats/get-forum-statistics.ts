@@ -1,6 +1,6 @@
 /**
- * Statistics Service
- * Orchestrates statistics operations using existing external layer
+ * Get Forum Statistics Service
+ * Gets forum-wide statistics using existing external layer
  */
 import { fetchForumStats } from "@/lib/external/supabase/stats";
 import type { ForumStats } from "@/types/common";

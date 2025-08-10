@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getForumStatistics } from "@/lib/services/stats-service";
+import { getForumStatistics } from "@/lib/services/stats/get-forum-statistics";
 import type { ForumStats } from "@/types/common";
 
 /**

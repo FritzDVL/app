@@ -1,4 +1,4 @@
-import { getThread } from "@/lib/services/thread-service";
+import { getThread } from "@/lib/services/thread/get-thread";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 

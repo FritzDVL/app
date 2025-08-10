@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getLatestThreads } from "@/lib/services/thread-service";
+import { getLatestThreads } from "@/lib/services/thread/get-latest-threads";
 import type { Thread } from "@/types/common";
 
 export function useThreadsLatest(limit: number = 5) {

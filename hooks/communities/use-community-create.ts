@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CreateCommunityFormData } from "@/lib/domain/communities/types";
-import { createCommunity } from "@/lib/services/community-service";
+import { createCommunity } from "@/lib/services/community/create-community";
 import { toast } from "sonner";
 
 // Re-export for convenience

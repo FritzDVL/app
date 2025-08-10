@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCommunity } from "@/lib/services/community-service";
+import { createCommunity } from "@/lib/services/community/create-community";
 import { Address } from "@/types/common";
 
 export async function POST(request: NextRequest) {

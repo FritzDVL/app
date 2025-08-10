@@ -1,4 +1,4 @@
-import { getLatestRepliesByAuthor } from "@/lib/services/reply-service";
+import { getLatestRepliesByAuthor } from "@/lib/services/reply/get-latest-replies-by-author";
 import { Address } from "@/types/common";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";

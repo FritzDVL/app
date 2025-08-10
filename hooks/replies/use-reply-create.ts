@@ -1,4 +1,4 @@
-import { createReply } from "@/lib/services/reply-service";
+import { createReply } from "@/lib/services/reply/create-reply";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Address, Reply as ReplyType } from "@/types/common";
 import { useSessionClient } from "@lens-protocol/react";

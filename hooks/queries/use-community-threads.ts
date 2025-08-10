@@ -1,4 +1,4 @@
-import { getCommunityThreads } from "@/lib/services/thread-service";
+import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 

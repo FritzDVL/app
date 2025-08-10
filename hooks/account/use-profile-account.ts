@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getAccountByUsername, getAccountStats } from "@/lib/services/account-service";
+import { getAccountByUsername } from "@/lib/services/account/get-account-by-username";
+import { getAccountStats } from "@/lib/services/account/get-account-stats";
 import { useAuthStore } from "@/stores/auth-store";
 import { Account } from "@lens-protocol/client";
 

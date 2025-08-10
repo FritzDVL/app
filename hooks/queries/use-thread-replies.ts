@@ -1,4 +1,4 @@
-import { getThreadReplies } from "@/lib/services/reply-service";
+import { getThreadReplies } from "@/lib/services/reply/get-thread-replies";
 import { PaginatedRepliesResult, ThreadReplyWithDepth } from "@/types/common";
 import { PageSize } from "@lens-protocol/client";
 import { useQuery } from "@tanstack/react-query";
