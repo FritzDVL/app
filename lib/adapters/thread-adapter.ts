@@ -1,7 +1,8 @@
+import { Thread } from "@/lib/domain/threads/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { client } from "@/lib/external/lens/protocol-client";
 import { getTimeAgo } from "@/lib/shared/utils";
-import { Address, Thread } from "@/types/common";
+import { Address } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
 import { Account, Feed, Post } from "@lens-protocol/client";
 import { fetchPost } from "@lens-protocol/client/actions";

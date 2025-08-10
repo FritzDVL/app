@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
-import { Community } from "@/types/common";
+import { Community } from "@/lib/domain/communities/types";
 import { Plus, Users } from "lucide-react";
 
 interface CommunityJoinBannerProps {

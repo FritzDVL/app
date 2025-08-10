@@ -3,8 +3,9 @@
  * Gets latest replies by author using service approach
  */
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
+import { Reply } from "@/lib/domain/replies/types";
 import { fetchPostsByAuthor } from "@/lib/external/lens/primitives/posts";
-import { Address, Reply } from "@/types/common";
+import { Address } from "@/types/common";
 
 export interface RepliesResult {
   success: boolean;

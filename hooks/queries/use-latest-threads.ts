@@ -1,5 +1,5 @@
+import type { Thread } from "@/lib/domain/threads/types";
 import { getLatestThreads } from "@/lib/services/thread/get-latest-threads";
-import type { Thread } from "@/types/common";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 

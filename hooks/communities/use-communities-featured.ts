@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getFeaturedCommunities } from "@/lib/services/community/get-featured-communities";
-import { Community } from "@/types/common";
+import { Community } from "@/lib/domain/communities/types";
 
 /**
  * Returns the featured communities (3 oldest, fully populated) and a loading flag.

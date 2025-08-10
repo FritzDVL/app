@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Thread } from "@/types/common";
+import { Thread } from "@/lib/domain/threads/types";
 import { Clock, Edit3, MessageCircle, ThumbsDown, ThumbsUp } from "lucide-react";
 
 interface LatestThreadsProps {

@@ -1,4 +1,4 @@
-import { Community, Moderator } from "@/types/common";
+import { Community, Moderator } from "@/lib/domain/communities/types";
 import { CommunitySupabase } from "@/types/supabase";
 import { Group, GroupStatsResponse } from "@lens-protocol/client";
 

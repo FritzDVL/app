@@ -1,5 +1,5 @@
-import { getThreadReplies } from "@/lib/services/reply/get-thread-replies";
-import { PaginatedRepliesResult, ThreadReplyWithDepth } from "@/types/common";
+import { ThreadReplyWithDepth } from "@/lib/domain/replies/types";
+import { PaginatedRepliesResult, getThreadReplies } from "@/lib/services/reply/get-thread-replies";
 import { PageSize } from "@lens-protocol/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";

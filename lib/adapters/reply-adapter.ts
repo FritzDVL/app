@@ -1,4 +1,4 @@
-import { Reply, ReplyAuthor } from "@/types/common";
+import { Reply, ReplyAuthor } from "@/lib/domain/replies/types";
 import { Post } from "@lens-protocol/client";
 
 /**

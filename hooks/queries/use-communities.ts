@@ -1,5 +1,5 @@
+import type { Community } from "@/lib/domain/communities/types";
 import { getAllCommunities } from "@/lib/services/community/get-all-communities";
-import type { Community } from "@/types/common";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 

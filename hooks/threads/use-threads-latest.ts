@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { Thread } from "@/lib/domain/threads/types";
 import { getLatestThreads } from "@/lib/services/thread/get-latest-threads";
-import type { Thread } from "@/types/common";
 
 export function useThreadsLatest(limit: number = 5) {
   const [threads, setThreads] = useState<Thread[]>([]);

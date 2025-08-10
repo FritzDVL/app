@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Moderator } from "@/types/common";
+import { Moderator } from "@/lib/domain/communities/types";
 
 interface CommunityModeratorsProps {
   moderators: Moderator[];

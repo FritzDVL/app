@@ -1,5 +1,5 @@
+import { Community } from "@/lib/domain/communities/types";
 import { joinCommunity } from "@/lib/services/membership/join-community";
-import { Community } from "@/types/common";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";

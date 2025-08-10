@@ -1,6 +1,7 @@
+import type { Reply as ReplyType } from "@/lib/domain/replies/types";
 import { createReply } from "@/lib/services/reply/create-reply";
 import { useAuthStore } from "@/stores/auth-store";
-import type { Address, Reply as ReplyType } from "@/types/common";
+import type { Address } from "@/types/common";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";

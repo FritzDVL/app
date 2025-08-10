@@ -5,7 +5,7 @@
  * External layer for forum-wide statistics from Supabase
  */
 import { supabaseClient } from "./client";
-import type { ForumStats } from "@/types/common";
+import { ForumStats } from "@/lib/domain/communities/types";
 
 /**
  * Fetches forum-wide stats: total members, total threads, and total communities.

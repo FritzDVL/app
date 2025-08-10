@@ -1,7 +1,7 @@
 "use server";
 
 import { client } from "../protocol-client";
-import type { Moderator } from "@/types/common";
+import { Moderator } from "@/lib/domain/communities/types";
 import { evmAddress } from "@lens-protocol/client";
 import type { Group, GroupStatsResponse } from "@lens-protocol/client";
 import { fetchAdminsFor, fetchGroup, fetchGroupStats, fetchGroups } from "@lens-protocol/client/actions";
