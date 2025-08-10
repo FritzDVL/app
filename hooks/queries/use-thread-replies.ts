@@ -1,12 +1,25 @@
-import { fetchRepliesPaginated } from "@/lib/fetchers/replies";
+import { getThreadReplies } from "@/lib/services/reply-service";
 import { PaginatedRepliesResult, ThreadReplyWithDepth } from "@/types/common";
 import { PageSize } from "@lens-protocol/client";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export function useThreadReplies(threadAddress: string | undefined, cursor: string | null, threadRootPostId?: string) {
   return useQuery<PaginatedRepliesResult, Error, { replies: ThreadReplyWithDepth[]; pageInfo: any }>({
     queryKey: ["replies", threadAddress, cursor, threadRootPostId],
-    queryFn: () => fetchRepliesPaginated(String(threadAddress), PageSize.Fifty, cursor),
+    queryFn: async () => {
+      const result = await getThreadReplies(String(threadAddress), PageSize.Fifty, cursor);
+      if (result.success && result.data) {
+        // Convert service response to expected type
+        return {
+          items: result.data.replies,
+          pageInfo: result.data.pageInfo,
+        };
+      } else {
+        toast.error(result.error);
+        throw new Error(result.error);
+      }
+    },
     enabled: !!threadAddress,
     staleTime: 1000 * 60 * 5, // Increased to 5 minutes for better performance
     refetchOnWindowFocus: false, // Reduce unnecessary refetches
