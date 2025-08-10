@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
+import { Thread } from "@/lib/domain/threads/types";
 import { createThread } from "@/lib/services/thread/create-thread";
-import { Thread } from "@/types/common";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";

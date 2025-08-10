@@ -3,11 +3,12 @@
  * Creates a reply using existing logic from useReplyCreate hook
  */
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
+import { Reply, ReplyAuthor } from "@/lib/domain/replies/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
 import { incrementThreadRepliesCount } from "@/lib/external/supabase/threads";
-import { Address, Reply, ReplyAuthor } from "@/types/common";
+import { Address } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
 import { Post, evmAddress, postId, uri } from "@lens-protocol/client";
 import { fetchPost, post } from "@lens-protocol/client/actions";

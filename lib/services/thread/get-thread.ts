@@ -3,10 +3,10 @@
  * Gets a single thread by its Lens feed address
  */
 import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
+import { Thread } from "@/lib/domain/threads/types";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
 import { fetchFeedFromLens } from "@/lib/external/lens/primitives/feeds";
 import { fetchThread as fetchThreadDb } from "@/lib/external/supabase/threads";
-import { Thread } from "@/types/common";
 
 export interface ThreadResult {
   success: boolean;

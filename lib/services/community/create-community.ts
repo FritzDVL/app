@@ -6,13 +6,13 @@
  */
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { CreateCommunityFormData } from "@/lib/domain/communities/types";
+import { Moderator } from "@/lib/domain/communities/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { getAdminSessionClient } from "@/lib/external/lens/admin-session";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
 import { persistCommunity } from "@/lib/external/supabase/communities";
 import { getAdminWallet } from "@/lib/external/wallets/admin-wallet";
-import { Moderator } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
 import { Group, evmAddress } from "@lens-protocol/client";
 import { createGroup, fetchAdminsFor, fetchGroup } from "@lens-protocol/client/actions";

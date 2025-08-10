@@ -3,11 +3,11 @@
  * Gets latest threads using optimized batch operations
  */
 import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
+import { Thread } from "@/lib/domain/threads/types";
 import { fetchAccountsBatch } from "@/lib/external/lens/primitives/accounts";
 import { fetchFeedsBatch } from "@/lib/external/lens/primitives/feeds";
 import { fetchPostsBatch } from "@/lib/external/lens/primitives/posts";
 import { fetchLatestThreads as fetchLatestThreadsDb } from "@/lib/external/supabase/threads";
-import { Thread } from "@/types/common";
 
 export interface ThreadsResult {
   success: boolean;

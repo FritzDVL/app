@@ -4,10 +4,10 @@
  */
 import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
+import { Thread } from "@/lib/domain/threads/types";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
 import { createThreadArticle } from "@/lib/external/lens/primitives/articles";
 import { persistCommunityThread, persistRootPostId } from "@/lib/external/supabase/threads";
-import { Thread } from "@/types/common";
 import { SessionClient } from "@lens-protocol/client";
 import { WalletClient } from "viem";
 

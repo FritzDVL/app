@@ -2,8 +2,8 @@
  * Join Community Service
  * Join a community using Lens Protocol
  */
+import { Community } from "@/lib/domain/communities/types";
 import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
-import { Community } from "@/types/common";
 import { SessionClient, evmAddress } from "@lens-protocol/client";
 import { joinGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";

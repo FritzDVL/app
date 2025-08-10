@@ -2,8 +2,8 @@
  * Leave Community Service
  * Leave a community using Lens Protocol
  */
+import { Community } from "@/lib/domain/communities/types";
 import { decrementCommunityMembersCount } from "@/lib/external/supabase/communities";
-import { Community } from "@/types/common";
 import { SessionClient, evmAddress } from "@lens-protocol/client";
 import { leaveGroup } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";

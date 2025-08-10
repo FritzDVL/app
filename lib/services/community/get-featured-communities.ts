@@ -3,9 +3,9 @@
  * Gets featured communities using service approach
  */
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
+import { Community } from "@/lib/domain/communities/types";
 import { fetchGroupAdminsBatch, fetchGroupStatsBatch, fetchGroupsBatch } from "@/lib/external/lens/primitives/groups";
 import { fetchFeaturedCommunities } from "@/lib/external/supabase/communities";
-import { Community } from "@/types/common";
 
 export interface CommunitiesResult {
   success: boolean;

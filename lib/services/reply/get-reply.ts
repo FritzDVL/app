@@ -3,9 +3,9 @@
  * Gets a single reply by ID using service approach
  */
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
+import { Reply } from "@/lib/domain/replies/types";
 import { fetchAccountsBatch } from "@/lib/external/lens/primitives/accounts";
 import { client } from "@/lib/external/lens/protocol-client";
-import { Reply } from "@/types/common";
 import { Post, postId } from "@lens-protocol/client";
 import { fetchPost } from "@lens-protocol/client/actions";
 

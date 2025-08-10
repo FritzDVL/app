@@ -3,13 +3,14 @@
  * Gets communities that a specific member has joined using optimized batch operations
  */
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
+import { Community } from "@/lib/domain/communities/types";
 import {
   fetchGroupAdminsBatch,
   fetchGroupStatsBatch,
   fetchGroupsByFilter,
 } from "@/lib/external/lens/primitives/groups";
 import { fetchCommunity as fetchCommunityDb } from "@/lib/external/supabase/communities";
-import { Address, Community } from "@/types/common";
+import { Address } from "@/types/common";
 
 export interface CommunitiesResult {
   success: boolean;

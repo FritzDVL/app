@@ -3,9 +3,9 @@
  * Gets replies for a thread with pagination using service approach
  */
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
+import { Reply } from "@/lib/domain/replies/types";
 import { fetchAccountsBatch } from "@/lib/external/lens/primitives/accounts";
 import { fetchThreadPosts } from "@/lib/external/lens/primitives/posts";
-import { Reply } from "@/types/common";
 import { PageSize } from "@lens-protocol/client";
 
 export interface PaginatedRepliesResult {

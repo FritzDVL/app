@@ -3,9 +3,9 @@
  * Gets all replies for a thread (non-paginated) using service approach
  */
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
+import { Reply } from "@/lib/domain/replies/types";
 import { fetchAccountsBatch } from "@/lib/external/lens/primitives/accounts";
 import { fetchAllThreadPosts } from "@/lib/external/lens/primitives/posts";
-import { Reply } from "@/types/common";
 
 export interface RepliesResult {
   success: boolean;

@@ -2,8 +2,8 @@
  * Get Forum Statistics Service
  * Gets forum-wide statistics using existing external layer
  */
+import type { ForumStats } from "@/lib/domain/communities/types";
 import { fetchForumStats } from "@/lib/external/supabase/stats";
-import type { ForumStats } from "@/types/common";
 
 export interface StatsResult {
   success: boolean;

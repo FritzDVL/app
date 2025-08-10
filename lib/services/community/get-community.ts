@@ -3,13 +3,13 @@
  * Gets a single community by address using service approach
  */
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
+import { Community } from "@/lib/domain/communities/types";
 import {
   fetchGroupAdminsFromLens,
   fetchGroupFromLens,
   fetchGroupStatsFromLens,
 } from "@/lib/external/lens/primitives/groups";
 import { fetchCommunity as fetchCommunityDb } from "@/lib/external/supabase/communities";
-import { Community } from "@/types/common";
 
 export interface CommunityResult {
   success: boolean;

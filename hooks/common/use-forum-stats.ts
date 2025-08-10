@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import type { ForumStats } from "@/lib/domain/communities/types";
 import { getForumStatistics } from "@/lib/services/stats/get-forum-statistics";
-import type { ForumStats } from "@/types/common";
 
 /**
  * Custom hook to fetch forum-wide stats (members, threads, communities)
