@@ -8,6 +8,7 @@ import { useWalletClient } from "wagmi";
 
 export function useThreadCreation() {
   const [isCreating, setIsCreating] = useState(false);
+
   const { data: sessionClient } = useSessionClient();
   const walletClient = useWalletClient();
 
@@ -16,7 +17,7 @@ export function useThreadCreation() {
     formData: CreateThreadFormData,
     onSuccess?: (thread: Thread) => void,
   ): Promise<void> => {
-    if (!sessionClient || !walletClient) {
+    if (!sessionClient || !walletClient.data) {
       toast.error("Connection required", {
         description: "Please connect your wallet and sign in to create a thread.",
       });

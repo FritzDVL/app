@@ -1,5 +1,3 @@
-"use server";
-
 /**
  * Lens Protocol Articles Primitives
  * Handles article creation and management for thread content

@@ -1,23 +1,14 @@
-"use server";
-
 /**
  * Create Thread Service
  * Creates a thread using the full business logic
  */
 import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
-import { storageClient } from "@/lib/external/grove/client";
-import { lensChain } from "@/lib/external/lens/chain";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
 import { createThreadArticle } from "@/lib/external/lens/primitives/articles";
 import { persistCommunityThread, persistRootPostId } from "@/lib/external/supabase/threads";
-import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
 import { Thread } from "@/types/common";
-import { immutable } from "@lens-chain/storage-client";
-import { SessionClient, evmAddress } from "@lens-protocol/client";
-import { createFeed, fetchFeed } from "@lens-protocol/client/actions";
-import { handleOperationWith } from "@lens-protocol/client/viem";
-import { feed } from "@lens-protocol/metadata";
+import { SessionClient } from "@lens-protocol/client";
 import { WalletClient } from "viem";
 
 export interface CreateThreadResult {
@@ -37,43 +28,38 @@ export async function createThread(
   walletClient: WalletClient,
 ): Promise<CreateThreadResult> {
   try {
-    // 1. Build metadata for the thread feed
-    const feedMetadata = feed({
-      name: formData.title,
-      description: formData.summary || "",
-    });
-    const acl = immutable(lensChain.id);
-
-    // 2. Upload feed metadata to storage
-    const { uri: feedUri } = await storageClient.uploadAsJson(feedMetadata, { acl });
-
-    // 3. Create the feed on Lens Protocol
-    const feedCreationResult = await createFeed(sessionClient, {
-      metadataUri: feedUri,
-      admins: [evmAddress(ADMIN_USER_ADDRESS)],
-      rules: {
-        required: [
-          {
-            groupGatedRule: {
-              group: evmAddress(communityAddress),
-            },
-          },
-        ],
+    // 1. Create the feed via API (server-side with admin clients)
+    const feedResponse = await fetch("/api/feeds", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    })
-      .andThen(handleOperationWith(walletClient))
-      .andThen(sessionClient.waitForTransaction)
-      .andThen(txHash => fetchFeed(sessionClient, { txHash }));
+      body: JSON.stringify({
+        title: formData.title,
+        description: formData.summary,
+        communityAddress,
+      }),
+    });
 
-    if (feedCreationResult.isErr()) {
-      console.error("[Service] Error creating feed:", feedCreationResult.error);
+    if (!feedResponse.ok) {
+      const errorData = await feedResponse.json().catch(() => ({}));
+      console.error("[Service] Error creating thread feed:", errorData);
       return {
         success: false,
-        error: feedCreationResult.error instanceof Error ? feedCreationResult.error.message : "Failed to create feed",
+        error: errorData.error || "Failed to create thread feed",
       };
     }
 
-    const createdFeed = feedCreationResult.value;
+    const feedResult = await feedResponse.json();
+    if (!feedResult.success) {
+      console.error("[Service] Error creating thread feed:", feedResult.error);
+      return {
+        success: false,
+        error: feedResult.error || "Failed to create thread feed",
+      };
+    }
+
+    const createdFeed = feedResult.feed;
     if (!createdFeed) {
       return {
         success: false,
