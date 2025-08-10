@@ -5,12 +5,8 @@
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
-import {
-  fetchAccountsBatch,
-  fetchAllThreadPosts,
-  fetchPostsByAuthor,
-  fetchThreadPosts,
-} from "@/lib/external/lens/primitives/replies";
+import { fetchAccountsBatch } from "@/lib/external/lens/primitives/accounts";
+import { fetchAllThreadPosts, fetchPostsByAuthor, fetchThreadPosts } from "@/lib/external/lens/primitives/posts";
 import { client } from "@/lib/external/lens/protocol-client";
 import { incrementThreadRepliesCount } from "@/lib/external/supabase/threads";
 import { Address, Reply, ReplyAuthor } from "@/types/common";
