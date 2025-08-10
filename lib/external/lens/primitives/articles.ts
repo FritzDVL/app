@@ -13,7 +13,7 @@ import { type SessionClient, evmAddress, uri } from "@lens-protocol/client";
 import type { Post } from "@lens-protocol/client";
 import { fetchPost, post } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
-import { article } from "@lens-protocol/metadata";
+import { MetadataAttributeType, article } from "@lens-protocol/metadata";
 
 export interface ArticleCreationData {
   title: string;
@@ -46,11 +46,8 @@ export async function createThreadArticle(
   try {
     // 1. Build article attributes
     const attributes: any[] = [];
-    attributes.push({ key: "author", type: "STRING", value: articleData.author });
-
-    if (articleData.summary) {
-      attributes.push({ key: "subtitle", type: "STRING", value: articleData.summary });
-    }
+    attributes.push({ key: "author", type: MetadataAttributeType.STRING, value: articleData.author });
+    attributes.push({ key: "subtitle", type: MetadataAttributeType.STRING, value: articleData.summary });
 
     // 2. Add thread content prefix with URL
     const threadUrl = `https://lensforum.xyz/thread/${articleData.feedAddress}`;

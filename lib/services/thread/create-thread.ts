@@ -7,19 +7,18 @@
 import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { storageClient } from "@/lib/external/grove/client";
-import { getAdminSessionClient } from "@/lib/external/lens/admin-session";
 import { lensChain } from "@/lib/external/lens/chain";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
 import { createThreadArticle } from "@/lib/external/lens/primitives/articles";
 import { persistCommunityThread, persistRootPostId } from "@/lib/external/supabase/threads";
-import { getAdminWallet } from "@/lib/external/wallets/admin-wallet";
 import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
 import { Thread } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
-import { evmAddress } from "@lens-protocol/client";
+import { SessionClient, evmAddress } from "@lens-protocol/client";
 import { createFeed, fetchFeed } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { feed } from "@lens-protocol/metadata";
+import { WalletClient } from "viem";
 
 export interface CreateThreadResult {
   success: boolean;
@@ -34,12 +33,10 @@ export interface CreateThreadResult {
 export async function createThread(
   communityAddress: string,
   formData: CreateThreadFormData,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
 ): Promise<CreateThreadResult> {
   try {
-    // Get admin session and wallet
-    const adminSessionClient = await getAdminSessionClient();
-    const adminWallet = await getAdminWallet();
-
     // 1. Build metadata for the thread feed
     const feedMetadata = feed({
       name: formData.title,
@@ -51,7 +48,7 @@ export async function createThread(
     const { uri: feedUri } = await storageClient.uploadAsJson(feedMetadata, { acl });
 
     // 3. Create the feed on Lens Protocol
-    const feedCreationResult = await createFeed(adminSessionClient, {
+    const feedCreationResult = await createFeed(sessionClient, {
       metadataUri: feedUri,
       admins: [evmAddress(ADMIN_USER_ADDRESS)],
       rules: {
@@ -64,15 +61,15 @@ export async function createThread(
         ],
       },
     })
-      .andThen(handleOperationWith(adminWallet))
-      .andThen(adminSessionClient.waitForTransaction)
-      .andThen(txHash => fetchFeed(adminSessionClient, { txHash }));
+      .andThen(handleOperationWith(walletClient))
+      .andThen(sessionClient.waitForTransaction)
+      .andThen(txHash => fetchFeed(sessionClient, { txHash }));
 
     if (feedCreationResult.isErr()) {
       console.error("[Service] Error creating feed:", feedCreationResult.error);
       return {
         success: false,
-        error: feedCreationResult.error.message,
+        error: feedCreationResult.error instanceof Error ? feedCreationResult.error.message : "Failed to create feed",
       };
     }
 
@@ -94,8 +91,8 @@ export async function createThread(
         tags: formData.tags,
         feedAddress: createdFeed.address,
       },
-      adminSessionClient,
-      adminWallet,
+      sessionClient,
+      walletClient,
     );
 
     if (!articleResult.success) {
