@@ -1,6 +1,6 @@
+import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { client } from "@/lib/external/lens/protocol-client";
 import { fetchThread as fetchThreadDb } from "@/lib/external/supabase/threads";
-import { transformFeedToThread } from "@/lib/transformers/thread-transformers";
 import { Thread } from "@/types/common";
 import { evmAddress } from "@lens-protocol/client";
 import { fetchAccount, fetchFeed } from "@lens-protocol/client/actions";
@@ -27,7 +27,7 @@ export async function fetchThread(threadAddress: string): Promise<Thread | null>
     if (accountRequest.isErr() || !accountRequest.value) return null;
 
     // Transform and enrich the thread
-    const thread = await transformFeedToThread(feedResult.value, threadRecord, accountRequest.value);
+    const thread = await adaptFeedToThread(feedResult.value, threadRecord, accountRequest.value);
     return thread;
   } catch (error) {
     console.error("Failed to fetch thread", error);

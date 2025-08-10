@@ -4,7 +4,7 @@ import { Post } from "@lens-protocol/client";
 /**
  * Transforms a Lens Post object into a Reply (ReplyPost) object for the forum
  */
-export function transformPostToReply(post: Post, author: ReplyAuthor): Reply {
+export function adaptPostToReply(post: Post, author: ReplyAuthor): Reply {
   return {
     id: post.id,
     thread: post.feed?.address,

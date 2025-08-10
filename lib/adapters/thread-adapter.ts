@@ -35,21 +35,21 @@ const getTitleAndSummary = (rootPost: Post | null, feed: Feed) => {
 
 /**
  * Transform a Lens Feed object and thread record to a Thread object
- * This is a convenience wrapper around transformFeedToThreadOptimized
+ * This is a convenience wrapper around adaptFeedToThreadOptimized
  */
-export const transformFeedToThread = async (
+export const adaptFeedToThread = async (
   feed: Feed,
   threadRecord: CommunityThreadSupabase,
   author: Account,
 ): Promise<Thread> => {
-  return transformFeedToThreadOptimized(feed, threadRecord, author);
+  return adaptFeedToThreadOptimized(feed, threadRecord, author);
 };
 
 /**
  * Transform form data and thread record to a basic Thread object
  * Used when we have thread data but no feed details yet
  */
-export const transformFormDataToThread = (
+export const adaptFormDataToThread = (
   formData: { title: string; summary: string; tags: string; author: Address },
   threadRecord: CommunityThreadSupabase,
   communityAddress: string,
@@ -80,7 +80,7 @@ export const transformFormDataToThread = (
  * Transform a Lens Feed object and thread record to a Thread object
  * Optimized version that accepts pre-fetched root post to avoid redundant API calls
  */
-export const transformFeedToThreadOptimized = async (
+export const adaptFeedToThreadOptimized = async (
   feed: Feed,
   threadRecord: CommunityThreadSupabase,
   author: Account,

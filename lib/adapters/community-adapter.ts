@@ -5,7 +5,7 @@ import { Group, GroupStatsResponse } from "@lens-protocol/client";
 /**
  * Transform a Lens Group object to a Community object
  */
-export function transformGroupToCommunity(
+export function adaptGroupToCommunity(
   group: Group,
   groupStats: GroupStatsResponse,
   dbCommunity: CommunitySupabase,

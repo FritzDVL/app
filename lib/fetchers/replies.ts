@@ -1,6 +1,6 @@
 import { APP_ADDRESS } from "../shared/constants";
+import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { client } from "@/lib/external/lens/protocol-client";
-import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { Address, PaginatedRepliesResult, Reply } from "@/types/common";
 import { Account, Post as LensPost, PageSize, evmAddress } from "@lens-protocol/client";
 import { fetchAccount, fetchPosts } from "@lens-protocol/client/actions";
@@ -52,7 +52,7 @@ async function fetchRepliesBatched(posts: LensPost[]): Promise<Reply[]> {
       }
 
       replies.push(
-        transformPostToReply(post, {
+        adaptPostToReply(post, {
           name: author.username?.localName || "Unknown Author",
           username: author.username?.value || "unknown",
           avatar: author.metadata?.picture || "",
@@ -161,7 +161,7 @@ export async function fetchLatestRepliesByAuthor(author: Address, limit: number 
 
     for (const post of validPosts.slice(0, limit)) {
       replies.push(
-        transformPostToReply(post, {
+        adaptPostToReply(post, {
           name: post.author.username?.localName || "Unknown Author",
           username: post.author.username?.value || "unknown",
           avatar: post.author.metadata?.picture || "",

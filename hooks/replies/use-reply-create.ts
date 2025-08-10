@@ -1,9 +1,9 @@
 // import { lensMainnet } from "@/lib/chains/lens-mainnet";
+import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
 import { incrementThreadRepliesCount } from "@/lib/external/supabase/threads";
-import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Address, Reply as ReplyType } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
@@ -60,7 +60,7 @@ export function useReplyCreate() {
   }
 
   function buildReplyObject(replyPost: Post) {
-    return transformPostToReply(replyPost, {
+    return adaptPostToReply(replyPost, {
       name: account?.username?.localName || "",
       username: account?.username?.value || "",
       avatar: account?.metadata?.picture,

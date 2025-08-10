@@ -2,12 +2,12 @@
  * Reply Service
  * Orchestrates reply operations using existing hooks and external layer
  */
+import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
 import { incrementThreadRepliesCount } from "@/lib/external/supabase/threads";
 import { fetchRepliesPaginated } from "@/lib/fetchers/replies";
-import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { Address, Reply, ReplyAuthor } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
 import { PageSize, Post, evmAddress, postId, uri } from "@lens-protocol/client";
@@ -89,7 +89,7 @@ export async function createReply(
     }
 
     // 5. Transform post to reply - using the correct author parameter
-    const reply = transformPostToReply(createdPost, replyAuthor);
+    const reply = adaptPostToReply(createdPost, replyAuthor);
 
     return {
       success: true,

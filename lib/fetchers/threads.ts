@@ -1,6 +1,6 @@
+import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
 import { client } from "@/lib/external/lens/protocol-client";
 import { fetchCommunityThreads, fetchFeaturedThreads, fetchLatestThreads } from "@/lib/external/supabase/threads";
-import { transformFeedToThreadOptimized } from "@/lib/transformers/thread-transformers";
 import { Thread } from "@/types/common";
 import { Account, Feed, Post, evmAddress } from "@lens-protocol/client";
 import { fetchAccount, fetchFeed, fetchPost } from "@lens-protocol/client/actions";
@@ -114,7 +114,7 @@ async function fetchThreadsBatched(threadRecords: any[]): Promise<Thread[]> {
       // Get root post if available
       const rootPost = threadRecord.root_post_id ? rootPostMap.get(threadRecord.root_post_id) || null : null;
 
-      const thread = await transformFeedToThreadOptimized(feed, threadRecord, author, rootPost);
+      const thread = await adaptFeedToThreadOptimized(feed, threadRecord, author, rootPost);
       threads.push(thread);
     } catch (error) {
       console.warn(`Error transforming thread ${threadRecord.lens_feed_address}:`, error);

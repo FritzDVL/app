@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { storageClient } from "@/lib/external/grove/client";
 import { getAdminSessionClient } from "@/lib/external/lens/admin-session";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
 import { persistCommunity } from "@/lib/external/supabase/communities";
 import { adminWallet } from "@/lib/external/wallets/admin-wallet";
-import { transformGroupToCommunity } from "@/lib/transformers/community-transformers";
 import { Moderator } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
 import { Group, evmAddress } from "@lens-protocol/client";
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. Transform and return the new community
-    const newCommunity = transformGroupToCommunity(
+    const newCommunity = adaptGroupToCommunity(
       createdGroup,
       {
         totalMembers: 0,

@@ -1,6 +1,6 @@
+import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { client } from "@/lib/external/lens/protocol-client";
 import { fetchReplies } from "@/lib/fetchers/replies";
-import { transformPostToReply } from "@/lib/transformers/reply-transformer";
 import { Reply } from "@/types/common";
 import { Post as LensPost, evmAddress, postId } from "@lens-protocol/client";
 import { fetchAccount, fetchPost } from "@lens-protocol/client/actions";
@@ -23,7 +23,7 @@ export async function fetchReply(replyId: string): Promise<Reply | null> {
     const accountResult = await fetchAccount(client, { address: evmAddress(post.author.address) });
     if (accountResult.isOk() && accountResult.value) {
       const author = accountResult.value;
-      return transformPostToReply(post, {
+      return adaptPostToReply(post, {
         name: author.username?.localName || "Unknown Author",
         username: author.username?.value || "unknown",
         avatar: author.metadata?.picture || "",

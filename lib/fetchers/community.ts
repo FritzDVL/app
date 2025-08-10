@@ -1,6 +1,6 @@
+import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { client } from "@/lib/external/lens/protocol-client";
 import { fetchCommunity as fetchCommunityDb } from "@/lib/external/supabase/communities";
-import { transformGroupToCommunity } from "@/lib/transformers/community-transformers";
 import { Community, Moderator } from "@/types/common";
 import { GroupStatsResponse, evmAddress } from "@lens-protocol/client";
 import { fetchAdminsFor, fetchGroup, fetchGroupStats } from "@lens-protocol/client/actions";
@@ -49,7 +49,7 @@ export async function fetchCommunity(address: string): Promise<Community | null>
     }
 
     // Pass groupStats (not stats) to the transformer
-    return transformGroupToCommunity(group, groupStats, dbCommunity, moderators);
+    return adaptGroupToCommunity(group, groupStats, dbCommunity, moderators);
   } catch (error) {
     console.warn(`Error populating community ${address}:`, error);
     return null;

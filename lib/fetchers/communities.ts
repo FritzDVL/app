@@ -1,6 +1,6 @@
+import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { client } from "@/lib/external/lens/protocol-client";
 import { fetchAllCommunities, fetchCommunity } from "@/lib/external/supabase/communities";
-import { transformGroupToCommunity } from "@/lib/transformers/community-transformers";
 import { Address, Community, Moderator } from "@/types/common";
 import { Group, GroupStatsResponse, evmAddress } from "@lens-protocol/client";
 import { fetchAdminsFor, fetchGroup, fetchGroupStats, fetchGroups } from "@lens-protocol/client/actions";
@@ -109,7 +109,7 @@ export async function fetchCommunities(
           continue;
         }
 
-        communitiesData.push(transformGroupToCommunity(group, groupStats, dbCommunity, moderators));
+        communitiesData.push(adaptGroupToCommunity(group, groupStats, dbCommunity, moderators));
       } catch (error) {
         console.warn(`Error transforming community ${dbCommunity.lens_group_address}:`, error);
         continue;
@@ -230,7 +230,7 @@ export async function fetchCommunitiesJoined(member: Address): Promise<Community
       }
 
       const moderators = adminsMap.get(evmAddress(group.address)) || [];
-      communities.push(transformGroupToCommunity(group, groupStats, dbCommunity, moderators));
+      communities.push(adaptGroupToCommunity(group, groupStats, dbCommunity, moderators));
     }
 
     return communities;

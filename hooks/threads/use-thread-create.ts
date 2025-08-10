@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { adaptFormDataToThread } from "@/lib/adapters/thread-adapter";
 import { addThreadContentPrefix } from "@/lib/domain/threads/content";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { storageClient } from "@/lib/external/grove/client";
@@ -6,7 +7,6 @@ import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
 import { fetchCommunity } from "@/lib/external/supabase/communities";
 import { persistRootPostId } from "@/lib/external/supabase/threads";
-import { transformFormDataToThread } from "@/lib/transformers/thread-transformers";
 import { Address, Thread } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
 import { immutable } from "@lens-chain/storage-client";
@@ -166,9 +166,9 @@ export function useThreadCreation() {
       const rootPost = await fetchThreadRootPost(postedFeed.id);
       // 6. Build thread record and thread instance
       const threadRecord = buildThreadRecord(formData, data, postedFeed, community);
-      // Ensure tags is always a string for transformFormDataToThread
+      // Ensure tags is always a string for adaptFormDataToThread
       const safeFormData = { ...formData, tags: formData.tags || "" };
-      const newThread = transformFormDataToThread(safeFormData, threadRecord, communityAddress, author, rootPost);
+      const newThread = adaptFormDataToThread(safeFormData, threadRecord, communityAddress, author, rootPost);
       if (onSuccess) {
         onSuccess(newThread);
       }
