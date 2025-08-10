@@ -31,7 +31,9 @@ export function useReplyCreate() {
       return null;
     }
 
+    let loadingToastId: string | number | undefined;
     try {
+      loadingToastId = toast.loading("Uploading your reply...");
       const replyAuthor = {
         name: account.username?.localName || "",
         username: account.username?.value || "",
@@ -52,6 +54,7 @@ export function useReplyCreate() {
 
       if (result.success) {
         toast.success("Reply posted!");
+        if (loadingToastId) toast.dismiss(loadingToastId);
         return result.reply || null;
       } else {
         const errorMsg = result.error || "Failed to create reply";
@@ -60,12 +63,14 @@ export function useReplyCreate() {
         } else {
           toast.error("Failed to create reply", { description: errorMsg });
         }
+        if (loadingToastId) toast.dismiss(loadingToastId);
         return null;
       }
     } catch (error) {
       console.error("Error creating reply:", error);
       const errorMsg = error instanceof Error ? error.message : "Unknown error occurred";
       toast.error("Failed to create reply", { description: errorMsg });
+      if (loadingToastId) toast.dismiss(loadingToastId);
       return null;
     }
   };
