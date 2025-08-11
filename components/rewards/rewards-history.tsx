@@ -58,7 +58,7 @@ export function RewardsHistory({ distributions, loading, isRewardsAvailable }: R
             </div>
             <div className="text-right">
               <p className="font-semibold text-green-700 dark:text-green-300">
-                +{distribution.amount} {distribution.token}
+                +{parseFloat(distribution.amount).toFixed(5)} {distribution.token}
               </p>
             </div>
           </div>
