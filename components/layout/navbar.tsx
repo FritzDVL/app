@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLogout } from "@/hooks/auth/use-logout";
 import { useAuthStore } from "@/stores/auth-store";
-import { Bell, Home, LogOut, Menu, Plus, RefreshCw, Search, User, Users, X } from "lucide-react";
+import { Bell, Gift, Home, LogOut, Menu, Plus, RefreshCw, Search, User, Users, X } from "lucide-react";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -109,6 +109,15 @@ export function Navbar() {
                     <Link href={`/u/${account.username?.localName || "user"}`}>
                       <User className="mr-2 h-4 w-4 text-brand-500" />
                       Go to profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    asChild
+                    className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-900 focus:bg-yellow-100 focus:text-yellow-900 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-200"
+                  >
+                    <Link href={`/u/${account.username?.localName || "user"}/rewards`}>
+                      <Gift className="mr-2 h-4 w-4 text-brand-500" />
+                      Rewards
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
