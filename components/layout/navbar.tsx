@@ -115,7 +115,7 @@ export function Navbar() {
                     asChild
                     className="cursor-pointer rounded-lg transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-900 focus:bg-yellow-100 focus:text-yellow-900 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-200"
                   >
-                    <Link href={`/u/${account.username?.localName || "user"}/rewards`}>
+                    <Link href={`/rewards`}>
                       <Gift className="mr-2 h-4 w-4 text-brand-500" />
                       Rewards
                     </Link>
