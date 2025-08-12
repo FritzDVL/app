@@ -62,19 +62,10 @@ export function useCommunityCreateForm() {
         },
         formData.image,
       );
-      if (!community || typeof community !== "object" || !("id" in community) || !("address" in community)) {
-        setError("Community creation failed.");
-        setLoading(false);
-        return;
-      }
-      const joined = await joinAndIncrementCommunityMember(
-        community as { id: string; address: string },
-        sessionClient.data,
-        walletClient.data,
-      );
+      const joined = await joinAndIncrementCommunityMember(community, sessionClient.data, walletClient.data);
       await queryClient.invalidateQueries({ queryKey: ["communities"] });
       if (joined) {
-        router.push(`/communities/${(community as { address: string }).address}`);
+        router.push(`/communities/${community.address}`);
       }
     } catch (err: any) {
       setError(err.message || "Failed to create community");

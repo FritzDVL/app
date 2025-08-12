@@ -1,25 +1,15 @@
 import { useState } from "react";
-import { CreateCommunityFormData } from "@/lib/domain/communities/types";
+import { Community, CreateCommunityFormData } from "@/lib/domain/communities/types";
 import { toast } from "sonner";
-
-// Re-export for convenience
-export type { CreateCommunityFormData };
 
 export function useCommunityCreation() {
   const [isCreating, setIsCreating] = useState(false);
 
-  const createCommunityAction = async (
-    formData: CreateCommunityFormData,
-    imageFile?: File,
-    onSuccess?: (community: any) => void,
-  ): Promise<void> => {
+  const createCommunityAction = async (formData: CreateCommunityFormData, imageFile?: File): Promise<Community> => {
     setIsCreating(true);
-
-    // Show loading toast
     const loadingToastId = toast.loading("Creating Community", {
       description: "Setting up your community on Lens Protocol...",
     });
-
     try {
       // Create FormData for API call
       const apiFormData = new FormData();
@@ -29,15 +19,12 @@ export function useCommunityCreation() {
       if (imageFile) {
         apiFormData.append("image", imageFile);
       }
-
       // Call the API route
       const response = await fetch("/api/communities", {
         method: "POST",
         body: apiFormData,
       });
-
       const result = await response.json();
-
       if (!response.ok || !result.success) {
         toast.error("Creation Failed", {
           id: loadingToastId,
@@ -45,14 +32,12 @@ export function useCommunityCreation() {
         });
         throw new Error(result.error || "Failed to create community.");
       }
-
-      // Use the returned community object
-      const newCommunity = result.community;
-      onSuccess?.(newCommunity);
       toast.success("Community Created!", {
         id: loadingToastId,
         description: `${formData.name} has been successfully created on Lens Protocol.`,
       });
+
+      return result.community as Community;
     } catch (error) {
       console.error("Error creating community:", error);
       toast.error("Creation Failed", {
