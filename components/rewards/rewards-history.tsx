@@ -1,5 +1,5 @@
 import React from "react";
-import { TokenDistribution } from "@/hooks/rewards/use-token-distributions";
+import { TokenDistribution } from "@/lib/domain/rewards/token-distribution";
 import { Calendar } from "lucide-react";
 
 interface RewardsHistoryProps {
