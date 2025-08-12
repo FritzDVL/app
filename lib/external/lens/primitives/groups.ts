@@ -1,5 +1,3 @@
-"use server";
-
 import { client } from "../protocol-client";
 import { Moderator } from "@/lib/domain/communities/types";
 import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
