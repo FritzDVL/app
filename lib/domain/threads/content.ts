@@ -19,10 +19,23 @@ export function addThreadContentPrefix(content: string, threadUrl: string, title
  * Removes prefix, title, and summary from content.
  */
 export function removeThreadContentPrefix(content: string): string {
-  return content.replace(
-    /^LensForum Thread: https:\/\/lensforum\.xyz\/thread\/[\w\d]+\s*\n\n(# \*\*.*\*\*\n\n)?(\*.*\*\n\n)?/,
-    "",
+  let result = content;
+
+  // Step 1: Remove the prefix line
+  const prefixRegex = new RegExp(
+    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}https://lensforum\\.xyz/thread/[\\w\\d]+\\s*\\n+`,
   );
+  result = result.replace(prefixRegex, "");
+
+  // Step 2: Remove H1 bold title if present
+  const titleRegex = /^# \*\*.*?\*\*\s*\n+/;
+  result = result.replace(titleRegex, "");
+
+  // Step 3: Remove italic summary if present
+  const summaryRegex = /^\*.*?\*\s*\n+/;
+  result = result.replace(summaryRegex, "");
+
+  return result;
 }
 
 /**
