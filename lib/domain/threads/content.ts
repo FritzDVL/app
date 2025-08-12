@@ -6,20 +6,41 @@
 const THREAD_CONTENT_PREFIX = "LensForum Thread: ";
 
 /**
- * Adds the LensForum thread prefix to the given content and thread URL.
- * Domain rule: All thread content should be prefixed with forum identifier
+ * Adds prefix, title, and summary to content.
  */
-export function addThreadContentPrefix(content: string, threadUrl: string): string {
-  return `${THREAD_CONTENT_PREFIX}${threadUrl}\n\n${content}`;
+export function formatThreadArticleContent(
+  content: string,
+  threadUrl: string,
+  title?: string,
+  summary?: string,
+): string {
+  const titleSection = title ? `# **${title}**\n\n` : "";
+  const summarySection = summary ? `*${summary}*\n\n` : "";
+  const prefixSection = `${THREAD_CONTENT_PREFIX}${threadUrl}\n\n`;
+  return `${prefixSection}${titleSection}${summarySection}${content}`;
 }
 
 /**
- * Removes the LensForum thread prefix from the given content if present.
- * Used when displaying content to users (clean format)
+ * Removes prefix, title, and summary from content.
  */
-export function removeThreadContentPrefix(content: string): string {
-  // Match only the prefix and URL at the start, up to the first double newline
-  return content.replace(/^LensForum Thread: https:\/\/lensforum\.xyz\/thread\/[\w\d]+\s*\n\n/, "");
+export function stripThreadArticleFormatting(content: string): string {
+  let result = content;
+
+  // Step 1: Remove the prefix line
+  const prefixRegex = new RegExp(
+    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}https://lensforum\\.xyz/thread/[\\w\\d]+\\s*\\n+`,
+  );
+  result = result.replace(prefixRegex, "");
+
+  // Step 2: Remove H1 bold title if present
+  const titleRegex = /^# \*\*.*?\*\*\s*\n+/;
+  result = result.replace(titleRegex, "");
+
+  // Step 3: Remove italic summary if present
+  const summaryRegex = /^\*.*?\*\s*\n+/;
+  result = result.replace(summaryRegex, "");
+
+  return result;
 }
 
 /**
@@ -27,7 +48,7 @@ export function removeThreadContentPrefix(content: string): string {
  * Useful for validation and content type detection
  */
 export function hasThreadContentPrefix(content: string): boolean {
-  return content.startsWith(THREAD_CONTENT_PREFIX);
+  return content.startsWith(`*${THREAD_CONTENT_PREFIX}`) || content.startsWith(THREAD_CONTENT_PREFIX);
 }
 
 export { THREAD_CONTENT_PREFIX };

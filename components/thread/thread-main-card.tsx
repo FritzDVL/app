@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThread } from "@/hooks/queries/use-thread";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
-import { removeThreadContentPrefix } from "@/lib/domain/threads/content";
+import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { useAuthStore } from "@/stores/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Coins, Flag, Reply as ReplyIcon, Share } from "lucide-react";
@@ -100,7 +100,7 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
                 </span>
               </div>
               <ContentRenderer
-                content={removeThreadContentPrefix(getThreadContent(thread))}
+                content={stripThreadArticleFormatting(getThreadContent(thread))}
                 className="rich-text-content rounded-2xl bg-muted/50 p-5 text-muted-foreground"
               />
             </div>

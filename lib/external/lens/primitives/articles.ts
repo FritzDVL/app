@@ -2,7 +2,7 @@
  * Lens Protocol Articles Primitives
  * Handles article creation and management for thread content
  */
-import { addThreadContentPrefix } from "@/lib/domain/threads/content";
+import { formatThreadArticleContent } from "@/lib/domain/threads/content";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
@@ -47,9 +47,14 @@ export async function createThreadArticle(
     attributes.push({ key: "author", type: MetadataAttributeType.STRING, value: articleData.author });
     attributes.push({ key: "subtitle", type: MetadataAttributeType.STRING, value: articleData.summary });
 
-    // 2. Add thread content prefix with URL
+    // 2. Add thread content prefix with URL, title and summary
     const threadUrl = `https://lensforum.xyz/thread/${articleData.feedAddress}`;
-    const contentWithPrefix = addThreadContentPrefix(articleData.content, threadUrl);
+    const contentWithPrefix = formatThreadArticleContent(
+      articleData.content,
+      threadUrl,
+      articleData.title,
+      articleData.summary,
+    );
 
     // 3. Build article metadata
     const articleMetadata = article({
