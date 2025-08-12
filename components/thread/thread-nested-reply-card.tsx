@@ -3,7 +3,7 @@ import { ThreadReplyBox } from "@/components/thread/thread-reply-box";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getTimeAgo } from "@/lib/utils";
+import { getTimeAgo } from "@/lib/shared/utils";
 import { Reply } from "lucide-react";
 
 export function ThreadNestedReplyCard({

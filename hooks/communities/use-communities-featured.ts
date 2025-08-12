@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchCommunity } from "@/lib/fetchers/community";
-import { fetchFeaturedCommunities } from "@/lib/supabase";
-import { Community } from "@/types/common";
+import { getFeaturedCommunities } from "@/lib/services/community/get-featured-communities";
+import { Community } from "@/lib/domain/communities/types";
 
 /**
  * Returns the featured communities (3 oldest, fully populated) and a loading flag.
@@ -15,10 +14,19 @@ export function useCommunitiesFeatured() {
     const fetchAndPopulate = async () => {
       setIsLoading(true);
       try {
-        const dbCommunities = await fetchFeaturedCommunities();
-        const populated = await Promise.all(dbCommunities.map(c => fetchCommunity(c.lens_group_address)));
+        const result = await getFeaturedCommunities();
         if (isMounted) {
-          setFeatured(populated.filter(Boolean) as Community[]);
+          if (result.success) {
+            setFeatured(result.communities || []);
+          } else {
+            console.error("Failed to fetch featured communities:", result.error);
+            setFeatured([]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching featured communities:", error);
+        if (isMounted) {
+          setFeatured([]);
         }
       } finally {
         if (isMounted) setIsLoading(false);

@@ -1,8 +1,5 @@
-import { decrementCommunityMembersCount } from "@/lib/supabase";
-import { Community } from "@/types/common";
-import { evmAddress } from "@lens-protocol/client";
-import { leaveGroup } from "@lens-protocol/client/actions";
-import { handleOperationWith } from "@lens-protocol/client/viem";
+import { Community } from "@/lib/domain/communities/types";
+import { leaveCommunity } from "@/lib/services/membership/leave-community";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
@@ -22,17 +19,21 @@ export function useLeaveCommunity(community: Community) {
       });
       return;
     }
+    if (!walletClient.data) {
+      toast.error("Wallet not connected", {
+        description: "Please connect your wallet to leave communities.",
+      });
+      return;
+    }
+
     const toastIsLeaving = toast.loading("Leaving community...");
     try {
-      const result = await leaveGroup(sessionClient.data, {
-        group: evmAddress(community.address),
-      }).andThen(handleOperationWith(walletClient.data));
+      const result = await leaveCommunity(community, sessionClient.data, walletClient.data);
 
-      if (result.isOk()) {
-        await decrementCommunityMembersCount(community.id);
+      if (result.success) {
         toast.success("You have left the community!");
       } else {
-        throw new Error(result.error.message);
+        throw new Error(result.error || "Failed to leave community");
       }
     } catch (error) {
       console.error("Error leaving community:", error);

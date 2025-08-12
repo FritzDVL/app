@@ -1,15 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
+import { TokenDistribution } from "@/lib/domain/rewards/token-distribution";
+import { fetchAllTokenDistributions } from "@/lib/external/lens/primitives/token-distribution";
 import { useAuthStore } from "@/stores/auth-store";
-import { fetchTokenDistributions } from "@lens-protocol/client/actions";
-import { PageSize, useSessionClient } from "@lens-protocol/react";
-
-export interface TokenDistribution {
-  id: string;
-  amount: string;
-  token: string;
-  timestamp: string;
-  type: string;
-}
+import { useSessionClient } from "@lens-protocol/react";
 
 export interface TokenDistributionResult {
   distributions: TokenDistribution[];
@@ -28,17 +21,6 @@ export function useTokenDistributions(): TokenDistributionResult {
   const { account } = useAuthStore();
   const sessionClient = useSessionClient();
 
-  // Transform function to convert Lens API response to our interface
-  const transformDistribution = (item: any): TokenDistribution => {
-    return {
-      id: item.txHash || `${item.timestamp}-${Math.random()}`,
-      amount: item.amount?.value || "0",
-      token: item.amount?.asset?.symbol || "UNKNOWN",
-      timestamp: item.timestamp || new Date().toISOString(),
-      type: "Reward Distribution",
-    };
-  };
-
   // Fetch all pages automatically to calculate accurate totals
   const fetchAllDistributions = useCallback(async () => {
     if (!account?.address) {
@@ -54,45 +36,11 @@ export function useTokenDistributions(): TokenDistributionResult {
     setLoading(true);
     setError(null);
 
-    try {
-      let allItems: TokenDistribution[] = [];
-      let cursor: string | null = null;
-      let hasMore = true;
+    const result = await fetchAllTokenDistributions(sessionClient.data);
 
-      // Fetch all pages
-      while (hasMore) {
-        const params: any = {
-          pageSize: PageSize.Ten,
-        };
-
-        if (cursor) {
-          params.cursor = cursor;
-        }
-
-        const result = await fetchTokenDistributions(sessionClient.data, params);
-
-        if (result.isErr()) {
-          throw new Error(result.error.message);
-        }
-
-        const { items, pageInfo } = result.value;
-
-        // Transform and add items to our collection
-        const transformedItems = items.map(transformDistribution);
-        allItems = [...allItems, ...transformedItems];
-
-        // Check if there are more pages
-        hasMore = !!pageInfo.next;
-        cursor = pageInfo.next;
-      }
-
-      setAllDistributions(allItems);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch token distributions");
-      setAllDistributions([]);
-    } finally {
-      setLoading(false);
-    }
+    setAllDistributions(result.distributions);
+    setError(result.error);
+    setLoading(false);
   }, [account?.address, sessionClient.data]);
 
   useEffect(() => {

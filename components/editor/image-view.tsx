@@ -87,6 +87,8 @@ export default function ImageView(props: ReactNodeViewProps) {
       {url && !error && (
         <Image
           src={url}
+          width={attrs.width || 600}
+          height={attrs.height || 400}
           onLoad={handleImageLoad}
           className="h-full max-h-full w-full max-w-full object-contain"
           alt="Image"

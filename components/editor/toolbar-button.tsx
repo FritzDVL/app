@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import { TooltipContent, TooltipRoot, TooltipTrigger } from "prosekit/react/tooltip";
 
 export default function ToolbarButton({

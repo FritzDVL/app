@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { groveLensUrlToHttp } from "@/lib/utils";
+import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import { MessageSquare, Search, Users } from "lucide-react";
 
 interface Community {

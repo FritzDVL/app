@@ -9,7 +9,7 @@ import { useForumStats } from "@/hooks/common/use-forum-stats";
 import { useFeaturedCommunities } from "@/hooks/queries/use-featured-communities";
 import { useFeaturedThreads } from "@/hooks/queries/use-featured-threads";
 import { useLatestThreads } from "@/hooks/queries/use-latest-threads";
-import { getTimeAgo } from "@/lib/utils";
+import { getTimeAgo } from "@/lib/shared/utils";
 
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("Featured");

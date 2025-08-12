@@ -1,37 +1,28 @@
 import { useState } from "react";
+import { Community, CreateCommunityFormData } from "@/lib/domain/communities/types";
 import { toast } from "sonner";
-
-export interface CreateCommunityFormData {
-  name: string;
-  description: string;
-  adminAddress: string;
-}
 
 export function useCommunityCreation() {
   const [isCreating, setIsCreating] = useState(false);
 
-  const createCommunity = async (
-    formData: CreateCommunityFormData,
-    onSuccess?: (community: any) => void, // Use 'any' since the API returns a plain object
-  ): Promise<void> => {
+  const createCommunity = async (formData: CreateCommunityFormData, imageFile?: File): Promise<Community> => {
     setIsCreating(true);
-
-    // Show loading toast
     const loadingToastId = toast.loading("Creating Community", {
       description: "Setting up your community on Lens Protocol...",
     });
-
     try {
-      // Call API route to create the community
+      // Create FormData for API call
+      const apiFormData = new FormData();
+      apiFormData.append("name", formData.name);
+      apiFormData.append("description", formData.description);
+      apiFormData.append("adminAddress", formData.adminAddress);
+      if (imageFile) {
+        apiFormData.append("image", imageFile);
+      }
+      // Call the API route
       const response = await fetch("/api/communities", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "community",
-          name: formData.name,
-          description: formData.description,
-          adminAddress: formData.adminAddress,
-        }),
+        body: apiFormData,
       });
       const result = await response.json();
       if (!response.ok || !result.success) {
@@ -41,13 +32,12 @@ export function useCommunityCreation() {
         });
         throw new Error(result.error || "Failed to create community.");
       }
-      // Use the returned community object
-      const newCommunity = result.community;
-      onSuccess?.(newCommunity);
       toast.success("Community Created!", {
         id: loadingToastId,
         description: `${formData.name} has been successfully created on Lens Protocol.`,
       });
+
+      return result.community as Community;
     } catch (error) {
       console.error("Error creating community:", error);
       toast.error("Creation Failed", {

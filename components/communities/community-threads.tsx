@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { VotingActions } from "@/components/shared/voting-actions";
 import { ThreadNewButton } from "@/components/thread/thread-new-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +21,7 @@ export function CommunityThreads({
   isJoined?: boolean;
 }) {
   const [sortBy, setSortBy] = useState("hot");
+  const router = useRouter();
 
   const { data: threads = [], isLoading: areThreadsLoading } = useCommunityThreads(communityAddress);
 
@@ -101,62 +103,69 @@ export function CommunityThreads({
           ) : (
             <div className="space-y-4">
               {threads.map(thread => (
-                <Link key={thread.id} href={`/thread/${thread.address}`} className="group">
-                  <Card className="group mb-4 w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800">
-                    <CardContent className="p-6">
-                      <div className="flex items-start space-x-4">
-                        {/* Voting */}
-                        <div className="flex min-w-[50px] flex-col items-center space-y-1">
-                          {thread.rootPost && (
-                            <VotingActions
-                              postid={postId(thread.rootPost.id)}
-                              score={thread.rootPost.stats.upvotes - thread.rootPost.stats.downvotes}
-                            />
-                          )}
+                <Card
+                  key={thread.id}
+                  className="group mb-4 w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800"
+                  onClick={() => {
+                    router.push(`/thread/${thread.address}`);
+                  }}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start space-x-4">
+                      {/* Voting */}
+                      <div className="flex min-w-[50px] flex-col items-center space-y-1">
+                        {thread.rootPost && (
+                          <VotingActions
+                            postid={postId(thread.rootPost.id)}
+                            score={thread.rootPost.stats.upvotes - thread.rootPost.stats.downvotes}
+                          />
+                        )}
+                      </div>
+                      {/* Content */}
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-2 flex items-center space-x-2">
+                          {Array.isArray(thread.tags) &&
+                            thread.tags.length > 0 &&
+                            thread.tags.map((tag: string) => (
+                              <Badge key={tag} variant="outline" className="text-xs">
+                                #{tag}
+                              </Badge>
+                            ))}
                         </div>
-                        {/* Content */}
-                        <div className="min-w-0 flex-1">
-                          <div className="mb-2 flex items-center space-x-2">
-                            {Array.isArray(thread.tags) &&
-                              thread.tags.length > 0 &&
-                              thread.tags.map((tag: string) => (
-                                <Badge key={tag} variant="outline" className="text-xs">
-                                  #{tag}
-                                </Badge>
-                              ))}
+                        <h3 className="mb-2 cursor-pointer text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
+                          {thread.title}
+                        </h3>
+                        <p className="mb-3 line-clamp-2 text-muted-foreground">{thread.summary}</p>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                          <div className="flex items-center space-x-4">
+                            {thread.author && (
+                              <Link
+                                href={`/u/${thread.author.username}`}
+                                className="flex items-center hover:text-brand-600"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                }}
+                              >
+                                <Avatar className="mr-2 h-5 w-5">
+                                  <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
+                                  <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
+                                </Avatar>
+                                <span>{thread.author.name}</span>
+                              </Link>
+                            )}
+                            <span>{thread.timeAgo}</span>
                           </div>
-                          <h3 className="mb-2 cursor-pointer text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
-                            {thread.title}
-                          </h3>
-                          <p className="mb-3 line-clamp-2 text-muted-foreground">{thread.summary}</p>
-                          <div className="flex items-center justify-between text-sm text-muted-foreground">
-                            <div className="flex items-center space-x-4">
-                              {thread.author && (
-                                <Link
-                                  href={`/u/${thread.author.username}`}
-                                  className="flex items-center hover:text-brand-600"
-                                >
-                                  <Avatar className="mr-2 h-5 w-5">
-                                    <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                                    <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
-                                  </Avatar>
-                                  <span>{thread.author.name}</span>
-                                </Link>
-                              )}
-                              <span>{thread.timeAgo}</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <div className="flex items-center">
-                                <MessageCircle className="mr-1 h-4 w-4" />
-                                {thread.repliesCount} replies
-                              </div>
+                          <div className="flex items-center space-x-2">
+                            <div className="flex items-center">
+                              <MessageCircle className="mr-1 h-4 w-4" />
+                              {thread.repliesCount} replies
                             </div>
                           </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}

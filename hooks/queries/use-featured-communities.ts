@@ -1,15 +1,19 @@
-import { fetchCommunity } from "@/lib/fetchers/community";
-import { fetchFeaturedCommunities } from "@/lib/supabase";
-import type { Community } from "@/types/common";
+import { Community } from "@/lib/domain/communities/types";
+import { getFeaturedCommunities } from "@/lib/services/community/get-featured-communities";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export function useFeaturedCommunities() {
   return useQuery<Community[], Error>({
     queryKey: ["communities", "featured"],
     queryFn: async () => {
-      const dbCommunities = await fetchFeaturedCommunities();
-      const populated = await Promise.all(dbCommunities.map(c => fetchCommunity(c.lens_group_address)));
-      return populated.filter(Boolean) as Community[];
+      const result = await getFeaturedCommunities();
+      if (result.success) {
+        return result.communities || [];
+      } else {
+        toast.error(result.error);
+        throw new Error(result.error);
+      }
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });

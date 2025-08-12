@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchThread } from "@/lib/fetchers/thread";
-import { fetchLatestThreads } from "@/lib/supabase";
-import type { Thread } from "@/types/common";
+import { Thread } from "@/lib/domain/threads/types";
+import { getLatestThreads } from "@/lib/services/thread/get-latest-threads";
 
 export function useThreadsLatest(limit: number = 5) {
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -13,18 +12,12 @@ export function useThreadsLatest(limit: number = 5) {
       setLoading(true);
       setError(null);
       try {
-        const threadRecords = await fetchLatestThreads(limit);
-        const transformed: Thread[] = [];
-        for (const threadRecord of threadRecords) {
-          try {
-            const thread = await fetchThread(threadRecord.lens_feed_address);
-            if (!thread) continue;
-            transformed.push(thread);
-          } catch {
-            continue;
-          }
+        const result = await getLatestThreads(limit);
+        if (result.success) {
+          setThreads(result.threads || []);
+        } else {
+          setError(result.error || "Failed to fetch threads");
         }
-        setThreads(transformed);
       } catch (e: any) {
         setError(e.message || "Unknown error");
       } finally {

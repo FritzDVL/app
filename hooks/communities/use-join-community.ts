@@ -1,8 +1,5 @@
-import { incrementCommunityMembersCount } from "@/lib/supabase";
-import { Community } from "@/types/common";
-import { evmAddress } from "@lens-protocol/client";
-import { joinGroup } from "@lens-protocol/client/actions";
-import { handleOperationWith } from "@lens-protocol/client/viem";
+import { Community } from "@/lib/domain/communities/types";
+import { joinCommunity } from "@/lib/services/membership/join-community";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
@@ -22,20 +19,23 @@ export function useJoinCommunity(community: Community) {
       });
       return;
     }
+    if (!walletClient.data) {
+      toast.error("Wallet not connected", {
+        description: "Please connect your wallet to join communities.",
+      });
+      return;
+    }
     const toastIsJoining = toast.loading("Joining community...");
     try {
-      const result = await joinGroup(sessionClient.data, {
-        group: evmAddress(community.address),
-      }).andThen(handleOperationWith(walletClient.data));
+      const result = await joinCommunity(community, sessionClient.data, walletClient.data);
 
-      if (result.isOk()) {
-        await incrementCommunityMembersCount(community.id);
+      if (result.success) {
         toast.success("You have joined the community!");
       } else {
-        throw new Error(result.error.message);
+        throw new Error(result.error || "Failed to join community");
       }
     } catch (error) {
-      console.error("Error joining/leaving community:", error);
+      console.error("Error joining community:", error);
       toast.error("Action Failed", {
         description: "Unable to update your membership status. Please try again.",
       });

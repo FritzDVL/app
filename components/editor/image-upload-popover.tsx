@@ -1,7 +1,7 @@
 import { type FC, type ReactNode, useState } from "react";
 import type { EditorExtension } from "./extension";
 import Button from "./toolbar-button";
-import { uploadImage } from "@/lib/grove/upload-image";
+import { uploadImage } from "@/lib/external/grove/upload-image";
 import { useEditor } from "prosekit/react";
 import { PopoverContent, PopoverRoot, PopoverTrigger } from "prosekit/react/popover";
 
@@ -42,7 +42,11 @@ export const ImageUploadPopover: FC<{
 
   const handleSubmit = () => {
     if (url) {
-      editor.commands.insertImage({ src: url });
+      editor.commands.insertImage({
+        src: url,
+        width: 600,
+        height: 400,
+      });
       deferResetState();
       setOpen(false);
     }

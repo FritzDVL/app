@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getTimeAgo } from "@/lib/utils";
+import { getTimeAgo } from "@/lib/shared/utils";
 import type { ReactionNotification } from "@lens-protocol/client";
 import { PostReactionType } from "@lens-protocol/client";
 import { ArrowDown, ArrowUp } from "lucide-react";

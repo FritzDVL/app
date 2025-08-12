@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getTimeAgo } from "@/lib/utils";
+import { getTimeAgo } from "@/lib/shared/utils";
 import type { MentionNotification } from "@lens-protocol/client";
 import { Users } from "lucide-react";
 

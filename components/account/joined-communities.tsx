@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { groveLensUrlToHttp } from "@/lib/utils";
-import type { Community } from "@/types/common";
+import { Community } from "@/lib/domain/communities/types";
+import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import { Users } from "lucide-react";
 
 interface JoinedCommunitiesProps {

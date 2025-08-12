@@ -11,7 +11,7 @@ import { useCommunityMembership } from "@/hooks/communities/use-community-member
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { useLeaveCommunity } from "@/hooks/communities/use-leave-community";
 import { useCommunity } from "@/hooks/queries/use-community";
-import { Community } from "@/types/common";
+import { Community } from "@/lib/domain/communities/types";
 
 export default function CommunityPage() {
   const params = useParams();

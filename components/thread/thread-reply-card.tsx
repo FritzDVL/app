@@ -7,11 +7,11 @@ import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { fetchReply } from "@/lib/fetchers/reply";
-import { fetchRepliesByParentId } from "@/lib/fetchers/reply";
-import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/utils";
+import { Reply as ReplyType } from "@/lib/domain/replies/types";
+import { getRepliesByParentId } from "@/lib/services/reply/get-replies-by-parent-id";
+import { getReply } from "@/lib/services/reply/get-reply";
+import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/shared/utils";
 import { useAuthStore } from "@/stores/auth-store";
-import { Reply as ReplyType } from "@/types/common";
 import { PostId } from "@lens-protocol/client";
 import { postId } from "@lens-protocol/react";
 import { Coins, MessageSquare, Reply } from "lucide-react";
@@ -53,11 +53,11 @@ export function ThreadReplyCard({
   // Recursively fetch context chain, stopping at rootPostId
   const fetchContextChain = async (parentId: string, acc: ReplyType[] = []): Promise<ReplyType[]> => {
     if (!parentId || parentId === rootPostId) return acc;
-    const parent = await fetchReply(parentId);
-    if (!parent || parent.id === rootPostId) return acc;
-    acc.unshift(parent); // prepend for top-down order
-    if (parent.parentReplyId && parent.parentReplyId !== rootPostId) {
-      return fetchContextChain(parent.parentReplyId, acc);
+    const result = await getReply(parentId);
+    if (!result.success || !result.reply || result.reply.id === rootPostId) return acc;
+    acc.unshift(result.reply); // prepend for top-down order
+    if (result.reply.parentReplyId && result.reply.parentReplyId !== rootPostId) {
+      return fetchContextChain(result.reply.parentReplyId, acc);
     }
     return acc;
   };
@@ -84,8 +84,10 @@ export function ThreadReplyCard({
     if (!showReplies) {
       setLoadingReplies(true);
       try {
-        const replies = await fetchRepliesByParentId(reply.id, threadAddress);
-        setChildReplies(replies);
+        const result = await getRepliesByParentId(reply.id, threadAddress);
+        if (result.success) {
+          setChildReplies(result.replies || []);
+        }
         setShowReplies(true);
       } finally {
         setLoadingReplies(false);
