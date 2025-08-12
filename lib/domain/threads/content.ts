@@ -8,7 +8,12 @@ const THREAD_CONTENT_PREFIX = "LensForum Thread: ";
 /**
  * Adds prefix, title, and summary to content.
  */
-export function addThreadContentPrefix(content: string, threadUrl: string, title?: string, summary?: string): string {
+export function formatThreadArticleContent(
+  content: string,
+  threadUrl: string,
+  title?: string,
+  summary?: string,
+): string {
   const titleSection = title ? `# **${title}**\n\n` : "";
   const summarySection = summary ? `*${summary}*\n\n` : "";
   const prefixSection = `${THREAD_CONTENT_PREFIX}${threadUrl}\n\n`;
@@ -18,7 +23,7 @@ export function addThreadContentPrefix(content: string, threadUrl: string, title
 /**
  * Removes prefix, title, and summary from content.
  */
-export function removeThreadContentPrefix(content: string): string {
+export function stripThreadArticleFormatting(content: string): string {
   let result = content;
 
   // Step 1: Remove the prefix line
