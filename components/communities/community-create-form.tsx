@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ReputationStatusBanner } from "@/components/shared/reputation-status-banner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -7,128 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
-import { useCommunityCreation } from "@/hooks/communities/use-community-create";
-import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
+import { useCommunityCreateForm } from "@/hooks/forms/use-community-create-form";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
-import { evmAddress } from "@lens-protocol/client";
-import { joinGroup } from "@lens-protocol/client/actions";
-import { handleOperationWith } from "@lens-protocol/client/viem";
-import { useSessionClient } from "@lens-protocol/react";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useWalletClient } from "wagmi";
 
 export function CommunityCreateForm() {
-  // --- State ---
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    category: "",
-    emoji: "",
-    image: undefined as File | undefined,
-    adminAddress: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // --- Hooks ---
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const { createCommunity, isCreating } = useCommunityCreation();
+  const { formData, loading, error, handleChange, handleImageChange, handleSubmit, isCreating } =
+    useCommunityCreateForm();
   const { account, walletAddress } = useAuthStore();
-  const sessionClient = useSessionClient();
-  const walletClient = useWalletClient();
   const { reputation, canCreateCommunity } = useLensReputationScore(walletAddress as Address, account?.address);
 
-  // --- Effects ---
-  useEffect(() => {
-    if (account?.address) {
-      setFormData(prev => ({ ...prev, adminAddress: account.address }));
-    }
-  }, [account?.address]);
-
-  // --- Handlers ---
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (e.target.name === "image") return;
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setFormData({ ...formData, image: file });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Check reputation requirements
-    if (!canCreateCommunity) {
-      if (reputation === undefined) {
-        toast.error("LensReputation NFT Required", {
-          description: "You need to mint the LensReputation NFT to create communities.",
-        });
-      } else {
-        toast.error("Insufficient Reputation", {
-          description: `You need a reputation score of 700 or higher to create communities. Your current score is ${reputation}.`,
-        });
-      }
-      return;
-    }
-
-    if (!sessionClient.data || !walletClient.data) {
-      toast.error("Not logged in", { description: "Please log in to create a community." });
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Use the community service through the hook
-      await createCommunity(
-        {
-          name: formData.name,
-          description: formData.description,
-          adminAddress: formData.adminAddress as Address,
-        },
-        formData.image,
-        async community => {
-          if (!sessionClient.data || !walletClient.data) {
-            toast.error("Not logged in", { description: "Please log in to create a community." });
-            return;
-          }
-
-          // Success callback - handle community creation success
-          if (community && community.id) {
-            const joinResult = await joinGroup(sessionClient.data!, {
-              group: evmAddress(community.address),
-            })
-              .andThen(handleOperationWith(walletClient.data!))
-              .andThen(sessionClient.data.waitForTransaction);
-
-            if (joinResult.isOk()) {
-              await incrementCommunityMembersCount(community.id);
-            } else {
-              console.error("Error joining community:", joinResult.error);
-              toast.error("Action Failed", {
-                description: "Unable to update your membership status. Please try again.",
-              });
-            }
-
-            await queryClient.invalidateQueries({ queryKey: ["communities"] });
-            router.push(`/communities/${community.address}`);
-          }
-        },
-      );
-    } catch (err: any) {
-      setError(err.message || "Failed to create community");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // --- Render ---
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardHeader>
@@ -202,7 +88,7 @@ export function CommunityCreateForm() {
               placeholder="0x... (your wallet address)"
               required
               className="rounded-2xl border-slate-300/60 bg-white/80 text-muted-foreground backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
-              disabled={!!account?.address}
+              disabled={!!formData.adminAddress}
             />
           </div>
 
