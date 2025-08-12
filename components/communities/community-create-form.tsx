@@ -94,11 +94,18 @@ export function CommunityCreateForm() {
         },
         formData.image,
         async community => {
+          if (!sessionClient.data || !walletClient.data) {
+            toast.error("Not logged in", { description: "Please log in to create a community." });
+            return;
+          }
+
           // Success callback - handle community creation success
           if (community && community.id) {
             const joinResult = await joinGroup(sessionClient.data!, {
               group: evmAddress(community.address),
-            }).andThen(handleOperationWith(walletClient.data!));
+            })
+              .andThen(handleOperationWith(walletClient.data!))
+              .andThen(sessionClient.data.waitForTransaction);
 
             if (joinResult.isOk()) {
               await incrementCommunityMembersCount(community.id);
