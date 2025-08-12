@@ -5,7 +5,7 @@ import { toast } from "sonner";
 export function useCommunityCreation() {
   const [isCreating, setIsCreating] = useState(false);
 
-  const createCommunityAction = async (formData: CreateCommunityFormData, imageFile?: File): Promise<Community> => {
+  const createCommunity = async (formData: CreateCommunityFormData, imageFile?: File): Promise<Community> => {
     setIsCreating(true);
     const loadingToastId = toast.loading("Creating Community", {
       description: "Setting up your community on Lens Protocol...",
@@ -51,7 +51,7 @@ export function useCommunityCreation() {
   };
 
   return {
-    createCommunity: createCommunityAction,
+    createCommunity,
     isCreating,
   };
 }
