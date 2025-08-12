@@ -16,7 +16,7 @@ export function defineImageFileHandlers() {
         .then(url => {
           const command = insertNode({
             type: "image",
-            attrs: { src: url.gatewayUrl },
+            attrs: { src: url.gatewayUrl, width: 600, height: 400 },
           });
           command(view.state, view.dispatch, view);
         })
@@ -33,7 +33,7 @@ export function defineImageFileHandlers() {
       uploadImage(file).then(url => {
         const command = insertNode({
           type: "image",
-          attrs: { src: url.gatewayUrl },
+          attrs: { src: url.gatewayUrl, width: 600, height: 400 },
           pos,
         });
         command(view.state, view.dispatch, view);

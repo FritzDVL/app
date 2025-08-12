@@ -42,7 +42,11 @@ export const ImageUploadPopover: FC<{
 
   const handleSubmit = () => {
     if (url) {
-      editor.commands.insertImage({ src: url });
+      editor.commands.insertImage({
+        src: url,
+        width: 600,
+        height: 400,
+      });
       deferResetState();
       setOpen(false);
     }
