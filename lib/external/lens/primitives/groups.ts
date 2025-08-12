@@ -2,9 +2,12 @@
 
 import { client } from "../protocol-client";
 import { Moderator } from "@/lib/domain/communities/types";
+import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { evmAddress } from "@lens-protocol/client";
 import type { Group, GroupStatsResponse } from "@lens-protocol/client";
-import { fetchAdminsFor, fetchGroup, fetchGroupStats, fetchGroups } from "@lens-protocol/client/actions";
+import { fetchAdminsFor, fetchGroup, fetchGroupStats, fetchGroups, joinGroup } from "@lens-protocol/client/actions";
+import { handleOperationWith } from "@lens-protocol/client/viem";
+import { toast } from "sonner";
 
 /**
  * Fetches a single group from Lens Protocol
@@ -147,5 +150,31 @@ export async function fetchGroupAdminsBatch(
   } catch (error) {
     console.error("Failed to batch fetch group admins from Lens:", error);
     throw new Error(`Failed to batch fetch group admins: ${error instanceof Error ? error.message : "Unknown error"}`);
+  }
+}
+
+/**
+ * Joins a group and increments the community member count
+ */
+export async function joinAndIncrementCommunityMember(
+  community: { id: string; address: string },
+  sessionClient: any,
+  walletClient: any,
+): Promise<boolean> {
+  const joinResult = await joinGroup(sessionClient, {
+    group: evmAddress(community.address),
+  })
+    .andThen(handleOperationWith(walletClient))
+    .andThen(sessionClient.waitForTransaction);
+
+  if (joinResult.isOk()) {
+    await incrementCommunityMembersCount(community.id);
+    return true;
+  } else {
+    console.error("Error joining community:", joinResult.error);
+    toast.error("Action Failed", {
+      description: "Unable to update your membership status. Please try again.",
+    });
+    return false;
   }
 }

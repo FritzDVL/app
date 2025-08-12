@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCommunityCreation } from "@/hooks/communities/use-community-create";
-import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
+import { joinAndIncrementCommunityMember } from "@/lib/external/lens/primitives/groups";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
-import { evmAddress } from "@lens-protocol/client";
-import { joinGroup } from "@lens-protocol/client/actions";
-import { handleOperationWith } from "@lens-protocol/client/viem";
 import { useSessionClient } from "@lens-protocol/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -51,38 +48,34 @@ export function useCommunityCreateForm() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    if (!sessionClient.data || !walletClient.data) {
+      toast.error("Not logged in", { description: "Please log in to create a community." });
+      setLoading(false);
+      return;
+    }
     try {
-      await createCommunity(
+      const community = await createCommunity(
         {
           name: formData.name,
           description: formData.description,
           adminAddress: formData.adminAddress as Address,
         },
         formData.image,
-        async community => {
-          if (!sessionClient.data || !walletClient.data) {
-            toast.error("Not logged in", { description: "Please log in to create a community." });
-            return;
-          }
-          if (community && community.id) {
-            const joinResult = await joinGroup(sessionClient.data!, {
-              group: evmAddress(community.address),
-            })
-              .andThen(handleOperationWith(walletClient.data!))
-              .andThen(sessionClient.data.waitForTransaction);
-            if (joinResult.isOk()) {
-              await incrementCommunityMembersCount(community.id);
-            } else {
-              console.error("Error joining community:", joinResult.error);
-              toast.error("Action Failed", {
-                description: "Unable to update your membership status. Please try again.",
-              });
-            }
-            await queryClient.invalidateQueries({ queryKey: ["communities"] });
-            router.push(`/communities/${community.address}`);
-          }
-        },
       );
+      if (!community || typeof community !== "object" || !("id" in community) || !("address" in community)) {
+        setError("Community creation failed.");
+        setLoading(false);
+        return;
+      }
+      const joined = await joinAndIncrementCommunityMember(
+        community as { id: string; address: string },
+        sessionClient.data,
+        walletClient.data,
+      );
+      await queryClient.invalidateQueries({ queryKey: ["communities"] });
+      if (joined) {
+        router.push(`/communities/${(community as { address: string }).address}`);
+      }
     } catch (err: any) {
       setError(err.message || "Failed to create community");
     } finally {
