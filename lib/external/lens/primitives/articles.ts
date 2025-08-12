@@ -47,9 +47,14 @@ export async function createThreadArticle(
     attributes.push({ key: "author", type: MetadataAttributeType.STRING, value: articleData.author });
     attributes.push({ key: "subtitle", type: MetadataAttributeType.STRING, value: articleData.summary });
 
-    // 2. Add thread content prefix with URL
+    // 2. Add thread content prefix with URL, title and summary
     const threadUrl = `https://lensforum.xyz/thread/${articleData.feedAddress}`;
-    const contentWithPrefix = addThreadContentPrefix(articleData.content, threadUrl);
+    const contentWithPrefix = addThreadContentPrefix(
+      articleData.content,
+      threadUrl,
+      articleData.title,
+      articleData.summary,
+    );
 
     // 3. Build article metadata
     const articleMetadata = article({
