@@ -10,12 +10,10 @@ import { MessageCircle } from "lucide-react";
 export function ReplyNotificationItem({ notification }: { notification: CommentNotification }) {
   const [content, setContent] = useState<string | null>(null);
   const { author, timestamp } = notification.comment;
-  console.log("ReplyNotificationItem", notification);
   useEffect(() => {
     const doFetchReplyContent = async () => {
       const replyUrl = storageClient.resolve(notification.comment.contentUri);
       const replyContent = await fetch(replyUrl);
-
       if (!replyContent.ok) {
         console.error("Failed to fetch reply content:", replyContent.statusText);
         return;
@@ -26,11 +24,25 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
     doFetchReplyContent();
   }, [notification]);
 
+  // Navigation URLs
+  const threadAddress = notification.comment.feed.address;
+  const replyId = notification.comment.id;
+  const viewReplyUrl = `/thread/${threadAddress}/reply/${replyId}`;
+
   return (
-    <div className="group rounded-xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+    <Link
+      href={viewReplyUrl}
+      className="group block rounded-xl border border-gray-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-brand-400/30 hover:bg-brand-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-400 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-brand-500/40 dark:hover:bg-brand-900/20"
+    >
       <div className="flex items-start gap-4">
         {author && (
-          <Link href={`/u/${notification.comment.author.username?.value}`} className="flex-shrink-0">
+          <Link
+            href={`/u/${notification.comment.author.username?.value}`}
+            onClick={e => e.stopPropagation()}
+            className="z-10 flex-shrink-0"
+            tabIndex={0}
+            aria-label={`Go to @${notification.comment.author.username?.localName} profile`}
+          >
             <Avatar className="h-12 w-12 ring-2 ring-gray-200 transition-all duration-300 group-hover:ring-brand-300 dark:ring-gray-700">
               <AvatarImage src={author.metadata?.picture || undefined} />
               <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 font-semibold text-white">
@@ -46,21 +58,16 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
                 <MessageCircle className="h-4 w-4 text-green-500" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                <h3 className="font-semibold text-gray-900 group-hover:text-brand-600 dark:text-gray-100">
                   @{author?.username?.localName} replied to your post
                 </h3>
                 {notification.comment.feed.metadata && (
-                  <Link href={`/thread/${notification.comment.feed.address}`} className="text-inherit hover:underline">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        in &ldquo;{" "}
-                        {(notification.comment.feed.metadata.description?.length ?? 0) > 150
-                          ? (notification.comment.feed.metadata.description?.slice(0, 150) ?? "") + "..."
-                          : (notification.comment.feed.metadata.description ?? "")}{" "}
-                        &rdquo;
-                      </span>
-                    </p>
-                  </Link>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      in "{(notification.comment.feed.metadata.description?.length ?? 0) > 50
+                        ? (notification.comment.feed.metadata.description?.slice(0, 50) ?? "") + "..."
+                        : (notification.comment.feed.metadata.description ?? "")}"</span>
+                  </p>
                 )}
               </div>
             </div>
@@ -78,6 +85,6 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
