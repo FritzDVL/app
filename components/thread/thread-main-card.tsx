@@ -4,16 +4,16 @@ import ContentRenderer from "@/components/shared/content-renderer";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { ThreadReplyBox } from "@/components/thread/thread-reply-box";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThread } from "@/hooks/queries/use-thread";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
+import { getTimeAgo } from "@/lib/shared/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
-import { Bookmark, Coins, Flag, Reply as ReplyIcon, Share } from "lucide-react";
+import { Coins, Reply as ReplyIcon, Share } from "lucide-react";
 
 function getThreadContent(thread: any): string {
   const metadata = thread?.rootPost?.metadata;
@@ -74,44 +74,60 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
                   </p>
                 )}
               </div>
-              <div className="ml-4 flex items-center gap-2 text-sm text-muted-foreground">
-                <Link href={`/u/${thread.author.username.replace("lens/", "")}`} className="flex items-center gap-2">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                    <AvatarFallback className="bg-gradient-to-r from-green-400 to-green-600 text-xs text-white">
-                      {thread.author.name[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">{thread.author.name}</span>
-                </Link>
+              <div className="ml-4 flex flex-col items-end gap-1">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Link href={`/u/${thread.author.username.replace("lens/", "")}`} className="flex items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
+                      <AvatarFallback className="bg-gradient-to-r from-green-400 to-green-600 text-xs text-white">
+                        {thread.author.name[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium">{thread.author.name}</span>
+                  </Link>
+                  {thread.rootPost?.timestamp && (
+                    <span className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      {getTimeAgo(new Date(thread.rootPost.timestamp))}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <div className="my-6 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
-                <span>
-                  Posted on{" "}
-                  {thread.rootPost?.timestamp
-                    ? new Date(thread.rootPost.timestamp).toLocaleString("en-US", {
-                        dateStyle: "long",
-                        timeStyle: "short",
-                      })
-                    : "Unknown date"}
-                </span>
-              </div>
               <ContentRenderer
                 content={stripThreadArticleFormatting(getThreadContent(thread))}
-                className="rich-text-content rounded-2xl bg-muted/50 p-5 text-muted-foreground"
+                className="rich-text-content rounded-2xl p-0 text-foreground dark:text-gray-100"
               />
             </div>
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              {Array.isArray(thread.tags) &&
-                thread.tags.length > 0 &&
-                thread.tags.map((tag: string) => (
-                  <Badge key={tag} variant="outline" className="rounded-full bg-card/80 text-xs backdrop-blur-sm">
-                    #{tag}
-                  </Badge>
-                ))}
+            {/* Remove posted date from below content, keep only tags */}
+            <div className="mt-2 flex flex-col gap-1">
+              {/* Tags */}
+              {Array.isArray(thread.tags) && thread.tags.length > 0 && (
+                <div className="mt-1 flex flex-wrap items-center gap-1">
+                  {thread.tags.map((tag: string) => (
+                    <span
+                      key={tag}
+                      className="inline-block rounded-full border border-gray-200 bg-transparent px-2 py-0.5 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -137,6 +153,7 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
               <Share className="mr-2 h-4 w-4" />
               <span className="truncate">Share</span>
             </Button>
+            {/*
             <Button variant="ghost" size="sm" className="min-w-0 flex-1 rounded-full sm:flex-none" disabled>
               <Bookmark className="mr-2 h-4 w-4" />
               <span className="truncate">Save</span>
@@ -150,6 +167,7 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
               <Flag className="mr-2 h-4 w-4" />
               <span className="truncate">Report</span>
             </Button>
+            */}
             {postId && (
               <div className="min-w-0 flex-1 sm:flex-none">
                 <TipGhoPopover to={postId} />
