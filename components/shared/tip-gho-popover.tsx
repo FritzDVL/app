@@ -18,7 +18,7 @@ interface TipGhoPopoverProps {
 export function TipGhoPopover({ to }: TipGhoPopoverProps) {
   const [tipAmount, setTipAmount] = useState<number | null>(null);
   const [customMode, setCustomMode] = useState(false);
-  const [customValue, setCustomValue] = useState(1);
+  const [customValue, setCustomValue] = useState<string>("1");
   const [canTip, setCanTip] = useState(true);
 
   const { isLoggedIn, account } = useAuthStore();
@@ -39,14 +39,21 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
     //   return;
     // }
 
-    if (tipAmount && tipAmount > 0) {
+    // Replace comma with dot in customValue before parsing
+    let amount = tipAmount;
+    if (customMode && customValue) {
+      const normalized = customValue.replace(/,/g, ".");
+      amount = parseFloat(normalized);
+    }
+
+    if (amount && Number(amount) > 0) {
       const toastId = toast.loading("Sending tip...");
       try {
         const result = await executePostAction(sessionClient.data, {
           post: postId(to),
           action: {
             tipping: {
-              native: bigDecimal(tipAmount),
+              native: bigDecimal(amount.toString()),
             },
           },
         }).andThen(handleOperationWith(walletClient.data));
@@ -60,7 +67,7 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
         // Reset tip amount after sending
         setTipAmount(null);
         setCustomMode(false);
-        setCustomValue(1);
+        setCustomValue("1");
       } catch (err: any) {
         toast.dismiss(toastId);
         toast.error("Failed to send tip: " + (err?.message || "Unknown error"));
@@ -88,15 +95,20 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="text-green-600 hover:text-green-700"
+          className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
           disabled={!isLoggedIn || !canTip}
         >
           <Coins className="mr-2 h-4 w-4" />
           Tip
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-72 p-4">
-        <div className="mb-3 text-center text-sm font-semibold text-gray-800">Send a tip in $GHO</div>
+      <PopoverContent
+        align="end"
+        className="w-72 border border-gray-200 bg-white p-4 text-gray-800 shadow-xl dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+      >
+        <div className="mb-3 text-center text-sm font-semibold text-gray-800 dark:text-gray-100">
+          Send a tip in $GHO
+        </div>
         <div className="flex flex-col items-center gap-3">
           {/* Quick tip buttons as a horizontal group */}
           <div className="flex w-full justify-center gap-2">
@@ -105,7 +117,7 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
                 key={val}
                 size="sm"
                 variant={tipAmount === val && !customMode ? "default" : "outline"}
-                className={`flex-1 rounded-full px-0 py-2 font-semibold transition-all duration-150 ${tipAmount === val && !customMode ? "scale-105 ring-2 ring-green-200" : "hover:scale-105"}`}
+                className={`flex-1 rounded-full px-0 py-2 font-semibold transition-all duration-150 ${tipAmount === val && !customMode ? "scale-105 ring-2 ring-green-200 dark:ring-green-700" : "hover:scale-105"} dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100`}
                 onClick={() => {
                   setTipAmount(val);
                   setCustomMode(false);
@@ -117,22 +129,25 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
             <Button
               size="sm"
               variant={customMode ? "default" : "outline"}
-              className={`flex-1 rounded-full px-0 py-2 font-semibold transition-all duration-150 ${customMode ? "scale-105 ring-2 ring-green-200" : "hover:scale-105"}`}
+              className={`flex-1 rounded-full px-0 py-2 font-semibold transition-all duration-150 ${customMode ? "scale-105 ring-2 ring-green-200 dark:ring-green-700" : "hover:scale-105"} dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100`}
               onClick={() => {
                 setCustomMode(true);
-                setTipAmount(customValue);
+                setTipAmount(parseFloat(customValue) || 1);
               }}
             >
               Custom
             </Button>
           </div>
           {/* Divider */}
-          <div className="w-full border-t border-dashed border-gray-200" />
+          <div className="w-full border-t border-dashed border-gray-200 dark:border-gray-700" />
           {/* Custom input, animated in */}
           <div
             className={`w-full transition-all duration-200 ${customMode ? "max-h-20 opacity-100" : "max-h-0 overflow-hidden opacity-0"}`}
           >
-            <label className="mb-1 block text-xs font-medium text-gray-500" htmlFor="custom-gho-amount">
+            <label
+              className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400"
+              htmlFor="custom-gho-amount"
+            >
               Custom amount
             </label>
             <Input
@@ -142,18 +157,25 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
               step={0.01}
               value={customValue}
               onChange={e => {
-                const v = parseFloat(e.target.value);
-                setCustomValue(isNaN(v) ? 1 : v);
-                setTipAmount(isNaN(v) ? 1 : v);
+                const v = e.target.value;
+                setCustomValue(v);
+                const num = parseFloat(v);
+                setTipAmount(!isNaN(num) && v !== "" ? num : null);
+              }}
+              onBlur={e => {
+                if (e.target.value === "") {
+                  setCustomValue("1");
+                  setTipAmount(1);
+                }
               }}
               placeholder="Amount (GHO)"
-              className="mb-2 text-center text-lg font-semibold"
+              className="mb-2 border-gray-200 bg-gray-50 text-center text-lg font-semibold focus:ring-green-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:ring-green-700"
             />
           </div>
           {/* Send button */}
           <Button
             size="sm"
-            className="w-full rounded-full font-semibold shadow-sm"
+            className="w-full rounded-full bg-green-600 font-semibold text-white shadow-sm hover:bg-green-700 dark:bg-green-500 dark:text-gray-900 dark:hover:bg-green-400"
             disabled={!tipAmount || tipAmount <= 0}
             onClick={handleTip}
           >
