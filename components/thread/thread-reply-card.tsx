@@ -15,6 +15,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { PostId } from "@lens-protocol/client";
 import { postId } from "@lens-protocol/react";
 import { Coins, MessageSquare, Reply } from "lucide-react";
+import { toast } from "sonner";
 
 export function ThreadReplyCard({
   reply,
@@ -28,11 +29,11 @@ export function ThreadReplyCard({
   threadAddress,
 }: {
   reply: ReplyType & { _depth?: number };
-  replyingTo: string | null;
-  replyContent: { [key: string]: string };
-  setReplyingTo: (id: string | null) => void;
-  setReplyContent: (fn: (c: any) => any) => void;
-  handleReply: (parentId: string, content: string) => Promise<void>;
+  replyingTo?: string | null;
+  replyContent?: { [key: string]: string };
+  setReplyingTo?: (id: string | null) => void;
+  setReplyContent?: (fn: (c: any) => any) => void;
+  handleReply?: (parentId: string, content: string) => Promise<void>;
   children?: React.ReactNode;
   depth?: number;
   rootPostId: string;
@@ -47,6 +48,9 @@ export function ThreadReplyCard({
   const [showReplies, setShowReplies] = useState(false);
   const [childReplies, setChildReplies] = useState<ReplyType[]>([]);
   const [loadingReplies, setLoadingReplies] = useState(false);
+
+  // State for copying reply link
+  const [copied, setCopied] = useState(false);
 
   const { isLoggedIn } = useAuthStore();
 
@@ -97,6 +101,16 @@ export function ThreadReplyCard({
     }
   };
 
+  // Handler to copy reply link
+  const handleCopyLink = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    const url = `${window.location.origin}/thread/${threadAddress}/reply/${reply.id}`;
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    toast.success("Reply link copied to clipboard!");
+    setTimeout(() => setCopied(false), 1200);
+  };
+
   // Context chain UI
   const ContextChain = () => (
     <div className="mb-2 flex flex-col gap-2">
@@ -104,7 +118,10 @@ export function ThreadReplyCard({
         <div key={ctx.id} className="relative flex items-start gap-2 pl-3">
           {/* Vertical line for chain */}
           {idx < contextChain.length - 1 && (
-            <span className="absolute left-0 top-5 h-full w-px bg-brand-100" style={{ minHeight: 32 }} />
+            <span
+              className="absolute left-0 top-5 h-full w-px bg-brand-100 dark:bg-gray-600"
+              style={{ minHeight: 32 }}
+            />
           )}
           <Avatar className="mt-0.5 h-4 w-4">
             <AvatarImage src={ctx.author.avatar || "/placeholder.svg"} />
@@ -112,15 +129,15 @@ export function ThreadReplyCard({
               {ctx.author.name[0].toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 rounded border border-brand-100 bg-slate-50 px-2 py-1">
+          <div className="flex-1 rounded border border-brand-100 bg-slate-50 px-2 py-1 dark:border-gray-600 dark:bg-gray-700">
             <div className="mb-0.5 flex items-center gap-2">
-              <span className="text-xs font-medium text-gray-900">{ctx.author.name}</span>
-              <span className="text-[10px] text-gray-400">
+              <span className="text-xs font-medium text-gray-900 dark:text-gray-100">{ctx.author.name}</span>
+              <span className="text-[10px] text-gray-400 dark:text-gray-500">
                 {ctx.createdAt ? getTimeAgo(new Date(ctx.createdAt)) : "Unknown date"}
               </span>
             </div>
             <div
-              className="rich-text-content text-gray-700"
+              className="rich-text-content text-gray-700 dark:text-gray-300"
               dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(ctx.content) }}
             />
           </div>
@@ -139,7 +156,7 @@ export function ThreadReplyCard({
             </div>
             <div className="min-w-0 flex-1">
               {/* Top row: author info */}
-              <div className="mb-6 flex items-center gap-2">
+              <div className="relative mb-6 flex items-center gap-2">
                 <Link
                   href={`/u/${reply.author.username.replace("lens/", "")}`}
                   className="flex items-center gap-2 hover:text-gray-900"
@@ -163,15 +180,15 @@ export function ThreadReplyCard({
                     className={
                       `inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium transition-colors ` +
                       (showContext
-                        ? "border border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100"
-                        : "bg-transparent text-brand-500 hover:text-brand-700")
+                        ? "border border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100 dark:border-brand-600 dark:bg-brand-900/50 dark:text-brand-300 dark:hover:bg-brand-900/70"
+                        : "bg-transparent text-brand-500 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300")
                     }
                     onClick={handleShowContext}
                     disabled={loadingContext}
                     aria-pressed={showContext}
                     title={showContext ? "Hide context" : "Show context"}
                   >
-                    {/* Use a Lucide icon for context, e.g. LucideLink2 */}
+                    {/* Use a more contextual icon for showing conversation thread */}
                     <span className="inline-block">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -186,7 +203,7 @@ export function ThreadReplyCard({
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          d="M15 7h2a5 5 0 0 1 0 10h-2m-6 0H7a5 5 0 0 1 0-10h2m1 5h4"
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                         />
                       </svg>
                     </span>
@@ -222,21 +239,40 @@ export function ThreadReplyCard({
                     <span>{(reply as any).tips ?? 0}</span>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
+                  {setReplyingTo && isLoggedIn && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-3 text-sm text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                      onClick={() => setReplyingTo(reply.id)}
+                      disabled={!isLoggedIn}
+                    >
+                      <Reply className="mr-1 h-4 w-4" />
+                      Reply
+                    </Button>
+                  )}
+                  <TipGhoPopover to={reply.id as PostId} />
+                  {/* Copy reply link button at the bottom right */}
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 px-3 text-sm text-primary hover:text-gray-900"
-                    onClick={() => setReplyingTo(reply.id)}
-                    disabled={!isLoggedIn}
+                    className={`h-8 px-2 text-sm text-green-600 hover:text-green-700 focus:outline-none dark:text-green-400 dark:hover:text-green-300 ${copied ? "text-green-500" : ""}`}
+                    title="Copy reply link"
+                    onClick={handleCopyLink}
                   >
-                    <Reply className="mr-1 h-4 w-4" />
-                    Reply
+                    <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 7h2a5 5 0 0 1 0 10h-2m-6 0H7a5 5 0 0 1 0-10h2m1 5h4"
+                      />
+                    </svg>
+                    {copied ? "Copied!" : "Copy link"}
                   </Button>
-                  <TipGhoPopover to={reply.id as PostId} />
                 </div>
               </div>
-              {replyingTo === reply.id && (
+              {replyingTo === reply.id && replyContent && setReplyingTo && setReplyContent && handleReply && (
                 <ThreadReplyBox
                   value={replyContent[reply.id] || ""}
                   onCancel={() => {
