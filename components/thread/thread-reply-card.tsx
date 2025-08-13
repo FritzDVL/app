@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
-import { VotingActions } from "../shared/voting-actions";
+import { ReplyVoting } from "../reply/reply-voting";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { ContentRenderer } from "@/components/shared/content-renderer";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
@@ -152,7 +152,7 @@ export function ThreadReplyCard({
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <div className="flex flex-col items-center">
-              <VotingActions postid={postId(reply.id)} score={reply.upvotes - reply.downvotes} />
+              <ReplyVoting postid={postId(reply.id)} score={reply.upvotes - reply.downvotes} />
             </div>
             <div className="min-w-0 flex-1">
               {/* Top row: author info */}
