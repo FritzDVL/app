@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
-import { VotingActions } from "@/components/shared/voting-actions";
 import { ThreadReplyBox } from "@/components/thread/thread-reply-box";
+import { ThreadVoting } from "@/components/thread/thread-voting";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,11 +61,6 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
-          {threadPostId && (
-            <div className="flex flex-col items-center">
-              <VotingActions postid={postId(threadPostId)} score={thread.upvotes - thread.downvotes} />
-            </div>
-          )}
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-xl font-bold text-white">
             {thread.title.charAt(0).toUpperCase()}
           </div>
@@ -150,33 +145,19 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
               <span className="text-sm">{thread.rootPost?.stats.tips}</span>
             </div>
           </div>
-          <div className="flex w-full min-w-0 flex-wrap gap-2 sm:w-auto sm:gap-2">
+          <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
+            {threadPostId && <ThreadVoting postid={postId(threadPostId)} score={thread.upvotes - thread.downvotes} />}
             <Button
               variant="ghost"
               size="sm"
               onClick={handleShare}
-              className="min-w-0 flex-1 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 sm:flex-none"
+              className="min-w-0 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
             >
               <Share className="mr-2 h-4 w-4" />
               <span className="truncate">Share</span>
             </Button>
-            {/*
-            <Button variant="ghost" size="sm" className="min-w-0 flex-1 rounded-full sm:flex-none" disabled>
-              <Bookmark className="mr-2 h-4 w-4" />
-              <span className="truncate">Save</span>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="min-w-0 flex-1 rounded-full text-red-500 hover:text-red-600 sm:flex-none"
-              disabled
-            >
-              <Flag className="mr-2 h-4 w-4" />
-              <span className="truncate">Report</span>
-            </Button>
-            */}
             {threadPostId && (
-              <div className="min-w-0 flex-1 sm:flex-none">
+              <div className="min-w-0">
                 <TipGhoPopover to={threadPostId} />
               </div>
             )}
