@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
+import { VotingActions } from "@/components/shared/voting-actions";
 import { ThreadReplyBox } from "@/components/thread/thread-reply-box";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { getTimeAgo } from "@/lib/shared/utils";
 import { useAuthStore } from "@/stores/auth-store";
+import { postId } from "@lens-protocol/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Coins, Reply as ReplyIcon, Share } from "lucide-react";
 
@@ -53,12 +55,17 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
   if (loading) return <LoadingSpinner text="Loading thread..." />;
   if (!thread) return null;
 
-  const postId = thread.rootPost?.id;
+  const threadPostId = thread.rootPost?.id;
 
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
+          {threadPostId && (
+            <div className="flex flex-col items-center">
+              <VotingActions postid={postId(threadPostId)} score={thread.upvotes - thread.downvotes} />
+            </div>
+          )}
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-xl font-bold text-white">
             {thread.title.charAt(0).toUpperCase()}
           </div>
@@ -168,9 +175,9 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
               <span className="truncate">Report</span>
             </Button>
             */}
-            {postId && (
+            {threadPostId && (
               <div className="min-w-0 flex-1 sm:flex-none">
-                <TipGhoPopover to={postId} />
+                <TipGhoPopover to={threadPostId} />
               </div>
             )}
           </div>
