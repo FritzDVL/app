@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { AvatarProfileLink } from "@/components/notifications/avatar-profile-link";
+import { NotificationCard } from "@/components/notifications/notification-card";
 import ContentRenderer from "@/components/shared/content-renderer";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getTimeAgo } from "@/lib/shared/utils";
 import type { MentionNotification } from "@lens-protocol/client";
 import { Users } from "lucide-react";
@@ -31,27 +32,9 @@ export function MentionNotificationItem({ notification }: { notification: Mentio
   const navigationUrl = `/thread/${threadAddress}${isReply ? `/reply/${post.id}` : ""}`;
 
   return (
-    <Link
-      href={navigationUrl}
-      className="group block rounded-xl border border-gray-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-brand-400/30 hover:bg-brand-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-400 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-brand-500/40 dark:hover:bg-brand-900/20"
-    >
+    <NotificationCard href={navigationUrl}>
       <div className="flex items-start gap-4">
-        {author && authorUsername && (
-          <Link
-            href={`/u/${authorUsername}`}
-            onClick={e => e.stopPropagation()}
-            className="z-10 flex-shrink-0"
-            tabIndex={0}
-            aria-label={`Go to @${authorUsername} profile`}
-          >
-            <Avatar className="h-12 w-12 ring-2 ring-gray-200 transition-all duration-300 group-hover:ring-brand-300 dark:ring-gray-700">
-              <AvatarImage src={author.metadata?.picture || undefined} />
-              <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 font-semibold text-white">
-                {author.metadata?.name?.[0]?.toUpperCase() || author.username?.localName?.[0]?.toUpperCase() || "?"}
-              </AvatarFallback>
-            </Avatar>
-          </Link>
-        )}
+        {author && <AvatarProfileLink author={author} />}
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-start justify-between">
             <div className="flex items-center gap-2">
@@ -83,6 +66,6 @@ export function MentionNotificationItem({ notification }: { notification: Mentio
           )}
         </div>
       </div>
-    </Link>
+    </NotificationCard>
   );
 }

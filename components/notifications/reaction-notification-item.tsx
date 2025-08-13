@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { AvatarProfileLink } from "@/components/notifications/avatar-profile-link";
+import { NotificationCard } from "@/components/notifications/notification-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getTimeAgo } from "@/lib/shared/utils";
 import type { ReactionNotification } from "@lens-protocol/client";
@@ -53,45 +55,9 @@ export function ReactionNotificationItem({ notification }: { notification: React
   const navigationUrl = `/thread/${threadAddress}${isReply ? `/reply/${post.id}` : ""}`;
 
   return (
-    <Link
-      href={navigationUrl}
-      className="group block rounded-xl border border-gray-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-brand-400/30 hover:bg-brand-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-400 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-brand-500/40 dark:hover:bg-brand-900/20"
-    >
+    <NotificationCard href={navigationUrl}>
       <div className="flex items-start gap-4">
-        {/* Multiple avatars display */}
-        <div className="flex flex-shrink-0">
-          {displayAuthors.map((item, index) => {
-            const { author } = item;
-            const username = author.username?.value || author.username?.localName;
-            return (
-              <Link
-                key={index}
-                href={username ? `/u/${username}` : "#"}
-                onClick={e => e.stopPropagation()}
-                className={`z-10 ${index > 0 ? "-ml-2" : ""}`}
-                tabIndex={0}
-                aria-label={username ? `Go to @${username} profile` : undefined}
-              >
-                <Avatar
-                  className={`h-10 w-10 ring-2 ring-white transition-all duration-300 group-hover:ring-brand-300 dark:ring-gray-800 ${displayAuthors.length === 1 ? "h-12 w-12 ring-gray-200 dark:ring-gray-700" : ""}`}
-                >
-                  <AvatarImage src={author.metadata?.picture || undefined} />
-                  <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-sm font-semibold text-white">
-                    {author.metadata?.name?.[0]?.toUpperCase() || author.username?.localName?.[0]?.toUpperCase() || "?"}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
-            );
-          })}
-          {/* Show "+N" if there are more than 3 reactions */}
-          {totalReactions > 3 && (
-            <div className="relative -ml-2 flex items-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-500 text-xs font-semibold text-white ring-2 ring-white dark:ring-gray-800">
-                +{totalReactions - 3}
-              </div>
-            </div>
-          )}
-        </div>
+        <AvatarProfileLink author={firstAuthor} />
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-start justify-between">
             <div className="flex items-center gap-2">
@@ -117,6 +83,6 @@ export function ReactionNotificationItem({ notification }: { notification: React
           </div>
         </div>
       </div>
-    </Link>
+    </NotificationCard>
   );
 }
