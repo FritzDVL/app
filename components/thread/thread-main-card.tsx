@@ -128,7 +128,12 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
             </div>
           </div>
           <div className="flex w-full min-w-0 flex-wrap gap-2 sm:w-auto sm:gap-2">
-            <Button variant="ghost" size="sm" onClick={handleShare} className="min-w-0 flex-1 sm:flex-none">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleShare}
+              className="min-w-0 flex-1 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 sm:flex-none"
+            >
               <Share className="mr-2 h-4 w-4" />
               <span className="truncate">Share</span>
             </Button>
@@ -157,7 +162,7 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
           <Button
             variant="ghost"
             size="sm"
-            className="text-green-600 hover:text-green-700"
+            className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
             onClick={() => setReplyingTo("main")}
             disabled={!isLoggedIn}
           >
