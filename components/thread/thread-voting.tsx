@@ -1,5 +1,5 @@
-import { useVoting } from "@/components/shared/use-voting";
 import { Button } from "@/components/ui/button";
+import { useVoting } from "@/hooks/common/use-voting";
 import { useAuthStore } from "@/stores/auth-store";
 import { PostId } from "@lens-protocol/react";
 import { ArrowDown, ArrowUp } from "lucide-react";

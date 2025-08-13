@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { VotingActions } from "@/components/shared/voting-actions";
+import { ReplyVoting } from "@/components/reply/reply-voting";
 import { ThreadNewButton } from "@/components/thread/thread-new-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -115,7 +115,7 @@ export function CommunityThreads({
                       {/* Voting */}
                       <div className="flex min-w-[50px] flex-col items-center space-y-1">
                         {thread.rootPost && (
-                          <VotingActions
+                          <ReplyVoting
                             postid={postId(thread.rootPost.id)}
                             score={thread.rootPost.stats.upvotes - thread.rootPost.stats.downvotes}
                           />

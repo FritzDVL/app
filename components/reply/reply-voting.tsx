@@ -1,10 +1,10 @@
-import { useVoting } from "./use-voting";
+import { useVoting } from "../../hooks/common/use-voting";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth-store";
 import { PostId } from "@lens-protocol/react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
-interface VotingActionsProps {
+interface ReplyVotingProps {
   postid: PostId;
   score: number;
 }
@@ -12,7 +12,7 @@ interface VotingActionsProps {
 const upvoteLabel = "Upvote";
 const downvoteLabel = "Downvote";
 
-export function VotingActions({ postid, score }: VotingActionsProps) {
+export function ReplyVoting({ postid, score }: ReplyVotingProps) {
   const { hasUserUpvoted, hasUserDownvoted, isLoading, scoreState, handleUpvote, handleDownvote } = useVoting({
     postid,
     initialScore: score,
