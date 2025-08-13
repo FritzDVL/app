@@ -244,7 +244,7 @@ export function ThreadReplyCard({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 px-3 text-sm text-primary hover:text-gray-900"
+                      className="h-8 px-3 text-sm text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
                       onClick={() => setReplyingTo(reply.id)}
                       disabled={!isLoggedIn}
                     >
@@ -257,7 +257,7 @@ export function ThreadReplyCard({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`h-8 px-2 text-sm text-brand-500 hover:text-brand-700 focus:outline-none ${copied ? "text-green-500" : ""}`}
+                    className={`h-8 px-2 text-sm text-green-600 hover:text-green-700 focus:outline-none dark:text-green-400 dark:hover:text-green-300 ${copied ? "text-green-500" : ""}`}
                     title="Copy reply link"
                     onClick={handleCopyLink}
                   >
