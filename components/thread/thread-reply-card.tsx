@@ -29,11 +29,11 @@ export function ThreadReplyCard({
   threadAddress,
 }: {
   reply: ReplyType & { _depth?: number };
-  replyingTo: string | null;
-  replyContent: { [key: string]: string };
-  setReplyingTo: (id: string | null) => void;
-  setReplyContent: (fn: (c: any) => any) => void;
-  handleReply: (parentId: string, content: string) => Promise<void>;
+  replyingTo?: string | null;
+  replyContent?: { [key: string]: string };
+  setReplyingTo?: (id: string | null) => void;
+  setReplyContent?: (fn: (c: any) => any) => void;
+  handleReply?: (parentId: string, content: string) => Promise<void>;
   children?: React.ReactNode;
   depth?: number;
   rootPostId: string;
@@ -240,16 +240,18 @@ export function ThreadReplyCard({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 px-3 text-sm text-primary hover:text-gray-900"
-                    onClick={() => setReplyingTo(reply.id)}
-                    disabled={!isLoggedIn}
-                  >
-                    <Reply className="mr-1 h-4 w-4" />
-                    Reply
-                  </Button>
+                  {setReplyingTo && isLoggedIn && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-3 text-sm text-primary hover:text-gray-900"
+                      onClick={() => setReplyingTo(reply.id)}
+                      disabled={!isLoggedIn}
+                    >
+                      <Reply className="mr-1 h-4 w-4" />
+                      Reply
+                    </Button>
+                  )}
                   <TipGhoPopover to={reply.id as PostId} />
                   {/* Copy reply link button at the bottom right */}
                   <Button
@@ -270,7 +272,7 @@ export function ThreadReplyCard({
                   </Button>
                 </div>
               </div>
-              {replyingTo === reply.id && (
+              {replyingTo === reply.id && replyContent && setReplyingTo && setReplyContent && handleReply && (
                 <ThreadReplyBox
                   value={replyContent[reply.id] || ""}
                   onCancel={() => {

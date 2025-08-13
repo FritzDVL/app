@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useParams } from "next/navigation";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import ContentRenderer from "@/components/shared/content-renderer";
@@ -10,10 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReply } from "@/hooks/queries/use-reply";
 import { useThread } from "@/hooks/queries/use-thread";
-import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { Address } from "@/types/common";
-import { useQueryClient } from "@tanstack/react-query";
 
 function getThreadContent(thread: any): string {
   const metadata = thread?.rootPost?.metadata;
@@ -26,27 +23,10 @@ function getThreadContent(thread: any): string {
 export default function ReplyPage() {
   const params = useParams();
   const { address: threadAddress, replyId } = params;
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-
-  const { createReply } = useReplyCreate();
-  const queryClient = useQueryClient();
 
   // Fetch reply and thread data
   const { data: reply, isLoading: replyLoading, error: replyError } = useReply(replyId as string);
   const { data: thread, isLoading: threadLoading } = useThread(threadAddress as Address);
-
-  const handleReply = async (parentId: string, content: string) => {
-    if (!thread || !content.trim()) return;
-
-    const newReply = await createReply(parentId, content, threadAddress as any, thread.id);
-    if (newReply) {
-      setReplyingTo(null);
-      setReplyContent(c => ({ ...c, [parentId]: "" }));
-      queryClient.invalidateQueries({ queryKey: ["replies", threadAddress] });
-      queryClient.invalidateQueries({ queryKey: ["reply", replyId] });
-    }
-  };
 
   if (replyLoading || threadLoading) {
     return (
@@ -110,7 +90,7 @@ export default function ReplyPage() {
             </div>
           </div>
           {/* Simplified Thread Context Card */}
-          <div className="opacity-75 transition-opacity hover:opacity-100">
+          <div>
             <Card className="rounded-lg bg-gray-50/50 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/50">
               <CardContent className="p-4">
                 {thread && (
@@ -197,11 +177,6 @@ export default function ReplyPage() {
             <div className="relative rounded-lg border-2 border-brand-200 bg-white shadow-lg dark:border-brand-600 dark:bg-gray-800">
               <ThreadReplyCard
                 reply={reply}
-                replyingTo={replyingTo}
-                replyContent={replyContent}
-                setReplyingTo={setReplyingTo}
-                setReplyContent={setReplyContent}
-                handleReply={handleReply}
                 rootPostId={thread.rootPost?.id || ""}
                 threadAddress={threadAddress as string}
               />
