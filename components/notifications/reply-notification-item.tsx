@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { AvatarProfileLink } from "@/components/notifications/avatar-profile-link";
+import { NotificationCard } from "@/components/notifications/notification-card";
 import ContentRenderer from "@/components/shared/content-renderer";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { storageClient } from "@/lib/external/grove/client";
 import { getTimeAgo } from "@/lib/shared/utils";
 import type { CommentNotification } from "@lens-protocol/client";
@@ -10,12 +11,10 @@ import { MessageCircle } from "lucide-react";
 export function ReplyNotificationItem({ notification }: { notification: CommentNotification }) {
   const [content, setContent] = useState<string | null>(null);
   const { author, timestamp } = notification.comment;
-  console.log("ReplyNotificationItem", notification);
   useEffect(() => {
     const doFetchReplyContent = async () => {
       const replyUrl = storageClient.resolve(notification.comment.contentUri);
       const replyContent = await fetch(replyUrl);
-
       if (!replyContent.ok) {
         console.error("Failed to fetch reply content:", replyContent.statusText);
         return;
@@ -26,19 +25,15 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
     doFetchReplyContent();
   }, [notification]);
 
+  // Navigation URLs
+  const threadAddress = notification.comment.feed.address;
+  const replyId = notification.comment.id;
+  const viewReplyUrl = `/thread/${threadAddress}/reply/${replyId}`;
+
   return (
-    <div className="group rounded-xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+    <NotificationCard href={viewReplyUrl}>
       <div className="flex items-start gap-4">
-        {author && (
-          <Link href={`/u/${notification.comment.author.username?.value}`} className="flex-shrink-0">
-            <Avatar className="h-12 w-12 ring-2 ring-gray-200 transition-all duration-300 group-hover:ring-brand-300 dark:ring-gray-700">
-              <AvatarImage src={author.metadata?.picture || undefined} />
-              <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 font-semibold text-white">
-                {author.username?.localName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          </Link>
-        )}
+        {author && <AvatarProfileLink author={author} />}
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-start justify-between">
             <div className="flex items-center gap-2">
@@ -46,21 +41,19 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
                 <MessageCircle className="h-4 w-4 text-green-500" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                <h3 className="font-semibold text-gray-900 group-hover:text-brand-600 dark:text-gray-100">
                   @{author?.username?.localName} replied to your post
                 </h3>
                 {notification.comment.feed.metadata && (
-                  <Link href={`/thread/${notification.comment.feed.address}`} className="text-inherit hover:underline">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        in &ldquo;{" "}
-                        {(notification.comment.feed.metadata.description?.length ?? 0) > 150
-                          ? (notification.comment.feed.metadata.description?.slice(0, 150) ?? "") + "..."
-                          : (notification.comment.feed.metadata.description ?? "")}{" "}
-                        &rdquo;
-                      </span>
-                    </p>
-                  </Link>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      in "
+                      {(notification.comment.feed.metadata.description?.length ?? 0) > 50
+                        ? (notification.comment.feed.metadata.description?.slice(0, 50) ?? "") + "..."
+                        : (notification.comment.feed.metadata.description ?? "")}
+                      "
+                    </span>
+                  </p>
                 )}
               </div>
             </div>
@@ -78,6 +71,6 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
           )}
         </div>
       </div>
-    </div>
+    </NotificationCard>
   );
 }

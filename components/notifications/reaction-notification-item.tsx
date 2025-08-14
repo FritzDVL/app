@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { AvatarProfileLink } from "@/components/notifications/avatar-profile-link";
+import { NotificationCard } from "@/components/notifications/notification-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getTimeAgo } from "@/lib/shared/utils";
 import type { ReactionNotification } from "@lens-protocol/client";
@@ -47,69 +49,15 @@ export function ReactionNotificationItem({ notification }: { notification: React
         ? post.metadata.content?.slice(0, 50) + "..."
         : "your post";
 
+  // Determine if this is a reply or a thread
+  const isReply = post.metadata?.__typename === "TextOnlyMetadata";
+  const threadAddress = post.feed.address;
+  const navigationUrl = `/thread/${threadAddress}${isReply ? `/reply/${post.id}` : ""}`;
+
   return (
-    <div className="group rounded-xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+    <NotificationCard href={navigationUrl}>
       <div className="flex items-start gap-4">
-        {/* Multiple avatars display */}
-        <div className="flex-shrink-0">
-          {displayAuthors.length === 1 ? (
-            // Single avatar
-            firstAuthor &&
-            firstAuthorUsername && (
-              <Link href={`/u/${firstAuthorUsername}`}>
-                <Avatar className="h-12 w-12 ring-2 ring-gray-200 transition-all duration-300 group-hover:ring-brand-300 dark:ring-gray-700">
-                  <AvatarImage src={firstAuthor.metadata?.picture || undefined} />
-                  <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 font-semibold text-white">
-                    {firstAuthor.metadata?.name?.[0]?.toUpperCase() ||
-                      firstAuthor.username?.localName?.[0]?.toUpperCase() ||
-                      "?"}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
-            )
-          ) : (
-            // Multiple avatars stacked
-            <div className="flex">
-              {displayAuthors.map((item, index) => {
-                const { author } = item;
-                const username = author.username?.value || author.username?.localName;
-                return (
-                  <div key={index} className={`${index > 0 ? "-ml-2" : ""} relative`}>
-                    {username ? (
-                      <Link href={`/u/${username}`}>
-                        <Avatar className="h-10 w-10 ring-2 ring-white transition-all duration-300 group-hover:ring-brand-300 dark:ring-gray-800">
-                          <AvatarImage src={author.metadata?.picture || undefined} />
-                          <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-sm font-semibold text-white">
-                            {author.metadata?.name?.[0]?.toUpperCase() ||
-                              author.username?.localName?.[0]?.toUpperCase() ||
-                              "?"}
-                          </AvatarFallback>
-                        </Avatar>
-                      </Link>
-                    ) : (
-                      <Avatar className="h-10 w-10 ring-2 ring-white dark:ring-gray-800">
-                        <AvatarImage src={author.metadata?.picture || undefined} />
-                        <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-sm font-semibold text-white">
-                          {author.metadata?.name?.[0]?.toUpperCase() ||
-                            author.username?.localName?.[0]?.toUpperCase() ||
-                            "?"}
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                  </div>
-                );
-              })}
-              {/* Show "+N" if there are more than 3 reactions */}
-              {totalReactions > 3 && (
-                <div className="relative -ml-2">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-500 text-xs font-semibold text-white ring-2 ring-white dark:ring-gray-800">
-                    +{totalReactions - 3}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        <AvatarProfileLink author={firstAuthor} />
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-start justify-between">
             <div className="flex items-center gap-2">
@@ -121,7 +69,9 @@ export function ReactionNotificationItem({ notification }: { notification: React
                 )}
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">{getReactionMessage()}</h3>
+                <h3 className="font-semibold text-gray-900 group-hover:text-brand-600 dark:text-gray-100">
+                  {getReactionMessage()}
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   <span className="font-medium text-gray-900 dark:text-gray-100">&ldquo;{postTitle}&rdquo;</span>
                 </p>
@@ -133,6 +83,6 @@ export function ReactionNotificationItem({ notification }: { notification: React
           </div>
         </div>
       </div>
-    </div>
+    </NotificationCard>
   );
 }
