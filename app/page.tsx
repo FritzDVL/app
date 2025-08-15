@@ -1,49 +1,35 @@
-"use client";
-
-import { useState } from "react";
 import { FeaturedCommunities } from "@/components/home/featured-communities";
 import { HeroSection } from "@/components/home/hero-section";
-import { LatestThreads } from "@/components/home/latest-threads";
 import { StatsBar } from "@/components/home/stats-bar";
-import { useForumStats } from "@/hooks/common/use-forum-stats";
-import { useFeaturedCommunities } from "@/hooks/queries/use-featured-communities";
-import { useFeaturedThreads } from "@/hooks/queries/use-featured-threads";
-import { useLatestThreads } from "@/hooks/queries/use-latest-threads";
-import { getTimeAgo } from "@/lib/shared/utils";
+import { ThreadsSwitcher } from "@/components/home/threads-switcher";
+import { getFeaturedCommunities } from "@/lib/services/community/get-featured-communities";
+import { getForumStatistics } from "@/lib/services/stats/get-forum-statistics";
+import { getFeaturedThreads } from "@/lib/services/thread/get-featured-threads";
+import { getLatestThreads } from "@/lib/services/thread/get-latest-threads";
 
-export default function HomePage() {
-  const [activeCategory, setActiveCategory] = useState("Featured");
+export default async function HomePage() {
+  const forumStatsResult = await getForumStatistics();
+  const forumStats = forumStatsResult.success && forumStatsResult.stats ? forumStatsResult.stats : null;
+  const statsError = !forumStatsResult.success;
 
-  // Forum-wide stats
-  const { data: forumStats, isLoading: loadingStats, isError: statsError } = useForumStats();
+  const latestThreadsResult = await getLatestThreads(5);
+  const latestThreads = latestThreadsResult.success ? (latestThreadsResult.threads ?? []) : [];
 
-  // Latest threads (optimized custom hook)
-  const { data: threads = [], isLoading: loadingThreads, error } = useLatestThreads(5);
-  const { data: featuredThreads = [], isLoading: loadingFeaturedThreads } = useFeaturedThreads(5);
+  const featuredThreadsResult = await getFeaturedThreads(5);
+  const featuredThreads = featuredThreadsResult.success ? (featuredThreadsResult.threads ?? []) : [];
 
-  // Featured communities (custom hook)
-  const { data: featuredCommunities = [] } = useFeaturedCommunities();
-
-  // Thread list to show depending on category
-  const showThreads = activeCategory === "Featured" ? featuredThreads : threads;
-  const showLoading = activeCategory === "Featured" ? loadingFeaturedThreads : loadingThreads;
+  const featuredCommunitiesResult = await getFeaturedCommunities();
+  const featuredCommunities = featuredCommunitiesResult.success ? (featuredCommunitiesResult.communities ?? []) : [];
 
   return (
     <>
       <HeroSection />
       <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <StatsBar loadingStats={loadingStats} statsError={statsError} forumStats={forumStats ?? undefined} />
+        <StatsBar loadingStats={false} statsError={statsError} forumStats={forumStats ?? undefined} />
         <div className="w-full">
           <div className="flex flex-col lg:flex-row">
             <div className="w-full gap-8 lg:w-2/3 lg:pr-4">
-              <LatestThreads
-                threads={showThreads}
-                loadingThreads={showLoading}
-                error={error}
-                activeCategory={activeCategory}
-                setActiveCategory={setActiveCategory}
-                formatDate={getTimeAgo}
-              />
+              <ThreadsSwitcher featuredThreads={featuredThreads} latestThreads={latestThreads} />
             </div>
             <div className="w-full gap-8 lg:w-1/3 lg:pl-4">
               <FeaturedCommunities featuredCommunities={featuredCommunities} />

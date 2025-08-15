@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Thread } from "@/lib/domain/threads/types";
+import { getTimeAgo } from "@/lib/shared/utils";
 import { Clock, Edit3, MessageCircle, ThumbsDown, ThumbsUp } from "lucide-react";
 
 interface LatestThreadsProps {
@@ -10,7 +11,6 @@ interface LatestThreadsProps {
   error: any;
   activeCategory: string;
   setActiveCategory: (category: string) => void;
-  formatDate: (date: Date) => string;
 }
 
 export function LatestThreads({
@@ -19,7 +19,6 @@ export function LatestThreads({
   error,
   activeCategory,
   setActiveCategory,
-  formatDate,
 }: LatestThreadsProps) {
   return (
     <div className="mb-8 w-full max-w-none overflow-hidden rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800 md:max-w-none">
@@ -115,7 +114,7 @@ export function LatestThreads({
                       <span className="text-border sm:inline">•</span>
                       <span className="flex items-center gap-1 text-sm text-muted-foreground">
                         <Clock className="h-3 w-3" />
-                        {formatDate(new Date(thread.created_at))}
+                        {getTimeAgo(new Date(thread.created_at))}
                       </span>
                     </div>
                     <div>
