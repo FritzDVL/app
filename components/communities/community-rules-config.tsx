@@ -9,9 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { CommunityRule } from "@/lib/domain/communities/types";
 import { isMainnet } from "@/lib/env";
+import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
 import { Account } from "@lens-protocol/client";
-import { AlertTriangle, Coins, DollarSign, Lock, Shield } from "lucide-react";
 
 interface CommunityRulesConfigProps {
   communityRule: CommunityRule;
@@ -33,10 +33,10 @@ const tokenOptions = isMainnet()
       { value: "0xaA91D645D7a6C1aeaa5988e0547267B77d33fe16", label: "WETH", symbol: "WETH" },
       { value: "0xeee5a340Cdc9c179Db25dea45AcfD5FE8d4d3eB8", label: "WGRASS", symbol: "WGRASS" },
     ];
+const defaultToken = tokenOptions[0].value;
 
 export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, recipient }: CommunityRulesConfigProps) {
   const [isEnabled, setIsEnabled] = useState(communityRule.type !== "none");
-  const defaultToken = tokenOptions[0].value;
 
   const handleRuleTypeChange = (type: string) => {
     if (type === "none") {
@@ -121,11 +121,7 @@ export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, rec
             <TokenGatedRuleConfig rule={communityRule} onChange={updateTokenGatedRule} />
           )}
           {communityRule.type === "MembershipApprovalGroupRule" && (
-            <MembershipApprovalRuleConfig
-              rule={communityRule}
-              walletAddress={recipient.owner}
-              onChange={updateApprovalRule}
-            />
+            <MembershipApprovalRuleConfig rule={communityRule} onChange={updateApprovalRule} />
           )}
         </>
       )}

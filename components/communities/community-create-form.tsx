@@ -94,7 +94,6 @@ export function CommunityCreateForm({ onGroupRuleChange, creator }: CommunityCre
               />
             </div>
 
-            {/* Group Rules Configuration */}
             <CommunityRulesConfig
               communityRule={formData.communityRule}
               onCommunityRuleChange={rule => handleChange({ target: { name: "communityRule", value: rule } })}
