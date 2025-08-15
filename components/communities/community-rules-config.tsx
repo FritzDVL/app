@@ -14,8 +14,8 @@ import { Account } from "@lens-protocol/client";
 import { AlertTriangle, Coins, DollarSign, Lock, Shield } from "lucide-react";
 
 interface CommunityRulesConfigProps {
-  groupRule: CommunityRule;
-  onGroupRuleChange: (rule: CommunityRule) => void;
+  communityRule: CommunityRule;
+  onCommunityRuleChange: (rule: CommunityRule) => void;
   recipient: Account;
 }
 
@@ -34,15 +34,15 @@ const tokenOptions = isMainnet()
       { value: "0xeee5a340Cdc9c179Db25dea45AcfD5FE8d4d3eB8", label: "WGRASS", symbol: "WGRASS" },
     ];
 
-export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }: CommunityRulesConfigProps) {
-  const [isEnabled, setIsEnabled] = useState(groupRule.type !== "none");
+export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, recipient }: CommunityRulesConfigProps) {
+  const [isEnabled, setIsEnabled] = useState(communityRule.type !== "none");
 
   // Default token (first option for each network)
   const defaultToken = tokenOptions[0].value;
 
   const handleRuleTypeChange = (type: string) => {
     if (type === "none") {
-      onGroupRuleChange({ type: "none" });
+      onCommunityRuleChange({ type: "none" });
       setIsEnabled(false);
       return;
     }
@@ -51,7 +51,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
 
     switch (type) {
       case "SimplePaymentGroupRule":
-        onGroupRuleChange({
+        onCommunityRuleChange({
           type: "SimplePaymentGroupRule",
           amount: "",
           token: defaultToken as Address,
@@ -59,7 +59,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
         });
         break;
       case "TokenGatedGroupRule":
-        onGroupRuleChange({
+        onCommunityRuleChange({
           type: "TokenGatedGroupRule",
           tokenAddress: "0x0000000000000000000000000000000000000000",
           minBalance: "",
@@ -67,7 +67,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
         });
         break;
       case "MembershipApprovalGroupRule":
-        onGroupRuleChange({
+        onCommunityRuleChange({
           type: "MembershipApprovalGroupRule",
           approvers: [recipient.address],
         });
@@ -78,34 +78,34 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
   const handleToggle = (enabled: boolean) => {
     setIsEnabled(enabled);
     if (!enabled) {
-      onGroupRuleChange({ type: "none" });
+      onCommunityRuleChange({ type: "none" });
     } else {
       handleRuleTypeChange("SimplePaymentGroupRule");
     }
   };
 
   const updatePaymentRule = (field: string, value: string) => {
-    if (groupRule.type === "SimplePaymentGroupRule") {
-      onGroupRuleChange({
-        ...groupRule,
+    if (communityRule.type === "SimplePaymentGroupRule") {
+      onCommunityRuleChange({
+        ...communityRule,
         [field]: value,
       });
     }
   };
 
   const updateTokenGatedRule = (field: string, value: string) => {
-    if (groupRule.type === "TokenGatedGroupRule") {
-      onGroupRuleChange({
-        ...groupRule,
+    if (communityRule.type === "TokenGatedGroupRule") {
+      onCommunityRuleChange({
+        ...communityRule,
         [field]: value,
       });
     }
   };
 
   const updateApprovalRule = (approvers: Address[]) => {
-    if (groupRule.type === "MembershipApprovalGroupRule") {
-      onGroupRuleChange({
-        ...groupRule,
+    if (communityRule.type === "MembershipApprovalGroupRule") {
+      onCommunityRuleChange({
+        ...communityRule,
         approvers,
       });
     }
@@ -129,7 +129,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
         <>
           <div className="space-y-2">
             <Label className="text-base font-medium text-foreground">Access Type</Label>
-            <Select value={groupRule.type} onValueChange={handleRuleTypeChange}>
+            <Select value={communityRule.type} onValueChange={handleRuleTypeChange}>
               <SelectTrigger className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base text-sm backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700">
                 <SelectValue placeholder="Choose access type" />
               </SelectTrigger>
@@ -166,7 +166,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
           </div>
 
           {/* Payment Configuration */}
-          {groupRule.type === "SimplePaymentGroupRule" && (
+          {communityRule.type === "SimplePaymentGroupRule" && (
             <>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -179,7 +179,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
                     type="number"
                     step="0.01"
                     placeholder="10.00"
-                    value={groupRule.amount}
+                    value={communityRule.amount}
                     onChange={e => updatePaymentRule("amount", e.target.value)}
                     className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
                   />
@@ -189,7 +189,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
                   <Label htmlFor="token" className="text-base font-medium text-foreground">
                     Payment Token
                   </Label>
-                  <Select value={groupRule.token} onValueChange={value => updatePaymentRule("token", value)}>
+                  <Select value={communityRule.token} onValueChange={value => updatePaymentRule("token", value)}>
                     <SelectTrigger className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base text-sm backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700">
                       <SelectValue />
                     </SelectTrigger>
@@ -215,7 +215,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
                 <Input
                   id="recipient"
                   placeholder="Wallet address to receive payments"
-                  value={groupRule.recipient}
+                  value={communityRule.recipient}
                   onChange={e => updatePaymentRule("recipient", e.target.value)}
                   className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
                 />
@@ -228,7 +228,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
           )}
 
           {/* Token Gating Configuration */}
-          {groupRule.type === "TokenGatedGroupRule" && (
+          {communityRule.type === "TokenGatedGroupRule" && (
             <>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -236,7 +236,10 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
                     <Lock className="h-4 w-4 text-blue-600" />
                     Token Type
                   </Label>
-                  <Select value={groupRule.tokenType} onValueChange={value => updateTokenGatedRule("tokenType", value)}>
+                  <Select
+                    value={communityRule.tokenType}
+                    onValueChange={value => updateTokenGatedRule("tokenType", value)}
+                  >
                     <SelectTrigger className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700">
                       <SelectValue />
                     </SelectTrigger>
@@ -265,13 +268,13 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
 
                 <div className="space-y-2">
                   <Label htmlFor="minBalance" className="text-base font-medium text-foreground">
-                    {groupRule.tokenType === "ERC20" ? "Min Balance" : "Min Amount"}
+                    {communityRule.tokenType === "ERC20" ? "Min Balance" : "Min Amount"}
                   </Label>
                   <Input
                     id="minBalance"
                     type="number"
-                    placeholder={groupRule.tokenType === "ERC20" ? "1.0" : "1"}
-                    value={groupRule.minBalance}
+                    placeholder={communityRule.tokenType === "ERC20" ? "1.0" : "1"}
+                    value={communityRule.minBalance}
                     onChange={e => updateTokenGatedRule("minBalance", e.target.value)}
                     className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
                   />
@@ -285,13 +288,13 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
                 <Input
                   id="tokenAddress"
                   placeholder="0x... token contract address"
-                  value={groupRule.tokenAddress}
+                  value={communityRule.tokenAddress}
                   onChange={e => updateTokenGatedRule("tokenAddress", e.target.value)}
                   className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
                 />
               </div>
 
-              {groupRule.tokenType === "ERC1155" && (
+              {communityRule.tokenType === "ERC1155" && (
                 <div className="space-y-2">
                   <Label htmlFor="tokenId" className="text-base font-medium text-foreground">
                     Token ID
@@ -299,7 +302,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
                   <Input
                     id="tokenId"
                     placeholder="Token ID"
-                    value={groupRule.tokenId || ""}
+                    value={communityRule.tokenId || ""}
                     onChange={e => updateTokenGatedRule("tokenId", e.target.value)}
                     className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
                   />
@@ -309,7 +312,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
           )}
 
           {/* Approval Configuration */}
-          {groupRule.type === "MembershipApprovalGroupRule" && (
+          {communityRule.type === "MembershipApprovalGroupRule" && (
             <div className="space-y-2">
               <Label htmlFor="approvers" className="flex items-center gap-2 text-base font-medium text-foreground">
                 <Shield className="h-4 w-4 text-purple-600" />
@@ -318,7 +321,7 @@ export function CommunityRulesConfig({ groupRule, onGroupRuleChange, recipient }
               <Textarea
                 id="approvers"
                 placeholder="Enter additional lens account addresse (one per line)"
-                value={groupRule.approvers.filter(addr => addr !== recipient.address).join("\n")}
+                value={communityRule.approvers.filter(addr => addr !== recipient.address).join("\n")}
                 onChange={e => {
                   const addresses = e.target.value
                     .split("\n")
