@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import CustomSelectItem from "@/components/ui/custom-select-item";
-import { Input } from "@/components/ui/input";
+import { MembershipApprovalRuleConfig } from "@/components/communities/rules/membership-approval-rule-config";
+import { PaymentRuleConfig } from "@/components/communities/rules/payment-rule-config";
+import { RuleTypeSelect } from "@/components/communities/rules/rule-type-select";
+import { TokenGatedRuleConfig } from "@/components/communities/rules/token-gated-rule-config";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { CommunityRule } from "@/lib/domain/communities/types";
 import { isMainnet } from "@/lib/env";
 import { Address } from "@/types/common";
@@ -36,8 +36,6 @@ const tokenOptions = isMainnet()
 
 export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, recipient }: CommunityRulesConfigProps) {
   const [isEnabled, setIsEnabled] = useState(communityRule.type !== "none");
-
-  // Default token (first option for each network)
   const defaultToken = tokenOptions[0].value;
 
   const handleRuleTypeChange = (type: string) => {
@@ -46,9 +44,7 @@ export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, rec
       setIsEnabled(false);
       return;
     }
-
     setIsEnabled(true);
-
     switch (type) {
       case "SimplePaymentGroupRule":
         onCommunityRuleChange({
@@ -84,30 +80,20 @@ export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, rec
     }
   };
 
+  // --- Modular update handlers ---
   const updatePaymentRule = (field: string, value: string) => {
     if (communityRule.type === "SimplePaymentGroupRule") {
-      onCommunityRuleChange({
-        ...communityRule,
-        [field]: value,
-      });
+      onCommunityRuleChange({ ...communityRule, [field]: value });
     }
   };
-
   const updateTokenGatedRule = (field: string, value: string) => {
     if (communityRule.type === "TokenGatedGroupRule") {
-      onCommunityRuleChange({
-        ...communityRule,
-        [field]: value,
-      });
+      onCommunityRuleChange({ ...communityRule, [field]: value });
     }
   };
-
   const updateApprovalRule = (approvers: Address[]) => {
     if (communityRule.type === "MembershipApprovalGroupRule") {
-      onCommunityRuleChange({
-        ...communityRule,
-        approvers,
-      });
+      onCommunityRuleChange({ ...communityRule, approvers });
     }
   };
 
@@ -123,216 +109,23 @@ export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, rec
           {isEnabled ? "Configure how users can join your community" : "Community will be free to join for everyone"}
         </p>
       </div>
-
       {/* Access Type Selection */}
       {isEnabled && (
         <>
-          <div className="space-y-2">
-            <Label className="text-base font-medium text-foreground">Access Type</Label>
-            <Select value={communityRule.type} onValueChange={handleRuleTypeChange}>
-              <SelectTrigger className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base text-sm backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700">
-                <SelectValue placeholder="Choose access type" />
-              </SelectTrigger>
-              <SelectContent className="rounded-2xl border-slate-300/60 bg-white/95 backdrop-blur-sm dark:border-gray-600 dark:bg-gray-800">
-                <CustomSelectItem
-                  value="SimplePaymentGroupRule"
-                  className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-                >
-                  <div className="flex items-center gap-2">
-                    <Coins className="h-4 w-4 text-green-500 data-[state=checked]:text-white" />
-                    <span>Paid Access</span>
-                  </div>
-                </CustomSelectItem>
-                <CustomSelectItem
-                  value="TokenGatedGroupRule"
-                  className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-                >
-                  <div className="flex items-center gap-2">
-                    <Lock className="h-4 w-4 text-blue-500 data-[state=checked]:text-white" />
-                    <span>Token Holders Only</span>
-                  </div>
-                </CustomSelectItem>
-                <CustomSelectItem
-                  value="MembershipApprovalGroupRule"
-                  className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-                >
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-purple-500 data-[state=checked]:text-white" />
-                    <span>Manual Approval</span>
-                  </div>
-                </CustomSelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Payment Configuration */}
+          <RuleTypeSelect value={communityRule.type} onChange={handleRuleTypeChange} />
+          {/* Modular config UIs */}
           {communityRule.type === "SimplePaymentGroupRule" && (
-            <>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="amount" className="flex items-center gap-2 text-base font-medium text-foreground">
-                    <DollarSign className="h-4 w-4 text-green-600" />
-                    Price
-                  </Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    placeholder="10.00"
-                    value={communityRule.amount}
-                    onChange={e => updatePaymentRule("amount", e.target.value)}
-                    className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="token" className="text-base font-medium text-foreground">
-                    Payment Token
-                  </Label>
-                  <Select value={communityRule.token} onValueChange={value => updatePaymentRule("token", value)}>
-                    <SelectTrigger className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base text-sm backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-2xl border-slate-300/60 bg-white/95 backdrop-blur-sm dark:border-gray-600 dark:bg-gray-800">
-                      {tokenOptions.map(token => (
-                        <CustomSelectItem
-                          key={token.value}
-                          value={token.value}
-                          className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-                        >
-                          {token.label}
-                        </CustomSelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="recipient" className="text-base font-medium text-foreground">
-                  Payment Recipient
-                </Label>
-                <Input
-                  id="recipient"
-                  placeholder="Wallet address to receive payments"
-                  value={communityRule.recipient}
-                  onChange={e => updatePaymentRule("recipient", e.target.value)}
-                  className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
-                />
-                <p className="flex items-center gap-1 text-base text-muted-foreground">
-                  <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                  Lens deducts 1.5% treasury fee automatically
-                </p>
-              </div>
-            </>
+            <PaymentRuleConfig rule={communityRule} tokenOptions={tokenOptions} onChange={updatePaymentRule} />
           )}
-
-          {/* Token Gating Configuration */}
           {communityRule.type === "TokenGatedGroupRule" && (
-            <>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="tokenType" className="flex items-center gap-2 text-base font-medium text-foreground">
-                    <Lock className="h-4 w-4 text-blue-600" />
-                    Token Type
-                  </Label>
-                  <Select
-                    value={communityRule.tokenType}
-                    onValueChange={value => updateTokenGatedRule("tokenType", value)}
-                  >
-                    <SelectTrigger className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-2xl border-slate-300/60 bg-white/95 backdrop-blur-sm dark:border-gray-600 dark:bg-gray-800">
-                      <CustomSelectItem
-                        value="ERC20"
-                        className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-                      >
-                        ERC-20
-                      </CustomSelectItem>
-                      <CustomSelectItem
-                        value="ERC721"
-                        className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-                      >
-                        NFT
-                      </CustomSelectItem>
-                      <CustomSelectItem
-                        value="ERC1155"
-                        className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-                      >
-                        ERC-1155
-                      </CustomSelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="minBalance" className="text-base font-medium text-foreground">
-                    {communityRule.tokenType === "ERC20" ? "Min Balance" : "Min Amount"}
-                  </Label>
-                  <Input
-                    id="minBalance"
-                    type="number"
-                    placeholder={communityRule.tokenType === "ERC20" ? "1.0" : "1"}
-                    value={communityRule.minBalance}
-                    onChange={e => updateTokenGatedRule("minBalance", e.target.value)}
-                    className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="tokenAddress" className="text-base font-medium text-foreground">
-                  Token Contract Address
-                </Label>
-                <Input
-                  id="tokenAddress"
-                  placeholder="0x... token contract address"
-                  value={communityRule.tokenAddress}
-                  onChange={e => updateTokenGatedRule("tokenAddress", e.target.value)}
-                  className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
-                />
-              </div>
-
-              {communityRule.tokenType === "ERC1155" && (
-                <div className="space-y-2">
-                  <Label htmlFor="tokenId" className="text-base font-medium text-foreground">
-                    Token ID
-                  </Label>
-                  <Input
-                    id="tokenId"
-                    placeholder="Token ID"
-                    value={communityRule.tokenId || ""}
-                    onChange={e => updateTokenGatedRule("tokenId", e.target.value)}
-                    className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
-                  />
-                </div>
-              )}
-            </>
+            <TokenGatedRuleConfig rule={communityRule} onChange={updateTokenGatedRule} />
           )}
-
-          {/* Approval Configuration */}
           {communityRule.type === "MembershipApprovalGroupRule" && (
-            <div className="space-y-2">
-              <Label htmlFor="approvers" className="flex items-center gap-2 text-base font-medium text-foreground">
-                <Shield className="h-4 w-4 text-purple-600" />
-                Additional Approvers
-              </Label>
-              <Textarea
-                id="approvers"
-                placeholder="Enter additional lens account addresse (one per line)"
-                value={communityRule.approvers.filter(addr => addr !== recipient.address).join("\n")}
-                onChange={e => {
-                  const addresses = e.target.value
-                    .split("\n")
-                    .map(addr => addr.trim())
-                    .filter(addr => addr.length > 0) as Address[];
-                  updateApprovalRule(recipient.address ? [recipient.address, ...addresses] : addresses);
-                }}
-                className="min-h-[80px] w-full rounded-2xl border-slate-300/60 bg-white/80 p-3 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
-              />
-              <p className="text-base text-muted-foreground">You are automatically included as an approver</p>
-            </div>
+            <MembershipApprovalRuleConfig
+              rule={communityRule}
+              walletAddress={recipient.owner}
+              onChange={updateApprovalRule}
+            />
           )}
         </>
       )}
