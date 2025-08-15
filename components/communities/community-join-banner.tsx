@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";

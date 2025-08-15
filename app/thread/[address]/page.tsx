@@ -1,27 +1,38 @@
-"use client";
-
-import { useState } from "react";
-import { useParams } from "next/navigation";
 import { CommunityJoinBanner } from "@/components/communities/community-join-banner";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { ThreadMainCard } from "@/components/thread/thread-main-card";
 import { ThreadRepliesList } from "@/components/thread/thread-replies-list";
 import { ThreadRepliesPagination } from "@/components/thread/thread-replies-pagination";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
-import { useCommunity } from "@/hooks/queries/use-community";
-import { useThread } from "@/hooks/queries/use-thread";
-import { useThreadReplies } from "@/hooks/queries/use-thread-replies";
-import { Address } from "@/types/common";
+import { Community } from "@/lib/domain/communities/types";
+import { getCommunity } from "@/lib/services/community/get-community";
+import { getThreadReplies } from "@/lib/services/reply/get-thread-replies";
+import { getThread } from "@/lib/services/thread/get-thread";
 
-export default function ThreadPage() {
-  const params = useParams();
-  const { address: threadAddress } = params;
-  const [cursor, setCursor] = useState<string | null>(null);
+export default async function ThreadPage({ params }: { params: { address: string } }) {
+  const threadAddress = params.address;
 
-  // Fetch thread and community data
-  const { data: thread } = useThread(threadAddress as Address);
-  const { data: community } = useCommunity(thread?.community || "");
-  const { data: replies } = useThreadReplies(threadAddress as string, cursor);
+  const threadResponse = await getThread(threadAddress);
+  if (!threadResponse.success || !threadResponse.thread) {
+    return <div className="text-center text-red-500">Thread not found</div>;
+  }
+  const thread = threadResponse.thread;
+
+  const communityResponse = await getCommunity(thread.community);
+  if (!communityResponse.success || !communityResponse.community) {
+    return <div className="text-center text-red-500">Community not found</div>;
+  }
+  const community: Community = communityResponse.community;
+
+  const repliesResponse = await getThreadReplies(thread.address);
+  if (!repliesResponse.success) {
+    return <div className="text-center text-red-500">Failed to load replies</div>;
+  }
+  const replies = repliesResponse.success
+    ? Array.isArray(repliesResponse.data)
+      ? repliesResponse.data
+      : (repliesResponse.data?.replies ?? [])
+    : [];
 
   return (
     <ProtectedRoute>
@@ -35,13 +46,8 @@ export default function ThreadPage() {
         {/* Community Join Banner - shown if user is not a member */}
         {community && <CommunityJoinBanner community={community} />}
 
-        <ThreadMainCard threadAddress={threadAddress as string} />
-        <ThreadRepliesList threadAddress={threadAddress as string} />
-        <ThreadRepliesPagination
-          pageInfo={replies?.pageInfo}
-          onPrev={() => setCursor(replies?.pageInfo?.prev || null)}
-          onNext={() => setCursor(replies?.pageInfo?.next || null)}
-        />
+        <ThreadMainCard thread={thread} />
+        <ThreadRepliesList thread={thread} replies={replies} />
       </div>
     </ProtectedRoute>
   );

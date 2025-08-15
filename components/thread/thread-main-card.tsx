@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
@@ -7,10 +9,9 @@ import { ThreadVoting } from "@/components/thread/thread-voting";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useThread } from "@/hooks/queries/use-thread";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
+import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo } from "@/lib/shared/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { postId } from "@lens-protocol/react";
@@ -25,23 +26,22 @@ function getThreadContent(thread: any): string {
   return "";
 }
 
-export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
+export function ThreadMainCard({ thread }: { thread: Thread }) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
 
   const { createReply } = useReplyCreate();
   const { isLoggedIn } = useAuthStore();
   const queryClient = useQueryClient();
-  const { data: thread, isLoading: loading } = useThread(threadAddress);
 
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
     if (replyingTo === "main" && replyContent["main"]) {
-      const reply = await createReply(thread.rootPost.id, replyContent["main"], threadAddress as any, thread.id);
+      const reply = await createReply(thread.rootPost.id, replyContent["main"], thread.address, thread.id);
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, main: "" }));
-        queryClient.invalidateQueries({ queryKey: ["replies", threadAddress] });
+        queryClient.invalidateQueries({ queryKey: ["replies", thread.address] });
       }
     }
   };
@@ -52,7 +52,6 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
 
-  if (loading) return <LoadingSpinner text="Loading thread..." />;
   if (!thread) return null;
 
   const threadPostId = thread.rootPost?.id;
