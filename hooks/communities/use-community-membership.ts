@@ -17,6 +17,10 @@ export const useCommunityMembership = (address: string) => {
     let cancelled = false;
 
     const checkMembership = async () => {
+      if (sessionClient.loading) {
+        return;
+      }
+
       const currentSessionClient = sessionClient.data;
       if (!currentSessionClient) {
         if (!cancelled) {
@@ -48,7 +52,7 @@ export const useCommunityMembership = (address: string) => {
     return () => {
       cancelled = true;
     };
-  }, [address, sessionClient.data]);
+  }, [address, sessionClient.loading, sessionClient.data]);
 
   // Allow external update of isMember
   const updateIsMember = (value: boolean) => setIsMember(value);

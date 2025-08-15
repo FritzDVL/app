@@ -1,29 +1,18 @@
-import { useState } from "react";
+"use client";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ReplyVoting } from "@/components/reply/reply-voting";
 import { ThreadNewButton } from "@/components/thread/thread-new-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useCommunityThreads } from "@/hooks/queries/use-community-threads";
-import { Address } from "@/types/common";
+import { Thread } from "@/lib/domain/threads/types";
 import { postId } from "@lens-protocol/react";
-import { ArrowUp, Clock, Flame, MessageCircle, Search } from "lucide-react";
+import { MessageCircle, Search } from "lucide-react";
 
-export function CommunityThreads({
-  communityAddress,
-  isJoined = true,
-}: {
-  communityAddress: string;
-  isJoined?: boolean;
-}) {
-  const [sortBy, setSortBy] = useState("hot");
+export function CommunityThreads({ threads, isJoined = true }: { threads: Thread[]; isJoined?: boolean }) {
   const router = useRouter();
-
-  const { data: threads = [], isLoading: areThreadsLoading } = useCommunityThreads(communityAddress);
 
   return (
     <>
@@ -33,7 +22,7 @@ export function CommunityThreads({
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-foreground">Start a Discussion</h3>
-              <ThreadNewButton communityAddress={communityAddress as Address} isJoined={isJoined} />
+              <ThreadNewButton communityAddress={threads[0].community} isJoined={isJoined} />
             </div>
           </CardHeader>
         </Card>
@@ -46,6 +35,7 @@ export function CommunityThreads({
               <MessageCircle className="mr-3 h-6 w-6 text-brand-500" />
               Discussions
             </h2>
+            {/*
             <div className="flex items-center space-x-2">
               <Button
                 variant={sortBy === "hot" ? "default" : "ghost"}
@@ -75,6 +65,7 @@ export function CommunityThreads({
                 Top
               </Button>
             </div>
+            */}
           </div>
           <div className="mt-6">
             <div className="relative max-w-md">
@@ -92,9 +83,7 @@ export function CommunityThreads({
         </CardHeader>
         <CardContent className="pt-0">
           {/* Threads List */}
-          {areThreadsLoading ? (
-            <LoadingSpinner text="Loading threads..." />
-          ) : threads.length === 0 ? (
+          {threads.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="mb-4 text-4xl">📝</div>
               <h3 className="mb-2 text-lg font-semibold text-slate-900">No threads yet</h3>
