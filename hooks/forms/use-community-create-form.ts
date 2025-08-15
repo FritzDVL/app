@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCommunityAction } from "@/app/actions/create-community";
+import { CommunityRule } from "@/lib/domain/communities/types";
 import { joinAndIncrementCommunityMember } from "@/lib/external/lens/primitives/groups";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
@@ -14,14 +15,16 @@ export interface CreateCommunityFormData {
   adminAddress: Address;
   logo?: File | null;
   tags?: string;
+  communityRule: CommunityRule;
 }
 
 export function useCommunityCreateForm() {
   const [formData, setFormData] = useState<CreateCommunityFormData>({
     name: "",
     description: "",
-    adminAddress: "0x0",
     logo: undefined,
+    adminAddress: "0x0",
+    communityRule: { type: "none" } as CommunityRule,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,16 +52,19 @@ export function useCommunityCreateForm() {
     if (name === "logo") {
       let file: File | null = null;
       if ("files" in e.target && e.target.files) {
-        // Real input event: use the first file only
         file = e.target.files[0] || null;
       } else if (value instanceof File) {
-        // Programmatic: value is a File
         file = value;
       } else if (value === null) {
-        // Programmatic: clear
         file = null;
       }
       setFormData(prev => ({ ...prev, logo: file }));
+      return;
+    }
+
+    // Handle communityRule (object)
+    if (name === "communityRule") {
+      setFormData(prev => ({ ...prev, communityRule: value }));
       return;
     }
 
@@ -82,7 +88,11 @@ export function useCommunityCreateForm() {
       actionFormData.append("description", formData.description);
       actionFormData.append("adminAddress", formData.adminAddress);
       if (formData.logo) {
-        actionFormData.append("logo", formData.logo);
+        actionFormData.append("image", formData.logo);
+      }
+      // Add communityRule as JSON string if not 'none'
+      if (formData.communityRule && formData.communityRule.type !== "none") {
+        actionFormData.append("communityRule", JSON.stringify(formData.communityRule));
       }
 
       // Show loading toast
@@ -115,7 +125,6 @@ export function useCommunityCreateForm() {
       const joined = await joinAndIncrementCommunityMember(result.community, sessionClient.data, walletClient.data);
 
       if (joined) {
-        // Server Action already invalidated the cache, just navigate
         router.push(`/communities/${result.community.address}`);
       }
     } catch (err: any) {
