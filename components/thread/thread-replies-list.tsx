@@ -22,9 +22,11 @@ export function ThreadRepliesList({ thread, replies }: { thread: Thread; replies
 
   if (!thread || !replies) return null;
 
+  const filteredReplies = replies.filter(r => r.id !== thread.rootPost?.id);
+
   return (
     <ThreadReplies
-      replies={replies}
+      replies={filteredReplies}
       replyingTo={replyingTo}
       replyContent={replyContent}
       setReplyingTo={setReplyingTo}
