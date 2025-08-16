@@ -1,11 +1,7 @@
 "use server";
 
-/**
- * Create Community Service
- * Creates a community using the full business logic
- */
+import { CreateCommunityFormData } from "@/hooks/forms/use-community-create-form";
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
-import { CreateCommunityFormData } from "@/lib/domain/communities/types";
 import { Moderator } from "@/lib/domain/communities/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { getAdminSessionClient } from "@/lib/external/lens/admin-session";

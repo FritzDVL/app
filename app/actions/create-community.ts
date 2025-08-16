@@ -1,7 +1,7 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
-import { CreateCommunityFormData } from "@/lib/domain/communities/types";
+import { revalidatePath } from "next/cache";
+import { CreateCommunityFormData } from "@/hooks/forms/use-community-create-form";
 import { createCommunity } from "@/lib/services/community/create-community";
 import { Address } from "@/types/common";
 
@@ -11,7 +11,7 @@ export async function createCommunityAction(formData: FormData) {
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
     const adminAddress = formData.get("adminAddress") as Address;
-    const imageFile = formData.get("image") as File | null;
+    const logoFile = formData.get("logo") as File | null;
 
     if (!name || !description || !adminAddress) {
       return {
@@ -24,10 +24,11 @@ export async function createCommunityAction(formData: FormData) {
       name,
       description,
       adminAddress,
+      logo: logoFile || undefined,
     };
 
-    // Create the community using existing service
-    const result = await createCommunity(communityData, imageFile || undefined);
+    // Create the community using simplified service interface
+    const result = await createCommunity(communityData);
 
     if (result.success) {
       revalidatePath(`/communities`);

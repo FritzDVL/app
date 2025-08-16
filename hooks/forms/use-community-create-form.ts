@@ -8,14 +8,20 @@ import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
 
+export interface CreateCommunityFormData {
+  name: string;
+  description: string;
+  adminAddress: Address;
+  logo?: File | null;
+  tags?: string;
+}
+
 export function useCommunityCreateForm() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreateCommunityFormData>({
     name: "",
     description: "",
-    category: "",
-    emoji: "",
-    image: undefined as File | undefined,
-    adminAddress: "",
+    adminAddress: "0x0",
+    logo: undefined,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,13 +39,13 @@ export function useCommunityCreateForm() {
   }, [account?.address]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (e.target.name === "image") return;
+    if (e.target.name === "imageFile") return;
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setFormData({ ...formData, image: file });
+    setFormData({ ...formData, logo: file });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,8 +63,8 @@ export function useCommunityCreateForm() {
       actionFormData.append("name", formData.name);
       actionFormData.append("description", formData.description);
       actionFormData.append("adminAddress", formData.adminAddress);
-      if (formData.image) {
-        actionFormData.append("image", formData.image);
+      if (formData.logo) {
+        actionFormData.append("image", formData.logo);
       }
 
       // Show loading toast

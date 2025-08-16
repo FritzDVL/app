@@ -10,8 +10,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
 
 export function CommunityCreateForm() {
-  const { formData, loading, error, handleChange, handleImageChange, handleSubmit, isCreating } =
-    useCommunityCreateForm();
+  const { formData, loading, error, handleChange, handleImageChange, handleSubmit } = useCommunityCreateForm();
   const { account, walletAddress } = useAuthStore();
   const { reputation, canCreateCommunity } = useLensReputationScore(walletAddress as Address, account?.address);
 
@@ -52,9 +51,9 @@ export function CommunityCreateForm() {
               className="w-full rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               onChange={handleImageChange}
             />
-            {formData.image && (
+            {formData.logo && (
               <div className="mt-2">
-                <span className="text-xs text-foreground">Selected: {formData.image.name}</span>
+                <span className="text-xs text-foreground">Selected: {formData.logo.name}</span>
               </div>
             )}
           </div>
@@ -108,14 +107,13 @@ export function CommunityCreateForm() {
               className="rounded-full bg-gradient-to-r from-green-500 to-green-600 px-6 font-semibold text-white hover:from-green-600 hover:to-green-700 dark:bg-gray-700"
               disabled={
                 loading ||
-                isCreating ||
                 !canCreateCommunity ||
                 !formData.name.trim() ||
                 !formData.description.trim() ||
                 !formData.adminAddress.trim()
               }
             >
-              {loading || isCreating ? (
+              {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
                   Creating...
