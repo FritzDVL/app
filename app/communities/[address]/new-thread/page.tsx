@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { CommunityRules } from "@/components/communities/community-rules";
 import { ProtectedRoute } from "@/components/pages/protected-route";
-import { ThreadCreateForm } from "@/components/thread/new-thread-form";
+import { ThreadCreateForm } from "@/components/thread/thread-create-form";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useAuthStore } from "@/stores/auth-store";
