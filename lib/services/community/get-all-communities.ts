@@ -1,7 +1,3 @@
-/**
- * Get All Communities Service
- * Gets all communities using optimized batch operations
- */
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import { fetchGroupAdminsBatch, fetchGroupStatsBatch, fetchGroupsBatch } from "@/lib/external/lens/primitives/groups";
