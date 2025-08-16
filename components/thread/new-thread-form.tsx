@@ -13,11 +13,11 @@ import { Address } from "@/types/common";
 import { Hash, Plus, Send, X } from "lucide-react";
 import { toast } from "sonner";
 
-interface NewThreadFormProps {
+interface ThreadCreateFormProps {
   communityAddress: string;
 }
 
-export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
+export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
   const { account, walletAddress } = useAuthStore();
   const { reputation, canCreateThread } = useLensReputationScore(walletAddress as Address, account?.address);
 

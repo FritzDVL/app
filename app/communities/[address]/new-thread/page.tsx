@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { CommunityRules } from "@/components/communities/community-rules";
 import { ProtectedRoute } from "@/components/pages/protected-route";
-import { NewThreadForm } from "@/components/thread/new-thread-form";
+import { ThreadCreateForm } from "@/components/thread/new-thread-form";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useAuthStore } from "@/stores/auth-store";
@@ -36,7 +36,7 @@ export default function NewThreadPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <NewThreadForm communityAddress={communityAddress} />
+            <ThreadCreateForm communityAddress={communityAddress} />
           </div>
           {/* Sidebar */}
           <div className="space-y-6">
