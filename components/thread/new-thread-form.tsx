@@ -20,7 +20,6 @@ interface ThreadCreateFormProps {
 export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
   const { account, walletAddress } = useAuthStore();
   const { reputation, canCreateThread } = useLensReputationScore(walletAddress as Address, account?.address);
-
   const { formData, setFormData, handleChange, handleSubmit, isCreating } = useThreadCreateForm({
     communityAddress,
     author: account?.address || "",
