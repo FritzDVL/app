@@ -2,7 +2,6 @@ import { CommunityJoinBanner } from "@/components/communities/community-join-ban
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { ThreadMainCard } from "@/components/thread/thread-main-card";
 import { ThreadRepliesList } from "@/components/thread/thread-replies-list";
-import { ThreadRepliesPagination } from "@/components/thread/thread-replies-pagination";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Community } from "@/lib/domain/communities/types";
 import { getCommunity } from "@/lib/services/community/get-community";
