@@ -29,7 +29,7 @@ export default async function CommunityPage({ params }: { params: Promise<{ addr
           {/* Main Content */}
           <div className="lg:col-span-3">
             <CommunityHeader community={community} />
-            <CommunityThreads threads={threads} />
+            <CommunityThreads community={community} threads={threads} />
           </div>
           {/* Sidebar */}
           <div className="space-y-8">

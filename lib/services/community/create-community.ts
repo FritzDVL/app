@@ -68,7 +68,6 @@ export async function createCommunity(
       .andThen(handleOperationWith(adminWallet))
       .andThen(adminSessionClient.waitForTransaction)
       .andThen((txHash: unknown) => {
-        console.log("[Service] Group txHash:", txHash);
         return fetchGroup(adminSessionClient, { txHash: txHash as string });
       });
 

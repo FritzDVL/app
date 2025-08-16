@@ -8,12 +8,21 @@ import { ThreadNewButton } from "@/components/thread/thread-new-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { postId } from "@lens-protocol/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, Search } from "lucide-react";
 
-export function CommunityThreads({ threads, isJoined = true }: { threads: Thread[]; isJoined?: boolean }) {
+export function CommunityThreads({
+  community,
+  threads,
+  isJoined = true,
+}: {
+  community: Community;
+  threads: Thread[];
+  isJoined?: boolean;
+}) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -36,7 +45,7 @@ export function CommunityThreads({ threads, isJoined = true }: { threads: Thread
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-foreground">Start a Discussion</h3>
-              <ThreadNewButton communityAddress={threads[0].community} isJoined={isJoined} />
+              <ThreadNewButton communityAddress={community.address} isJoined={isJoined} />
             </div>
           </CardHeader>
         </Card>

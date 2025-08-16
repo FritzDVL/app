@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCommunityCreation } from "@/hooks/communities/use-community-create";
+import { createCommunityAction } from "@/app/actions/create-community";
 import { joinAndIncrementCommunityMember } from "@/lib/external/lens/primitives/groups";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
 import { useSessionClient } from "@lens-protocol/react";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
 
@@ -21,12 +20,11 @@ export function useCommunityCreateForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const { createCommunity, isCreating } = useCommunityCreation();
   const { account } = useAuthStore();
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
+
+  const router = useRouter();
 
   useEffect(() => {
     if (account?.address) {
@@ -54,18 +52,41 @@ export function useCommunityCreateForm() {
       return;
     }
     try {
-      const community = await createCommunity(
-        {
-          name: formData.name,
-          description: formData.description,
-          adminAddress: formData.adminAddress as Address,
-        },
-        formData.image,
-      );
-      const joined = await joinAndIncrementCommunityMember(community, sessionClient.data, walletClient.data);
-      await queryClient.invalidateQueries({ queryKey: ["communities"] });
+      // Create FormData for Server Action
+      const actionFormData = new FormData();
+      actionFormData.append("name", formData.name);
+      actionFormData.append("description", formData.description);
+      actionFormData.append("adminAddress", formData.adminAddress);
+      if (formData.image) {
+        actionFormData.append("image", formData.image);
+      }
+
+      // Show loading toast
+      const loadingToastId = toast.loading("Creating Community", {
+        description: "Setting up your community on Lens Protocol...",
+      });
+
+      // Call Server Action
+      const result = await createCommunityAction(actionFormData);
+
+      if (!result.success) {
+        toast.error("Creation Failed", {
+          id: loadingToastId,
+          description: result.error || "Failed to create community.",
+        });
+        throw new Error(result.error || "Failed to create community.");
+      }
+
+      toast.success("Community Created!", {
+        id: loadingToastId,
+        description: `${formData.name} has been successfully created on Lens Protocol.`,
+      });
+
+      const joined = await joinAndIncrementCommunityMember(result.community, sessionClient.data, walletClient.data);
+
       if (joined) {
-        router.push(`/communities/${community.address}`);
+        // Server Action ya invalidó la caché, solo navegamos
+        router.push(`/communities/${result.community.address}`);
       }
     } catch (err: any) {
       setError(err.message || "Failed to create community");
@@ -81,6 +102,5 @@ export function useCommunityCreateForm() {
     handleChange,
     handleImageChange,
     handleSubmit,
-    isCreating,
   };
 }
