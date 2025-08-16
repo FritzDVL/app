@@ -13,10 +13,6 @@ export interface CommunitiesResult {
   error?: string;
 }
 
-/**
- * Gets all communities using optimized batch operations
- * Replaces the fetchCommunities function with service-based approach
- */
 export async function getAllCommunities(
   sortBy: keyof Community | null = null,
   sortOrder: "asc" | "desc" = "desc",
