@@ -53,8 +53,10 @@ export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
       }
       return;
     }
-    setFormData({ ...formData, tags: tags.join(",") });
-    handleSubmit(e);
+
+    const newFormData = { ...formData, tags: tags.join(",") };
+    setFormData(newFormData);
+    handleSubmit(e, newFormData);
   };
 
   return (

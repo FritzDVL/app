@@ -18,7 +18,7 @@ export function adaptGroupToCommunity(
     address: group.address,
     name: dbCommunity.name || "",
     description: group.metadata?.description || "",
-    logo: group.metadata?.icon || null,
+    logo: group.metadata?.icon || undefined,
     memberCount: groupStats.totalMembers || 0,
     threadsCount: dbCommunity.threads_count || 0,
     moderators,

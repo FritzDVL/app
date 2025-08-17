@@ -31,25 +31,26 @@ export function useThreadCreateForm({ communityAddress, author }: UseThreadCreat
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, customFormData?: CreateThreadFormData) => {
     e.preventDefault();
     if (!account?.address) {
       toast.error("Authentication Error", { description: "User address not found" });
       return;
     }
-    const formDataWithAuthor = {
+
+    const formDataToUse = customFormData ?? {
       ...formData,
       author: account.address,
       tags: tags.join(","),
     };
-    const validation = validateCreateThreadForm(formDataWithAuthor);
+    const validation = validateCreateThreadForm(formDataToUse);
     if (!validation.isValid) {
       const firstError = validation.errors[0];
       toast.error("Validation Error", { description: firstError.message });
       return;
     }
     try {
-      await createThread(communityAddress, formDataWithAuthor, () => {
+      await createThread(communityAddress, formDataToUse, () => {
         setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
         setTags([]);
         setTagInput("");

@@ -26,7 +26,7 @@ export function CommunitiesClient({ initialCommunities }: CommunitiesClientProps
     if (!debouncedSearchQuery.trim()) return communities;
     const query = debouncedSearchQuery.toLowerCase().trim();
     return communities.filter(
-      (community: any) =>
+      (community: Community) =>
         community.name.toLowerCase().includes(query) ||
         (community.description && community.description.toLowerCase().includes(query)),
     );
@@ -44,7 +44,7 @@ export function CommunitiesClient({ initialCommunities }: CommunitiesClientProps
           />
           <CommunitiesList
             searchQuery={debouncedSearchQuery}
-            communities={filteredCommunities.map((c: any) => ({ ...c, logo: c.logo ?? undefined }))}
+            communities={filteredCommunities}
             isLoading={false}
             isError={false}
             error={null}

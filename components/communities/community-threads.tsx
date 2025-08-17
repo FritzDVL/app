@@ -84,100 +84,85 @@ export function CommunityThreads({
           ) : (
             <div className="space-y-4">
               <AnimatePresence initial={false}>
-                {threads.map(thread =>
-                  filteredThreads.some(t => t.id === thread.id) ? (
-                    <motion.div
-                      key={thread.id}
-                      layout="position"
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 8 }}
-                      transition={{
-                        duration: 0.18,
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 24,
-                        layout: { duration: 0.18 },
+                {filteredThreads.map(thread => (
+                  <motion.div
+                    key={thread.id}
+                    layout="position"
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{
+                      duration: 0.18,
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 24,
+                      layout: { duration: 0.18 },
+                    }}
+                  >
+                    <Card
+                      className="group w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800"
+                      onClick={() => {
+                        router.push(`/thread/${thread.address}`);
                       }}
                     >
-                      <Card
-                        className="group w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800"
-                        onClick={() => {
-                          router.push(`/thread/${thread.address}`);
-                        }}
-                      >
-                        <CardContent className="p-6">
-                          <div className="flex items-start space-x-4">
-                            {/* Voting */}
-                            <div className="flex min-w-[50px] flex-col items-center space-y-1">
-                              {thread.rootPost && (
-                                <ReplyVoting
-                                  postid={postId(thread.rootPost.id)}
-                                  score={thread.rootPost.stats.upvotes - thread.rootPost.stats.downvotes}
-                                />
-                              )}
+                      <CardContent className="p-6">
+                        <div className="flex items-start space-x-4">
+                          {/* Voting */}
+                          <div className="flex min-w-[50px] flex-col items-center space-y-1">
+                            {thread.rootPost && (
+                              <ReplyVoting
+                                postid={postId(thread.rootPost.id)}
+                                score={thread.rootPost.stats.upvotes - thread.rootPost.stats.downvotes}
+                              />
+                            )}
+                          </div>
+                          {/* Content */}
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-2 flex items-center space-x-2">
+                              {Array.isArray(thread.tags) &&
+                                thread.tags.length > 0 &&
+                                thread.tags.map((tag: string) => (
+                                  <Badge key={tag} variant="outline" className="text-xs">
+                                    #{tag}
+                                  </Badge>
+                                ))}
                             </div>
-                            {/* Content */}
-                            <div className="min-w-0 flex-1">
-                              <div className="mb-2 flex items-center space-x-2">
-                                {Array.isArray(thread.tags) &&
-                                  thread.tags.length > 0 &&
-                                  thread.tags.map((tag: string) => (
-                                    <Badge key={tag} variant="outline" className="text-xs">
-                                      #{tag}
-                                    </Badge>
-                                  ))}
+                            <h3 className="mb-2 cursor-pointer text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
+                              {thread.title}
+                            </h3>
+                            <p className="mb-3 line-clamp-2 text-muted-foreground">{thread.summary}</p>
+                            <div className="flex items-center justify-between text-sm text-muted-foreground">
+                              <div className="flex items-center space-x-4">
+                                {thread.author && (
+                                  <Link
+                                    href={`/u/${thread.author.username}`}
+                                    className="flex items-center hover:text-brand-600"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                    }}
+                                  >
+                                    <Avatar className="mr-2 h-5 w-5">
+                                      <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
+                                      <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
+                                    </Avatar>
+                                    <span>{thread.author.name}</span>
+                                  </Link>
+                                )}
+                                <span>{thread.timeAgo}</span>
                               </div>
-                              <h3 className="mb-2 cursor-pointer text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
-                                {thread.title}
-                              </h3>
-                              <p className="mb-3 line-clamp-2 text-muted-foreground">{thread.summary}</p>
-                              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                <div className="flex items-center space-x-4">
-                                  {thread.author && (
-                                    <Link
-                                      href={`/u/${thread.author.username}`}
-                                      className="flex items-center hover:text-brand-600"
-                                      onClick={e => {
-                                        e.stopPropagation();
-                                      }}
-                                    >
-                                      <Avatar className="mr-2 h-5 w-5">
-                                        <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                                        <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
-                                      </Avatar>
-                                      <span>{thread.author.name}</span>
-                                    </Link>
-                                  )}
-                                  <span>{thread.timeAgo}</span>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <div className="flex items-center">
-                                    <MessageCircle className="mr-1 h-4 w-4" />
-                                    {thread.repliesCount} replies
-                                  </div>
+                              <div className="flex items-center space-x-2">
+                                <div className="flex items-center">
+                                  <MessageCircle className="mr-1 h-4 w-4" />
+                                  {thread.repliesCount} replies
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key={thread.id}
-                      layout="position"
-                      initial={false}
-                      animate={{ opacity: 0, y: 8 }}
-                      exit={{ opacity: 0, y: 8 }}
-                      transition={{
-                        duration: 0.14,
-                        layout: { duration: 0.14 },
-                      }}
-                      style={{ height: 0, overflow: "hidden", margin: 0, padding: 0 }}
-                    />
-                  ),
-                )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
               </AnimatePresence>
             </div>
           )}

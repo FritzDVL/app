@@ -91,7 +91,7 @@ export function useCommunityCreateForm() {
       const joined = await joinAndIncrementCommunityMember(result.community, sessionClient.data, walletClient.data);
 
       if (joined) {
-        // Server Action ya invalidó la caché, solo navegamos
+        // Server Action already invalidated the cache, just navigate
         router.push(`/communities/${result.community.address}`);
       }
     } catch (err: any) {

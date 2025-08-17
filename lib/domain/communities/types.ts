@@ -11,7 +11,7 @@ export interface Community {
   description: string;
   memberCount: number;
   postCount?: number;
-  logo?: string | null;
+  logo?: string | undefined;
   threadsCount: number;
   moderators: Moderator[];
   createdAt: string; // ISO date string
