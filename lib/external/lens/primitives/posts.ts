@@ -74,7 +74,7 @@ export async function fetchThreadPosts(
 /**
  * Fetch all posts for a thread (non-paginated)
  */
-export async function fetchRepliesByPostId(postId: PostId): Promise<LensPost[]> {
+export async function fetchCommentsByPostId(postId: PostId): Promise<LensPost[]> {
   const result = await fetchPostReferences(client, {
     referencedPost: postId,
     referenceTypes: [PostReferenceType.CommentOn],

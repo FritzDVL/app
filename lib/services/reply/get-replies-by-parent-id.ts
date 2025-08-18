@@ -1,7 +1,7 @@
-import { RepliesResult } from "./get-all-thread-replies";
+import { RepliesResult } from "./get-latest-replies-by-author";
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { Reply } from "@/lib/domain/replies/types";
-import { fetchRepliesByPostId } from "@/lib/external/lens/primitives/posts";
+import { fetchCommentsByPostId } from "@/lib/external/lens/primitives/posts";
 import { PostId } from "@lens-protocol/client";
 
 /**
@@ -10,7 +10,7 @@ import { PostId } from "@lens-protocol/client";
 export async function getRepliesByParentId(parentId: PostId): Promise<RepliesResult> {
   try {
     // 1. Fetch all posts for the thread
-    const posts = await fetchRepliesByPostId(parentId);
+    const posts = await fetchCommentsByPostId(parentId);
     if (!posts.length) {
       return {
         success: true,
