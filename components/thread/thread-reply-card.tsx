@@ -88,7 +88,7 @@ export function ThreadReplyCard({
     if (!showReplies) {
       setLoadingReplies(true);
       try {
-        const result = await getRepliesByParentId(reply.id, threadAddress);
+        const result = await getRepliesByParentId(postId(reply.id));
         if (result.success) {
           setChildReplies(result.replies || []);
         }
