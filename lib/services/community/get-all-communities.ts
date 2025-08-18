@@ -1,7 +1,3 @@
-/**
- * Get All Communities Service
- * Gets all communities using optimized batch operations
- */
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import { fetchGroupAdminsBatch, fetchGroupStatsBatch, fetchGroupsBatch } from "@/lib/external/lens/primitives/groups";
@@ -13,10 +9,6 @@ export interface CommunitiesResult {
   error?: string;
 }
 
-/**
- * Gets all communities using optimized batch operations
- * Replaces the fetchCommunities function with service-based approach
- */
 export async function getAllCommunities(
   sortBy: keyof Community | null = null,
   sortOrder: "asc" | "desc" = "desc",

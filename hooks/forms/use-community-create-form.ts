@@ -1,32 +1,36 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCommunityCreation } from "@/hooks/communities/use-community-create";
+import { createCommunityAction } from "@/app/actions/create-community";
 import { joinAndIncrementCommunityMember } from "@/lib/external/lens/primitives/groups";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
 import { useSessionClient } from "@lens-protocol/react";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
 
+export interface CreateCommunityFormData {
+  name: string;
+  description: string;
+  adminAddress: Address;
+  logo?: File | null;
+  tags?: string;
+}
+
 export function useCommunityCreateForm() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreateCommunityFormData>({
     name: "",
     description: "",
-    category: "",
-    emoji: "",
-    image: undefined as File | undefined,
-    adminAddress: "",
+    adminAddress: "0x0",
+    logo: undefined,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const { createCommunity, isCreating } = useCommunityCreation();
   const { account } = useAuthStore();
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
+
+  const router = useRouter();
 
   useEffect(() => {
     if (account?.address) {
@@ -35,13 +39,13 @@ export function useCommunityCreateForm() {
   }, [account?.address]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (e.target.name === "image") return;
+    if (e.target.name === "imageFile") return;
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setFormData({ ...formData, image: file });
+    setFormData({ ...formData, logo: file });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,18 +58,41 @@ export function useCommunityCreateForm() {
       return;
     }
     try {
-      const community = await createCommunity(
-        {
-          name: formData.name,
-          description: formData.description,
-          adminAddress: formData.adminAddress as Address,
-        },
-        formData.image,
-      );
-      const joined = await joinAndIncrementCommunityMember(community, sessionClient.data, walletClient.data);
-      await queryClient.invalidateQueries({ queryKey: ["communities"] });
+      // Create FormData for Server Action
+      const actionFormData = new FormData();
+      actionFormData.append("name", formData.name);
+      actionFormData.append("description", formData.description);
+      actionFormData.append("adminAddress", formData.adminAddress);
+      if (formData.logo) {
+        actionFormData.append("image", formData.logo);
+      }
+
+      // Show loading toast
+      const loadingToastId = toast.loading("Creating Community", {
+        description: "Setting up your community on Lens Protocol...",
+      });
+
+      // Call Server Action
+      const result = await createCommunityAction(actionFormData);
+
+      if (!result.success) {
+        toast.error("Creation Failed", {
+          id: loadingToastId,
+          description: result.error || "Failed to create community.",
+        });
+        throw new Error(result.error || "Failed to create community.");
+      }
+
+      toast.success("Community Created!", {
+        id: loadingToastId,
+        description: `${formData.name} has been successfully created on Lens Protocol.`,
+      });
+
+      const joined = await joinAndIncrementCommunityMember(result.community, sessionClient.data, walletClient.data);
+
       if (joined) {
-        router.push(`/communities/${community.address}`);
+        // Server Action already invalidated the cache, just navigate
+        router.push(`/communities/${result.community.address}`);
       }
     } catch (err: any) {
       setError(err.message || "Failed to create community");
@@ -81,6 +108,5 @@ export function useCommunityCreateForm() {
     handleChange,
     handleImageChange,
     handleSubmit,
-    isCreating,
   };
 }

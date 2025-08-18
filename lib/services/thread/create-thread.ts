@@ -1,7 +1,11 @@
 /**
  * Create Thread Service
- * Creates a thread using the full business logic
+ * Creates a thread using hybrid server/client logic:
+ * 1. SERVER: Creates feed via Server Action (admin clients)
+ * 2. CLIENT: Creates article/post (user session + wallet)
+ * 3. SERVER: Persists and adapts data
  */
+import { createThreadFeedAction } from "@/app/actions/create-thread";
 import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { Thread } from "@/lib/domain/threads/types";
@@ -28,29 +32,9 @@ export async function createThread(
   walletClient: WalletClient,
 ): Promise<CreateThreadResult> {
   try {
-    // 1. Create the feed via API (server-side with admin clients)
-    const feedResponse = await fetch("/api/feeds", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: formData.title,
-        description: formData.summary,
-        communityAddress,
-      }),
-    });
+    // 1. Create the feed via Server Action (server-side with admin clients)
+    const feedResult = await createThreadFeedAction(formData.title, formData.summary, communityAddress);
 
-    if (!feedResponse.ok) {
-      const errorData = await feedResponse.json().catch(() => ({}));
-      console.error("[Service] Error creating thread feed:", errorData);
-      return {
-        success: false,
-        error: errorData.error || "Failed to create thread feed",
-      };
-    }
-
-    const feedResult = await feedResponse.json();
     if (!feedResult.success) {
       console.error("[Service] Error creating thread feed:", feedResult.error);
       return {

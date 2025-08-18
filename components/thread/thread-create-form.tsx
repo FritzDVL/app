@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { TextEditor } from "@/components/editor/text-editor";
 import { ReputationStatusBanner } from "@/components/shared/reputation-status-banner";
 import { Badge } from "@/components/ui/badge";
@@ -8,35 +6,26 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
-import { useThreadCreation } from "@/hooks/threads/use-thread-create";
-import { CreateThreadFormData } from "@/lib/domain/threads/types";
-import { validateCreateThreadForm } from "@/lib/domain/threads/validation";
+import { useTagsInput } from "@/hooks/forms/use-tags-input";
+import { useThreadCreateForm } from "@/hooks/forms/use-thread-create-form";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
-import { useQueryClient } from "@tanstack/react-query";
 import { Hash, Plus, Send, X } from "lucide-react";
 import { toast } from "sonner";
 
-interface NewThreadFormProps {
+interface ThreadCreateFormProps {
   communityAddress: string;
 }
 
-export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
-  const { createThread, isCreating } = useThreadCreation();
+export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
   const { account, walletAddress } = useAuthStore();
-  const queryClient = useQueryClient();
-  const router = useRouter();
   const { reputation, canCreateThread } = useLensReputationScore(walletAddress as Address, account?.address);
-
-  const [formData, setFormData] = useState<CreateThreadFormData>({
-    title: "",
-    summary: "",
-    content: "",
-    tags: "",
+  const { formData, setFormData, handleChange, handleSubmit, isCreating } = useThreadCreateForm({
+    communityAddress,
     author: account?.address || "",
   });
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState("");
+  const { tags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput();
+
   const suggestedTags = [
     "discussion",
     "help",
@@ -50,32 +39,8 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
     "research",
   ];
 
-  const addTag = (tag: string) => {
-    const trimmedTag = tag.trim().toLowerCase();
-    if (trimmedTag && !tags.includes(trimmedTag) && tags.length < 5) {
-      const newTags = [...tags, trimmedTag];
-      setTags(newTags);
-      setFormData({ ...formData, tags: newTags.join(",") });
-      setTagInput("");
-    }
-  };
-  const removeTag = (tagToRemove: string) => {
-    const newTags = tags.filter(tag => tag !== tagToRemove);
-    setTags(newTags);
-    setFormData({ ...formData, tags: newTags.join(",") });
-  };
-  const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      addTag(tagInput);
-    } else if (e.key === "Backspace" && !tagInput && tags.length > 0) {
-      removeTag(tags[tags.length - 1]);
-    }
-  };
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Check reputation requirements
     if (!canCreateThread) {
       if (reputation === undefined) {
         toast.error("LensReputation NFT Required", {
@@ -89,30 +54,9 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
       return;
     }
 
-    // Validate form data using domain validation
-    if (!account?.address) {
-      toast.error("Authentication Error", { description: "User address not found" });
-      return;
-    }
-
-    const formDataWithAuthor = { ...formData, author: account.address };
-    const validation = validateCreateThreadForm(formDataWithAuthor);
-
-    if (!validation.isValid) {
-      const firstError = validation.errors[0];
-      toast.error("Validation Error", { description: firstError.message });
-      return;
-    }
-
-    try {
-      await createThread(communityAddress, formDataWithAuthor, () => {
-        setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
-      });
-      await queryClient.invalidateQueries({ queryKey: ["threads", communityAddress] });
-      router.push(`/communities/${communityAddress}`);
-    } catch (error) {
-      console.error("Error in handleSubmit:", error);
-    }
+    const newFormData = { ...formData, tags: tags.join(",") };
+    setFormData(newFormData);
+    handleSubmit(e, newFormData);
   };
 
   return (
@@ -122,7 +66,7 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
         <p className="text-muted-foreground">Share your thoughts with the community</p>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
           {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title" className="text-sm font-medium text-foreground">
@@ -131,7 +75,7 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
             <Input
               id="title"
               value={formData.title}
-              onChange={e => setFormData({ ...formData, title: e.target.value })}
+              onChange={e => handleChange("title", e.target.value)}
               placeholder="What's your thread about?"
               className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               required
@@ -145,7 +89,7 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
             <Input
               id="summary"
               value={formData.summary}
-              onChange={e => setFormData({ ...formData, summary: e.target.value })}
+              onChange={e => handleChange("summary", e.target.value)}
               placeholder="Brief description (max 100 chars)"
               className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 dark:bg-gray-700"
               maxLength={100}
@@ -157,7 +101,7 @@ export function NewThreadForm({ communityAddress }: NewThreadFormProps) {
               Content
             </Label>
             <div className="rounded-2xl border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm dark:bg-gray-800">
-              <TextEditor onChange={value => setFormData({ ...formData, content: value })} />
+              <TextEditor onChange={value => handleChange("content", value)} />
             </div>
           </div>
           {/* Tags Input */}

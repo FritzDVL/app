@@ -59,8 +59,14 @@ export async function fetchThreadPosts(
     (item: any) => item && item.__typename === "Post" && item.author && item.author.address,
   ) as LensPost[];
 
+  const sortedPosts = validPosts.toSorted((a, b) => {
+    const aTime = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+    const bTime = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+    return aTime - bTime;
+  });
+
   return {
-    posts: validPosts,
+    posts: sortedPosts,
     pageInfo: result.value.pageInfo,
   };
 }

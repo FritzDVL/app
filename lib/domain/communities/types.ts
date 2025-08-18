@@ -4,16 +4,6 @@
  */
 import { Address } from "@/types/common";
 
-/**
- * Community creation form data - domain model
- */
-export interface CreateCommunityFormData {
-  name: string;
-  description: string;
-  adminAddress: Address;
-  tags?: string;
-}
-
 export interface Community {
   id: string;
   address: Address;
@@ -21,7 +11,7 @@ export interface Community {
   description: string;
   memberCount: number;
   postCount?: number;
-  logo?: string | null;
+  logo?: string | undefined;
   threadsCount: number;
   moderators: Moderator[];
   createdAt: string; // ISO date string

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
@@ -7,10 +9,9 @@ import { ThreadVoting } from "@/components/thread/thread-voting";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useThread } from "@/hooks/queries/use-thread";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
+import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo } from "@/lib/shared/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { postId } from "@lens-protocol/react";
@@ -25,23 +26,22 @@ function getThreadContent(thread: any): string {
   return "";
 }
 
-export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
+export function ThreadMainCard({ thread }: { thread: Thread }) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
 
   const { createReply } = useReplyCreate();
   const { isLoggedIn } = useAuthStore();
   const queryClient = useQueryClient();
-  const { data: thread, isLoading: loading } = useThread(threadAddress);
 
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
     if (replyingTo === "main" && replyContent["main"]) {
-      const reply = await createReply(thread.rootPost.id, replyContent["main"], threadAddress as any, thread.id);
+      const reply = await createReply(thread.rootPost.id, replyContent["main"], thread.address, thread.id);
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, main: "" }));
-        queryClient.invalidateQueries({ queryKey: ["replies", threadAddress] });
+        queryClient.invalidateQueries({ queryKey: ["replies", thread.address] });
       }
     }
   };
@@ -52,7 +52,6 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
 
-  if (loading) return <LoadingSpinner text="Loading thread..." />;
   if (!thread) return null;
 
   const threadPostId = thread.rootPost?.id;
@@ -60,77 +59,78 @@ export function ThreadMainCard({ threadAddress }: { threadAddress: string }) {
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardContent className="p-6">
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-xl font-bold text-white">
-            {thread.title.charAt(0).toUpperCase()}
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="mb-1 flex items-start justify-between">
-              <div>
-                <h1 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">
-                  {thread.title}
-                </h1>
-                {thread.summary && (
-                  <p className="mt-1 max-w-2xl text-base font-medium italic text-green-700/90 dark:text-green-400/90">
-                    {thread.summary}
-                  </p>
-                )}
-              </div>
-              <div className="ml-4 flex flex-col items-end gap-1">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Link href={`/u/${thread.author.username.replace("lens/", "")}`} className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                      <AvatarFallback className="bg-gradient-to-r from-green-400 to-green-600 text-xs text-white">
-                        {thread.author.name[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm font-medium">{thread.author.name}</span>
-                  </Link>
-                  {thread.rootPost?.timestamp && (
-                    <span className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3 w-3"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      {getTimeAgo(new Date(thread.rootPost.timestamp))}
-                    </span>
-                  )}
-                </div>
-              </div>
+        <div className="space-y-3">
+          {/* Header row with avatar+name on left and timestamp on right */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Avatar className="h-8 w-8 text-sm font-bold">
+                <AvatarImage src={thread.author.avatar || undefined} alt={thread.author.name} />
+                <AvatarFallback className="bg-gradient-to-br from-green-500 to-green-600 text-white">
+                  {thread.author.name[0].toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <Link
+                href={`/u/${thread.author.username.replace("lens/", "")}`}
+                className="block max-w-[8rem] truncate text-xs font-medium text-foreground"
+              >
+                {thread.author.name}
+              </Link>
             </div>
-            <div className="my-6 flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              {thread.rootPost?.timestamp && (
+                <span className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3 w-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  {getTimeAgo(new Date(thread.rootPost.timestamp))}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Title, summary and content in one block */}
+          <div className="px-8">
+            <h1 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">
+              {thread.title}
+            </h1>
+            {thread.summary && (
+              <p className="mt-1 max-w-2xl text-base font-medium italic text-green-700/90 dark:text-green-400/90">
+                {thread.summary}
+              </p>
+            )}
+            <div className="mt-3 flex flex-col gap-2">
               <ContentRenderer
                 content={stripThreadArticleFormatting(getThreadContent(thread))}
                 className="rich-text-content rounded-2xl p-0 text-foreground dark:text-gray-100"
               />
             </div>
-            {/* Remove posted date from below content, keep only tags */}
-            <div className="mt-2 flex flex-col gap-1">
-              {/* Tags */}
-              {Array.isArray(thread.tags) && thread.tags.length > 0 && (
-                <div className="mt-1 flex flex-wrap items-center gap-1">
-                  {thread.tags.map((tag: string) => (
-                    <span
-                      key={tag}
-                      className="inline-block rounded-full border border-gray-200 bg-transparent px-2 py-0.5 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
+          </div>
+
+          {/* Tags */}
+          <div className="flex flex-col gap-1">
+            {Array.isArray(thread.tags) && thread.tags.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1">
+                {thread.tags.map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="inline-block rounded-full border border-gray-200 bg-transparent px-2 py-0.5 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         {/* Actions */}
