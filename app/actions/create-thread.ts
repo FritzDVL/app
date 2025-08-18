@@ -27,6 +27,7 @@ export async function createThreadFeedAction(title: string, description: string,
 
     // Invalidate cache for the community page since we created a new feed
     revalidatePath(`/communities/${communityAddress}`);
+    revalidatePath("/");
 
     return {
       success: true,
