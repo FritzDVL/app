@@ -1,33 +1,52 @@
-/**
- * Get Replies By Parent ID Service
- * Gets replies by parent ID using service approach
- */
-import { RepliesResult, getAllThreadReplies } from "./get-all-thread-replies";
+import { RepliesResult } from "./get-all-thread-replies";
+import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
+import { Reply } from "@/lib/domain/replies/types";
+import { fetchRepliesByPostId } from "@/lib/external/lens/primitives/posts";
+import { PostId } from "@lens-protocol/client";
 
 /**
  * Gets replies by parent ID using service approach
  */
-export async function getRepliesByParentId(parentId: string, threadAddress?: string): Promise<RepliesResult> {
+export async function getRepliesByParentId(parentId: PostId): Promise<RepliesResult> {
   try {
-    if (!threadAddress) {
+    // 1. Fetch all posts for the thread
+    const posts = await fetchRepliesByPostId(parentId);
+    if (!posts.length) {
       return {
         success: true,
         replies: [],
       };
     }
 
-    // Get all thread replies first
-    const result = await getAllThreadReplies(threadAddress);
-    if (!result.success || !result.replies) {
-      return result;
+    // 2. Transform posts to replies using author data from post.author
+    const replies: Reply[] = [];
+    for (const post of posts) {
+      try {
+        const author = post.author;
+        if (!author) {
+          console.warn(`Missing author data for post ${post.id}:`, {
+            authorAddress: post.author?.address,
+          });
+          continue;
+        }
+        replies.push(
+          adaptPostToReply(post, {
+            name: author.username?.localName || "Unknown Author",
+            username: author.username?.value || "unknown",
+            avatar: author.metadata?.picture || "",
+            reputation: author.score || 0,
+            address: author.address,
+          }),
+        );
+      } catch (error) {
+        console.warn(`Error transforming post ${post.id}:`, error);
+        continue;
+      }
     }
-
-    // Filter by parent ID
-    const filteredReplies = result.replies.filter(r => r.parentReplyId === parentId);
 
     return {
       success: true,
-      replies: filteredReplies,
+      replies: replies,
     };
   } catch (error) {
     console.error("Failed to fetch replies by parent ID:", error);

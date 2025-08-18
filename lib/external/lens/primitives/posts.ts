@@ -3,9 +3,9 @@
 import { client } from "@/lib/external/lens/protocol-client";
 import { APP_ADDRESS } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
-import type { AnyPost, Post as LensPost, PageSize } from "@lens-protocol/client";
-import { evmAddress } from "@lens-protocol/client";
-import { fetchPost, fetchPosts } from "@lens-protocol/client/actions";
+import type { AnyPost, Post as LensPost, PageSize, PostId } from "@lens-protocol/client";
+import { PostReferenceType, evmAddress } from "@lens-protocol/client";
+import { fetchPost, fetchPostReferences, fetchPosts } from "@lens-protocol/client/actions";
 
 export interface PaginatedPostsResult {
   posts: LensPost[];
@@ -74,11 +74,10 @@ export async function fetchThreadPosts(
 /**
  * Fetch all posts for a thread (non-paginated)
  */
-export async function fetchAllThreadPosts(threadAddress: string): Promise<LensPost[]> {
-  const result = await fetchPosts(client, {
-    filter: {
-      feeds: [{ feed: evmAddress(threadAddress) }],
-    },
+export async function fetchRepliesByPostId(postId: PostId): Promise<LensPost[]> {
+  const result = await fetchPostReferences(client, {
+    referencedPost: postId,
+    referenceTypes: [PostReferenceType.CommentOn],
   });
 
   if (!result.isOk() || !result.value.items) return [];
