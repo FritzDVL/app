@@ -149,19 +149,19 @@ export function ThreadReplyCard({
   return (
     <div className="space-y-2" id={reply.id}>
       <Card className="rounded-lg bg-white shadow-sm dark:border-gray-700/60 dark:bg-gray-800">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-start gap-2 sm:gap-3">
             <div className="flex flex-col items-center">
               <ReplyVoting postid={postId(reply.id)} />
             </div>
             <div className="min-w-0 flex-1">
               {/* Top row: author info */}
-              <div className="relative mb-6 flex items-center gap-2">
+              <div className="relative mb-3 flex flex-col gap-1 sm:mb-6 sm:flex-row sm:items-center sm:gap-2">
                 <Link
                   href={`/u/${reply.author.username.replace("lens/", "")}`}
                   className="flex items-center gap-2 hover:text-gray-900"
                 >
-                  <Avatar className="h-6 w-6">
+                  <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
                     <AvatarImage src={reply.author.avatar || "/placeholder.svg"} />
                     <AvatarFallback className="bg-muted text-xs text-muted-foreground">
                       {reply.author.name[0].toUpperCase()}
@@ -169,7 +169,7 @@ export function ThreadReplyCard({
                   </Avatar>
                   <span className="text-sm font-medium text-foreground">{reply.author.name}</span>
                 </Link>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs text-muted-foreground sm:text-sm">
                   {reply.createdAt ? getTimeAgo(new Date(reply.createdAt)) : "Unknown date"}
                 </span>
               </div>
@@ -188,7 +188,6 @@ export function ThreadReplyCard({
                     aria-pressed={showContext}
                     title={showContext ? "Hide context" : "Show context"}
                   >
-                    {/* Use a more contextual icon for showing conversation thread */}
                     <span className="inline-block">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -198,7 +197,7 @@ export function ThreadReplyCard({
                         viewBox="0 0 24 24"
                         stroke="currentColor"
                         strokeWidth="2"
-                        className="h-4 w-4"
+                        className="h-3 w-3 sm:h-4 sm:w-4"
                       >
                         <path
                           strokeLinecap="round"
@@ -207,7 +206,10 @@ export function ThreadReplyCard({
                         />
                       </svg>
                     </span>
-                    {loadingContext ? "Loading..." : showContext ? "Hide context" : "Show context"}
+                    <span className="hidden sm:inline">
+                      {loadingContext ? "Loading..." : showContext ? "Hide context" : "Show context"}
+                    </span>
+                    <span className="sm:hidden">{showContext ? "Hide" : "Context"}</span>
                   </button>
                   {showContext && contextChain.length > 0 && <ContextChain />}
                 </div>
@@ -215,7 +217,7 @@ export function ThreadReplyCard({
               {/* Content */}
               <ContentRenderer content={removeTrailingEmptyPTags(reply.content)} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
-              <div className="mt-3 flex items-center justify-between">
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 {/* Tips counter and replies button bottom left */}
                 <div className="flex items-center gap-2">
                   {/* Button to show child replies */}
@@ -230,26 +232,27 @@ export function ThreadReplyCard({
                     disabled={loadingReplies}
                     title={showReplies ? "Hide replies" : "Show replies"}
                   >
-                    <MessageSquare className="h-3.5 w-3.5" />
+                    <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     <span>{loadingReplies ? "..." : reply.repliesCount || "0"}</span>
                   </button>
 
-                  <div className="flex items-center gap-1 text-sm text-gray-500">
-                    <Coins className="h-4 w-4" />
+                  <div className="flex items-center gap-1 text-xs text-gray-500 sm:text-sm">
+                    <Coins className="h-3 w-3 sm:h-4 sm:w-4" />
                     <span>{(reply as any).tips ?? 0}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   {setReplyingTo && isLoggedIn && (
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 px-3 text-sm text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                      className="h-7 px-2 text-xs text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 sm:h-8 sm:px-3 sm:text-sm"
                       onClick={() => setReplyingTo(reply.id)}
                       disabled={!isLoggedIn}
                     >
-                      <Reply className="mr-1 h-4 w-4" />
-                      Reply
+                      <Reply className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                      <span className="hidden sm:inline">Reply</span>
+                      <span className="sm:hidden">Rep</span>
                     </Button>
                   )}
                   <TipGhoPopover to={reply.id as PostId} />
@@ -257,18 +260,25 @@ export function ThreadReplyCard({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`h-8 px-2 text-sm text-green-600 hover:text-green-700 focus:outline-none dark:text-green-400 dark:hover:text-green-300 ${copied ? "text-green-500" : ""}`}
+                    className={`h-7 px-2 text-xs text-green-600 hover:text-green-700 focus:outline-none dark:text-green-400 dark:hover:text-green-300 sm:h-8 sm:px-2 sm:text-sm ${copied ? "text-green-500" : ""}`}
                     title="Copy reply link"
                     onClick={handleCopyLink}
                   >
-                    <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <svg
+                      className="mr-1 h-3 w-3 sm:h-4 sm:w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         d="M15 7h2a5 5 0 0 1 0 10h-2m-6 0H7a5 5 0 0 1 0-10h2m1 5h4"
                       />
                     </svg>
-                    {copied ? "Copied!" : "Copy link"}
+                    <span className="hidden sm:inline">{copied ? "Copied!" : "Copy link"}</span>
+                    <span className="sm:hidden">{copied ? "✓" : "Copy"}</span>
                   </Button>
                 </div>
               </div>
@@ -296,7 +306,7 @@ export function ThreadReplyCard({
 
               {/* Recursive rendering of child replies */}
               {showReplies && childReplies.length > 0 && (
-                <div className="mt-4 space-y-3 border-l-2 border-brand-100 pl-4">
+                <div className="mt-3 space-y-2 border-l-2 border-brand-100 pl-2 sm:mt-4 sm:space-y-3 sm:pl-4">
                   {childReplies.map(child => (
                     <ThreadReplyCard
                       key={child.id}
