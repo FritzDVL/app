@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { ThreadVotesDisplay } from "./thread-votes-display";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo } from "@/lib/shared/utils";
-import { Clock, Edit3, MessageCircle, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Clock, Edit3, MessageCircle } from "lucide-react";
 
 interface LatestThreadsProps {
   threads: Thread[];
@@ -133,13 +134,8 @@ export function LatestThreads({
                           <MessageCircle className="h-4 w-4" />
                           <span>{thread.repliesCount || 0} replies</span>
                         </div>
-                        <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-green-600">
-                          <ThumbsUp className="h-4 w-4" />
-                          <span>{thread.upvotes || 0}</span>
-                        </div>
-                        <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-red-600">
-                          <ThumbsDown className="h-4 w-4" />
-                          <span>{thread.downvotes || 0}</span>
+                        <div className="flex cursor-pointer items-center gap-2 transition-colors">
+                          <ThreadVotesDisplay thread={thread} />
                         </div>
                       </div>
                     </div>
