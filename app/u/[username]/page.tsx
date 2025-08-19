@@ -33,12 +33,12 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <div className="animate-pulse space-y-8">
-          <div className="h-64 rounded-3xl bg-white/60 backdrop-blur-sm"></div>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="mx-auto max-w-6xl px-3 py-4 sm:px-4 sm:py-8">
+        <div className="animate-pulse space-y-4 sm:space-y-8">
+          <div className="h-48 rounded-2xl bg-white/60 backdrop-blur-sm sm:h-64 sm:rounded-3xl"></div>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-20 rounded-3xl bg-white/60 backdrop-blur-sm"></div>
+              <div key={i} className="h-16 rounded-2xl bg-white/60 backdrop-blur-sm sm:h-20 sm:rounded-3xl"></div>
             ))}
           </div>
         </div>
@@ -48,11 +48,11 @@ export default function ProfilePage() {
 
   if (!lensAccount && !isLoading) {
     return (
-      <div className="mx-auto min-h-screen max-w-6xl px-4 py-8 text-center">
-        <Card className="dark:bg-border-700/60 mx-auto max-w-md rounded-3xl bg-white backdrop-blur-sm dark:bg-gray-800">
-          <CardContent className="p-8">
-            <h1 className="mb-4 text-2xl font-bold text-foreground">Profile not found</h1>
-            <p className="text-muted-foreground">
+      <div className="mx-auto min-h-screen max-w-6xl px-3 py-4 text-center sm:px-4 sm:py-8">
+        <Card className="dark:bg-border-700/60 mx-auto max-w-md rounded-2xl bg-white backdrop-blur-sm dark:bg-gray-800 sm:rounded-3xl">
+          <CardContent className="p-6 sm:p-8">
+            <h1 className="mb-3 text-xl font-bold text-foreground sm:mb-4 sm:text-2xl">Profile not found</h1>
+            <p className="text-sm text-muted-foreground sm:text-base">
               The user @{username} could not be found or is not connected to Lens.
             </p>
           </CardContent>
@@ -63,7 +63,7 @@ export default function ProfilePage() {
 
   return (
     <ProtectedRoute>
-      <div className="mx-auto max-w-6xl space-y-8 px-4 py-8">
+      <div className="mx-auto max-w-6xl space-y-4 px-3 py-4 sm:space-y-8 sm:px-4 sm:py-8">
         {/* Profile Header */}
         <ProfileHeader lensAccount={lensAccount as Account} username={username} />
 
@@ -77,7 +77,7 @@ export default function ProfilePage() {
         />
 
         {/* Main Content */}
-        <div className="space-y-8">
+        <div className="space-y-4 sm:space-y-8">
           {/* Minimalist Tab Navigation */}
           <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 

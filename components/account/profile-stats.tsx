@@ -35,22 +35,24 @@ export function ProfileStats({ followers, following, posts, reputation, loading 
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4">
       {stats.map(stat => (
         <div
           key={stat.label}
-          className="rounded-2xl border border-slate-300/60 bg-white p-3 backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800"
+          className="rounded-xl border border-slate-300/60 bg-white p-2 backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800 sm:rounded-2xl sm:p-3"
         >
           <div className="flex flex-col items-center text-center">
             <div className="mb-1 flex items-center justify-center">
               {stat.label === "Reputation" ? (
-                <span className="mr-2">
-                  <LensReputationLogo size={28} />
+                <span className="mr-1 sm:mr-2">
+                  <LensReputationLogo size={20} />
                 </span>
               ) : (
-                <span className="mr-2">{React.cloneElement(stat.icon, { className: "h-7 w-7 text-brand-500" })}</span>
+                <span className="mr-1 sm:mr-2">
+                  {React.cloneElement(stat.icon, { className: "h-5 w-5 text-brand-500 sm:h-7 sm:w-7" })}
+                </span>
               )}
-              <span className="text-2xl font-extrabold text-foreground">{stat.value}</span>
+              <span className="text-lg font-extrabold text-foreground sm:text-2xl">{stat.value}</span>
             </div>
             <div className="mt-0.5 text-xs text-muted-foreground">{stat.label}</div>
           </div>
