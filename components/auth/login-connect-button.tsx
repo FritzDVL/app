@@ -39,7 +39,7 @@ export function LoginConnectButton() {
           }
 
           return (
-            <Button onClick={show} className="gradient-button gap-2 rounded-full px-4 py-2">
+            <Button onClick={show} className="gradient-button w-full gap-2 rounded-full px-4 py-2">
               <Wallet className="h-4 w-4" />
               {isConnected
                 ? ensName || `${address?.substring(0, 6)}...${address?.substring(address.length - 4)}`
