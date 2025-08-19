@@ -47,32 +47,32 @@ export function CommunityHeader({ community }: { community: Community }) {
   return (
     <>
       <Card className="mb-8 rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
-        <CardContent className="p-8">
-          <div className="flex flex-col space-y-4 md:flex-row md:items-start md:space-x-6 md:space-y-0">
-            {/* Logo, Name, and Join/Leave Button in a single row */}
-            <div className="mr-6 flex h-[100px] w-[100px] items-center justify-center">
+        <CardContent className="p-6 md:p-8">
+          <div className="flex flex-col items-center space-y-4 md:flex-row md:items-start md:space-x-6 md:space-y-0">
+            {/* Logo, Name, and Join/Leave Button in a single row (stacked on mobile) */}
+            <div className="flex h-[80px] w-[80px] items-center justify-center md:mr-6 md:h-[100px] md:w-[100px]">
               {community.logo ? (
                 <Image
                   src={groveLensUrlToHttp(community.logo)}
                   alt={community.name}
                   width={100}
                   height={100}
-                  className="h-[100px] w-[100px] rounded-full border border-slate-200 bg-white object-cover"
+                  className="h-[80px] w-[80px] rounded-full border border-slate-200 bg-white object-cover md:h-[100px] md:w-[100px]"
                 />
               ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-foreground">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-foreground md:h-[100px] md:w-[100px]">
                   {community.name.charAt(0).toUpperCase()}
                 </div>
               )}
             </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex w-full items-start justify-between">
-                <div className="min-w-0 flex-1">
-                  <h1 className="mb-2 truncate text-3xl font-bold text-foreground">{community.name}</h1>
-                  <p className="mb-4 max-w-2xl whitespace-pre-line break-words text-muted-foreground">
+            <div className="w-full min-w-0 flex-1">
+              <div className="flex w-full flex-col items-center md:flex-row md:items-start md:justify-between">
+                <div className="w-full min-w-0 flex-1 text-center md:text-left">
+                  <h1 className="mb-2 truncate text-2xl font-bold text-foreground md:text-3xl">{community.name}</h1>
+                  <p className="mx-auto mb-4 max-w-2xl whitespace-pre-line break-words text-muted-foreground md:mx-0">
                     {community.description}
                   </p>
-                  <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+                  <div className="flex flex-col items-center space-y-2 text-sm text-muted-foreground md:flex-row md:space-x-6 md:space-y-0">
                     <div className="flex items-center">
                       <Users className="mr-2 h-4 w-4" />
                       {community.memberCount.toLocaleString()} members
@@ -83,11 +83,11 @@ export function CommunityHeader({ community }: { community: Community }) {
                     </div>
                   </div>
                 </div>
-                <div className="ml-6 flex shrink-0 flex-col gap-3 sm:flex-row">
+                <div className="mt-4 flex w-full shrink-0 flex-col gap-3 md:ml-6 md:mt-0 md:w-auto md:flex-row">
                   <Button
                     disabled={!isLoggedIn || isMemberLoading}
                     onClick={isMember ? handleLeaveCommunity : handleJoinCommunity}
-                    className={`rounded-full px-8 py-3 font-semibold transition-all duration-300 ${
+                    className={`w-full rounded-full px-8 py-3 font-semibold transition-all duration-300 md:w-auto ${
                       isMember
                         ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"
                         : "bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:from-brand-600 hover:to-brand-700"
