@@ -103,51 +103,110 @@ export function CommunityThreads({ community }: { community: Community; isJoined
                         router.push(`/thread/${thread.address}`);
                       }}
                     >
-                      <CardContent className="p-6">
-                        <div className="flex items-start space-x-4">
-                          {/* Voting */}
-                          <div className="flex min-w-[50px] flex-col items-center space-y-1">
-                            {thread.rootPost && <ReplyVoting postid={postId(thread.rootPost.id)} />}
-                          </div>
-                          {/* Content */}
-                          <div className="min-w-0 flex-1">
-                            <div className="mb-2 flex items-center space-x-2">
-                              {Array.isArray(thread.tags) &&
-                                thread.tags.length > 0 &&
-                                thread.tags.map((tag: string) => (
-                                  <Badge key={tag} variant="outline" className="text-xs">
-                                    #{tag}
-                                  </Badge>
-                                ))}
+                      <CardContent className="p-4 sm:p-6">
+                        {/* Layout: Responsive design for mobile and desktop */}
+                        <div className="flex flex-col">
+                          {/* MOBILE VERSION */}
+                          <div className="flex w-full items-start sm:hidden">
+                            {/* Voting (left of title) */}
+                            <div className="mr-2 flex min-w-[40px] flex-col items-center justify-start">
+                              {thread.rootPost && <ReplyVoting postid={postId(thread.rootPost.id)} />}
                             </div>
-                            <h3 className="mb-2 cursor-pointer text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
-                              {thread.title}
-                            </h3>
-                            <p className="mb-3 line-clamp-2 text-muted-foreground">{thread.summary}</p>
-                            <div className="flex items-center justify-between text-sm text-muted-foreground">
-                              <div className="flex items-center space-x-4">
-                                {thread.author && (
-                                  <Link
-                                    href={`/u/${thread.author.username}`}
-                                    className="flex items-center hover:text-brand-600"
-                                    onClick={e => {
-                                      e.stopPropagation();
-                                    }}
-                                  >
-                                    <Avatar className="mr-2 h-5 w-5">
-                                      <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                                      <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
-                                    </Avatar>
-                                    <span>{thread.author.name}</span>
-                                  </Link>
-                                )}
-                                <span>{thread.timeAgo}</span>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <div className="flex items-center">
-                                  <MessageCircle className="mr-1 h-4 w-4" />
-                                  {thread.repliesCount} replies
+                            {/* Title, summary, tags */}
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-col">
+                                <h3 className="mb-1 cursor-pointer text-base font-semibold text-foreground transition-colors group-hover:text-brand-600">
+                                  {thread.title}
+                                </h3>
+                                <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">{thread.summary}</p>
+                                {/* Tags (show on mobile below summary) */}
+                                <div className="mb-2 flex flex-wrap items-center gap-2">
+                                  {Array.isArray(thread.tags) &&
+                                    thread.tags.length > 0 &&
+                                    thread.tags.map((tag: string) => (
+                                      <Badge key={tag} variant="outline" className="text-xs">
+                                        #{tag}
+                                      </Badge>
+                                    ))}
                                 </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* DESKTOP VERSION */}
+                          <div className="hidden sm:flex sm:items-start sm:space-x-4">
+                            {/* Voting column */}
+                            <div className="flex min-w-[50px] flex-col items-center space-y-1">
+                              {thread.rootPost && <ReplyVoting postid={postId(thread.rootPost.id)} />}
+                            </div>
+                            {/* Content */}
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-2 flex items-center space-x-2">
+                                {Array.isArray(thread.tags) &&
+                                  thread.tags.length > 0 &&
+                                  thread.tags.map((tag: string) => (
+                                    <Badge key={tag} variant="outline" className="text-xs">
+                                      #{tag}
+                                    </Badge>
+                                  ))}
+                              </div>
+                              <h3 className="mb-2 cursor-pointer text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
+                                {thread.title}
+                              </h3>
+                              <p className="mb-3 line-clamp-2 text-muted-foreground">{thread.summary}</p>
+                              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                                <div className="flex items-center space-x-4">
+                                  {thread.author && (
+                                    <Link
+                                      href={`/u/${thread.author.username}`}
+                                      className="flex items-center hover:text-brand-600"
+                                      onClick={e => {
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      <Avatar className="mr-2 h-5 w-5">
+                                        <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
+                                        <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
+                                      </Avatar>
+                                      <span>{thread.author.name}</span>
+                                    </Link>
+                                  )}
+                                  <span>{thread.timeAgo}</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="flex items-center">
+                                    <MessageCircle className="mr-1 h-4 w-4" />
+                                    {thread.repliesCount} replies
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Footer: author and stats for MOBILE only */}
+                          <div className="mt-2 flex w-full items-center justify-between text-sm text-muted-foreground sm:hidden">
+                            <div className="flex items-center space-x-4">
+                              {thread.author && (
+                                <Link
+                                  href={`/u/${thread.author.username}`}
+                                  className="flex items-center hover:text-brand-600"
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <Avatar className="mr-2 h-5 w-5">
+                                    <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
+                                    <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
+                                  </Avatar>
+                                  <span className="max-w-[100px] truncate">{thread.author.name}</span>
+                                </Link>
+                              )}
+                              <span>{thread.timeAgo}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="flex items-center">
+                                <MessageCircle className="mr-1 h-4 w-4" />
+                                {thread.repliesCount} replies
                               </div>
                             </div>
                           </div>
