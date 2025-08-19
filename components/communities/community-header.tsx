@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { ThreadNewButton } from "../thread/thread-new-button";
 import { LeaveCommunityDialog } from "@/components/communities/community-leave-dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { useLeaveCommunity } from "@/hooks/communities/use-leave-community";
@@ -44,58 +45,78 @@ export function CommunityHeader({ community }: { community: Community }) {
   if (!community) return null;
 
   return (
-    <Card className="mb-8 rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
-      <CardContent className="p-8">
-        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-6 md:space-y-0">
-          <div className="flex h-[100px] w-[100px] items-center justify-center">
-            {community.logo ? (
-              <Image
-                src={groveLensUrlToHttp(community.logo)}
-                alt={community.name}
-                width={100}
-                height={100}
-                className="h-[100px] w-[100px] rounded-full border border-slate-200 bg-white object-cover"
-              />
-            ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-foreground">
-                {community.name.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-          <div className="min-w-0 flex-1">
-            <h1 className="mb-2 truncate text-3xl font-bold text-foreground">{community.name}</h1>
-            <p className="mb-4 max-w-2xl truncate text-muted-foreground">{community.description}</p>
-            <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-              <div className="flex items-center">
-                <Users className="mr-2 h-4 w-4" />
-                {community.memberCount.toLocaleString()} members
-              </div>
-              <div className="flex items-center">
-                <MessageCircle className="mr-2 h-4 w-4" />
-                {community.threadsCount} threads
+    <>
+      <Card className="mb-8 rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
+        <CardContent className="p-8">
+          <div className="flex flex-col space-y-4 md:flex-row md:items-start md:space-x-6 md:space-y-0">
+            {/* Logo, Name, and Join/Leave Button in a single row */}
+            <div className="mr-6 flex h-[100px] w-[100px] items-center justify-center">
+              {community.logo ? (
+                <Image
+                  src={groveLensUrlToHttp(community.logo)}
+                  alt={community.name}
+                  width={100}
+                  height={100}
+                  className="h-[100px] w-[100px] rounded-full border border-slate-200 bg-white object-cover"
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 text-2xl text-foreground">
+                  {community.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex w-full items-start justify-between">
+                <div className="min-w-0 flex-1">
+                  <h1 className="mb-2 truncate text-3xl font-bold text-foreground">{community.name}</h1>
+                  <p className="mb-4 max-w-2xl whitespace-pre-line break-words text-muted-foreground">
+                    {community.description}
+                  </p>
+                  <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+                    <div className="flex items-center">
+                      <Users className="mr-2 h-4 w-4" />
+                      {community.memberCount.toLocaleString()} members
+                    </div>
+                    <div className="flex items-center">
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      {community.threadsCount} threads
+                    </div>
+                  </div>
+                </div>
+                <div className="ml-6 flex shrink-0 flex-col gap-3 sm:flex-row">
+                  <Button
+                    disabled={!isLoggedIn || isMemberLoading}
+                    onClick={isMember ? handleLeaveCommunity : handleJoinCommunity}
+                    className={`rounded-full px-8 py-3 font-semibold transition-all duration-300 ${
+                      isMember
+                        ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        : "bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:from-brand-600 hover:to-brand-700"
+                    }`}
+                  >
+                    {isMemberLoading ? "..." : isMember ? "Leave Community" : "Join Community"}
+                  </Button>
+                  <LeaveCommunityDialog
+                    open={showLeaveDialog}
+                    onOpenChange={setShowLeaveDialog}
+                    onConfirm={confirmLeaveCommunity}
+                  />
+                </div>
               </div>
             </div>
           </div>
-          <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
-            <Button
-              disabled={!isLoggedIn || isMemberLoading}
-              onClick={isMember ? handleLeaveCommunity : handleJoinCommunity}
-              className={`rounded-full px-8 py-3 font-semibold transition-all duration-300 ${
-                isMember
-                  ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  : "bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:from-brand-600 hover:to-brand-700"
-              }`}
-            >
-              {isMemberLoading ? "..." : isMember ? "Leave Community" : "Join Community"}
-            </Button>
-            <LeaveCommunityDialog
-              open={showLeaveDialog}
-              onOpenChange={setShowLeaveDialog}
-              onConfirm={confirmLeaveCommunity}
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      {/* Post Thread Form */}
+      {isMember && (
+        <Card className="mb-8 rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-foreground">Start a Discussion</h3>
+              <ThreadNewButton communityAddress={community.address} isJoined={isMember} />
+            </div>
+          </CardHeader>
+        </Card>
+      )}
+    </>
   );
 }

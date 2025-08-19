@@ -4,12 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ReplyVoting } from "@/components/reply/reply-voting";
-import { ThreadNewButton } from "@/components/thread/thread-new-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
 import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
@@ -22,8 +20,6 @@ export function CommunityThreads({ community }: { community: Community; isJoined
   const [searchQuery, setSearchQuery] = useState("");
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const { isMember } = useCommunityMembership(community.address);
 
   useEffect(() => {
     const fetchThreads = async () => {
@@ -49,17 +45,6 @@ export function CommunityThreads({ community }: { community: Community; isJoined
 
   return (
     <>
-      {/* Post Thread Form */}
-      {isMember && (
-        <Card className="mb-8 rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-foreground">Start a Discussion</h3>
-              <ThreadNewButton communityAddress={community.address} isJoined={isMember} />
-            </div>
-          </CardHeader>
-        </Card>
-      )}
       {/* Threads Content */}
       <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardHeader className="pb-4">
