@@ -13,7 +13,7 @@ export function ThreadVotesDisplay({ thread }: ThreadVotesDisplayProps) {
   const postId = thread.rootPost?.id;
   const validPostId = postId ? toPostId(postId) : undefined;
   const { scoreState, isLoading } = useVoting({ postid: validPostId as any });
-  if (!postId) return null;
+  if (!validPostId) return null;
 
   return (
     <div className="flex cursor-pointer items-center gap-2">
