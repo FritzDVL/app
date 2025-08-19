@@ -146,7 +146,7 @@ export function ThreadMainCard({ thread }: { thread: Thread }) {
             </div>
           </div>
           <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
-            {threadPostId && <ThreadVoting postid={postId(threadPostId)} score={thread.upvotes - thread.downvotes} />}
+            {threadPostId && <ThreadVoting postid={postId(threadPostId)} />}
             <Button
               variant="ghost"
               size="sm"

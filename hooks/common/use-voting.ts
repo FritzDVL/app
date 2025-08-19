@@ -1,48 +1,51 @@
 import { useCallback, useEffect, useState } from "react";
-import { useAuthStore } from "@/stores/auth-store";
 import { addReaction, fetchPost, undoReaction } from "@lens-protocol/client/actions";
 import { Post, PostId, PostReactionType, postId as toPostId, useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 
 interface UseVotingOptions {
   postid: PostId;
-  initialScore: number;
   upvoteLabel?: string;
   downvoteLabel?: string;
 }
 
-export function useVoting({
-  postid,
-  initialScore,
-  upvoteLabel = "Upvote",
-  downvoteLabel = "Downvote",
-}: UseVotingOptions) {
+export function useVoting({ postid, upvoteLabel = "Upvote", downvoteLabel = "Downvote" }: UseVotingOptions) {
   const [hasUserUpvoted, setHasUserUpvoted] = useState(false);
   const [hasUserDownvoted, setHasUserDownvoted] = useState(false);
-  const [isLoading, setIsLoading] = useState<"up" | "down" | null>(null);
-  const [scoreState, setScoreState] = useState(initialScore);
+  const [isLoading, setIsLoading] = useState<"up" | "down" | "score" | null>("score");
+  const [scoreState, setScoreState] = useState(0);
 
   const sessionClient = useSessionClient();
 
   useEffect(() => {
-    setScoreState(initialScore);
+    if (sessionClient.loading) return;
+    setIsLoading("score");
     const checkReactions = async () => {
-      if (!sessionClient.data) return;
+      if (!sessionClient.data) {
+        setIsLoading(null);
+        return;
+      }
       try {
         const postResult = await fetchPost(sessionClient.data, { post: toPostId(postid) });
         if (postResult.isErr()) {
           console.error("Failed to fetch post reactions:", postResult.error);
+          setIsLoading(null);
           return;
         }
         const fetchedPost = postResult.value as Post;
         setHasUserUpvoted(!!fetchedPost.operations?.hasUpvoted);
         setHasUserDownvoted(!!fetchedPost.operations?.hasDownvoted);
+        const upvotes = fetchedPost.stats?.upvotes ?? 0;
+        const downvotes = fetchedPost.stats?.downvotes ?? 0;
+        setScoreState(upvotes - downvotes);
       } catch (error) {
         console.error("Error checking reactions:", error);
+      } finally {
+        setIsLoading(null);
       }
     };
     checkReactions();
-  }, [sessionClient.data, postid, initialScore]);
+  }, [sessionClient.data, sessionClient.loading, postid]);
 
   const handleVote = useCallback(
     async (

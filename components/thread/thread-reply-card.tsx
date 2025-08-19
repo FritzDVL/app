@@ -152,7 +152,7 @@ export function ThreadReplyCard({
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <div className="flex flex-col items-center">
-              <ReplyVoting postid={postId(reply.id)} score={reply.upvotes - reply.downvotes} />
+              <ReplyVoting postid={postId(reply.id)} />
             </div>
             <div className="min-w-0 flex-1">
               {/* Top row: author info */}

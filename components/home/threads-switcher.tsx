@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LatestThreads } from "./latest-threads";
+import { ThreadsList } from "@/components/home/threads-list";
 import type { Thread } from "@/lib/domain/threads/types";
 
 interface ThreadsSwitcherProps {
@@ -15,7 +15,7 @@ export function ThreadsSwitcher({ featuredThreads, latestThreads }: ThreadsSwitc
   const showThreads = activeCategory === "Featured" ? featuredThreads : latestThreads;
 
   return (
-    <LatestThreads
+    <ThreadsList
       threads={showThreads}
       loadingThreads={false}
       error={null}

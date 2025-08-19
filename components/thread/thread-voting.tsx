@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { useVoting } from "@/hooks/common/use-voting";
 import { useAuthStore } from "@/stores/auth-store";
@@ -6,14 +8,12 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 
 interface ThreadVotingProps {
   postid: PostId;
-  score: number;
   className?: string;
 }
 
-export function ThreadVoting({ postid, score, className }: ThreadVotingProps) {
+export function ThreadVoting({ postid, className }: ThreadVotingProps) {
   const { hasUserUpvoted, hasUserDownvoted, isLoading, scoreState, handleUpvote, handleDownvote } = useVoting({
     postid,
-    initialScore: score,
   });
 
   const { isLoggedIn } = useAuthStore();
@@ -42,7 +42,13 @@ export function ThreadVoting({ postid, score, className }: ThreadVotingProps) {
         )}
       </Button>
 
-      <span className="mx-1 min-w-[1.5rem] text-center text-sm font-semibold text-foreground">{scoreState}</span>
+      <span className="mx-1 min-w-[1.5rem] text-center text-sm font-semibold text-foreground">
+        {isLoading ? (
+          <span className="inline-block h-3 w-3 animate-spin rounded-full border border-gray-400 border-t-transparent align-middle" />
+        ) : (
+          scoreState
+        )}
+      </span>
 
       <Button
         variant="ghost"

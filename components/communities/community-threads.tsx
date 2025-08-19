@@ -1,30 +1,36 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ReplyVoting } from "@/components/reply/reply-voting";
-import { ThreadNewButton } from "@/components/thread/thread-new-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
+import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
 import { postId } from "@lens-protocol/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, Search } from "lucide-react";
 
-export function CommunityThreads({
-  community,
-  threads,
-  isJoined = true,
-}: {
-  community: Community;
-  threads: Thread[];
-  isJoined?: boolean;
-}) {
+export function CommunityThreads({ community }: { community: Community; isJoined?: boolean }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [threads, setThreads] = useState<Thread[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchThreads = async () => {
+      setLoading(true);
+      const result = await getCommunityThreads(community.address);
+      setThreads(result.success ? (result.threads ?? []) : []);
+      setLoading(false);
+    };
+
+    fetchThreads();
+  }, [community.address]);
 
   const filteredThreads = useMemo(() => {
     if (!searchQuery.trim()) return threads;
@@ -39,17 +45,6 @@ export function CommunityThreads({
 
   return (
     <>
-      {/* Post Thread Form */}
-      {isJoined && (
-        <Card className="mb-8 rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-foreground">Start a Discussion</h3>
-              <ThreadNewButton communityAddress={community.address} isJoined={isJoined} />
-            </div>
-          </CardHeader>
-        </Card>
-      )}
       {/* Threads Content */}
       <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardHeader className="pb-4">
@@ -74,8 +69,11 @@ export function CommunityThreads({
           </div>
         </CardHeader>
         <CardContent className="pt-0">
-          {/* Threads List */}
-          {filteredThreads.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <LoadingSpinner text="Loading threads..." />
+            </div>
+          ) : filteredThreads.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="mb-4 text-4xl">📝</div>
               <h3 className="mb-2 text-lg font-semibold text-slate-900">No threads yet</h3>
@@ -109,12 +107,7 @@ export function CommunityThreads({
                         <div className="flex items-start space-x-4">
                           {/* Voting */}
                           <div className="flex min-w-[50px] flex-col items-center space-y-1">
-                            {thread.rootPost && (
-                              <ReplyVoting
-                                postid={postId(thread.rootPost.id)}
-                                score={thread.rootPost.stats.upvotes - thread.rootPost.stats.downvotes}
-                              />
-                            )}
+                            {thread.rootPost && <ReplyVoting postid={postId(thread.rootPost.id)} />}
                           </div>
                           {/* Content */}
                           <div className="min-w-0 flex-1">

@@ -4,6 +4,7 @@
  */
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { Reply } from "@/lib/domain/replies/types";
+import { Thread } from "@/lib/domain/threads/types";
 import { fetchAccountsBatch } from "@/lib/external/lens/primitives/accounts";
 import { fetchThreadPosts } from "@/lib/external/lens/primitives/posts";
 import { PageSize } from "@lens-protocol/client";
@@ -21,13 +22,13 @@ export interface PaginatedRepliesResult {
  * Gets replies for a thread with pagination using service approach
  */
 export async function getThreadReplies(
-  threadAddress: string,
+  thread: Thread,
   pageSize: PageSize = PageSize.Fifty,
   cursor?: string | null,
 ): Promise<PaginatedRepliesResult> {
   try {
     // 1. Fetch posts with pagination
-    const { posts, pageInfo } = await fetchThreadPosts(threadAddress, pageSize, cursor);
+    const { posts, pageInfo } = await fetchThreadPosts(thread.address, pageSize, cursor);
 
     if (!posts.length) {
       return {
@@ -52,7 +53,7 @@ export async function getThreadReplies(
     });
 
     // 5. Transform posts to replies using cached author data
-    const replies: Reply[] = [];
+    let replies: Reply[] = [];
     for (const post of posts) {
       try {
         const author = authorMap.get(post.author.address);
@@ -77,6 +78,11 @@ export async function getThreadReplies(
         console.warn(`Error transforming post ${post.id}:`, error);
         continue;
       }
+    }
+
+    // Filter the rootPost if it exists
+    if (thread.rootPost && typeof thread.rootPost.id === "string") {
+      replies = replies.filter(r => r.id !== thread.rootPost!.id);
     }
 
     return {

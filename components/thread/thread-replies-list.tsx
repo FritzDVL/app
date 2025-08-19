@@ -1,15 +1,40 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ThreadReplies } from "@/components/thread/thread-replies";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
+import { getThreadReplies } from "@/lib/services/reply/get-thread-replies";
 
-export function ThreadRepliesList({ thread, replies }: { thread: Thread; replies: Reply[] }) {
+interface ThreadRepliesListProps {
+  thread: Thread;
+}
+
+export function ThreadRepliesList({ thread }: ThreadRepliesListProps) {
+  const [replies, setReplies] = useState<Reply[]>([]);
+  const [loading, setLoading] = useState(true);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+
   const { createReply } = useReplyCreate();
+
+  useEffect(() => {
+    const fetchReplies = async () => {
+      setLoading(true);
+      const repliesResponse = await getThreadReplies(thread);
+      if (!repliesResponse.success) {
+        setReplies([]);
+        setLoading(false);
+        return;
+      }
+      const replies = repliesResponse.data?.replies ?? [];
+      setReplies(replies);
+      setLoading(false);
+    };
+    fetchReplies();
+  }, [thread]);
 
   const handleReply = async (parentId: string, content: string) => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
@@ -20,13 +45,17 @@ export function ThreadRepliesList({ thread, replies }: { thread: Thread; replies
     }
   };
 
-  if (!thread || !replies) return null;
-
-  const filteredReplies = replies.filter(r => r.id !== thread.rootPost?.id);
+  if (loading) {
+    return (
+      <div className="flex justify-center py-8">
+        <LoadingSpinner text="Loading replies..." />
+      </div>
+    );
+  }
 
   return (
     <ThreadReplies
-      replies={filteredReplies}
+      replies={replies}
       replyingTo={replyingTo}
       replyContent={replyContent}
       setReplyingTo={setReplyingTo}

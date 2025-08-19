@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { ThreadVotesDisplay } from "@/components/home/thread-votes-display";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo } from "@/lib/shared/utils";
-import { Clock, Edit3, MessageCircle, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Clock, Edit3, MessageCircle } from "lucide-react";
 
 interface LatestThreadsProps {
   threads: Thread[];
@@ -13,13 +14,7 @@ interface LatestThreadsProps {
   setActiveCategory: (category: string) => void;
 }
 
-export function LatestThreads({
-  threads,
-  loadingThreads,
-  error,
-  activeCategory,
-  setActiveCategory,
-}: LatestThreadsProps) {
+export function ThreadsList({ threads, loadingThreads, error, activeCategory, setActiveCategory }: LatestThreadsProps) {
   return (
     <div className="mb-8 w-full max-w-none overflow-hidden rounded-3xl border border-slate-300/60 bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800 md:max-w-none">
       <div className="border-b border-slate-200/80 bg-gradient-to-r from-slate-100/90 to-white px-4 py-4 dark:border-gray-700/50 dark:from-gray-800/50 dark:to-gray-800 sm:px-8 sm:py-6">
@@ -133,13 +128,8 @@ export function LatestThreads({
                           <MessageCircle className="h-4 w-4" />
                           <span>{thread.repliesCount || 0} replies</span>
                         </div>
-                        <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-green-600">
-                          <ThumbsUp className="h-4 w-4" />
-                          <span>{thread.upvotes || 0}</span>
-                        </div>
-                        <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-red-600">
-                          <ThumbsDown className="h-4 w-4" />
-                          <span>{thread.downvotes || 0}</span>
+                        <div className="flex cursor-pointer items-center gap-2 transition-colors">
+                          <ThreadVotesDisplay thread={thread} />
                         </div>
                       </div>
                     </div>
