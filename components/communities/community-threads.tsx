@@ -109,12 +109,7 @@ export function CommunityThreads({
                         <div className="flex items-start space-x-4">
                           {/* Voting */}
                           <div className="flex min-w-[50px] flex-col items-center space-y-1">
-                            {thread.rootPost && (
-                              <ReplyVoting
-                                postid={postId(thread.rootPost.id)}
-                                score={thread.rootPost.stats.upvotes - thread.rootPost.stats.downvotes}
-                              />
-                            )}
+                            {thread.rootPost && <ReplyVoting postid={postId(thread.rootPost.id)} />}
                           </div>
                           {/* Content */}
                           <div className="min-w-0 flex-1">

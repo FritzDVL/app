@@ -6,18 +6,11 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 
 interface ReplyVotingProps {
   postid: PostId;
-  score: number;
 }
 
-const upvoteLabel = "Upvote";
-const downvoteLabel = "Downvote";
-
-export function ReplyVoting({ postid, score }: ReplyVotingProps) {
+export function ReplyVoting({ postid }: ReplyVotingProps) {
   const { hasUserUpvoted, hasUserDownvoted, isLoading, scoreState, handleUpvote, handleDownvote } = useVoting({
     postid,
-    initialScore: score,
-    upvoteLabel,
-    downvoteLabel,
   });
   const { isLoggedIn } = useAuthStore();
 
@@ -30,7 +23,6 @@ export function ReplyVoting({ postid, score }: ReplyVotingProps) {
         onClick={handleUpvote}
         disabled={isLoading === "up" || isLoading === "down" || hasUserDownvoted || !isLoggedIn}
         aria-pressed={hasUserUpvoted}
-        aria-label={upvoteLabel}
       >
         {isLoading === "up" ? (
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
@@ -46,7 +38,6 @@ export function ReplyVoting({ postid, score }: ReplyVotingProps) {
         onClick={handleDownvote}
         disabled={isLoading === "up" || isLoading === "down" || hasUserUpvoted || !isLoggedIn}
         aria-pressed={hasUserDownvoted}
-        aria-label={downvoteLabel}
       >
         {isLoading === "down" ? (
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />

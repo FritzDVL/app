@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { ThreadReplies } from "@/components/thread/thread-replies";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
@@ -13,6 +14,7 @@ interface ThreadRepliesListProps {
 
 export function ThreadRepliesList({ thread }: ThreadRepliesListProps) {
   const [replies, setReplies] = useState<Reply[]>([]);
+  const [loading, setLoading] = useState(true);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
 
@@ -20,13 +22,16 @@ export function ThreadRepliesList({ thread }: ThreadRepliesListProps) {
 
   useEffect(() => {
     const fetchReplies = async () => {
+      setLoading(true);
       const repliesResponse = await getThreadReplies(thread);
       if (!repliesResponse.success) {
         setReplies([]);
+        setLoading(false);
         return;
       }
       const replies = repliesResponse.data?.replies ?? [];
       setReplies(replies);
+      setLoading(false);
     };
     fetchReplies();
   }, [thread]);
@@ -39,6 +44,14 @@ export function ThreadRepliesList({ thread }: ThreadRepliesListProps) {
       setReplyContent(c => ({ ...c, [parentId]: "" }));
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-8">
+        <LoadingSpinner text="Loading replies..." />
+      </div>
+    );
+  }
 
   return (
     <ThreadReplies

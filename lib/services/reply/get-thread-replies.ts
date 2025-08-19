@@ -81,8 +81,8 @@ export async function getThreadReplies(
     }
 
     // Filter the rootPost if it exists
-    if (thread.rootPost?.id) {
-      replies = replies.filter(r => r.id !== thread.rootPost.id);
+    if (thread.rootPost && typeof thread.rootPost.id === "string") {
+      replies = replies.filter(r => r.id !== thread.rootPost!.id);
     }
 
     return {
