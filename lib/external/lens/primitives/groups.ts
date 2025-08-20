@@ -2,10 +2,19 @@ import { client } from "../protocol-client";
 import { Moderator } from "@/lib/domain/communities/types";
 import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { evmAddress } from "@lens-protocol/client";
-import type { Group, GroupStatsResponse } from "@lens-protocol/client";
-import { fetchAdminsFor, fetchGroup, fetchGroupStats, fetchGroups, joinGroup } from "@lens-protocol/client/actions";
+import type { Group, GroupStatsResponse, SessionClient } from "@lens-protocol/client";
+import {
+  addAdmins,
+  fetchAdminsFor,
+  fetchGroup,
+  fetchGroupStats,
+  fetchGroups,
+  joinGroup,
+  removeAdmins,
+} from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { toast } from "sonner";
+import { Address, WalletClient } from "viem";
 
 /**
  * Fetches a single group from Lens Protocol
@@ -175,4 +184,52 @@ export async function joinAndIncrementCommunityMember(
     });
     return false;
   }
+}
+
+export async function addAdminToGroup(
+  newAdmin: Address,
+  group: Address,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
+): Promise<boolean> {
+  const addAdminResult = await addAdmins(sessionClient, {
+    admins: [newAdmin],
+    address: group,
+  })
+    .andThen(handleOperationWith(walletClient))
+    .andThen(sessionClient.waitForTransaction);
+
+  if (addAdminResult.isErr()) {
+    console.error("Error adding admin to group:", addAdminResult.error);
+    toast.error("Action Failed", {
+      description: "Unable to add admin to group. Please try again.",
+    });
+    return false;
+  }
+
+  return true;
+}
+
+export async function removeAdminFromGroup(
+  admin: Address,
+  group: Address,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
+): Promise<boolean> {
+  const removeAdminResult = await removeAdmins(sessionClient, {
+    admins: [admin],
+    address: group,
+  })
+    .andThen(handleOperationWith(walletClient))
+    .andThen(sessionClient.waitForTransaction);
+
+  if (removeAdminResult.isErr()) {
+    console.error("Error removing admin to group:", removeAdminResult.error);
+    toast.error("Action Failed", {
+      description: "Unable to remove admin to group. Please try again.",
+    });
+    return false;
+  }
+
+  return true;
 }
