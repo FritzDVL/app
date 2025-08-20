@@ -1,4 +1,5 @@
 import { CommunityModerators } from "@/components/communities/community-moderators";
+import { CommunityOwner } from "@/components/communities/community-owner";
 import { CommunityRules } from "@/components/communities/community-rules";
 import { Community } from "@/lib/domain/communities/types";
 
@@ -7,6 +8,7 @@ export function CommunitySidebar({ community }: { community: Community }) {
 
   return (
     <div className="space-y-8">
+      <CommunityOwner owner={community.owner} />
       <CommunityRules />
       <CommunityModerators moderators={community.moderators} />
     </div>

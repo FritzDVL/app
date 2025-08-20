@@ -9,6 +9,7 @@ import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
 import { persistCommunity } from "@/lib/external/supabase/communities";
 import { getAdminWallet } from "@/lib/external/wallets/admin-wallet";
+import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
 import { immutable } from "@lens-chain/storage-client";
 import { Group, evmAddress } from "@lens-protocol/client";
 import { createGroup, fetchAdminsFor, fetchGroup } from "@lens-protocol/client/actions";
@@ -59,7 +60,8 @@ export async function createCommunity(
     // 5. Create the group on Lens Protocol
     const result = await createGroup(adminSessionClient, {
       metadataUri: uri,
-      admins: [evmAddress(formData.adminAddress)],
+      admins: [evmAddress(formData.adminAddress), ADMIN_USER_ADDRESS],
+      owner: evmAddress(formData.adminAddress),
     })
       .andThen(handleOperationWith(adminWallet))
       .andThen(adminSessionClient.waitForTransaction)
