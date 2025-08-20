@@ -24,7 +24,7 @@ export interface UpdateCommunityResult {
   error?: string;
 }
 
-export async function updateCommunity(address: Address, data: EditCommunityFormData): Promise<{}> {
+export async function updateCommunity(address: Address, data: EditCommunityFormData): Promise<UpdateCommunityResult> {
   try {
     // 1. Upload new logo if provided
     let iconUri: string | undefined = undefined;
