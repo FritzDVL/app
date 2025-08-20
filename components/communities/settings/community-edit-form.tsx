@@ -17,7 +17,6 @@ interface CommunityEditFormProps {
 export function CommunityEditForm({ community }: CommunityEditFormProps) {
   const {
     formData,
-    setFormData,
     previewUrl,
     setPreviewUrl,
     loading,
