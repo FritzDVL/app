@@ -14,7 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { UserSearch } from "@/components/ui/user-search";
-import { MentionAccount } from "@/hooks/editor/use-mention-query";
+import { AccountSuggestion } from "@/hooks/editor/use-account-search";
 import { Community, Moderator } from "@/lib/domain/communities/types";
 import { Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -31,7 +31,7 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
   // Get current moderator addresses to exclude from search results
   const currentModeratorAddresses = moderators.map(mod => mod.address);
 
-  const handleAddModerator = async (user: MentionAccount) => {
+  const handleAddModerator = async (user: AccountSuggestion) => {
     // Check if user is already a moderator
     if (moderators.some(mod => mod.address.toLowerCase() === user.address.toLowerCase())) {
       toast.error("This user is already a moderator");

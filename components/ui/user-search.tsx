@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
-import useMentionQuery, { MentionAccount } from "@/hooks/editor/use-mention-query";
+import useAccountSearch, { AccountSuggestion } from "@/hooks/editor/use-account-search";
 import { Search, User } from "lucide-react";
 
 interface UserSearchProps {
-  onUserSelect: (user: MentionAccount) => void;
+  onUserSelect: (user: AccountSuggestion) => void;
   placeholder?: string;
   disabled?: boolean;
   excludeAddresses?: string[];
@@ -24,14 +24,14 @@ export function UserSearch({
   const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const searchResults = useMentionQuery(searchQuery);
+  const searchResults = useAccountSearch(searchQuery);
   const filteredResults = searchResults.filter(
     user => !excludeAddresses.some(addr => addr.toLowerCase() === user.address.toLowerCase()),
   );
 
   const isSearching = searchQuery.length > 0 && searchResults.length === 0;
 
-  const handleUserSelect = (user: MentionAccount) => {
+  const handleUserSelect = (user: AccountSuggestion) => {
     onUserSelect(user);
     setSearchQuery("");
     setOpen(false);

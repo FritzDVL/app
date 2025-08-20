@@ -5,7 +5,7 @@ import { AccountsOrderBy } from "@lens-protocol/react";
 
 const SUGGESTION_LIST_LENGTH_LIMIT = 5;
 
-export type MentionAccount = {
+export type AccountSuggestion = {
   address: string;
   displayUsername: string;
   username: string;
@@ -13,8 +13,8 @@ export type MentionAccount = {
   picture: string;
 };
 
-const useMentionQuery = (query: string): MentionAccount[] => {
-  const [results, setResults] = useState<MentionAccount[]>([]);
+const useAccountSearch = (query: string): AccountSuggestion[] => {
+  const [results, setResults] = useState<AccountSuggestion[]>([]);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const useMentionQuery = (query: string): MentionAccount[] => {
       const accounts = accountsResult.items
         .filter(account => !account.operations?.isBlockedByMe && !account.operations?.hasBlockedMe)
         .map(
-          (account): MentionAccount => ({
+          (account): AccountSuggestion => ({
             address: account.address,
             displayUsername: account.username?.localName || "",
             name: account.metadata?.name || "",
@@ -72,4 +72,4 @@ const useMentionQuery = (query: string): MentionAccount[] => {
   return results;
 };
 
-export default useMentionQuery;
+export default useAccountSearch;
