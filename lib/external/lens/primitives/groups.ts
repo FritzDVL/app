@@ -1,5 +1,5 @@
 import { client } from "../protocol-client";
-import { Moderator } from "@/lib/domain/communities/types";
+import { Community, Moderator } from "@/lib/domain/communities/types";
 import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { evmAddress } from "@lens-protocol/client";
 import type { Group, GroupStatsResponse, SessionClient } from "@lens-protocol/client";
@@ -141,7 +141,7 @@ export async function fetchGroupAdminsBatch(
  * Joins a group and increments the community member count
  */
 export async function joinAndIncrementCommunityMember(
-  community: { id: string; address: string },
+  community: Community,
   sessionClient: any,
   walletClient: any,
 ): Promise<boolean> {

@@ -88,6 +88,12 @@ export function useCommunityCreateForm() {
         description: `${formData.name} has been successfully created on Lens Protocol.`,
       });
 
+      if (!result.community) {
+        toast.error("Creation Failed", {
+          description: "Community data is missing after creation.",
+        });
+        return;
+      }
       const joined = await joinAndIncrementCommunityMember(result.community, sessionClient.data, walletClient.data);
 
       if (joined) {
