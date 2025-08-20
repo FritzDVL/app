@@ -1,13 +1,19 @@
 import { useState } from "react";
+import { updateCommunityAction } from "@/app/actions/update-community";
 import { Community } from "@/lib/domain/communities/types";
-import { updateCommunity } from "@/lib/services/community/update-community";
 import { toast } from "sonner";
 
+export interface EditCommunityFormData {
+  name: string;
+  description: string;
+  logo: File | null;
+}
+
 export function useCommunityEditForm(community: Community) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EditCommunityFormData>({
     name: community.name,
     description: community.description,
-    logo: null as File | null,
+    logo: null,
   });
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -49,14 +55,21 @@ export function useCommunityEditForm(community: Community) {
     e.preventDefault();
     setLoading(true);
     try {
-      // Prepare update payload
-      const payload = {
-        name: formData.name,
-        description: formData.description,
-        logo: formData.logo,
-      };
-      // Call update service
-      const result = await updateCommunity(community.address, payload);
+      // Prepare FormData for server action
+      const form = new FormData();
+      form.append("name", formData.name);
+      form.append("description", formData.description);
+      if (formData.logo) {
+        form.append("logo", formData.logo);
+      }
+
+      // Show loading toast
+      const loadingToastId = toast.loading("Updating Community", {
+        description: "Updating up your community...",
+      });
+
+      const result = await updateCommunityAction(community.address, form);
+
       if (!result.success) {
         toast.error("Failed to update community", {
           description: result.error || "Please try again later.",
@@ -64,10 +77,12 @@ export function useCommunityEditForm(community: Community) {
         setLoading(false);
         return;
       }
-      toast.success("Community updated successfully!", {
+
+      toast.success("Community updated!", {
+        id: loadingToastId,
         description: "Your changes have been saved.",
       });
-      // Optionally: update UI state, refetch, etc.
+
     } catch (error) {
       console.error("Error updating community:", error);
       toast.error("Failed to update community", {
@@ -80,7 +95,6 @@ export function useCommunityEditForm(community: Community) {
 
   return {
     formData,
-    setFormData,
     previewUrl,
     setPreviewUrl,
     loading,

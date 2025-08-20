@@ -1,14 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { EditCommunityFormData } from "@/hooks/forms/use-community-edit-form";
 import { updateCommunity } from "@/lib/services/community/update-community";
 import { Address } from "@/types/common";
 
 export async function updateCommunityAction(address: Address, formData: FormData) {
   try {
     // Extract data from FormData
-    const name = formData.get("name") as string | null;
-    const description = formData.get("description") as string | null;
+    const name = formData.get("name") as string;
+    const description = formData.get("description") as string;
     const logoFile = formData.get("logo") as File | null;
 
     if (!address) {
@@ -18,28 +19,28 @@ export async function updateCommunityAction(address: Address, formData: FormData
       };
     }
 
-    // Only include fields that are present
-    const updateData: any = {};
-    if (name !== null) updateData.name = name;
-    if (description !== null) updateData.description = description;
-    if (logoFile) updateData.logo = logoFile;
+    const communityData: EditCommunityFormData = {
+      name: name,
+      description: description,
+      logo: logoFile || null,
+    };
 
-    const result = await updateCommunity(address, updateData);
-
-    if (result.success) {
-      revalidatePath(`/communities/${address}`);
-      revalidatePath(`/communities/${address}/settings`);
-      revalidatePath(`/`);
-      return {
-        success: true,
-        community: result.community,
-      };
-    } else {
+    const result = await updateCommunity(address, communityData);
+    if (!result.success) {
       return {
         success: false,
         error: result.error,
       };
     }
+
+    revalidatePath(`/communities/${address}`);
+    revalidatePath(`/communities/${address}/settings`);
+    revalidatePath(`/`);
+
+    return {
+      success: true,
+      community: result.community,
+    };
   } catch (error) {
     console.error("Error updating community:", error);
     return {

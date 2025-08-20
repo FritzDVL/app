@@ -1,5 +1,6 @@
 "use server";
 
+import { EditCommunityFormData } from "@/hooks/forms/use-community-edit-form";
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import { storageClient } from "@/lib/external/grove/client";
@@ -17,16 +18,13 @@ import { Group, evmAddress } from "@lens-protocol/client";
 import { fetchGroup, setGroupMetadata } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 
-export interface UpdateCommunityFormData {
-  name?: string;
-  description?: string;
-  logo?: File | null;
+export interface UpdateCommunityResult {
+  success: boolean;
+  community?: Community;
+  error?: string;
 }
 
-export async function updateCommunity(
-  address: Address,
-  data: UpdateCommunityFormData,
-): Promise<{ success: boolean; community?: Community; error?: string }> {
+export async function updateCommunity(address: Address, data: EditCommunityFormData): Promise<{}> {
   try {
     // 1. Upload new logo if provided
     let iconUri: string | undefined = undefined;
@@ -40,16 +38,12 @@ export async function updateCommunity(
     const adminSessionClient = await getAdminSessionClient();
     const adminWallet = await getAdminWallet();
 
-    // 3. Fetch current group from Lens
-    const groupResult = await fetchGroup(adminSessionClient, { group: evmAddress(address) });
-    if (groupResult.isErr() || !groupResult.value) {
-      return { success: false, error: "Failed to fetch group from Lens" };
-    }
-    const group = groupResult.value;
+    // 3. Prepare group name for metadata (no spaces, max 20 chars)
+    const groupName = data.name ? data.name.replace(/\s+/g, "-").slice(0, 20) : "";
 
     // 4. Build new metadata
     const newMetadata = {
-      ...group.metadata,
+      name: groupName || data,
       ...(data.name ? { name: data.name } : {}),
       ...(data.description ? { description: data.description } : {}),
       ...(iconUri ? { icon: iconUri } : {}),

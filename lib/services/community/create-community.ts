@@ -2,7 +2,7 @@
 
 import { CreateCommunityFormData } from "@/hooks/forms/use-community-create-form";
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
-import { Moderator } from "@/lib/domain/communities/types";
+import { Community, Moderator } from "@/lib/domain/communities/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { getAdminSessionClient } from "@/lib/external/lens/admin-session";
 import { lensChain } from "@/lib/external/lens/chain";
@@ -18,7 +18,7 @@ import { group } from "@lens-protocol/metadata";
 
 export interface CreateCommunityResult {
   success: boolean;
-  community?: any;
+  community?: Community;
   error?: string;
 }
 
