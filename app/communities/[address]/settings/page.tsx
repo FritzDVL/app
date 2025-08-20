@@ -1,5 +1,4 @@
 import { CommunitySettingsClient } from "@/components/communities/settings/community-settings-client";
-import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { getCommunity } from "@/lib/services/community/get-community";
 

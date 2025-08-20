@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CommunityAccessDenied } from "@/components/communities/settings/community-access-denied";
 import { CommunityEditForm } from "@/components/communities/settings/community-edit-form";
 import { CommunityModeratorsManager } from "@/components/communities/settings/community-moderators-manager";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useIsOwner } from "@/hooks/communities/use-is-owner";
 import { Community } from "@/lib/domain/communities/types";
-import { useAuthStore } from "@/stores/auth-store";
-import { Settings, Shield, Users } from "lucide-react";
+import { Settings, Users } from "lucide-react";
 
 interface CommunitySettingsClientProps {
   community: Community;
@@ -15,20 +16,8 @@ interface CommunitySettingsClientProps {
 
 export function CommunitySettingsClient({ community }: CommunitySettingsClientProps) {
   const [activeTab, setActiveTab] = useState("general");
-  const { account } = useAuthStore();
-  const [isOwner, setIsOwner] = useState(false);
+  const isOwner = useIsOwner(community);
 
-  // Check if current user is owner/admin of the community
-  useEffect(() => {
-    if (account?.address && community.moderators) {
-      const userIsOwner = community.moderators.some(
-        moderator => moderator.address.toLowerCase() === account.address.toLowerCase(),
-      );
-      setIsOwner(userIsOwner);
-    }
-  }, [account?.address, community.moderators]);
-
-  // If user is not owner, show access denied
   if (!isOwner) {
     return <CommunityAccessDenied />;
   }
