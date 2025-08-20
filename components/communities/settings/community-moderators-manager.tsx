@@ -16,8 +16,13 @@ import { Button } from "@/components/ui/button";
 import { UserSearch } from "@/components/ui/user-search";
 import { AccountSuggestion } from "@/hooks/editor/use-account-search";
 import { Community, Moderator } from "@/lib/domain/communities/types";
+import { addModeratorToCommunity } from "@/lib/services/community/add-moderator";
+import { removeModeratorFromCommunity } from "@/lib/services/community/remove-moderator";
+import { Address } from "@/types/common";
+import { useSessionClient } from "@lens-protocol/react";
 import { Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
+import { useWalletClient } from "wagmi";
 
 interface CommunityModeratorsManagerProps {
   community: Community;
@@ -28,12 +33,24 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
   const [loading, setLoading] = useState(false);
   const [removingModerator, setRemovingModerator] = useState<Moderator | null>(null);
 
+  const sessionClient = useSessionClient();
+  const walletClient = useWalletClient();
+
   // Get current moderator addresses to exclude from search results
   const currentModeratorAddresses = moderators.map(mod => mod.address);
 
-  const handleAddModerator = async (user: AccountSuggestion) => {
+  const handleAddModerator = async (account: AccountSuggestion) => {
+    if (!sessionClient || !sessionClient.data) {
+      toast.error("Login to add moderators");
+      return;
+    }
+    if (!walletClient || !walletClient.data) {
+      toast.error("Connect your wallet to add moderators");
+      return;
+    }
+
     // Check if user is already a moderator
-    if (moderators.some(mod => mod.address.toLowerCase() === user.address.toLowerCase())) {
+    if (moderators.some(mod => mod.address.toLowerCase() === account.address.toLowerCase())) {
       toast.error("This user is already a moderator");
       return;
     }
@@ -41,15 +58,22 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
     setLoading(true);
 
     try {
-      // TODO: Implement add moderator service
-      // This would typically call an API endpoint to add the moderator
+      const ok = await addModeratorToCommunity(
+        community.address as Address,
+        account.address as Address,
+        sessionClient.data,
+        walletClient.data,
+      );
+      if (!ok) {
+        throw new Error("Service returned false");
+      }
 
       // Convert MentionAccount to Moderator
       const newModerator: Moderator = {
-        address: user.address as `0x${string}`,
-        username: user.username || user.displayUsername,
-        displayName: user.name || user.displayUsername || `User ${user.address.slice(-6)}`,
-        picture: user.picture,
+        address: account.address as Address,
+        username: account.username || account.displayUsername,
+        displayName: account.name || account.displayUsername || `User ${account.address.slice(-6)}`,
+        picture: account.picture,
       };
 
       setModerators(prev => [...prev, newModerator]);
@@ -57,8 +81,6 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
       toast.success("Moderator added successfully!", {
         description: `${newModerator.displayName} has been added as a moderator.`,
       });
-
-      console.log("Adding moderator:", user);
     } catch (error) {
       console.error("Error adding moderator:", error);
       toast.error("Failed to add moderator", {
@@ -73,8 +95,23 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
     setLoading(true);
 
     try {
-      // TODO: Implement remove moderator service
-      // This would typically call an API endpoint to remove the moderator
+      if (!sessionClient || !sessionClient.data) {
+        toast.error("Login to add moderators");
+        return;
+      }
+      if (!walletClient || !walletClient.data) {
+        toast.error("Connect your wallet to add moderators");
+        return;
+      }
+      const ok = await removeModeratorFromCommunity(
+        community.address as Address,
+        moderator.address as Address,
+        sessionClient.data,
+        walletClient.data,
+      );
+      if (!ok) {
+        throw new Error("Service returned false");
+      }
 
       setModerators(prev => prev.filter(mod => mod.address !== moderator.address));
       setRemovingModerator(null);

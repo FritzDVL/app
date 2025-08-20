@@ -178,9 +178,6 @@ export async function addAdminToGroup(
 
   if (addAdminResult.isErr()) {
     console.error("Error adding admin to group:", addAdminResult.error);
-    toast.error("Action Failed", {
-      description: "Unable to add admin to group. Please try again.",
-    });
     return false;
   }
 
@@ -202,9 +199,6 @@ export async function removeAdminFromGroup(
 
   if (removeAdminResult.isErr()) {
     console.error("Error removing admin to group:", removeAdminResult.error);
-    toast.error("Action Failed", {
-      description: "Unable to remove admin to group. Please try again.",
-    });
     return false;
   }
 
