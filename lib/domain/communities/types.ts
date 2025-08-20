@@ -14,6 +14,7 @@ export interface Community {
   logo?: string | undefined;
   threadsCount: number;
   moderators: Moderator[];
+  owner: Address;
   createdAt: string; // ISO date string
 }
 
