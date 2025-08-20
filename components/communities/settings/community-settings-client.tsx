@@ -5,10 +5,9 @@ import { CommunityAccessDenied } from "@/components/communities/settings/communi
 import { CommunityEditForm } from "@/components/communities/settings/community-edit-form";
 import { CommunityModeratorsManager } from "@/components/communities/settings/community-moderators-manager";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useIsOwner } from "@/hooks/communities/use-is-owner";
 import { Community } from "@/lib/domain/communities/types";
-import { Settings, Users } from "lucide-react";
+import { BookOpen, Settings, Users } from "lucide-react";
 
 interface CommunitySettingsClientProps {
   community: Community;
@@ -56,6 +55,15 @@ export function CommunitySettingsClient({ community }: CommunitySettingsClientPr
           >
             <Users className="mr-2 inline h-4 w-4" />
             Moderators
+          </button>
+          <button
+            disabled
+            className={
+              "cursor-not-allowed rounded-lg bg-transparent px-3 py-2 text-xs font-medium text-muted-foreground opacity-50 sm:rounded-xl sm:px-6 sm:py-3 sm:text-sm"
+            }
+          >
+            <BookOpen className="mr-2 inline h-4 w-4" />
+            Rules
           </button>
         </div>
       </div>
