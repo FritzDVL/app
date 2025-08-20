@@ -5,14 +5,12 @@ import { useAuthStore } from "@/stores/auth-store";
 export function useIsOwner(community: Community) {
   const [isOwner, setIsOwner] = useState(false);
 
-  const { account } = useAuthStore();
+  const { walletAddress } = useAuthStore();
 
   useEffect(() => {
-    if (account?.address) {
-      const userIsOwner = account.address == community.owner;
-      setIsOwner(userIsOwner);
-    }
-  }, [account?.address, community.moderators]);
+    const userIsOwner = walletAddress == community.owner;
+    setIsOwner(userIsOwner);
+  }, [walletAddress, community.moderators]);
 
   return isOwner;
 }

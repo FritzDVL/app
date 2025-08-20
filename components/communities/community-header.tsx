@@ -1,26 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ThreadNewButton } from "../thread/thread-new-button";
 import { LeaveCommunityDialog } from "@/components/communities/community-leave-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
+import { useIsOwner } from "@/hooks/communities/use-is-owner";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { useLeaveCommunity } from "@/hooks/communities/use-leave-community";
 import { Community } from "@/lib/domain/communities/types";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import { useAuthStore } from "@/stores/auth-store";
-import { MessageCircle, Users } from "lucide-react";
+import { MessageCircle, Settings, Users } from "lucide-react";
 
 export function CommunityHeader({ community }: { community: Community }) {
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
 
-  const { isMember, updateIsMember, isLoading: isMemberLoading } = useCommunityMembership(community.address);
   const joinCommunity = useJoinCommunity(community);
   const leaveCommunity = useLeaveCommunity(community);
+  const isOwner = useIsOwner(community);
   const { isLoggedIn } = useAuthStore();
+  const { isMember, updateIsMember, isLoading: isMemberLoading } = useCommunityMembership(community.address);
 
   const handleJoinCommunity = async () => {
     try {
@@ -95,6 +98,20 @@ export function CommunityHeader({ community }: { community: Community }) {
                   >
                     {isMemberLoading ? "..." : isMember ? "Leave Community" : "Join Community"}
                   </Button>
+
+                  {/* Settings Button - Only show for community owners */}
+                  {isOwner && (
+                    <Link href={`/communities/${community.address}/settings`}>
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-full border-slate-300 px-6 py-3 font-semibold transition-all duration-300 hover:bg-slate-50 md:w-auto"
+                      >
+                        <Settings className="mr-2 h-4 w-4" />
+                        Settings
+                      </Button>
+                    </Link>
+                  )}
+
                   <LeaveCommunityDialog
                     open={showLeaveDialog}
                     onOpenChange={setShowLeaveDialog}
