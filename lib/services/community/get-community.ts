@@ -5,7 +5,7 @@
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import {
-  fetchGroupAdminsFromLens,
+  fetchAdminsFromGroup,
   fetchGroupFromLens,
   fetchGroupStatsFromLens,
 } from "@/lib/external/lens/primitives/groups";
@@ -35,7 +35,7 @@ export async function getCommunity(address: string): Promise<CommunityResult> {
     const [group, groupStats, moderators] = await Promise.all([
       fetchGroupFromLens(address),
       fetchGroupStatsFromLens(address),
-      fetchGroupAdminsFromLens(address),
+      fetchAdminsFromGroup(address),
     ]);
 
     if (!group || !groupStats) {

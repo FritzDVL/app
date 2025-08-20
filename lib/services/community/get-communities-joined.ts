@@ -7,7 +7,7 @@ import { Community } from "@/lib/domain/communities/types";
 import {
   fetchGroupAdminsBatch,
   fetchGroupStatsBatch,
-  fetchGroupsByFilter,
+  fetchGroupsJoinedByMember,
 } from "@/lib/external/lens/primitives/groups";
 import { fetchCommunity as fetchCommunityDb } from "@/lib/external/supabase/communities";
 import { Address } from "@/types/common";
@@ -24,7 +24,7 @@ export interface CommunitiesResult {
 export async function getCommunitiesJoined(member: Address): Promise<CommunitiesResult> {
   try {
     // 1. Fetch groups from Lens using member filter
-    const groups = await fetchGroupsByFilter({ member });
+    const groups = await fetchGroupsJoinedByMember(member);
     if (!groups.length) {
       return {
         success: true,

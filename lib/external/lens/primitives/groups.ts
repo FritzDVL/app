@@ -55,10 +55,10 @@ export async function fetchGroupStatsFromLens(address: string): Promise<GroupSta
 /**
  * Fetches groups by filter from Lens Protocol
  */
-export async function fetchGroupsByFilter(filter: { member?: string }) {
+export async function fetchGroupsJoinedByMember(member: string): Promise<Group[]> {
   try {
     const result = await fetchGroups(client, {
-      filter: filter.member ? { member: evmAddress(filter.member) } : {},
+      filter: { member: evmAddress(member) },
     });
 
     if (result.isErr()) {
@@ -66,33 +66,10 @@ export async function fetchGroupsByFilter(filter: { member?: string }) {
       return [];
     }
 
-    return result.value.items || [];
+    return result.value.items ? [...result.value.items] : [];
   } catch (error) {
     console.error("Failed to fetch groups by filter from Lens:", error);
     throw new Error(`Failed to fetch groups: ${error instanceof Error ? error.message : "Unknown error"}`);
-  }
-}
-
-/**
- * Fetches admins/moderators for a group from Lens Protocol
- */
-export async function fetchGroupAdminsFromLens(address: string): Promise<Moderator[]> {
-  try {
-    const result = await fetchAdminsFor(client, { address: evmAddress(address) });
-
-    if (result.isErr()) {
-      return [];
-    }
-
-    return result.value.items.map(admin => ({
-      username: admin.account.username?.value || "",
-      address: admin.account.address,
-      picture: admin.account.metadata?.picture,
-      displayName: admin.account.username?.localName || "",
-    }));
-  } catch (error) {
-    console.error("Failed to fetch group admins from Lens:", error);
-    throw new Error(`Failed to fetch group admins: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }
 
@@ -146,7 +123,7 @@ export async function fetchGroupAdminsBatch(
 ): Promise<Array<{ address: string; result: Moderator[] }>> {
   try {
     const adminsPromises = addresses.map(async address => {
-      const moderators = await fetchGroupAdminsFromLens(address);
+      const moderators = await fetchAdminsFromGroup(address);
       return {
         address,
         result: moderators,
@@ -232,4 +209,24 @@ export async function removeAdminFromGroup(
   }
 
   return true;
+}
+
+export async function fetchAdminsFromGroup(address: string): Promise<Moderator[]> {
+  try {
+    const result = await fetchAdminsFor(client, { address: evmAddress(address) });
+
+    if (result.isErr()) {
+      return [];
+    }
+
+    return result.value.items.map(admin => ({
+      username: admin.account.username?.value || "",
+      address: admin.account.address,
+      picture: admin.account.metadata?.picture,
+      displayName: admin.account.username?.localName || "",
+    }));
+  } catch (error) {
+    console.error("Failed to fetch group admins from Lens:", error);
+    throw new Error(`Failed to fetch group admins: ${error instanceof Error ? error.message : "Unknown error"}`);
+  }
 }
