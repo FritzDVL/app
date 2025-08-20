@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CommunityAccessDenied } from "@/components/communities/settings/community-access-denied";
 import { CommunityEditForm } from "@/components/communities/settings/community-edit-form";
 import { CommunityModeratorsManager } from "@/components/communities/settings/community-moderators-manager";
+import { CommunitySettingsTabPanel } from "@/components/communities/settings/community-settings-tab-panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsOwner } from "@/hooks/communities/use-is-owner";
 import { Community } from "@/lib/domain/communities/types";
@@ -71,35 +72,15 @@ export function CommunitySettingsClient({ community }: CommunitySettingsClientPr
       {/* Tab Content */}
       <div className="mx-auto max-w-4xl">
         {activeTab === "general" && (
-          <div className="space-y-6">
-            <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
-              <CardHeader>
-                <CardTitle className="flex items-center text-2xl font-bold text-foreground">
-                  <Settings className="mr-3 h-6 w-6 text-brand-500" />
-                  Community Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CommunityEditForm community={community} />
-              </CardContent>
-            </Card>
-          </div>
+          <CommunitySettingsTabPanel icon={Settings} title="Community Information">
+            <CommunityEditForm community={community} />
+          </CommunitySettingsTabPanel>
         )}
 
         {activeTab === "moderators" && (
-          <div className="space-y-6">
-            <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
-              <CardHeader>
-                <CardTitle className="flex items-center text-2xl font-bold text-foreground">
-                  <Users className="mr-3 h-6 w-6 text-brand-500" />
-                  Manage Moderators
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CommunityModeratorsManager community={community} />
-              </CardContent>
-            </Card>
-          </div>
+          <CommunitySettingsTabPanel icon={Users} title="Manage Moderators">
+            <CommunityModeratorsManager community={community} />
+          </CommunitySettingsTabPanel>
         )}
       </div>
     </div>
