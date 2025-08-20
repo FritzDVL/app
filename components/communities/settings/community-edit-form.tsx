@@ -1,97 +1,31 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useCommunityEditForm } from "@/hooks/forms/use-community-edit-form";
 import { Community } from "@/lib/domain/communities/types";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import { Save, Upload, X } from "lucide-react";
-import { toast } from "sonner";
 
 interface CommunityEditFormProps {
   community: Community;
 }
 
 export function CommunityEditForm({ community }: CommunityEditFormProps) {
-  const [formData, setFormData] = useState({
-    name: community.name,
-    description: community.description,
-    logo: null as File | null,
-  });
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        toast.error("Please select a valid image file");
-        return;
-      }
-
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image must be less than 5MB");
-        return;
-      }
-
-      setFormData(prev => ({
-        ...prev,
-        logo: file,
-      }));
-
-      // Create preview URL
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    }
-  };
-
-  const clearImage = () => {
-    setFormData(prev => ({
-      ...prev,
-      logo: null,
-    }));
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-      setPreviewUrl(null);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // TODO: Implement update community service
-      // This would typically call an API endpoint to update the community
-      // For now, we'll just show a success message
-
-      toast.success("Community updated successfully!", {
-        description: "Your changes have been saved.",
-      });
-
-      console.log("Form data to submit:", formData);
-    } catch (error) {
-      console.error("Error updating community:", error);
-      toast.error("Failed to update community", {
-        description: "Please try again later.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    formData,
+    setFormData,
+    previewUrl,
+    setPreviewUrl,
+    loading,
+    handleChange,
+    handleImageChange,
+    clearImage,
+    handleSubmit,
+  } = useCommunityEditForm(community);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -200,12 +134,12 @@ export function CommunityEditForm({ community }: CommunityEditFormProps) {
           {loading ? (
             <>
               <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-              Saving...
+              Updating...
             </>
           ) : (
             <>
               <Save className="mr-2 h-4 w-4" />
-              Save Changes
+              Update Community
             </>
           )}
         </Button>
