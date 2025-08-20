@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { UserSearch } from "@/components/ui/user-search";
+import { MentionAccount } from "@/hooks/editor/use-mention-query";
 import { Community, Moderator } from "@/lib/domain/communities/types";
 import { Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -25,25 +25,16 @@ interface CommunityModeratorsManagerProps {
 
 export function CommunityModeratorsManager({ community }: CommunityModeratorsManagerProps) {
   const [moderators, setModerators] = useState<Moderator[]>(community.moderators || []);
-  const [newModeratorAddress, setNewModeratorAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [removingModerator, setRemovingModerator] = useState<Moderator | null>(null);
 
-  const handleAddModerator = async () => {
-    if (!newModeratorAddress.trim()) {
-      toast.error("Please enter a valid address");
-      return;
-    }
+  // Get current moderator addresses to exclude from search results
+  const currentModeratorAddresses = moderators.map(mod => mod.address);
 
-    // Basic address validation (should start with 0x and be 42 characters)
-    if (!newModeratorAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
-      toast.error("Please enter a valid Ethereum address");
-      return;
-    }
-
-    // Check if moderator already exists
-    if (moderators.some(mod => mod.address.toLowerCase() === newModeratorAddress.toLowerCase())) {
-      toast.error("This address is already a moderator");
+  const handleAddModerator = async (user: MentionAccount) => {
+    // Check if user is already a moderator
+    if (moderators.some(mod => mod.address.toLowerCase() === user.address.toLowerCase())) {
+      toast.error("This user is already a moderator");
       return;
     }
 
@@ -52,24 +43,22 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
     try {
       // TODO: Implement add moderator service
       // This would typically call an API endpoint to add the moderator
-      // and fetch the user's profile information from Lens
 
-      // For now, we'll create a mock moderator
+      // Convert MentionAccount to Moderator
       const newModerator: Moderator = {
-        address: newModeratorAddress as `0x${string}`,
-        username: `user-${newModeratorAddress.slice(-6)}`,
-        displayName: `User ${newModeratorAddress.slice(-6)}`,
-        picture: undefined,
+        address: user.address as `0x${string}`,
+        username: user.username || user.displayUsername,
+        displayName: user.name || user.displayUsername || `User ${user.address.slice(-6)}`,
+        picture: user.picture,
       };
 
       setModerators(prev => [...prev, newModerator]);
-      setNewModeratorAddress("");
 
       toast.success("Moderator added successfully!", {
-        description: "The new moderator has been added to your community.",
+        description: `${newModerator.displayName} has been added as a moderator.`,
       });
 
-      console.log("Adding moderator:", newModeratorAddress);
+      console.log("Adding moderator:", user);
     } catch (error) {
       console.error("Error adding moderator:", error);
       toast.error("Failed to add moderator", {
@@ -110,40 +99,17 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
       {/* Add New Moderator */}
       <div className="rounded-2xl border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
         <h3 className="mb-4 text-lg font-semibold text-foreground">Add New Moderator</h3>
-        <div className="flex space-x-3">
-          <div className="flex-1">
-            <Label htmlFor="moderator-address" className="sr-only">
-              Moderator Address
-            </Label>
-            <Input
-              id="moderator-address"
-              value={newModeratorAddress}
-              onChange={e => setNewModeratorAddress(e.target.value)}
-              placeholder="Enter wallet address (0x...)"
-              className="rounded-xl"
-            />
-          </div>
-          <Button
-            onClick={handleAddModerator}
-            disabled={loading || !newModeratorAddress.trim()}
-            className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-6 font-semibold text-white hover:from-blue-600 hover:to-blue-700"
-          >
-            {loading ? (
-              <>
-                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                Adding...
-              </>
-            ) : (
-              <>
-                <UserPlus className="mr-2 h-4 w-4" />
-                Add
-              </>
-            )}
-          </Button>
+        <div className="space-y-3">
+          <UserSearch
+            onUserSelect={handleAddModerator}
+            placeholder="Search for a user by username..."
+            disabled={loading}
+            excludeAddresses={currentModeratorAddresses}
+          />
+          <p className="text-xs text-muted-foreground">
+            Search and select a user to make them a moderator of this community.
+          </p>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          Add a wallet address to make them a moderator of this community.
-        </p>
       </div>
 
       {/* Current Moderators */}
