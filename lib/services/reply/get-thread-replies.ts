@@ -5,8 +5,7 @@
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
-import { fetchAccountsBatch } from "@/lib/external/lens/primitives/accounts";
-import { fetchThreadPosts } from "@/lib/external/lens/primitives/posts";
+import { fetchPostsByFeed } from "@/lib/external/lens/primitives/posts";
 import { PageSize } from "@lens-protocol/client";
 
 export interface PaginatedRepliesResult {
@@ -28,7 +27,7 @@ export async function getThreadReplies(
 ): Promise<PaginatedRepliesResult> {
   try {
     // 1. Fetch posts with pagination
-    const { posts, pageInfo } = await fetchThreadPosts(thread.address, pageSize, cursor);
+    const { posts, pageInfo } = await fetchPostsByFeed(thread.address, pageSize, cursor);
 
     if (!posts.length) {
       return {
@@ -40,31 +39,17 @@ export async function getThreadReplies(
       };
     }
 
-    // 2. Extract unique author addresses for batching
-    const authorAddresses = [...new Set(posts.map(post => post.author.address))];
-
-    // 3. Batch fetch all authors
-    const authorResults = await fetchAccountsBatch(authorAddresses);
-
-    // 4. Create lookup map for O(1) access
-    const authorMap = new Map();
-    authorResults.forEach(({ address, result }) => {
-      authorMap.set(address, result);
-    });
-
-    // 5. Transform posts to replies using cached author data
+    // 2. Transform posts to replies using author data from post.author
     let replies: Reply[] = [];
     for (const post of posts) {
       try {
-        const author = authorMap.get(post.author.address);
-
+        const author = post.author;
         if (!author) {
           console.warn(`Missing author data for post ${post.id}:`, {
-            authorAddress: post.author.address,
+            authorAddress: post.author?.address,
           });
           continue;
         }
-
         replies.push(
           adaptPostToReply(post, {
             name: author.username?.localName || "Unknown Author",
