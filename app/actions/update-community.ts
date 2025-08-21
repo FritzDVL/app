@@ -2,17 +2,18 @@
 
 import { revalidatePath } from "next/cache";
 import { EditCommunityFormData } from "@/hooks/forms/use-community-edit-form";
+import { Community } from "@/lib/domain/communities/types";
 import { updateCommunity } from "@/lib/services/community/update-community";
 import { Address } from "@/types/common";
 
-export async function updateCommunityAction(address: Address, formData: FormData) {
+export async function updateCommunityAction(community: Community, formData: FormData) {
   try {
     // Extract data from FormData
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
     const logoFile = formData.get("logo") as File | null;
 
-    if (!address) {
+    if (!community.address) {
       return {
         success: false,
         error: "Missing community address",
@@ -25,7 +26,7 @@ export async function updateCommunityAction(address: Address, formData: FormData
       logo: logoFile || null,
     };
 
-    const result = await updateCommunity(address, communityData);
+    const result = await updateCommunity(community, communityData);
     if (!result.success) {
       return {
         success: false,
@@ -33,8 +34,8 @@ export async function updateCommunityAction(address: Address, formData: FormData
       };
     }
 
-    revalidatePath(`/communities/${address}`);
-    revalidatePath(`/communities/${address}/settings`);
+    revalidatePath(`/communities/${community.address}`);
+    revalidatePath(`/communities/${community.address}/settings`);
     revalidatePath(`/`);
 
     return {

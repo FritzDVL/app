@@ -17,6 +17,7 @@ import { immutable } from "@lens-chain/storage-client";
 import { Group, evmAddress } from "@lens-protocol/client";
 import { fetchGroup, setGroupMetadata } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
+import { group } from "@lens-protocol/metadata";
 
 export interface UpdateCommunityResult {
   success: boolean;
@@ -24,7 +25,10 @@ export interface UpdateCommunityResult {
   error?: string;
 }
 
-export async function updateCommunity(address: Address, data: EditCommunityFormData): Promise<UpdateCommunityResult> {
+export async function updateCommunity(
+  community: Community,
+  data: EditCommunityFormData,
+): Promise<UpdateCommunityResult> {
   try {
     // 1. Upload new logo if provided
     let iconUri: string | undefined = undefined;
@@ -39,15 +43,14 @@ export async function updateCommunity(address: Address, data: EditCommunityFormD
     const adminWallet = await getAdminWallet();
 
     // 3. Prepare group name for metadata (no spaces, max 20 chars)
-    const groupName = data.name ? data.name.replace(/\s+/g, "-").slice(0, 20) : "";
+    const groupName = data.name ? data.name.replace(/\s+/g, "-").slice(0, 100) : "";
 
     // 4. Build new metadata
-    const newMetadata = {
-      name: groupName || data,
-      ...(data.name ? { name: data.name } : {}),
-      ...(data.description ? { description: data.description } : {}),
-      ...(iconUri ? { icon: iconUri } : {}),
-    };
+    const newMetadata = group({
+      name: groupName,
+      description: data.description,
+      icon: iconUri ? iconUri : community.logo,
+    });
 
     // 5. Upload new metadata to Grove
     const acl = immutable(lensChain.id);
@@ -55,7 +58,7 @@ export async function updateCommunity(address: Address, data: EditCommunityFormD
 
     // 6. Update group metadata on Lens
     const updateResult = await setGroupMetadata(adminSessionClient, {
-      group: evmAddress(address),
+      group: community.address,
       metadataUri,
     })
       .andThen(handleOperationWith(adminWallet))
@@ -74,14 +77,14 @@ export async function updateCommunity(address: Address, data: EditCommunityFormD
 
     // 6.5. Update name and updatedAt in the database.
     if (data.name) {
-      await updateCommunityDb(address, data.name);
+      await updateCommunityDb(community.address, data.name);
     }
 
     // 7. Fetch updated group stats, DB record, and moderators
     const [groupStatsRaw, dbCommunity, moderators] = await Promise.all([
-      fetchGroupStatsFromLens(address),
-      fetchCommunityDb(address),
-      fetchAdminsFromGroup(address),
+      fetchGroupStatsFromLens(community.address),
+      fetchCommunityDb(community.address),
+      fetchAdminsFromGroup(community.address),
     ]);
     const groupStats = groupStatsRaw ?? { __typename: "GroupStatsResponse", totalMembers: 0 };
     if (!dbCommunity) {
