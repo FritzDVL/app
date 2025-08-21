@@ -53,8 +53,8 @@ export async function getLatestThreads(limit: number = 5): Promise<ThreadsResult
     });
 
     const rootPostMap = new Map();
-    rootPostResults.forEach(({ postId, result }) => {
-      rootPostMap.set(postId, result);
+    rootPostResults.forEach(post => {
+      rootPostMap.set(post.id, post);
     });
 
     // 5. Transform threads using cached data
