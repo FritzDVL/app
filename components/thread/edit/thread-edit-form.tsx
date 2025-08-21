@@ -78,24 +78,9 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
             <X className="h-4 w-4" />
           </Button>
         </div>
-        {/* Debug info - mostrar datos del rootPost */}
-        <div className="mt-4 rounded-lg bg-gray-100 p-3 text-xs dark:bg-gray-700">
-          <p>
-            <strong>Thread ID:</strong> {thread.id}
-          </p>
-          <p>
-            <strong>Root Post ID:</strong> {thread.rootPost?.id || "No rootPost"}
-          </p>
-          <p>
-            <strong>Author:</strong> {thread.author.address}
-          </p>
-          <p>
-            <strong>Content URI:</strong> {thread.rootPost?.contentUri || "N/A"}
-          </p>
-          <p>
-            <strong>Metadata Type:</strong> {thread.rootPost?.metadata?.__typename || "N/A"}
-          </p>
-        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Update your thread details below. Make sure your changes are clear and helpful for the community.
+        </p>
       </CardHeader>
       <CardContent className="p-6 pt-0">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -158,7 +143,11 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
 
           {/* Submit Buttons */}
           <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button
+              type="button"
+              className="rounded-full bg-gray-300 text-gray-800 hover:bg-gray-400"
+              onClick={onCancel}
+            >
               Cancel
             </Button>
             <Button
