@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import { TextEditor } from "@/components/editor/text-editor";
+import { TagsInput } from "@/components/thread/tags-input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { Save, X } from "lucide-react";
@@ -25,12 +27,34 @@ function getThreadContent(thread: Thread): string {
 }
 
 export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormProps) {
+  let initialTags: string[] = [];
+  if (Array.isArray(thread.tags)) {
+    initialTags = thread.tags as string[];
+  } else if (typeof thread.tags === "string") {
+    initialTags = (thread.tags as string)
+      .split(",")
+      .map((t: string) => t.trim())
+      .filter(Boolean);
+  }
   const [formData, setFormData] = useState({
     title: thread.title,
     summary: thread.summary,
     content: stripThreadArticleFormatting(getThreadContent(thread)),
-    tags: Array.isArray(thread.tags) ? thread.tags.join(", ") : "",
   });
+  const { tags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput(initialTags);
+
+  const suggestedTags = [
+    "discussion",
+    "help",
+    "development",
+    "question",
+    "announcement",
+    "tutorial",
+    "feedback",
+    "showcase",
+    "governance",
+    "research",
+  ];
 
   const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData({ ...formData, [field]: value });
@@ -39,10 +63,9 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implementar la lógica de actualización
-    console.log("Datos del formulario:", formData);
+    const updatedData = { ...formData, tags: tags.join(",") };
+    console.log("Datos del formulario:", updatedData);
     console.log("rootPost:", thread.rootPost);
-
-    // Por ahora solo simular éxito
     if (onSuccess) onSuccess();
   };
 
@@ -100,8 +123,8 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
               id="edit-summary"
               value={formData.summary}
               onChange={e => handleChange("summary", e.target.value)}
-              placeholder="Brief description"
-              className="h-12 rounded-full border-slate-300/60 bg-white/80 backdrop-blur-sm focus:ring-2 dark:bg-gray-700"
+              placeholder="Brief description (max 100 chars)"
+              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 dark:bg-gray-700"
               maxLength={100}
             />
           </div>
@@ -119,14 +142,17 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
           {/* Tags */}
           <div className="space-y-2">
             <Label htmlFor="edit-tags" className="text-sm font-medium text-foreground">
-              Tags (optional)
+              Tags (optional) {tags.length > 0 && <span className="text-slate-500">({tags.length}/5)</span>}
             </Label>
-            <Input
-              id="edit-tags"
-              value={formData.tags}
-              onChange={e => handleChange("tags", e.target.value)}
-              placeholder="Separate tags with commas"
-              className="h-12 rounded-full border-slate-300/60 bg-white/80 backdrop-blur-sm focus:ring-2 dark:bg-gray-700"
+            <TagsInput
+              tags={tags}
+              tagInput={tagInput}
+              setTagInput={setTagInput}
+              addTag={addTag}
+              removeTag={removeTag}
+              handleTagInputKeyDown={handleTagInputKeyDown}
+              suggestedTags={suggestedTags}
+              maxTags={5}
             />
           </div>
 
