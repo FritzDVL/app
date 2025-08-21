@@ -15,20 +15,23 @@ import { ProseKit, useDocChange } from "prosekit/react";
 
 interface TextEditorProps {
   onChange: (value: string) => void;
+  initialValue?: string;
 }
 
-export function TextEditor({ onChange }: TextEditorProps) {
+export function TextEditor({ onChange, initialValue }: TextEditorProps) {
   const editor = useMemo(() => {
-    return createEditor({ extension: defineExtension() });
-  }, []);
+    const extension = defineExtension();
+    return createEditor({
+      extension,
+      defaultContent: initialValue || undefined,
+    });
+  }, [initialValue]);
 
-  // Listen for content changes
   useDocChange(
     () => {
       const html = editor.getDocHTML();
       const record = markdownFromHTML(html);
       onChange(record);
-      // onChange(html); // fallback to HTML for now
     },
     { editor },
   );

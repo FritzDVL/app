@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
+import { ThreadEditForm } from "@/components/thread/thread-edit-form-simple";
 import { ThreadReplyBox } from "@/components/thread/thread-reply-box";
 import { ThreadVoting } from "@/components/thread/thread-voting";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,7 +17,7 @@ import { getTimeAgo } from "@/lib/shared/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { postId } from "@lens-protocol/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Coins, Reply as ReplyIcon, Share } from "lucide-react";
+import { Coins, Edit, Reply as ReplyIcon, Share } from "lucide-react";
 
 function getThreadContent(thread: any): string {
   const metadata = thread?.rootPost?.metadata;
@@ -29,6 +30,7 @@ function getThreadContent(thread: any): string {
 export function ThreadMainCard({ thread }: { thread: Thread }) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+  const [isEditing, setIsEditing] = useState(false);
 
   const { createReply } = useReplyCreate();
   const { isLoggedIn } = useAuthStore();
@@ -52,9 +54,23 @@ export function ThreadMainCard({ thread }: { thread: Thread }) {
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
 
+  const handleEditSuccess = () => {
+    setIsEditing(false);
+    // Invalidate queries to refresh the thread data
+    queryClient.invalidateQueries({ queryKey: ["thread", thread.address] });
+  };
+
+  // Check if current user can edit this thread
+  const canEdit = true;
+
   if (!thread) return null;
 
   const threadPostId = thread.rootPost?.id;
+
+  // Show edit form when editing
+  if (isEditing) {
+    return <ThreadEditForm thread={thread} onCancel={() => setIsEditing(false)} onSuccess={handleEditSuccess} />;
+  }
 
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
@@ -77,6 +93,17 @@ export function ThreadMainCard({ thread }: { thread: Thread }) {
               </Link>
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              {canEdit && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsEditing(true)}
+                  className="ml-1 border border-yellow-200 bg-yellow-100 text-yellow-800 hover:bg-yellow-200 hover:text-yellow-900 dark:border-yellow-400 dark:bg-yellow-300/20 dark:text-yellow-200 dark:hover:bg-yellow-300/40 dark:hover:text-yellow-100"
+                  aria-label="Edit thread"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              )}
               {thread.rootPost?.timestamp && (
                 <span className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
                   <svg
@@ -105,7 +132,7 @@ export function ThreadMainCard({ thread }: { thread: Thread }) {
               {thread.title}
             </h1>
             {thread.summary && (
-              <p className="mt-1 max-w-2xl text-base font-medium italic text-green-700/90 dark:text-green-400/90">
+              <p className="mt-1 max-w-2xl text-base text-sm font-medium italic text-gray-500 dark:text-gray-400">
                 {thread.summary}
               </p>
             )}
