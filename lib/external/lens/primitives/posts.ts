@@ -26,7 +26,7 @@ export async function fetchPostsBatch(postIds: string[]): Promise<Post[]> {
 /**
  * Fetch posts for a thread with pagination
  */
-export async function fetchThreadPosts(
+export async function fetchPostsByFeed(
   threadAddress: string,
   pageSize?: PageSize,
   cursor?: string | null,
