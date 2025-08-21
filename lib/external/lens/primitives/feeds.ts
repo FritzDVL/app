@@ -9,7 +9,7 @@ import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
 import { immutable } from "@lens-chain/storage-client";
 import { evmAddress } from "@lens-protocol/client";
 import type { Feed } from "@lens-protocol/client";
-import { fetchFeed } from "@lens-protocol/client/actions";
+import { fetchFeed as fetchFeedLens } from "@lens-protocol/client/actions";
 import { createFeed as createLensFeed } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { feed } from "@lens-protocol/metadata";
@@ -17,9 +17,9 @@ import { feed } from "@lens-protocol/metadata";
 /**
  * Fetches a single feed from Lens Protocol
  */
-export async function fetchFeedFromLens(feedAddress: string): Promise<Feed | null> {
+export async function fetchFeed(feedAddress: string): Promise<Feed | null> {
   try {
-    const result = await fetchFeed(client, {
+    const result = await fetchFeedLens(client, {
       feed: evmAddress(feedAddress),
     });
 
@@ -42,7 +42,7 @@ export async function fetchFeedsBatch(
 ): Promise<Array<{ address: string; result: Feed | null }>> {
   try {
     const feedPromises = feedAddresses.map(async address => {
-      const result = await fetchFeed(client, { feed: evmAddress(address) });
+      const result = await fetchFeedLens(client, { feed: evmAddress(address) });
       return {
         address,
         result: result.isOk() ? result.value : null,
@@ -102,7 +102,7 @@ export async function createFeed(feedData: FeedCreationData): Promise<FeedCreati
     })
       .andThen(handleOperationWith(adminWallet))
       .andThen(adminSessionClient.waitForTransaction)
-      .andThen(txHash => fetchFeed(adminSessionClient, { txHash }));
+      .andThen(txHash => fetchFeedLens(adminSessionClient, { txHash }));
 
     if (feedCreationResult.isErr()) {
       console.error("[Feeds] Error creating feed:", feedCreationResult.error);

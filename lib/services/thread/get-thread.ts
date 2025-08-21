@@ -5,7 +5,7 @@
 import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
-import { fetchFeedFromLens } from "@/lib/external/lens/primitives/feeds";
+import { fetchFeed } from "@/lib/external/lens/primitives/feeds";
 import { fetchThread as fetchThreadDb } from "@/lib/external/supabase/threads";
 
 export interface ThreadResult {
@@ -30,7 +30,7 @@ export async function getThread(threadAddress: string): Promise<ThreadResult> {
     }
 
     // 2. Fetch feed from Lens Protocol
-    const feed = await fetchFeedFromLens(threadAddress);
+    const feed = await fetchFeed(threadAddress);
     if (!feed) {
       return {
         success: false,
