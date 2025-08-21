@@ -36,8 +36,7 @@ export async function getReply(replyId: string): Promise<{
     }
 
     // Fetch author account
-    const authorResults = await fetchAccountsBatch([post.author.address]);
-    const author = authorResults[0]?.result;
+    const author = post.author;
 
     if (!author) {
       return {

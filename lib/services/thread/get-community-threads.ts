@@ -4,7 +4,6 @@
  */
 import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
 import { Thread } from "@/lib/domain/threads/types";
-import { fetchAccountsBatch } from "@/lib/external/lens/primitives/accounts";
 import { fetchFeedsBatch } from "@/lib/external/lens/primitives/feeds";
 import { fetchPostsBatch } from "@/lib/external/lens/primitives/posts";
 import { fetchCommunityThreads } from "@/lib/external/supabase/threads";

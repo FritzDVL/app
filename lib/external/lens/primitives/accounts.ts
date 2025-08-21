@@ -3,7 +3,7 @@
 import { client } from "@/lib/external/lens/protocol-client";
 import { evmAddress } from "@lens-protocol/client";
 import type { Account } from "@lens-protocol/client";
-import { fetchAccount } from "@lens-protocol/client/actions";
+import { fetchAccount, fetchAccountsBulk } from "@lens-protocol/client/actions";
 
 /**
  * Fetches an account from Lens Protocol
@@ -28,21 +28,12 @@ export async function fetchAccountFromLens(address: string): Promise<Account | n
 /**
  * Batch fetch multiple accounts from Lens Protocol
  */
-export async function fetchAccountsBatch(
-  addresses: string[],
-): Promise<Array<{ address: string; result: Account | null }>> {
-  try {
-    const accountPromises = addresses.map(async address => {
-      const result = await fetchAccount(client, { address: evmAddress(address) });
-      return {
-        address,
-        result: result.isOk() ? result.value : null,
-      };
-    });
+export async function fetchAccountsBatch(addresses: string[]): Promise<Account[]> {
+  if (!addresses.length) return [];
+  const result = await fetchAccountsBulk(client, {
+    addresses: addresses.map(evmAddress),
+  });
+  if (!result.isOk() || !result.value) return [];
 
-    return await Promise.all(accountPromises);
-  } catch (error) {
-    console.error("Failed to batch fetch accounts from Lens:", error);
-    throw new Error(`Failed to batch fetch accounts: ${error instanceof Error ? error.message : "Unknown error"}`);
-  }
+  return Array.isArray(result.value) ? result.value.filter(acc => acc && acc.address) : [];
 }
