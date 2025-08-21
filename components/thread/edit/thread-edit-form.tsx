@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { TextEditor } from "@/components/editor/text-editor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TagsInput } from "@/components/ui/tags-input";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
-import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
+import { useThreadEditForm } from "@/hooks/forms/use-thread-edit-form";
 import { Thread } from "@/lib/domain/threads/types";
 import { Save, X } from "lucide-react";
 
@@ -18,31 +18,7 @@ interface ThreadEditFormProps {
   onSuccess?: () => void;
 }
 
-function getThreadContent(thread: Thread): string {
-  const metadata = thread?.rootPost?.metadata;
-  if (metadata && typeof metadata === "object" && "content" in metadata) {
-    return metadata.content ?? "";
-  }
-  return "";
-}
-
 export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormProps) {
-  let initialTags: string[] = [];
-  if (Array.isArray(thread.tags)) {
-    initialTags = thread.tags as string[];
-  } else if (typeof thread.tags === "string") {
-    initialTags = (thread.tags as string)
-      .split(",")
-      .map((t: string) => t.trim())
-      .filter(Boolean);
-  }
-  const [formData, setFormData] = useState({
-    title: thread.title,
-    summary: thread.summary,
-    content: stripThreadArticleFormatting(getThreadContent(thread)),
-  });
-  const { tags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput(initialTags);
-
   const suggestedTags = [
     "discussion",
     "help",
@@ -55,19 +31,17 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
     "governance",
     "research",
   ];
-
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    setFormData({ ...formData, [field]: value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implementar la lógica de actualización
-    const updatedData = { ...formData, tags: tags.join(",") };
-    console.log("Datos del formulario:", updatedData);
-    console.log("rootPost:", thread.rootPost);
-    if (onSuccess) onSuccess();
-  };
+  const { formData, isSaving, handleChange, handleSubmit } = useThreadEditForm(thread, onSuccess);
+  const { tags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput(
+    Array.isArray(thread.tags)
+      ? (thread.tags as string[])
+      : typeof thread.tags === "string"
+        ? (thread.tags as string)
+            .split(",")
+            .map((t: string) => t.trim())
+            .filter(Boolean)
+        : [],
+  );
 
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
@@ -83,7 +57,7 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
         </p>
       </CardHeader>
       <CardContent className="p-6 pt-0">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={e => handleSubmit(e, tags, tagInput, setTagInput)} className="space-y-6">
           {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="edit-title" className="text-sm font-medium text-foreground">
@@ -147,16 +121,26 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
               type="button"
               className="rounded-full bg-gray-300 text-gray-800 hover:bg-gray-400"
               onClick={onCancel}
+              disabled={isSaving}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={!formData.title.trim() || !formData.content.trim()}
+              disabled={isSaving || !formData.title.trim() || !formData.content.trim()}
               className="rounded-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50"
             >
-              <Save className="mr-2 h-4 w-4" />
-              Save Changes
+              {isSaving ? (
+                <span className="flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></span>
+                  Saving...
+                </span>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </>
+              )}
             </Button>
           </div>
         </form>
