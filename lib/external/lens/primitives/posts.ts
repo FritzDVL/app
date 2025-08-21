@@ -55,7 +55,9 @@ export async function fetchThreadPosts(
     return { posts: [], pageInfo: { prev: null, next: null } };
   }
 
-  const validPosts = result.value.items.filter(
+  const posts = result.value.items as LensPost[];
+
+  const validPosts = posts.filter(
     (item: any) => item && item.__typename === "Post" && item.author && item.author.address,
   ) as LensPost[];
 
