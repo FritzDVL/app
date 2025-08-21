@@ -1,10 +1,10 @@
 import { TextEditor } from "@/components/editor/text-editor";
 import { ReputationStatusBanner } from "@/components/shared/reputation-status-banner";
-import { TagsInput } from "@/components/thread/tags-input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TagsInput } from "@/components/ui/tags-input";
 import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { useThreadCreateForm } from "@/hooks/forms/use-thread-create-form";
