@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ThreadEditForm } from "@/components/thread/thread-edit-form-simple";
+import { ThreadEditForm } from "@/components/thread/thread-edit-form";
 import { ThreadMainCard } from "@/components/thread/thread-main-card";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Button } from "@/components/ui/button";
