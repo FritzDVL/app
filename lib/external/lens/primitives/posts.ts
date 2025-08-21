@@ -3,7 +3,7 @@
 import { client } from "@/lib/external/lens/protocol-client";
 import { APP_ADDRESS } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
-import type { AnyPost, Post as LensPost, PageSize, PostId } from "@lens-protocol/client";
+import type { AnyPost, Post as LensPost, PageSize, Post, PostId } from "@lens-protocol/client";
 import { PostReferenceType, ReferenceRelevancyFilter, evmAddress } from "@lens-protocol/client";
 import { fetchPost, fetchPostReferences, fetchPosts } from "@lens-protocol/client/actions";
 
@@ -15,21 +15,12 @@ export interface PaginatedPostsResult {
 /**
  * Batch fetch multiple posts from Lens Protocol
  */
-export async function fetchPostsBatch(postIds: string[]): Promise<Array<{ postId: string; result: AnyPost | null }>> {
-  try {
-    const postPromises = postIds.map(async postId => {
-      const result = await fetchPost(client, { post: postId });
-      return {
-        postId,
-        result: result.isOk() ? result.value : null,
-      };
-    });
+export async function fetchPostsBatch(postIds: string[]): Promise<Post[]> {
+  if (!postIds.length) return [];
+  const result = await fetchPosts(client, { filter: { posts: postIds } });
+  if (!result.isOk() || !result.value.items) return [];
 
-    return await Promise.all(postPromises);
-  } catch (error) {
-    console.error("Failed to batch fetch posts from Lens:", error);
-    throw new Error(`Failed to batch fetch posts: ${error instanceof Error ? error.message : "Unknown error"}`);
-  }
+  return (result.value.items as Post[]).filter(post => post && post.__typename === "Post" && postIds.includes(post.id));
 }
 
 /**
