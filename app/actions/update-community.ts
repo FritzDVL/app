@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { EditCommunityFormData } from "@/hooks/forms/use-community-edit-form";
 import { Community } from "@/lib/domain/communities/types";
 import { updateCommunity } from "@/lib/services/community/update-community";
-import { Address } from "@/types/common";
 
 export async function updateCommunityAction(community: Community, formData: FormData) {
   try {

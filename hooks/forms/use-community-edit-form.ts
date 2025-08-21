@@ -67,7 +67,7 @@ export function useCommunityEditForm(community: Community) {
       const loadingToastId = toast.loading("Updating Community", {
         description: "Updating up your community...",
       });
-console.log("Submitting community update:", formData);
+
       const result = await updateCommunityAction(community, form);
 
       if (!result.success) {

@@ -12,9 +12,8 @@ import {
   updateCommunity as updateCommunityDb,
 } from "@/lib/external/supabase/communities";
 import { getAdminWallet } from "@/lib/external/wallets/admin-wallet";
-import { Address } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
-import { Group, evmAddress } from "@lens-protocol/client";
+import { Group } from "@lens-protocol/client";
 import { fetchGroup, setGroupMetadata } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { group } from "@lens-protocol/metadata";
