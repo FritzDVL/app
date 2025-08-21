@@ -82,7 +82,6 @@ export function useCommunityEditForm(community: Community) {
         id: loadingToastId,
         description: "Your changes have been saved.",
       });
-
     } catch (error) {
       console.error("Error updating community:", error);
       toast.error("Failed to update community", {
