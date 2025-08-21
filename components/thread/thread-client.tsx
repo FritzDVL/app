@@ -32,7 +32,7 @@ export function ThreadClient({ thread }: ThreadClientProps) {
   };
 
   // Check if current user can edit this thread
-  const canEdit = true;
+  const canEdit = thread.rootPost?.operations?.canEdit;
 
   if (isEditing) {
     return <ThreadEditForm thread={thread} onCancel={handleEditCancel} onSuccess={handleEditSuccess} />;

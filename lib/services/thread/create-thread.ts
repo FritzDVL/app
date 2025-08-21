@@ -6,7 +6,7 @@
  * 3. SERVER: Persists and adapts data
  */
 import { createThreadFeedAction } from "@/app/actions/create-thread";
-import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
+import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
@@ -93,7 +93,7 @@ export async function createThread(
     }
 
     // 8. Transform to Thread object using adapter
-    const thread = await adaptFeedToThreadOptimized(
+    const thread = await adaptFeedToThread(
       createdFeed,
       threadRecord,
       author,

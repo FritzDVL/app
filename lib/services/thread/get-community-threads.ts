@@ -2,7 +2,7 @@
  * Get Community Threads Service
  * Gets all threads for a community using optimized batch operations
  */
-import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
+import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchFeedsBatch } from "@/lib/external/lens/primitives/feeds";
 import { fetchPostsBatch } from "@/lib/external/lens/primitives/posts";
@@ -56,7 +56,7 @@ export async function getCommunityThreads(communityAddress: string): Promise<Thr
           const feed = feedMap.get(threadRecord.lens_feed_address);
           const rootPost = threadRecord.root_post_id ? rootPostMap.get(threadRecord.root_post_id) : null;
           // author y rootPost siempre existen según tu aclaración
-          return adaptFeedToThreadOptimized(feed, threadRecord, rootPost?.author, rootPost);
+          return adaptFeedToThread(feed, threadRecord, rootPost?.author, rootPost);
         })
       )
     ).filter(Boolean) as Thread[];
