@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { defineExtension } from "./extension";
 import "./text-editor.css";
 import BlockHandle from "@/components/editor/block-handle";
@@ -7,10 +7,10 @@ import MentionPicker from "@/components/editor/mention-picker";
 import SlashMenu from "@/components/editor/slash-menu";
 import { TableHandle } from "@/components/editor/table-handle";
 import Toolbar from "@/components/editor/toolbar";
-import { markdownFromHTML } from "@/lib/external/prosekit/markdown";
+import { htmlFromMarkdown, markdownFromHTML } from "@/lib/external/prosekit/markdown";
 import "prosekit/basic/style.css";
 import "prosekit/basic/typography.css";
-import { createEditor } from "prosekit/core";
+import { NodeJSON, createEditor, jsonFromHTML } from "prosekit/core";
 import { ProseKit, useDocChange } from "prosekit/react";
 
 interface TextEditorProps {
@@ -19,11 +19,22 @@ interface TextEditorProps {
 }
 
 export function TextEditor({ onChange, initialValue }: TextEditorProps) {
+  let defaultContent: NodeJSON | undefined;
   const editor = useMemo(() => {
+    if (initialValue) {
+      const html = htmlFromMarkdown(initialValue);
+      const extension = defineExtension();
+      if (!extension.schema) {
+        throw new Error("Extension schema is null");
+      }
+      const content = jsonFromHTML(html, { schema: extension.schema });
+      defaultContent = content;
+    }
+
     const extension = defineExtension();
     return createEditor({
       extension,
-      defaultContent: initialValue || undefined,
+      defaultContent,
     });
   }, [initialValue]);
 
