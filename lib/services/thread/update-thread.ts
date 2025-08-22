@@ -46,6 +46,7 @@ export async function updateThread(
         tags: updateData.tags,
         postId: thread.rootPost.id,
         feedAddress: thread.address,
+        author: thread.author.address,
       },
       sessionClient,
       walletClient,

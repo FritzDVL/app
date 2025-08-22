@@ -6,6 +6,7 @@ import { ThreadMainCard } from "@/components/thread/thread-main-card";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Button } from "@/components/ui/button";
 import { Thread } from "@/lib/domain/threads/types";
+import { useAuthStore } from "@/stores/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
 import { Edit } from "lucide-react";
 
@@ -15,7 +16,9 @@ interface ThreadClientProps {
 
 export function ThreadClient({ thread }: ThreadClientProps) {
   const [isEditing, setIsEditing] = useState(false);
+
   const queryClient = useQueryClient();
+  const { account } = useAuthStore();
 
   const handleEditStart = () => {
     setIsEditing(true);
@@ -28,7 +31,7 @@ export function ThreadClient({ thread }: ThreadClientProps) {
   const handleEditSuccess = () => {
     setIsEditing(false);
     // Invalidate queries to refresh the thread data
-    queryClient.invalidateQueries({ queryKey: ["thread", thread.address] });
+    queryClient.invalidateQueries({ queryKey: ["thread", thread.address, account?.address] });
   };
 
   // Check if current user can edit this thread

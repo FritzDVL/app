@@ -8,6 +8,7 @@ import { postId } from "@lens-protocol/client";
 import { editPost, fetchPost, post } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { MetadataAttributeType, article } from "@lens-protocol/metadata";
+import { WalletClient } from "viem";
 
 export interface ArticleCreationData {
   title: string;
@@ -31,6 +32,7 @@ export interface ArticleUpdateData {
   tags?: string;
   postId: string;
   feedAddress: string;
+  author: string;
 }
 
 export interface ArticleUpdateResult {
@@ -125,7 +127,7 @@ export async function createThreadArticle(
 export async function updateThreadArticle(
   updateData: ArticleUpdateData,
   sessionClient: SessionClient,
-  walletClient: any,
+  walletClient: WalletClient,
 ): Promise<ArticleUpdateResult> {
   try {
     // 1. Format content with thread prefix
@@ -137,14 +139,16 @@ export async function updateThreadArticle(
       updateData.summary,
     );
 
+    const attributes: any[] = [];
+    attributes.push({ key: "author", type: MetadataAttributeType.STRING, value: updateData.author });
+    attributes.push({ key: "subtitle", type: MetadataAttributeType.STRING, value: updateData.summary });
+
     // 2. Create article metadata
     const metadata = article({
       title: updateData.title,
       content: formattedContent,
-      attributes: [
-        { key: "subtitle", value: updateData.summary, type: MetadataAttributeType.STRING },
-        { key: "tags", value: updateData.tags || "", type: MetadataAttributeType.STRING },
-      ],
+      attributes,
+      tags: updateData.tags ? updateData.tags.split(",").map(tag => tag.trim()) : [],
     });
 
     // 3. Upload metadata to storage
