@@ -58,7 +58,7 @@ export function useLogin() {
         }
 
         // Set lens session
-        setLensSession(authenticated.value); // TODO: Ensure authenticated.value matches AuthenticatedUser type
+        setLensSession(authenticated.value);
 
         // Fetch account details
         const result = await fetchAccount(client, {

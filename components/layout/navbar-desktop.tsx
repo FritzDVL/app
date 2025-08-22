@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LoginConnectButton } from "@/components/auth/login-connect-button";
-import { LoginLensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
+import { LensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -17,15 +17,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLogout } from "@/hooks/auth/use-logout";
+import { useSwitchAccount } from "@/hooks/auth/use-switch-account";
 import { useAuthStore } from "@/stores/auth-store";
 import { Bell, Gift, Home, LogOut, RefreshCw, User, Users } from "lucide-react";
 
 export function NavbarDesktop() {
   const [showLensDialog, setShowLensDialog] = useState(false);
+  const [switchingAccount, setSwitchingAccount] = useState<string | null>(null);
 
   const pathname = usePathname();
   const { account } = useAuthStore();
   const { logout } = useLogout();
+  const { switchLensAccount, isLoading: isSwitching } = useSwitchAccount();
+
+  const handleSwitchAccount = async (accountToSwitch: any) => {
+    setSwitchingAccount(accountToSwitch.account.address);
+    try {
+      await switchLensAccount(accountToSwitch, () => setShowLensDialog(false));
+    } catch (error) {
+      console.error("Error switching account:", error);
+    } finally {
+      setSwitchingAccount(null);
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full max-w-full overflow-x-hidden border-b border-gray-200 bg-white/80 px-4 py-3 shadow-xl backdrop-blur-md dark:border-gray-700 dark:bg-gray-900/80">
@@ -136,7 +150,15 @@ export function NavbarDesktop() {
           </div>
         </div>
       </div>
-      <LoginLensAccountsDialog isOpen={showLensDialog} onClose={() => setShowLensDialog(false)} />
+      <LensAccountsDialog
+        isOpen={showLensDialog}
+        onClose={() => setShowLensDialog(false)}
+        onAccountSelect={handleSwitchAccount}
+        loadingAccount={switchingAccount || (isSwitching ? "switching" : null)}
+        title="Switch Lens account"
+        description="Select the Lens account you want to use"
+        buttonText="Switch"
+      />
     </nav>
   );
 }
