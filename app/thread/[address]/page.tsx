@@ -1,64 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { CommunityJoinBanner } from "@/components/communities/community-join-banner";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { ThreadClient } from "@/components/thread/thread-client";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Community } from "@/lib/domain/communities/types";
-import { getCommunity } from "@/lib/services/community/get-community";
-import { getThread } from "@/lib/services/thread/get-thread";
+import { useCommunity } from "@/hooks/queries/use-community";
+import { useThread } from "@/hooks/queries/use-thread";
+import { Address } from "@/types/common";
 import { useSessionClient } from "@lens-protocol/react";
 
 export default function ThreadPage({ params }: { params: { address: string } }) {
-  const threadAddress = params.address;
-
-  const [thread, setThread] = useState<any>(null);
-  const [community, setCommunity] = useState<Community | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const threadAddress = params.address as Address;
   const sessionClient = useSessionClient();
 
-  useEffect(() => {
-    if (sessionClient.loading) return;
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        let threadResponse;
-        if (sessionClient && sessionClient.data) {
-          threadResponse = await getThread(threadAddress, sessionClient.data);
-        } else {
-          threadResponse = await getThread(threadAddress);
-        }
-        if (!threadResponse.success || !threadResponse.thread) {
-          setError("Thread not found");
-          setLoading(false);
-          return;
-        }
-        setThread(threadResponse.thread);
-        const communityResponse = await getCommunity(threadResponse.thread.community);
-        if (!communityResponse.success || !communityResponse.community) {
-          setError("Community not found");
-          setLoading(false);
-          return;
-        }
-        setCommunity(communityResponse.community);
-      } catch {
-        setError("Error loading thread or community");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [threadAddress, sessionClient.data, sessionClient.loading]);
+  const {
+    data: thread,
+    isLoading: threadLoading,
+    error: threadError,
+  } = useThread(threadAddress, sessionClient.data ?? undefined);
 
-  if (loading) {
+  const { data: community, isLoading: communityLoading, error: communityError } = useCommunity(thread?.community || "");
+
+  if (threadLoading || communityLoading || sessionClient.loading) {
     return <LoadingSpinner text="Loading..." />;
   }
-  if (error || !thread || !community) {
-    return <div className="text-center text-red-500">{error || "Not found"}</div>;
+  if (threadError || communityError || !thread || !community) {
+    return (
+      <div className="text-center text-red-500">{threadError?.message || communityError?.message || "Not found"}</div>
+    );
   }
 
   return (
