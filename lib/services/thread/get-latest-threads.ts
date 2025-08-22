@@ -2,7 +2,7 @@
  * Get Latest Threads Service
  * Gets latest threads using optimized batch operations
  */
-import { adaptFeedToThreadOptimized } from "@/lib/adapters/thread-adapter";
+import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchFeedsBatch } from "@/lib/external/lens/primitives/feeds";
 import { fetchPostsBatch } from "@/lib/external/lens/primitives/posts";
@@ -55,7 +55,7 @@ export async function getLatestThreads(limit: number = 5): Promise<ThreadsResult
       const rootPost = threadRecord.root_post_id ? rootPostMap.get(threadRecord.root_post_id) : null;
       const author = rootPost?.author;
       if (!feed || !author) return null;
-      return adaptFeedToThreadOptimized(feed, threadRecord, author, rootPost);
+      return adaptFeedToThread(feed, threadRecord, author, rootPost);
     });
 
     const threads = (await Promise.all(threadPromises)).filter(Boolean) as Thread[];

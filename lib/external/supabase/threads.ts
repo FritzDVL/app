@@ -198,3 +198,20 @@ export async function incrementThreadRepliesCount(threadId: string): Promise<voi
     throw new Error(`Failed to increment replies_count: ${error.message}`);
   }
 }
+
+/**
+ * Actualiza solo el campo updated_at de un thread en la tabla community_threads
+ * @param threadId - The thread's id (primary key)
+ * @returns void
+ */
+export async function updateThread(threadId: string): Promise<void> {
+  const supabase = await supabaseClient();
+  const { error } = await supabase
+    .from("community_threads")
+    .update({ updated_at: new Date().toISOString() })
+    .eq("id", threadId)
+    .single();
+  if (error) {
+    throw new Error(`Failed to update updated_at: ${error.message}`);
+  }
+}

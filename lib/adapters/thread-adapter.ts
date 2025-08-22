@@ -1,11 +1,9 @@
 import { Thread } from "@/lib/domain/threads/types";
 import { storageClient } from "@/lib/external/grove/client";
-import { client } from "@/lib/external/lens/protocol-client";
 import { getTimeAgo } from "@/lib/shared/utils";
 import { Address } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
 import { Account, Feed, Post } from "@lens-protocol/client";
-import { fetchPost } from "@lens-protocol/client/actions";
 
 /**
  * Helper function to transform an Account to a thread author
@@ -32,18 +30,6 @@ const getTitleAndSummary = (rootPost: Post | null, feed: Feed) => {
     title: feed.metadata?.name || `Thread ${feed.address.slice(-6)}`,
     summary: feed.metadata?.description || "No content available",
   };
-};
-
-/**
- * Transform a Lens Feed object and thread record to a Thread object
- * This is a convenience wrapper around adaptFeedToThreadOptimized
- */
-export const adaptFeedToThread = async (
-  feed: Feed,
-  threadRecord: CommunityThreadSupabase,
-  author: Account,
-): Promise<Thread> => {
-  return adaptFeedToThreadOptimized(feed, threadRecord, author);
 };
 
 /**
@@ -81,25 +67,12 @@ export const adaptFormDataToThread = (
  * Transform a Lens Feed object and thread record to a Thread object
  * Optimized version that accepts pre-fetched root post to avoid redundant API calls
  */
-export const adaptFeedToThreadOptimized = async (
+export const adaptFeedToThread = async (
   feed: Feed,
   threadRecord: CommunityThreadSupabase,
   author: Account,
-  rootPost: Post | null = null,
+  rootPost: Post,
 ): Promise<Thread> => {
-  // Fetch root post if not provided
-  if (!rootPost && threadRecord.root_post_id) {
-    const rootPostRequest = await fetchPost(client, {
-      post: threadRecord.root_post_id,
-    });
-
-    if (rootPostRequest.isErr()) {
-      throw new Error(`Failed to fetch root post: ${rootPostRequest.error.message}`);
-    }
-
-    rootPost = rootPostRequest.value as Post;
-  }
-
   // Fetch content data
   let contentData = null;
   if (rootPost?.contentUri) {

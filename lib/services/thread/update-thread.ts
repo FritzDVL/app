@@ -1,0 +1,68 @@
+/**
+ * Update Thread Service
+ * Updates thread content using Lens Protocol
+ */
+import { Thread } from "@/lib/domain/threads/types";
+import { updateThreadArticle as updateArticleLens } from "@/lib/external/lens/primitives/articles";
+import { updateThread as updateThreadDb } from "@/lib/external/supabase/threads";
+import { SessionClient } from "@lens-protocol/client";
+import { WalletClient } from "viem";
+
+export interface UpdateThreadData {
+  title: string;
+  summary: string;
+  content: string;
+  tags?: string;
+}
+
+export interface UpdateThreadResult {
+  success: boolean;
+  error?: string;
+}
+
+/**
+ * Updates a thread's root post content
+ */
+export async function updateThread(
+  thread: Thread,
+  updateData: UpdateThreadData,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
+): Promise<UpdateThreadResult> {
+  try {
+    if (!thread.rootPost?.id) {
+      return {
+        success: false,
+        error: "Thread root post not found",
+      };
+    }
+
+    // Llama a la nueva función Lens
+    const result = await updateArticleLens(
+      {
+        title: updateData.title,
+        summary: updateData.summary,
+        content: updateData.content,
+        tags: updateData.tags,
+        postId: thread.rootPost.id,
+        feedAddress: thread.address,
+        author: thread.author.address,
+      },
+      sessionClient,
+      walletClient,
+    );
+    if (!result.success) {
+      return { success: false, error: result.error };
+    }
+
+    await updateThreadDb(thread.id);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Thread update failed:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to update thread",
+    };
+  }
+}

@@ -1,41 +1,36 @@
+"use client";
+
 import { CommunityJoinBanner } from "@/components/communities/community-join-banner";
 import { ProtectedRoute } from "@/components/pages/protected-route";
-import { ThreadMainCard } from "@/components/thread/thread-main-card";
-import { ThreadRepliesList } from "@/components/thread/thread-replies-list";
-import { BackNavigationLink } from "@/components/ui/back-navigation-link";
-import { Community } from "@/lib/domain/communities/types";
-import { getCommunity } from "@/lib/services/community/get-community";
-import { getThread } from "@/lib/services/thread/get-thread";
+import { ThreadClient } from "@/components/thread/thread-client";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useCommunity } from "@/hooks/queries/use-community";
+import { useThread } from "@/hooks/queries/use-thread";
+import { Address } from "@/types/common";
+import { useSessionClient } from "@lens-protocol/react";
 
-export default async function ThreadPage({ params }: { params: { address: string } }) {
-  const threadAddress = params.address;
+export default function ThreadPage({ params }: { params: { address: string } }) {
+  const threadAddress = params.address as Address;
+  const sessionClient = useSessionClient();
 
-  const threadResponse = await getThread(threadAddress);
-  if (!threadResponse.success || !threadResponse.thread) {
-    return <div className="text-center text-red-500">Thread not found</div>;
+  const { data: thread, isLoading: threadLoading, error: threadError } = useThread(threadAddress);
+  const { data: community, isLoading: communityLoading, error: communityError } = useCommunity(thread?.community || "");
+
+  if (threadLoading || communityLoading || sessionClient.loading) {
+    return <LoadingSpinner text="Loading..." />;
   }
-  const thread = threadResponse.thread;
-
-  const communityResponse = await getCommunity(thread.community);
-  if (!communityResponse.success || !communityResponse.community) {
-    return <div className="text-center text-red-500">Community not found</div>;
+  if (threadError || communityError || !thread || !community) {
+    return (
+      <div className="text-center text-red-500">{threadError?.message || communityError?.message || "Not found"}</div>
+    );
   }
-  const community: Community = communityResponse.community;
 
   return (
     <ProtectedRoute>
       <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
-        <div className="mb-2">
-          <BackNavigationLink href={thread?.community ? `/communities/${thread.community}` : "/communities"}>
-            Back to Community
-          </BackNavigationLink>
-        </div>
-
         {/* Community Join Banner - shown if user is not a member */}
         {community && <CommunityJoinBanner community={community} />}
-
-        <ThreadMainCard thread={thread} />
-        <ThreadRepliesList thread={thread} />
+        <ThreadClient thread={thread} />
       </div>
     </ProtectedRoute>
   );
