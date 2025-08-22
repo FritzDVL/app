@@ -1,12 +1,13 @@
-import { Thread } from "@/lib/domain/threads/types";
 import { getThread } from "@/lib/services/thread/get-thread";
 import { Address } from "@/types/common";
-import { SessionClient } from "@lens-protocol/client";
+import { useSessionClient } from "@lens-protocol/react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export function useThread(threadAddress: Address, sessionClient?: SessionClient) {
-  const authenticatedUserResult = sessionClient?.getAuthenticatedUser();
+export function useThread(threadAddress: Address) {
+  const sessionClient = useSessionClient();
+  const sessionData = sessionClient.data;
+  const authenticatedUserResult = sessionData?.getAuthenticatedUser();
   const authenticatedUserAddress =
     authenticatedUserResult && authenticatedUserResult.isOk() ? authenticatedUserResult.value.address : undefined;
 
@@ -14,8 +15,8 @@ export function useThread(threadAddress: Address, sessionClient?: SessionClient)
     queryKey: ["thread", threadAddress, authenticatedUserAddress],
     queryFn: async () => {
       let result;
-      if (sessionClient) {
-        result = await getThread(threadAddress, sessionClient);
+      if (sessionData) {
+        result = await getThread(threadAddress, sessionData);
       } else {
         result = await getThread(threadAddress);
       }
@@ -25,7 +26,7 @@ export function useThread(threadAddress: Address, sessionClient?: SessionClient)
       }
       return result.thread || null;
     },
-    enabled: !!threadAddress,
+    enabled: !!threadAddress && !sessionClient.loading,
     staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
   });

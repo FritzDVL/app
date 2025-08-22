@@ -13,12 +13,7 @@ export default function ThreadPage({ params }: { params: { address: string } }) 
   const threadAddress = params.address as Address;
   const sessionClient = useSessionClient();
 
-  const {
-    data: thread,
-    isLoading: threadLoading,
-    error: threadError,
-  } = useThread(threadAddress, sessionClient.data ?? undefined);
-
+  const { data: thread, isLoading: threadLoading, error: threadError } = useThread(threadAddress);
   const { data: community, isLoading: communityLoading, error: communityError } = useCommunity(thread?.community || "");
 
   if (threadLoading || communityLoading || sessionClient.loading) {
