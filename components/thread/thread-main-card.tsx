@@ -60,6 +60,7 @@ export function ThreadMainCard({ thread }: ThreadMainCardProps) {
   if (!thread) return null;
 
   const threadPostId = thread.rootPost?.id;
+  const isEdited = thread.rootPost?.isEdited;
 
   return (
     <>
@@ -83,6 +84,11 @@ export function ThreadMainCard({ thread }: ThreadMainCardProps) {
                 </Link>
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                {isEdited && (
+                  <span className="ml-2 rounded bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-200">
+                    edited
+                  </span>
+                )}
                 {thread.rootPost?.timestamp && (
                   <span className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
                     <svg
@@ -99,6 +105,7 @@ export function ThreadMainCard({ thread }: ThreadMainCardProps) {
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
+
                     {getTimeAgo(new Date(thread.rootPost.timestamp))}
                   </span>
                 )}
