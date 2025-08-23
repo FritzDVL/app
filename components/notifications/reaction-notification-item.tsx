@@ -1,9 +1,7 @@
-import Link from "next/link";
 import { AvatarProfileLink } from "@/components/notifications/avatar-profile-link";
 import { NotificationCard } from "@/components/notifications/notification-card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getTimeAgo } from "@/lib/shared/utils";
-import type { ReactionNotification } from "@lens-protocol/client";
+import type { Account, NotificationAccountPostReaction, ReactionNotification } from "@lens-protocol/client";
 import { PostReactionType } from "@lens-protocol/client";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
@@ -11,33 +9,48 @@ export function ReactionNotificationItem({ notification }: { notification: React
   const reactions = notification.reactions;
   const post = notification.post;
 
-  // Get first reaction details
-  const firstReaction = reactions[0];
-  const firstAuthor = (firstReaction as any).account || (firstReaction as any).by || notification.post.author;
-  const reactionType = (firstReaction as any).type || (firstReaction as any).reaction || PostReactionType.Upvote;
-  const firstAuthorUsername = firstAuthor.username?.value || firstAuthor.username?.localName;
+  // Group reactions by type
+  const upvoteReactions = reactions.filter(r =>
+    r.reactions.some(reaction => reaction.reaction === PostReactionType.Upvote),
+  );
+  const downvoteReactions = reactions.filter(r =>
+    r.reactions.some(reaction => reaction.reaction === PostReactionType.Downvote),
+  );
 
-  const isUpvote = reactionType === PostReactionType.Upvote;
   const totalReactions = reactions.length;
-  const additionalReactions = totalReactions - 1;
+  const hasUpvotes = upvoteReactions.length > 0;
+  const hasDownvotes = downvoteReactions.length > 0;
 
-  // Get multiple authors for avatar display (max 3)
-  const displayAuthors = reactions.slice(0, 3).map(reaction => ({
-    author: (reaction as any).account || (reaction as any).by || notification.post.author,
-    reaction,
-  }));
+  // Get first reaction for main display
+  const firstReaction = reactions[0] as NotificationAccountPostReaction;
+  const firstAuthor: Account = firstReaction.account;
 
   // Build the reaction message
   const getReactionMessage = () => {
     const authorName = firstAuthor.metadata?.name || firstAuthor.username?.localName;
-    const actionWord = isUpvote ? "upvoted" : "downvoted";
 
-    if (additionalReactions === 0) {
-      return `${authorName} ${actionWord} your post`;
-    } else if (additionalReactions === 1) {
-      return `${authorName} and 1 other ${actionWord} your post`;
+    if (hasUpvotes && hasDownvotes) {
+      // Mixed reactions
+      const additionalReactions = totalReactions - 1;
+      if (additionalReactions === 0) {
+        return `${authorName} reacted to your post`;
+      } else if (additionalReactions === 1) {
+        return `${authorName} and 1 other reacted to your post`;
+      } else {
+        return `${authorName} and ${additionalReactions} others reacted to your post`;
+      }
     } else {
-      return `${authorName} and ${additionalReactions} others ${actionWord} your post`;
+      // Single type of reaction
+      const actionWord = hasUpvotes ? "upvoted" : "downvoted";
+      const additionalReactions = totalReactions - 1;
+
+      if (additionalReactions === 0) {
+        return `${authorName} ${actionWord} your post`;
+      } else if (additionalReactions === 1) {
+        return `${authorName} and 1 other ${actionWord} your post`;
+      } else {
+        return `${authorName} and ${additionalReactions} others ${actionWord} your post`;
+      }
     }
   };
 
@@ -61,11 +74,27 @@ export function ReactionNotificationItem({ notification }: { notification: React
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-start justify-between">
             <div className="flex items-center gap-2">
-              <div className="rounded-full bg-orange-100 p-1.5 dark:bg-orange-900/30">
-                {isUpvote ? (
-                  <ArrowUp className="h-4 w-4 text-green-500" />
-                ) : (
-                  <ArrowDown className="h-4 w-4 text-red-500" />
+              <div className="flex items-center gap-1">
+                {/* Show reaction icons based on what types we have */}
+                {hasUpvotes && (
+                  <div className="rounded-full bg-green-100 p-1.5 dark:bg-green-900/30">
+                    <ArrowUp className="h-4 w-4 text-green-500" />
+                    {upvoteReactions.length > 1 && (
+                      <span className="ml-1 text-xs font-medium text-green-600 dark:text-green-400">
+                        {upvoteReactions.length}
+                      </span>
+                    )}
+                  </div>
+                )}
+                {hasDownvotes && (
+                  <div className="rounded-full bg-red-100 p-1.5 dark:bg-red-900/30">
+                    <ArrowDown className="h-4 w-4 text-red-500" />
+                    {downvoteReactions.length > 1 && (
+                      <span className="ml-1 text-xs font-medium text-red-600 dark:text-red-400">
+                        {downvoteReactions.length}
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
               <div>
@@ -78,7 +107,9 @@ export function ReactionNotificationItem({ notification }: { notification: React
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500 dark:text-gray-400">{getTimeAgo(new Date(post.timestamp))}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {getTimeAgo(new Date(notification.reactions[0].reactions[0].reactedAt))}
+              </span>
             </div>
           </div>
         </div>

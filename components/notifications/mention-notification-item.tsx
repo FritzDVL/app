@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { AvatarProfileLink } from "@/components/notifications/avatar-profile-link";
 import { NotificationCard } from "@/components/notifications/notification-card";
 import ContentRenderer from "@/components/shared/content-renderer";
@@ -9,7 +8,6 @@ import { Users } from "lucide-react";
 export function MentionNotificationItem({ notification }: { notification: MentionNotification }) {
   const author = notification.post.author;
   const post = notification.post;
-  const authorUsername = author?.username?.localName;
 
   // Extract post title from metadata based on type
   const postTitle =
