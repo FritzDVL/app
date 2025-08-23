@@ -32,6 +32,7 @@ export function ThreadClient({ thread }: ThreadClientProps) {
     setIsEditing(false);
     // Invalidate queries to refresh the thread data
     queryClient.invalidateQueries({ queryKey: ["thread", thread.address, account?.address] });
+    queryClient.invalidateQueries({ queryKey: ["thread", thread.address] });
   };
 
   // Check if current user can edit this thread
