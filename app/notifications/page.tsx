@@ -8,7 +8,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useNotifications } from "@/hooks/notifications/use-notifications";
 
 export default function NotificationsPage() {
-  const [filter, setFilter] = useState<"all" | "mentions" | "comments" | "reactions">("all");
+  const [filter, setFilter] = useState<"all" | "mentions" | "comments" | "reactions" | "rewards">("all");
   const { notifications, loading, error } = useNotifications();
 
   return (

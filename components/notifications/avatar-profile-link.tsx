@@ -1,9 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Account } from "@lens-protocol/client";
 
 interface AvatarProfileLinkProps {
-  author?: any; // Accepts an author object (Account type)
+  author?: Account;
 }
 
 export const AvatarProfileLink: React.FC<AvatarProfileLinkProps> = ({ author }) => {

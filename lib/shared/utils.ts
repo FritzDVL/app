@@ -33,3 +33,18 @@ export function groveLensUrlToHttp(url?: string): string {
   if (!url) return "";
   return url.startsWith("lens://") ? url.replace("lens://", GROVE_API_URL) : url;
 }
+
+export function getNotificationDate(n: any): string | undefined {
+  switch (n.__typename) {
+    case "MentionNotification":
+      return n.post?.timestamp;
+    case "CommentNotification":
+      return n.comment?.timestamp;
+    case "ReactionNotification":
+      return n.reactions?.[0]?.reactions?.[0]?.reactedAt;
+    case "TokenDistributedNotification":
+      return n.actionDate;
+    default:
+      return n.timestamp || n.id;
+  }
+}

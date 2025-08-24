@@ -1,20 +1,21 @@
 import { Button } from "@/components/ui/button";
 import type { Notification } from "@lens-protocol/client";
-import { ArrowUp, Bell, MessageCircle, Users } from "lucide-react";
+import { ArrowUp, Bell, Gift, MessageCircle, Users } from "lucide-react";
 
 interface NotificationsFilterProps {
-  currentFilter: "all" | "mentions" | "comments" | "reactions";
-  onFilterChange: (filter: "all" | "mentions" | "comments" | "reactions") => void;
+  currentFilter: "all" | "mentions" | "comments" | "reactions" | "rewards";
+  onFilterChange: (filter: "all" | "mentions" | "comments" | "reactions" | "rewards") => void;
   notifications: Notification[];
 }
 
 function getNotificationCounters(notifications: Notification[]) {
-  const counters = { all: 0, mentions: 0, comments: 0, reactions: 0 };
+  const counters = { all: 0, mentions: 0, comments: 0, reactions: 0, rewards: 0 };
   for (const n of notifications) {
     counters.all++;
     if (n.__typename === "MentionNotification") counters.mentions++;
     else if (n.__typename === "CommentNotification") counters.comments++;
     else if (n.__typename === "ReactionNotification") counters.reactions++;
+    else if (n.__typename === "TokenDistributedNotification") counters.rewards++;
   }
   return counters;
 }
@@ -26,6 +27,7 @@ export function NotificationsFilter({ currentFilter, onFilterChange, notificatio
     { key: "mentions" as const, label: "Mentions", icon: Users, count: counters.mentions },
     { key: "comments" as const, label: "Replies", icon: MessageCircle, count: counters.comments },
     { key: "reactions" as const, label: "Reactions", icon: ArrowUp, count: counters.reactions },
+    { key: "rewards" as const, label: "Rewards", icon: Gift, count: counters.rewards },
   ];
 
   return (
