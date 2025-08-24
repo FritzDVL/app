@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useLogin } from "@/hooks/auth/use-login";
 import { client } from "@/lib/external/lens/protocol-client";
 import { HEY_URL } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
@@ -14,17 +13,28 @@ import { AccountAvailable, evmAddress } from "@lens-protocol/react";
 import { Loader2 } from "lucide-react";
 import { useAccount } from "wagmi";
 
-interface LoginLensAccountsDialogProps {
+interface LensAccountsDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  onAccountSelect: (account: AccountAvailable) => Promise<void>;
+  loadingAccount: string | null; // address de la cuenta que está en loading
+  title?: string;
+  description?: string;
+  buttonText?: string;
 }
 
-export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDialogProps) {
-  const [loggingIn, setLoggingIn] = useState<AccountAvailable | null>(null);
+export function LensAccountsDialog({
+  isOpen,
+  onClose,
+  onAccountSelect,
+  loadingAccount,
+  title = "Connect your Lens account",
+  description = "Select a Lens account to continue",
+  buttonText = "Connect",
+}: LensAccountsDialogProps) {
   const [lensAccounts, setLensAccounts] = useState<AccountAvailable[]>([]);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
 
-  const { login } = useLogin();
   const { status, address } = useAccount();
 
   useEffect(() => {
@@ -50,25 +60,12 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
     }
   }, [status, address]);
 
-  const handleLogin = async (lensAccount: AccountAvailable) => {
-    setLoggingIn(lensAccount);
-    try {
-      await login(lensAccount, () => {
-        onClose();
-      });
-    } catch (error) {
-      console.error("Error logging in:", error);
-    } finally {
-      setLoggingIn(null);
-    }
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent className="border-0 bg-white shadow-lg backdrop-blur-md dark:border-gray-600/60 dark:bg-gray-700 sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-foreground">Connect your Lens account</DialogTitle>
-          <DialogDescription className="text-muted-foreground">Select a Lens account to continue</DialogDescription>
+          <DialogTitle className="text-xl font-semibold text-foreground">{title}</DialogTitle>
+          <DialogDescription className="text-muted-foreground">{description}</DialogDescription>
         </DialogHeader>
         <div className="py-4">
           {isLoadingAccounts ? (
@@ -138,16 +135,16 @@ export function LoginLensAccountsDialog({ isOpen, onClose }: LoginLensAccountsDi
                     <Button
                       size="sm"
                       className="bg-gradient-to-r from-brand-500 to-brand-600 font-semibold text-white hover:from-brand-600 hover:to-brand-700"
-                      onClick={() => handleLogin(lensAccount)}
-                      disabled={loggingIn === lensAccount.account.address}
+                      onClick={() => onAccountSelect(lensAccount)}
+                      disabled={loadingAccount === lensAccount.account.address}
                     >
-                      {loggingIn === lensAccount.account.address ? (
+                      {loadingAccount === lensAccount.account.address ? (
                         <div className="flex items-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
-                          Connecting...
+                          {buttonText}ing...
                         </div>
                       ) : (
-                        "Connect"
+                        buttonText
                       )}
                     </Button>
                   </div>

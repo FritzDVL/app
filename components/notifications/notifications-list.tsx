@@ -3,7 +3,7 @@ import { Notification } from "@lens-protocol/client";
 import { Bell } from "lucide-react";
 
 interface NotificationsListProps {
-  filter: "all" | "mentions" | "comments" | "reactions";
+  filter: "all" | "mentions" | "comments" | "reactions" | "rewards";
   notifications: Notification[];
 }
 
@@ -13,6 +13,7 @@ export function NotificationsList({ filter, notifications }: NotificationsListPr
     if (filter === "mentions") return notification.__typename === "MentionNotification";
     if (filter === "comments") return notification.__typename === "CommentNotification";
     if (filter === "reactions") return notification.__typename === "ReactionNotification";
+    if (filter === "rewards") return notification.__typename === "TokenDistributedNotification";
     return true;
   });
 
