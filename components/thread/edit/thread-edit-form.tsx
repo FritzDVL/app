@@ -11,6 +11,7 @@ import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { useThreadEditForm } from "@/hooks/forms/use-thread-edit-form";
 import { Thread } from "@/lib/domain/threads/types";
 import { Save, X } from "lucide-react";
+import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 
 interface ThreadEditFormProps {
   thread: Thread;
@@ -42,6 +43,11 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
             .filter(Boolean)
         : [],
   );
+
+  const initialContent =
+    thread.rootPost?.metadata?.__typename == "ArticleMetadata"
+      ? stripThreadArticleFormatting(thread.rootPost.metadata.content)
+      : "";
 
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
@@ -94,7 +100,7 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
               Content
             </Label>
             <div className="rounded-2xl border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm dark:bg-gray-800">
-              <TextEditor onChange={value => handleChange("content", value)} initialValue={formData.content} />
+              <TextEditor onChange={value => handleChange("content", value)} initialValue={initialContent} />
             </div>
           </div>
 
