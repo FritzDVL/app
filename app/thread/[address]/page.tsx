@@ -1,6 +1,6 @@
 import { CommunityJoinBanner } from "@/components/communities/community-join-banner";
 import { ProtectedRoute } from "@/components/pages/protected-route";
-import { ThreadClient } from "@/components/thread/thread-client";
+import { Thread } from "@/components/thread/thread";
 import { getCommunity } from "@/lib/services/community/get-community";
 import { getThread } from "@/lib/services/thread/get-thread";
 import { Address } from "@/types/common";
@@ -44,11 +44,7 @@ export default async function ThreadPage({ params }: { params: { address: string
 
   return (
     <ProtectedRoute>
-      <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
-        {/* Community Join Banner - shown if user is not a member */}
-        {community && <CommunityJoinBanner community={community.community} />}
-        <ThreadClient thread={thread.thread} />
-      </div>
+      <Thread thread={thread.thread} community={community.community} />
     </ProtectedRoute>
   );
 }

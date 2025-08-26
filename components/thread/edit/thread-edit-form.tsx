@@ -52,9 +52,22 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
 
   return (
     <>
-      <BackNavigationLink href={thread?.community ? `/communities/${thread.community}` : "/communities"}>
-        Back to Community
-      </BackNavigationLink>
+      <Button
+        onClick={onCancel}
+        className="inline-flex items-center rounded-full bg-white/80 px-4 py-2 text-sm text-slate-600 backdrop-blur-sm hover:bg-white hover:text-slate-900"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="mr-2 h-4 w-4"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+        Back to Thread
+      </Button>
       <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
