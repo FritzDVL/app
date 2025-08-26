@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { revalidateCommunityPath } from "@/app/actions/revalidate-path";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -78,6 +79,9 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
 
       setModerators(prev => [...prev, newModerator]);
 
+      // Revalidate the community path after adding a moderator
+      await revalidateCommunityPath(community.address);
+
       toast.success("Moderator added successfully!", {
         description: `${newModerator.displayName} has been added as a moderator.`,
       });
@@ -115,6 +119,9 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
 
       setModerators(prev => prev.filter(mod => mod.address !== moderator.address));
       setRemovingModerator(null);
+
+      // Revalidate the community path after removing a moderator
+      await revalidateCommunityPath(community.address);
 
       toast.success("Moderator removed successfully!", {
         description: "The moderator has been removed from your community.",
