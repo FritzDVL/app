@@ -9,8 +9,8 @@ export function CommunitySidebar({ community }: { community: Community }) {
   return (
     <div className="space-y-8">
       <CommunityOwner owner={community.owner} />
-      <CommunityRules />
       <CommunityModerators moderators={community.moderators} />
+      <CommunityRules />
     </div>
   );
 }
