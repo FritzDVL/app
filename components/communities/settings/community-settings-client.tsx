@@ -5,7 +5,7 @@ import { CommunityAccessDenied } from "@/components/communities/settings/communi
 import { CommunityEditForm } from "@/components/communities/settings/community-edit-form";
 import { CommunityModeratorsManager } from "@/components/communities/settings/community-moderators-manager";
 import { CommunitySettingsTabPanel } from "@/components/communities/settings/community-settings-tab-panel";
-import { useIsOwner } from "@/hooks/communities/use-is-owner";
+import { useIsModerator } from "@/hooks/communities/use-is-moderator";
 import { Community } from "@/lib/domain/communities/types";
 import { BookOpen, Settings, Users } from "lucide-react";
 
@@ -15,9 +15,9 @@ interface CommunitySettingsClientProps {
 
 export function CommunitySettingsClient({ community }: CommunitySettingsClientProps) {
   const [activeTab, setActiveTab] = useState("general");
-  const isOwner = useIsOwner(community);
+  const isModerator = useIsModerator(community);
 
-  if (!isOwner) {
+  if (!isModerator) {
     return <CommunityAccessDenied />;
   }
 

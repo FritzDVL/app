@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ThreadNewButton } from "../thread/thread-new-button";
@@ -8,7 +8,7 @@ import { LeaveCommunityDialog } from "@/components/communities/community-leave-d
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
-import { useIsOwner } from "@/hooks/communities/use-is-owner";
+import { useIsModerator } from "@/hooks/communities/use-is-moderator";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { useLeaveCommunity } from "@/hooks/communities/use-leave-community";
 import { Community } from "@/lib/domain/communities/types";
@@ -21,7 +21,7 @@ export function CommunityHeader({ community }: { community: Community }) {
 
   const joinCommunity = useJoinCommunity(community);
   const leaveCommunity = useLeaveCommunity(community);
-  const isOwner = useIsOwner(community);
+  const isModerator = useIsModerator(community);
   const { isLoggedIn } = useAuthStore();
   const { isMember, updateIsMember, isLoading: isMemberLoading } = useCommunityMembership(community.address);
 
@@ -100,8 +100,8 @@ export function CommunityHeader({ community }: { community: Community }) {
                     {isMemberLoading ? "..." : isMember ? "Leave" : "Join"}
                   </Button>
 
-                  {/* Settings Button - Only show for community owners */}
-                  {isOwner && (
+                  {/* Settings Button - Only show for community mods */}
+                  {isModerator && (
                     <Link href={`/communities/${community.address}/settings`}>
                       <Button
                         variant="ghost"
