@@ -22,6 +22,7 @@ export function adaptGroupToCommunity(
     memberCount: groupStats.totalMembers || 0,
     threadsCount: dbCommunity.threads_count || 0,
     moderators,
+    owner: group.owner,
     createdAt: groupTimestamp,
   };
 }

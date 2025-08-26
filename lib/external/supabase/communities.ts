@@ -5,6 +5,7 @@
  * External layer for community-related Supabase operations
  */
 import { supabaseClient } from "./client";
+import { Address } from "@/types/common";
 import { CommunitySupabase } from "@/types/supabase";
 
 /**
@@ -149,4 +150,18 @@ export async function decrementCommunityMembersCount(communityId: string): Promi
   if (error) {
     throw new Error(`Failed to decrement members_count: ${error.message}`);
   }
+}
+
+export async function updateCommunity(groupAddress: Address, name: string): Promise<CommunitySupabase | null> {
+  const supabase = await supabaseClient();
+  const { data, error } = await supabase
+    .from("communities")
+    .update({ name, updated_at: new Date().toISOString() })
+    .eq("lens_group_address", groupAddress)
+    .select()
+    .single();
+  if (error) {
+    throw new Error(`Failed to update community: ${error.message}`);
+  }
+  return data || null;
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { EditorExtension } from "./extension";
-import useMentionQuery, { MentionAccount } from "@/hooks/editor/use-mention-query";
+import useAccountSearch, { AccountSuggestion } from "@/hooks/editor/use-account-search";
 import { ChevronRight, Search, Users } from "lucide-react";
 import { useEditor } from "prosekit/react";
 import {
@@ -13,7 +13,7 @@ import {
 
 interface MentionItemProps {
   onSelect: VoidFunction;
-  account: MentionAccount;
+  account: AccountSuggestion;
 }
 
 const MentionItem = ({ onSelect, account }: MentionItemProps) => {
@@ -59,10 +59,10 @@ export default function MentionPicker() {
   const [queryString, setQueryString] = useState<string>("");
   const editor = useEditor<EditorExtension>();
 
-  const result = useMentionQuery(queryString);
+  const result = useAccountSearch(queryString);
   const isSearching = queryString.length > 0 && result.length === 0;
 
-  const handleAccountInsert = (account: MentionAccount) => {
+  const handleAccountInsert = (account: AccountSuggestion) => {
     editor.commands.insertMention({
       id: account.address,
       value: "@lens/" + account.displayUsername,
