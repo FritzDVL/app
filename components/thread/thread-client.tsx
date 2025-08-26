@@ -36,7 +36,22 @@ export function ThreadClient({ thread }: ThreadClientProps) {
   };
 
   // Check if current user can edit this thread
-  const canEdit = thread.rootPost?.operations?.canEdit;
+  let canEdit = false;
+  const canEditOperation = thread.rootPost?.operations?.canEdit;
+  switch (canEditOperation?.__typename) {
+    case "PostOperationValidationPassed":
+      canEdit = true;
+      break;
+
+    case "PostOperationValidationFailed":
+    case "PostOperationValidationUnknown":
+      canEdit = false;
+      break;
+
+    default:
+      canEdit = false;
+      break;
+  }
 
   if (isEditing) {
     return <ThreadEditForm thread={thread} onCancel={handleEditCancel} onSuccess={handleEditSuccess} />;
