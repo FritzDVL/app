@@ -9,9 +9,9 @@ import { Label } from "@/components/ui/label";
 import { TagsInput } from "@/components/ui/tags-input";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { useThreadEditForm } from "@/hooks/forms/use-thread-edit-form";
+import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { Save, X } from "lucide-react";
-import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 
 interface ThreadEditFormProps {
   thread: Thread;

@@ -6,7 +6,6 @@ import { fetchPostWithClient } from "@/lib/external/lens/primitives/posts";
 import { client } from "@/lib/external/lens/protocol-client";
 import { fetchThread as fetchThreadDb } from "@/lib/external/supabase/threads";
 import { Post, SessionClient } from "@lens-protocol/client";
-import { fetchPost } from "@lens-protocol/client/actions";
 
 export interface ThreadResult {
   success: boolean;

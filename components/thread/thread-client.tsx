@@ -5,6 +5,7 @@ import { ThreadEditForm } from "@/components/thread/edit/thread-edit-form";
 import { ThreadMainCard } from "@/components/thread/thread-main-card";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Button } from "@/components/ui/button";
+import { useCanEditThread } from "@/hooks/threads/use-can-edit-thread";
 import { Thread } from "@/lib/domain/threads/types";
 import { useAuthStore } from "@/stores/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,6 +21,8 @@ export function ThreadClient({ thread }: ThreadClientProps) {
   const queryClient = useQueryClient();
   const { account } = useAuthStore();
 
+  const { canEdit } = useCanEditThread(thread);
+
   const handleEditStart = () => {
     setIsEditing(true);
   };
@@ -34,24 +37,6 @@ export function ThreadClient({ thread }: ThreadClientProps) {
     queryClient.invalidateQueries({ queryKey: ["thread", thread.address, account?.address] });
     queryClient.invalidateQueries({ queryKey: ["thread", thread.address] });
   };
-
-  // Check if current user can edit this thread
-  let canEdit = false;
-  const canEditOperation = thread.rootPost?.operations?.canEdit;
-  switch (canEditOperation?.__typename) {
-    case "PostOperationValidationPassed":
-      canEdit = true;
-      break;
-
-    case "PostOperationValidationFailed":
-    case "PostOperationValidationUnknown":
-      canEdit = false;
-      break;
-
-    default:
-      canEdit = false;
-      break;
-  }
 
   if (isEditing) {
     return <ThreadEditForm thread={thread} onCancel={handleEditCancel} onSuccess={handleEditSuccess} />;
