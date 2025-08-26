@@ -1,30 +1,44 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Community } from "@/lib/domain/communities/types";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import { MessageSquare, Search, Users } from "lucide-react";
 
-interface Community {
-  id: string;
-  address: string;
-  name: string;
-  description: string;
-  logo?: string;
-  memberCount: number;
-  postCount?: number;
-}
-
 interface CommunitiesListProps {
-  communities: Community[];
+  initialCommunities: Community[];
   isLoading: boolean;
   isError: boolean;
   error: unknown;
-  searchQuery: string;
 }
 
-export function CommunitiesList({ communities, isLoading, isError, error, searchQuery }: CommunitiesListProps) {
+export function CommunitiesList({ initialCommunities, isLoading, isError, error }: CommunitiesListProps) {
+  // Client state for search
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const filteredCommunities = useMemo(() => {
+    if (!debouncedSearchQuery.trim()) return initialCommunities;
+    const query = debouncedSearchQuery.toLowerCase().trim();
+    return initialCommunities.filter(
+      (community: Community) =>
+        community.name.toLowerCase().includes(query) ||
+        (community.description && community.description.toLowerCase().includes(query)),
+    );
+  }, [initialCommunities, debouncedSearchQuery]);
+
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
       <CardHeader className="pb-4">
@@ -38,6 +52,20 @@ export function CommunitiesList({ communities, isLoading, isError, error, search
           <p className="mt-2 text-sm text-slate-600 dark:text-gray-400">
             Discover and join communities to share ideas, collaborate, and connect with others who share your interests.
           </p>
+          {/* Search Bar */}
+          <div className="mt-6">
+            <div className="relative max-w-md">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  className="w-full rounded-xl py-2.5 pl-10 pr-10 text-sm text-foreground placeholder-muted-foreground backdrop-blur-sm transition-all duration-300 focus:border-primary/60 focus:bg-background focus:shadow-md focus:shadow-primary/10 focus:outline-none focus:ring-1 focus:ring-primary/20"
+                  placeholder="Search communities..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
@@ -57,15 +85,15 @@ export function CommunitiesList({ communities, isLoading, isError, error, search
               <div className="mb-6 flex items-center gap-2 text-sm text-slate-600">
                 <Search className="h-4 w-4" />
                 <span>
-                  Found {communities.length} communit
-                  {communities.length === 1 ? "y" : "ies"}
+                  Found {filteredCommunities.length} communit
+                  {filteredCommunities.length === 1 ? "y" : "ies"}
                   {searchQuery && ` for "${searchQuery}"`}
                 </span>
               </div>
             )}
-            {communities.length > 0 ? (
+            {filteredCommunities.length > 0 ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
-                {communities.map(community => (
+                {filteredCommunities.map(community => (
                   <Link key={community.id} href={`/communities/${community.address}`} className="group">
                     <Card className="group w-full min-w-0 cursor-pointer rounded-2xl border bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800 sm:p-6">
                       <CardContent className="p-6">
