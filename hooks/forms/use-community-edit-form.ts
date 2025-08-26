@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { revalidateCommunityAndListPaths } from "@/app/actions/revalidate-path";
 import { Community } from "@/lib/domain/communities/types";
 import { updateCommunity } from "@/lib/services/community/update-community";
 import { useSessionClient } from "@lens-protocol/react";
@@ -57,6 +58,7 @@ export function useCommunityEditForm(community: Community) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!sessionClient.data) {
       toast.error("You must be logged in to update the community.");
       return;
@@ -65,38 +67,37 @@ export function useCommunityEditForm(community: Community) {
       toast.error("Wallet not connected. Please connect your wallet.");
       return;
     }
-    e.preventDefault();
     setLoading(true);
-    let loadingToastId: string | number | undefined;
+    const data = {
+      name: formData.name,
+      description: formData.description,
+      logo: formData.logo,
+    };
+    const loadingToastId = toast.loading("Updating Community", {
+      description: "Updating your community...",
+    });
     try {
-      // Call the updateCommunity service directly with EditCommunityFormData
-      const data = {
-        name: formData.name,
-        description: formData.description,
-        logo: formData.logo,
-      };
-      loadingToastId = toast.loading("Updating Community", {
-        description: "Updating up your community...",
-      });
       const result = await updateCommunity(community, data, sessionClient.data, walletClient.data);
-      if (!result.success) {
+      if (result.success) {
+        if (community?.address) {
+          await revalidateCommunityAndListPaths(community.address);
+        }
+        toast.success("Community updated!", {
+          id: loadingToastId,
+          description: "Your changes have been saved.",
+        });
+      } else {
         toast.error("Failed to update community", {
+          id: loadingToastId,
           description: result.error || "Please try again later.",
         });
-        if (loadingToastId) toast.dismiss(loadingToastId);
-        setLoading(false);
-        return;
       }
-      toast.success("Community updated!", {
-        id: loadingToastId,
-        description: "Your changes have been saved.",
-      });
     } catch (error) {
       console.error("Error updating community:", error);
       toast.error("Failed to update community", {
         description: "Please try again later.",
       });
-      if (loadingToastId) toast.dismiss(loadingToastId);
+      toast.dismiss(loadingToastId);
     } finally {
       setLoading(false);
     }
