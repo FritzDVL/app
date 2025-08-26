@@ -4,6 +4,7 @@ import { CommunityThreads } from "@/components/communities/community-threads";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { getCommunity } from "@/lib/services/community/get-community";
+import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
 
 export default async function CommunityPage({ params }: { params: Promise<{ address: string }> }) {
   const { address: communityAddress } = await params;
@@ -15,6 +16,10 @@ export default async function CommunityPage({ params }: { params: Promise<{ addr
     return <div className="text-center text-red-500">Community not found</div>;
   }
 
+  // Fetch threads on the server
+  const threadsResult = await getCommunityThreads(communityAddress);
+  const threads = threadsResult.success ? (threadsResult.threads ?? []) : [];
+
   return (
     <ProtectedRoute>
       <div className="mx-auto mt-4 max-w-7xl px-4">
@@ -25,7 +30,7 @@ export default async function CommunityPage({ params }: { params: Promise<{ addr
           {/* Main Content */}
           <div className="lg:col-span-3">
             <CommunityHeader community={community} />
-            <CommunityThreads community={community} />
+            <CommunityThreads threads={threads} />
           </div>
           {/* Sidebar */}
           <div className="space-y-8">

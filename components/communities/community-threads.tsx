@@ -10,27 +10,20 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
-import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
 import { postId } from "@lens-protocol/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, Search } from "lucide-react";
 
-export function CommunityThreads({ community }: { community: Community; isJoined?: boolean }) {
+export function CommunityThreads({
+  threads,
+}: {
+  threads: Thread[];
+  isJoined?: boolean;
+}) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [threads, setThreads] = useState<Thread[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchThreads = async () => {
-      setLoading(true);
-      const result = await getCommunityThreads(community.address);
-      setThreads(result.success ? (result.threads ?? []) : []);
-      setLoading(false);
-    };
-
-    fetchThreads();
-  }, [community.address]);
+  const loading = false;
 
   const filteredThreads = useMemo(() => {
     if (!searchQuery.trim()) return threads;
