@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ThreadReplies } from "@/components/thread/thread-replies";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThreadReplies } from "@/hooks/queries/use-thread-replies";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { Thread } from "@/lib/domain/threads/types";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface ThreadRepliesListProps {
   thread: Thread;

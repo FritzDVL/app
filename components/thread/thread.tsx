@@ -2,6 +2,7 @@ import React from "react";
 import { CommunityJoinBanner } from "@/components/communities/community-join-banner";
 import { ThreadActions } from "@/components/thread/thread-actions";
 import { ThreadCard } from "@/components/thread/thread-card";
+import { ThreadRepliesList } from "@/components/thread/thread-replies-list";
 import { Community } from "@/lib/domain/communities/types";
 import { Thread as ThreadType } from "@/lib/domain/threads/types";
 
@@ -17,6 +18,7 @@ export function Thread({ community, thread }: ThreadProps) {
         {community && <CommunityJoinBanner community={community} />}
         <ThreadActions thread={thread} />
         <ThreadCard thread={thread} />
+        <ThreadRepliesList thread={thread} />
       </div>
     </>
   );

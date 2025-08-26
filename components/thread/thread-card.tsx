@@ -2,7 +2,6 @@ import React from "react";
 import { ThreadCardActions } from "@/components/thread/thread-card-actions";
 import { ThreadCardInfo } from "@/components/thread/thread-info";
 import { ThreadCardReplyBox } from "@/components/thread/thread-main-reply-box";
-import { ThreadRepliesList } from "@/components/thread/thread-replies-list";
 import { Card, CardContent } from "@/components/ui/card";
 import { Thread } from "@/lib/domain/threads/types";
 
@@ -21,7 +20,6 @@ export function ThreadCard({ thread }: ThreadCardProps) {
           <ThreadCardReplyBox thread={thread} />
         </CardContent>
       </Card>
-      <ThreadRepliesList thread={thread} />
     </>
   );
 }
