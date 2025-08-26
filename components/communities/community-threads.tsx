@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ReplyVoting } from "@/components/reply/reply-voting";
@@ -8,18 +8,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { postId } from "@lens-protocol/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, Search } from "lucide-react";
 
-export function CommunityThreads({
-  threads,
-}: {
-  threads: Thread[];
-  isJoined?: boolean;
-}) {
+export function CommunityThreads({ threads }: { threads: Thread[]; isJoined?: boolean }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -102,7 +96,10 @@ export function CommunityThreads({
                           {/* MOBILE VERSION */}
                           <div className="flex w-full items-start sm:hidden">
                             {/* Voting (left of title) */}
-                            <div className="mr-2 flex min-w-[40px] flex-col items-center justify-start">
+                            <div
+                              className="mr-2 flex min-w-[40px] flex-col items-center justify-start"
+                              onClick={e => e.stopPropagation()}
+                            >
                               {thread.rootPost && <ReplyVoting postid={postId(thread.rootPost.id)} />}
                             </div>
                             {/* Title, summary, tags */}
@@ -129,7 +126,10 @@ export function CommunityThreads({
                           {/* DESKTOP VERSION */}
                           <div className="hidden sm:flex sm:items-start sm:space-x-4">
                             {/* Voting column */}
-                            <div className="flex min-w-[50px] flex-col items-center space-y-1">
+                            <div
+                              className="flex min-w-[50px] flex-col items-center space-y-1"
+                              onClick={e => e.stopPropagation()}
+                            >
                               {thread.rootPost && <ReplyVoting postid={postId(thread.rootPost.id)} />}
                             </div>
                             {/* Content */}
