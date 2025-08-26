@@ -14,3 +14,15 @@ export async function revalidateCommunitiesPath() {
 export async function revalidateCommunityAndListPaths(address: Address) {
   await Promise.all([revalidateCommunityPath(address), revalidateCommunitiesPath()]);
 }
+
+export async function revalidateThreadPath(address: Address) {
+  revalidatePath(`/thread/${address}`);
+}
+
+export async function revalidateThreadsPath() {
+  revalidatePath(`/thread`);
+}
+
+export async function revalidateThreadAndListPaths(address: Address) {
+  await Promise.all([revalidateThreadPath(address), revalidateThreadsPath()]);
+}
