@@ -15,16 +15,8 @@ interface CommunityEditFormProps {
 }
 
 export function CommunityEditForm({ community }: CommunityEditFormProps) {
-  const {
-    formData,
-    previewUrl,
-    setPreviewUrl,
-    loading,
-    handleChange,
-    handleImageChange,
-    clearImage,
-    handleSubmit,
-  } = useCommunityEditForm(community);
+  const { formData, previewUrl, loading, handleChange, handleImageChange, clearImage, handleSubmit } =
+    useCommunityEditForm(community);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { updateCommunityAction } from "@/app/actions/update-community";
 import { Community } from "@/lib/domain/communities/types";
+import { updateCommunity } from "@/lib/services/community/update-community";
+import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
+import { useWalletClient } from "wagmi";
 
 export interface EditCommunityFormData {
   name: string;
@@ -17,6 +19,9 @@ export function useCommunityEditForm(community: Community) {
   });
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const sessionClient = useSessionClient();
+  const walletClient = useWalletClient();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -52,32 +57,36 @@ export function useCommunityEditForm(community: Community) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    if (!sessionClient.data) {
+      toast.error("You must be logged in to update the community.");
+      return;
+    }
+    if (!walletClient.data) {
+      toast.error("Wallet not connected. Please connect your wallet.");
+      return;
+    }
     e.preventDefault();
     setLoading(true);
+    let loadingToastId: string | number | undefined;
     try {
-      // Prepare FormData for server action
-      const form = new FormData();
-      form.append("name", formData.name);
-      form.append("description", formData.description);
-      if (formData.logo) {
-        form.append("logo", formData.logo);
-      }
-
-      // Show loading toast
-      const loadingToastId = toast.loading("Updating Community", {
+      // Call the updateCommunity service directly with EditCommunityFormData
+      const data = {
+        name: formData.name,
+        description: formData.description,
+        logo: formData.logo,
+      };
+      loadingToastId = toast.loading("Updating Community", {
         description: "Updating up your community...",
       });
-
-      const result = await updateCommunityAction(community, form);
-
+      const result = await updateCommunity(community, data, sessionClient.data, walletClient.data);
       if (!result.success) {
         toast.error("Failed to update community", {
           description: result.error || "Please try again later.",
         });
+        if (loadingToastId) toast.dismiss(loadingToastId);
         setLoading(false);
         return;
       }
-
       toast.success("Community updated!", {
         id: loadingToastId,
         description: "Your changes have been saved.",
@@ -87,6 +96,7 @@ export function useCommunityEditForm(community: Community) {
       toast.error("Failed to update community", {
         description: "Please try again later.",
       });
+      if (loadingToastId) toast.dismiss(loadingToastId);
     } finally {
       setLoading(false);
     }

@@ -5,7 +5,6 @@ import { CommunityAccessDenied } from "@/components/communities/settings/communi
 import { CommunityEditForm } from "@/components/communities/settings/community-edit-form";
 import { CommunityModeratorsManager } from "@/components/communities/settings/community-moderators-manager";
 import { CommunitySettingsTabPanel } from "@/components/communities/settings/community-settings-tab-panel";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsOwner } from "@/hooks/communities/use-is-owner";
 import { Community } from "@/lib/domain/communities/types";
 import { BookOpen, Settings, Users } from "lucide-react";

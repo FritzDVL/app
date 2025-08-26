@@ -4,8 +4,15 @@ import { revalidatePath } from "next/cache";
 import { EditCommunityFormData } from "@/hooks/forms/use-community-edit-form";
 import { Community } from "@/lib/domain/communities/types";
 import { updateCommunity } from "@/lib/services/community/update-community";
+import { SessionClient } from "@lens-protocol/client";
+import { WalletClient } from "viem";
 
-export async function updateCommunityAction(community: Community, formData: FormData) {
+export async function updateCommunityAction(
+  community: Community,
+  formData: FormData,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
+) {
   try {
     // Extract data from FormData
     const name = formData.get("name") as string;
@@ -25,7 +32,7 @@ export async function updateCommunityAction(community: Community, formData: Form
       logo: logoFile || null,
     };
 
-    const result = await updateCommunity(community, communityData);
+    const result = await updateCommunity(community, communityData, sessionClient, walletClient);
     if (!result.success) {
       return {
         success: false,

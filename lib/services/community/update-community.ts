@@ -1,22 +1,19 @@
-"use server";
-
 import { EditCommunityFormData } from "@/hooks/forms/use-community-edit-form";
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import { storageClient } from "@/lib/external/grove/client";
-import { getAdminSessionClient } from "@/lib/external/lens/admin-session";
 import { lensChain } from "@/lib/external/lens/chain";
 import { fetchAdminsFromGroup, fetchGroupStatsFromLens } from "@/lib/external/lens/primitives/groups";
 import {
   fetchCommunity as fetchCommunityDb,
   updateCommunity as updateCommunityDb,
 } from "@/lib/external/supabase/communities";
-import { getAdminWallet } from "@/lib/external/wallets/admin-wallet";
 import { immutable } from "@lens-chain/storage-client";
-import { Group } from "@lens-protocol/client";
+import { Group, SessionClient } from "@lens-protocol/client";
 import { fetchGroup, setGroupMetadata } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { group } from "@lens-protocol/metadata";
+import { WalletClient } from "viem";
 
 export interface UpdateCommunityResult {
   success: boolean;
@@ -27,6 +24,8 @@ export interface UpdateCommunityResult {
 export async function updateCommunity(
   community: Community,
   data: EditCommunityFormData,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
 ): Promise<UpdateCommunityResult> {
   try {
     // 1. Upload new logo if provided
@@ -37,57 +36,51 @@ export async function updateCommunity(
       iconUri = uri;
     }
 
-    // 2. Get admin session client and wallet
-    const adminSessionClient = await getAdminSessionClient();
-    const adminWallet = await getAdminWallet();
-
-    // 3. Prepare group name for metadata (no spaces, max 20 chars)
+    // 2. Prepare group name for metadata (no spaces, max 20 chars)
     const groupName = data.name ? data.name.replace(/\s+/g, "-").slice(0, 100) : "";
 
-    // 4. Build new metadata
+    // 3. Build new metadata
     const newMetadata = group({
       name: groupName,
       description: data.description,
       icon: iconUri ? iconUri : community.logo,
     });
 
-    // 5. Upload new metadata to Grove
+    // 4. Upload new metadata to Grove
     const acl = immutable(lensChain.id);
     const { uri: metadataUri } = await storageClient.uploadAsJson(newMetadata, { acl });
 
-    // 6. Update group metadata on Lens
-    const updateResult = await setGroupMetadata(adminSessionClient, {
+    // 5. Update group metadata on Lens
+    const result = await setGroupMetadata(sessionClient, {
       group: community.address,
       metadataUri,
     })
-      .andThen(handleOperationWith(adminWallet))
-      .andThen(adminSessionClient.waitForTransaction)
-      .andThen((txHash: unknown) => {
-        return fetchGroup(adminSessionClient, { txHash: txHash as string });
-      });
-    if (updateResult.isErr()) {
+      .andThen(handleOperationWith(walletClient))
+      .andThen(sessionClient.waitForTransaction)
+      .andThen(() => fetchGroup(sessionClient, { group: community.address }));
+
+    if (result.isErr()) {
       return {
         success: false,
-        error: updateResult.error?.message || "Failed to update group metadata",
+        error: result.error?.message || "Failed to update group metadata",
       };
     }
+    const updatedGroup = result.value as Group;
 
-    const updatedGroup = updateResult.value as Group;
-
-    // 6.5. Update name and updatedAt in the database.
-    if (data.name) {
+    // 6. Update name and updatedAt in the database.
+    if (updatedGroup) {
       await updateCommunityDb(community.address, data.name);
     }
 
     // 7. Fetch updated group stats, DB record, and moderators
-    const [groupStatsRaw, dbCommunity, moderators] = await Promise.all([
+    const [groupStats, dbCommunity, moderators] = await Promise.all([
       fetchGroupStatsFromLens(community.address),
       fetchCommunityDb(community.address),
       fetchAdminsFromGroup(community.address),
     ]);
-    const groupStats = groupStatsRaw ?? { __typename: "GroupStatsResponse", totalMembers: 0 };
-    if (!dbCommunity) {
-      return { success: false, error: "Community database record not found" };
+
+    if (!dbCommunity || !groupStats) {
+      return { success: false, error: "Error fetching updated data" };
     }
     const updatedCommunity = adaptGroupToCommunity(updatedGroup, groupStats, dbCommunity, moderators);
     return { success: true, community: updatedCommunity };
