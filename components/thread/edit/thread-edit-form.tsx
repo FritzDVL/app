@@ -16,11 +16,9 @@ import { Save } from "lucide-react";
 
 interface ThreadEditFormProps {
   thread: Thread;
-  onCancel: () => void;
-  onSuccess?: () => void;
 }
 
-export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormProps) {
+export function ThreadEditForm({ thread }: ThreadEditFormProps) {
   const suggestedTags = [
     "discussion",
     "help",
@@ -33,7 +31,7 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
     "governance",
     "research",
   ];
-  const { formData, isSaving, handleChange, handleSubmit } = useThreadEditForm(thread, onSuccess);
+  const { formData, isSaving, handleChange, handleSubmit } = useThreadEditForm(thread);
   const { tags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput(
     Array.isArray(thread.tags)
       ? (thread.tags as string[])
@@ -52,22 +50,7 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
 
   return (
     <>
-      <Button
-        onClick={onCancel}
-        className="inline-flex items-center rounded-full bg-white/80 px-4 py-2 text-sm text-slate-600 backdrop-blur-sm hover:bg-white hover:text-slate-900"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="mr-2 h-4 w-4"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
-        Back to Thread
-      </Button>
+      <BackNavigationLink href={`/thread/${thread.address}`}>Back to Thread</BackNavigationLink>
       <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
@@ -138,14 +121,6 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
 
             {/* Submit Buttons */}
             <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                className="rounded-full bg-gray-300 text-gray-800 hover:bg-gray-400"
-                onClick={onCancel}
-                disabled={isSaving}
-              >
-                Cancel
-              </Button>
               <Button
                 type="submit"
                 disabled={isSaving || !formData.title.trim() || !formData.content.trim()}

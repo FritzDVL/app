@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { revalidateCommunityAndListPaths } from "@/app/actions/revalidate-path";
+import { revalidateCommunityAndListPaths, revalidateThreadAndListPaths } from "@/app/actions/revalidate-path";
 import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { updateThread } from "@/lib/services/thread/update-thread";
@@ -71,7 +71,7 @@ export function useThreadEditForm(thread: Thread, onSuccess?: () => void) {
       }
 
       // Revalidate the thread path after successful update
-      await revalidateCommunityAndListPaths(thread.address);
+      await revalidateThreadAndListPaths(thread.address);
 
       // Show success toast and reset state
       toast.success("Thread updated successfully", { id: loadingToastId });
