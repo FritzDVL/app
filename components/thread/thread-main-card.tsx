@@ -2,6 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import {
+  revalidateCommunitiesPath,
+  revalidateCommunityPath,
+  revalidateThreadPath,
+} from "@/app/actions/revalidate-path";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { ThreadRepliesList } from "@/components/thread/thread-replies-list";
@@ -37,19 +42,20 @@ export function ThreadMainCard({ thread }: ThreadMainCardProps) {
 
   const { createReply } = useReplyCreate();
   const { isLoggedIn } = useAuthStore();
-  const queryClient = useQueryClient();
 
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
-    if (replyingTo === "main" && replyContent["main"]) {
-      const reply = await createReply(thread.rootPost.id, replyContent["main"], thread.address, thread.id);
+    if (replyingTo && replyContent[replyingTo]) {
+      const reply = await createReply(thread.rootPost.id, replyContent[replyingTo], thread.address, thread.id);
       if (reply) {
         setReplyingTo(null);
-        setReplyContent(c => ({ ...c, main: "" }));
-        queryClient.invalidateQueries({ queryKey: ["replies", thread.address] });
+        setReplyContent(c => ({ ...c, [replyingTo]: "" }));
+        revalidateThreadPath(thread.address);
+        revalidateCommunityPath(thread.community);
       }
     }
   };
+
   const handleShare = () => {
     if (!thread) return;
     const url = `https://lensforum.xyz/thread/${thread.address}`;
@@ -149,10 +155,6 @@ export function ThreadMainCard({ thread }: ThreadMainCardProps) {
           {/* Actions */}
           <div className="mt-6 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4 text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <ReplyIcon className="h-4 w-4" />
-                <span className="text-sm">{thread.repliesCount}</span>
-              </div>
               <div className="flex items-center gap-1">
                 <Coins className="h-4 w-4" />
                 <span className="text-sm">{thread.rootPost?.stats.tips}</span>
