@@ -49,12 +49,12 @@ export function TextEditor({ onChange, initialValue }: TextEditorProps) {
 
   return (
     <ProseKit editor={editor}>
-      <div className="color-black dark:color-white box-border flex h-full min-h-36 w-full flex-col overflow-x-hidden overflow-y-hidden rounded-md border border-solid border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-700">
+      <div className="color-black dark:color-white box-border flex h-full min-h-36 w-full flex-col overflow-x-hidden overflow-y-hidden rounded-2xl border border-brand-200/40 bg-gray-50/80 ring-offset-background backdrop-blur-sm focus-within:ring-2 focus-within:ring-brand-200/40 focus-within:ring-offset-2 dark:border-gray-700/60 dark:bg-slate-800/90">
         <Toolbar />
         <div className="relative box-border w-full flex-1 overflow-y-scroll">
           <div
             ref={editor.mount}
-            className="ProseMirror box-border min-h-full px-[max(4rem,_calc(50%-20rem))] py-8 outline-none outline-0 [&_span[data-mention=tag]]:text-violet-500 [&_span[data-mention=user]]:text-blue-500"
+            className="ProseMirror box-border min-h-full px-7 py-4 text-base outline-none outline-0 [&_span[data-mention=tag]]:text-violet-500 [&_span[data-mention=user]]:text-blue-500"
           ></div>
           <InlineMenu />
           <SlashMenu />

@@ -28,14 +28,14 @@ export function TagsInput({
   return (
     <div className="space-y-2">
       {/* Compact input matching the rest of the form */}
-      <div className="flex h-12 items-center gap-2 rounded-full border-slate-300/60 bg-white/80 px-4 backdrop-blur-sm focus-within:ring-2 focus-within:ring-blue-100 dark:bg-gray-700">
+      <div className="flex h-12 items-center gap-2 overflow-hidden rounded-2xl border border-brand-200/40 bg-gray-50/80 px-4 backdrop-blur-sm focus-within:ring-2 focus-within:ring-brand-200/40 dark:border-gray-700/60 dark:bg-slate-800/90">
         <Hash className="h-4 w-4 text-muted-foreground" />
         <Input
           value={tagInput}
           onChange={e => setTagInput(e.target.value)}
           onKeyDown={handleTagInputKeyDown}
           placeholder={tags.length === 0 ? "Add tags..." : "Add another..."}
-          className="border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="z-0 flex-1 border-none bg-transparent p-0 text-sm shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
           disabled={tags.length >= maxTags}
         />
         {tagInput.trim() && (
