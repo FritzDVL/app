@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Thread } from "@/lib/domain/threads/types";
 import { getThread } from "@/lib/services/thread/get-thread";
