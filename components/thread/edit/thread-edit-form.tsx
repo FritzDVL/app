@@ -122,7 +122,6 @@ export function ThreadEditForm({ thread }: ThreadEditFormProps) {
               <Button
                 type="submit"
                 disabled={isSaving || !formData.title.trim() || !formData.content.trim()}
-                className="rounded-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50"
               >
                 {isSaving ? (
                   <span className="flex items-center gap-2">

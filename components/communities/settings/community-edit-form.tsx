@@ -65,7 +65,6 @@ export function CommunityEditForm({ community }: CommunityEditFormProps) {
         <Button
           type="submit"
           disabled={loading}
-          className="rounded-full bg-gradient-to-r from-green-500 to-green-600 px-8 py-3 font-semibold text-white hover:from-green-600 hover:to-green-700"
         >
           {loading ? (
             <>

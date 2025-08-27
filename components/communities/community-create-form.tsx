@@ -78,7 +78,6 @@ export function CommunityCreateForm() {
           <div className="flex justify-end">
             <Button
               type="submit"
-              className="rounded-full bg-gradient-to-r from-green-500 to-green-600 px-6 font-semibold text-white hover:from-green-600 hover:to-green-700 dark:bg-gray-700"
               disabled={
                 loading || !formData.name.trim() || !formData.description.trim() || !formData.adminAddress.trim()
               }
