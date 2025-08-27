@@ -1,25 +1,20 @@
 import { TextEditor } from "@/components/editor/text-editor";
-import { ReputationStatusBanner } from "@/components/shared/reputation-status-banner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TagsInput } from "@/components/ui/tags-input";
-import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { useThreadCreateForm } from "@/hooks/forms/use-thread-create-form";
 import { useAuthStore } from "@/stores/auth-store";
-import { Address } from "@/types/common";
 import { Send } from "lucide-react";
-import { toast } from "sonner";
 
 interface ThreadCreateFormProps {
   communityAddress: string;
 }
 
 export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
-  const { account, walletAddress } = useAuthStore();
-  const { reputation, canCreateThread } = useLensReputationScore(walletAddress as Address, account?.address);
+  const { account } = useAuthStore();
   const { formData, setFormData, handleChange, handleSubmit, isCreating } = useThreadCreateForm({
     communityAddress,
     author: account?.address || "",
@@ -41,18 +36,6 @@ export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canCreateThread) {
-      if (reputation === undefined) {
-        toast.error("LensReputation NFT Required", {
-          description: "You need to mint the LensReputation NFT to create threads.",
-        });
-      } else {
-        toast.error("Insufficient Reputation", {
-          description: `You need a reputation score of 400 or higher to create threads. Your current score is ${reputation}.`,
-        });
-      }
-      return;
-    }
 
     const newFormData = { ...formData, tags: tags.join(",") };
     setFormData(newFormData);
@@ -120,18 +103,12 @@ export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
               maxTags={5}
             />
           </div>
-          {/* Reputation Status */}
-          <ReputationStatusBanner
-            reputation={reputation}
-            canPerformAction={canCreateThread}
-            actionType="threads"
-            requiredScore={400}
-          />
+
           {/* Submit Button */}
           <div className="flex justify-end pt-4">
             <Button
               type="submit"
-              disabled={isCreating || !canCreateThread || !formData.title.trim() || !formData.content.trim()}
+              disabled={isCreating || !formData.title.trim() || !formData.content.trim()}
               className="rounded-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50"
             >
               {isCreating ? (
