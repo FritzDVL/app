@@ -17,13 +17,13 @@ export function useJoinCommunity(community: Community) {
       toast.error("Not logged in", {
         description: "Please log in to join communities.",
       });
-      return;
+      return false;
     }
     if (!walletClient.data) {
       toast.error("Wallet not connected", {
         description: "Please connect your wallet to join communities.",
       });
-      return;
+      return false;
     }
     const toastIsJoining = toast.loading("Joining community...");
     try {
@@ -31,6 +31,7 @@ export function useJoinCommunity(community: Community) {
 
       if (result.success) {
         toast.success("You have joined the community!");
+        return true;
       } else {
         throw new Error(result.error || "Failed to join community");
       }
@@ -39,6 +40,7 @@ export function useJoinCommunity(community: Community) {
       toast.error("Action Failed", {
         description: "Unable to update your membership status. Please try again.",
       });
+      return false;
     } finally {
       toast.dismiss(toastIsJoining);
     }

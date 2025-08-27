@@ -24,8 +24,8 @@ export function CommunityHeaderActions({ community }: { community: Community }) 
 
   const handleJoinCommunity = async () => {
     try {
-      await joinCommunity();
-      updateIsMember(true);
+      const status = await joinCommunity();
+      updateIsMember(status);
     } catch (error) {
       console.error("Error joining community:", error);
     }
