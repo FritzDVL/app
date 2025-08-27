@@ -1,4 +1,5 @@
 import { Address } from "@/types/common";
+import { GroupRule } from "@lens-protocol/client";
 
 export interface Community {
   id: string;
@@ -11,6 +12,7 @@ export interface Community {
   threadsCount: number;
   moderators: Moderator[];
   owner: Address;
+  rule: GroupRule | null;
   createdAt: string; // ISO date string
 }
 
