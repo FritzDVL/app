@@ -3,7 +3,6 @@
 import { CreateCommunityFormData } from "@/hooks/forms/use-community-create-form";
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community, Moderator } from "@/lib/domain/communities/types";
-import { CommunityRule } from "@/lib/domain/communities/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { getAdminSessionClient } from "@/lib/external/lens/admin-session";
 import { lensChain } from "@/lib/external/lens/chain";
@@ -21,36 +20,6 @@ export interface CreateCommunityResult {
   success: boolean;
   community?: Community;
   error?: string;
-}
-
-/**
- * Build a Lens Protocol Group Rule from our domain GroupRule
- */
-async function buildGroupRule(groupRule: CommunityRule): Promise<any> {
-  switch (groupRule.type) {
-    case "SimplePaymentGroupRule":
-      return {
-        type: "SimplePaymentGroupRule",
-        amount: groupRule.amount,
-        token: evmAddress(groupRule.token),
-        recipient: evmAddress(groupRule.recipient),
-      };
-    case "TokenGatedGroupRule":
-      return {
-        type: "TokenGatedGroupRule",
-        tokenAddress: evmAddress(groupRule.tokenAddress),
-        minBalance: groupRule.minBalance,
-        tokenType: groupRule.tokenType,
-        ...(groupRule.tokenId ? { tokenId: groupRule.tokenId } : {}),
-      };
-    case "MembershipApprovalGroupRule":
-      return {
-        type: "MembershipApprovalGroupRule",
-        approvers: groupRule.approvers.map(addr => evmAddress(addr)),
-      };
-    default:
-      throw new Error(`Unsupported group rule type: ${groupRule.type}`);
-  }
 }
 
 /**
@@ -93,10 +62,12 @@ export async function createCommunity(formData: CreateCommunityFormData): Promis
     };
 
     // Add group rules if specified
-    if (formData.communityRule && formData.communityRule.type !== "none") {
-      createGroupParams.rules = [await buildGroupRule(formData.communityRule)];
+    if (formData.communityRule) {
+      createGroupParams.rules = {
+        required: [formData.communityRule],
+      };
     }
-
+    console.dir(createGroupParams, { depth: null });
     const result = await createGroup(adminSessionClient, createGroupParams)
       .andThen(handleOperationWith(adminWallet))
       .andThen(adminSessionClient.waitForTransaction)

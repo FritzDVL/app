@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCommunityAction } from "@/app/actions/create-community";
-import { CommunityRule } from "@/lib/domain/communities/types";
 import { joinAndIncrementCommunityMember } from "@/lib/external/lens/primitives/groups";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
-import { useSessionClient } from "@lens-protocol/react";
+import { GroupRule, useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
 
@@ -15,7 +14,7 @@ export interface CreateCommunityFormData {
   adminAddress: Address;
   logo?: File | null;
   tags?: string;
-  communityRule: CommunityRule;
+  communityRule?: GroupRule | null;
 }
 
 export function useCommunityCreateForm() {
@@ -24,7 +23,7 @@ export function useCommunityCreateForm() {
     description: "",
     logo: undefined,
     adminAddress: "0x0",
-    communityRule: { type: "none" } as CommunityRule,
+    communityRule: undefined,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,7 +93,7 @@ export function useCommunityCreateForm() {
       if (formData.communityRule && formData.communityRule.type !== "none") {
         actionFormData.append("communityRule", JSON.stringify(formData.communityRule));
       }
-
+      console.log("Submitting community creation with data:", formData);
       // Show loading toast
       const loadingToastId = toast.loading("Creating Community", {
         description: "Setting up your community on Lens Protocol...",

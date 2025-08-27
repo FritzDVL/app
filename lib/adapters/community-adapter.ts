@@ -23,7 +23,7 @@ export function adaptGroupToCommunity(
     threadsCount: dbCommunity.threads_count || 0,
     moderators,
     owner: group.owner,
-    rule: group.rules.required[0] ?? undefined,
+    rules: group.rules,
     createdAt: groupTimestamp,
   };
 }

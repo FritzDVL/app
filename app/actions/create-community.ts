@@ -12,6 +12,7 @@ export async function createCommunityAction(formData: FormData) {
     const description = formData.get("description") as string;
     const adminAddress = formData.get("adminAddress") as Address;
     const logoFile = formData.get("logo") as File | null;
+    const communityRule = formData.get("communityRule");
 
     if (!name || !description || !adminAddress) {
       return {
@@ -20,11 +21,19 @@ export async function createCommunityAction(formData: FormData) {
       };
     }
 
+    let parsedCommunityRule = communityRule ? JSON.parse(communityRule as string) : undefined;
+    if (parsedCommunityRule && typeof parsedCommunityRule === "object" && "type" in parsedCommunityRule) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { type, ...rest } = parsedCommunityRule;
+      parsedCommunityRule = rest;
+    }
+
     const communityData: CreateCommunityFormData = {
       name,
       description,
       adminAddress,
       logo: logoFile || undefined,
+      communityRule: parsedCommunityRule,
     };
 
     // Create the community using simplified service interface

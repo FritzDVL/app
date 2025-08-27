@@ -7,11 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityCreateForm } from "@/hooks/forms/use-community-create-form";
-import { CommunityRule } from "@/lib/domain/communities/types";
-import { Account } from "@lens-protocol/client";
+import { Account, GroupRule } from "@lens-protocol/client";
 
 interface CommunityCreateFormProps {
-  onGroupRuleChange?: (groupRule: CommunityRule) => void;
+  onGroupRuleChange?: (groupRule: GroupRule) => void;
   creator?: Account;
 }
 
@@ -20,7 +19,9 @@ export function CommunityCreateForm({ onGroupRuleChange, creator }: CommunityCre
 
   // Notify parent component when groupRule changes
   useEffect(() => {
-    onGroupRuleChange?.(formData.communityRule);
+    if (formData.communityRule) {
+      onGroupRuleChange?.(formData.communityRule);
+    }
   }, [formData.communityRule, onGroupRuleChange]);
 
   if (!creator) {
@@ -95,7 +96,6 @@ export function CommunityCreateForm({ onGroupRuleChange, creator }: CommunityCre
             </div>
 
             <CommunityRulesConfig
-              communityRule={formData.communityRule}
               onCommunityRuleChange={rule => handleChange({ target: { name: "communityRule", value: rule } })}
               recipient={creator}
             />
@@ -106,16 +106,7 @@ export function CommunityCreateForm({ onGroupRuleChange, creator }: CommunityCre
               <Button
                 type="submit"
                 disabled={
-                  loading ||
-                  !formData.name.trim() ||
-                  !formData.description.trim() ||
-                  !formData.adminAddress.trim() ||
-                  (formData.communityRule.type === "SimplePaymentGroupRule" &&
-                    (!formData.communityRule.amount || !formData.communityRule.recipient)) ||
-                  (formData.communityRule.type === "TokenGatedGroupRule" &&
-                    (!formData.communityRule.tokenAddress || !formData.communityRule.minBalance)) ||
-                  (formData.communityRule.type === "MembershipApprovalGroupRule" &&
-                    formData.communityRule.approvers.length === 0)
+                  loading || !formData.name.trim() || !formData.description.trim() || !formData.adminAddress.trim()
                 }
               >
                 {loading ? (

@@ -1,72 +1,72 @@
 "use client";
 
 import React, { useState } from "react";
-import { MembershipApprovalRuleConfig } from "@/components/communities/rules/membership-approval-rule-config";
-import { PaymentRuleConfig } from "@/components/communities/rules/payment-rule-config";
+import {
+  MembershipApprovalGroupRule,
+  MembershipApprovalRuleConfig,
+} from "@/components/communities/rules/membership-approval-rule-config";
+import { PaymentRuleConfig, SimplePaymentGroupRule } from "@/components/communities/rules/payment-rule-config";
 import { RuleTypeSelect } from "@/components/communities/rules/rule-type-select";
-import { TokenGatedRuleConfig } from "@/components/communities/rules/token-gated-rule-config";
+import { TokenGatedGroupRule, TokenGatedRuleConfig } from "@/components/communities/rules/token-gated-rule-config";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { CommunityRule } from "@/lib/domain/communities/types";
-import { isMainnet } from "@/lib/env";
-import { Address } from "@/types/common";
-import { Account } from "@lens-protocol/client";
+import { Account, TokenStandard, bigDecimal, evmAddress } from "@lens-protocol/client";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface CommunityRulesConfigProps {
-  communityRule: CommunityRule;
-  onCommunityRuleChange: (rule: CommunityRule) => void;
+  onCommunityRuleChange: (
+    rule: SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule | undefined,
+  ) => void;
   recipient: Account;
 }
 
 // Token configurations for different networks
-const tokenOptions = isMainnet()
-  ? [
-      { value: "0x000000000000000000000000000000000000800A", label: "GHO", symbol: "GHO" },
-      { value: "0xE5ecd226b3032910CEaa43ba92EE8232f8237553", label: "WETH", symbol: "WETH" },
-      { value: "0x6bDc36E20D267Ff0dd6097799f82e78907105e2F", label: "WGHO", symbol: "WGHO" },
-      { value: "0x88F08E304EC4f90D644Cec3Fb69b8aD414acf884", label: "USDC", symbol: "USDC" },
-      { value: "0xB0588f9A9cADe7CD5f194a5fe77AcD6A58250f82", label: "BONSAI", symbol: "BONSAI" },
-    ]
-  : [
-      { value: "0x000000000000000000000000000000000000800A", label: "GRASS", symbol: "GRASS" },
-      { value: "0xaA91D645D7a6C1aeaa5988e0547267B77d33fe16", label: "WETH", symbol: "WETH" },
-      { value: "0xeee5a340Cdc9c179Db25dea45AcfD5FE8d4d3eB8", label: "WGRASS", symbol: "WGRASS" },
-    ];
-const defaultToken = tokenOptions[0].value;
 
-export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, recipient }: CommunityRulesConfigProps) {
-  const [isEnabled, setIsEnabled] = useState(communityRule.type !== "none");
+export function CommunityRulesConfig({ onCommunityRuleChange, recipient }: CommunityRulesConfigProps) {
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [communityRule, setCommunityRule] = useState<
+    SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule | undefined
+  >(undefined);
 
   const handleRuleTypeChange = (type: string) => {
     if (type === "none") {
-      onCommunityRuleChange({ type: "none" });
       setIsEnabled(false);
       return;
     }
     setIsEnabled(true);
     switch (type) {
       case "SimplePaymentGroupRule":
-        onCommunityRuleChange({
+        const simplePaymentRule: SimplePaymentGroupRule = {
           type: "SimplePaymentGroupRule",
-          amount: "",
-          token: defaultToken as Address,
-          recipient: recipient.address,
-        });
+          simplePaymentRule: {
+            native: "",
+            recipient: recipient.address,
+          },
+        };
+        setCommunityRule(simplePaymentRule);
+        onCommunityRuleChange(simplePaymentRule);
         break;
       case "TokenGatedGroupRule":
-        onCommunityRuleChange({
+        const tokenGatedRule: TokenGatedGroupRule = {
           type: "TokenGatedGroupRule",
-          tokenAddress: "0x0000000000000000000000000000000000000000",
-          minBalance: "",
-          tokenType: "ERC20",
-        });
+          tokenGatedRule: {
+            token: {
+              currency: evmAddress("0x000000000000000000000000000000000000800A"),
+              standard: TokenStandard.Erc721,
+              value: bigDecimal("1"),
+            },
+          },
+        };
+        setCommunityRule(tokenGatedRule);
+        onCommunityRuleChange(tokenGatedRule);
         break;
       case "MembershipApprovalGroupRule":
-        onCommunityRuleChange({
+        const membershipApprovalRule: MembershipApprovalGroupRule = {
           type: "MembershipApprovalGroupRule",
-          approvers: [recipient.address],
-        });
+          membershipApprovalRule: { enable: true },
+        };
+        setCommunityRule(membershipApprovalRule);
+        onCommunityRuleChange(membershipApprovalRule);
         break;
     }
   };
@@ -74,28 +74,25 @@ export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, rec
   const handleToggle = (enabled: boolean) => {
     setIsEnabled(enabled);
     if (!enabled) {
-      onCommunityRuleChange({ type: "none" });
+      onCommunityRuleChange(undefined);
     } else {
       handleRuleTypeChange("SimplePaymentGroupRule");
     }
   };
 
   // --- Modular update handlers ---
-  const updatePaymentRule = (field: string, value: string) => {
-    if (communityRule.type === "SimplePaymentGroupRule") {
-      onCommunityRuleChange({ ...communityRule, [field]: value });
-    }
+  const updatePaymentRule = (rule: SimplePaymentGroupRule) => {
+    setCommunityRule(rule);
+    onCommunityRuleChange(rule);
   };
-  const updateTokenGatedRule = (field: string, value: string) => {
-    if (communityRule.type === "TokenGatedGroupRule") {
-      onCommunityRuleChange({ ...communityRule, [field]: value });
-    }
-  };
-  const updateApprovalRule = (approvers: Address[]) => {
-    if (communityRule.type === "MembershipApprovalGroupRule") {
-      onCommunityRuleChange({ ...communityRule, approvers });
-    }
-  };
+  // const updateTokenGatedRule = (rule: TokenGatedGroupRule) => {
+  //   setCommunityRule(rule);
+  //   onCommunityRuleChange(rule);
+  // };
+  // const updateApprovalRule = (rule: MembershipApprovalGroupRule) => {
+  //   setCommunityRule(rule);
+  //   onCommunityRuleChange(rule);
+  // };
 
   return (
     <>
@@ -121,17 +118,17 @@ export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, rec
             style={{ overflow: "hidden" }}
           >
             <div className="pt-2">
-              <RuleTypeSelect value={communityRule.type} onChange={handleRuleTypeChange} />
+              <RuleTypeSelect value={communityRule?.type || "SimplePaymentGroupRule"} onChange={handleRuleTypeChange} />
               {/* Modular config UIs */}
-              {communityRule.type === "SimplePaymentGroupRule" && (
-                <PaymentRuleConfig rule={communityRule} tokenOptions={tokenOptions} onChange={updatePaymentRule} />
+              {communityRule && communityRule.type === "SimplePaymentGroupRule" && (
+                <PaymentRuleConfig rule={communityRule} onChange={updatePaymentRule} />
               )}
-              {communityRule.type === "TokenGatedGroupRule" && (
+              {/* {communityRule && communityRule.type === "TokenGatedGroupRule" && (
                 <TokenGatedRuleConfig rule={communityRule} onChange={updateTokenGatedRule} />
               )}
-              {communityRule.type === "MembershipApprovalGroupRule" && (
+              {communityRule && communityRule.type === "MembershipApprovalGroupRule" && (
                 <MembershipApprovalRuleConfig rule={communityRule} onChange={updateApprovalRule} />
-              )}
+              )} */}
             </div>
           </motion.div>
         )}

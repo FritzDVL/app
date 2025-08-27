@@ -1,26 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import CustomSelectItem from "@/components/ui/custom-select-item";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CommunityRule } from "@/lib/domain/communities/types";
+import { Address } from "@/types/common";
+import { TokenStandard } from "@lens-protocol/client";
 import { Lock } from "lucide-react";
 
+export interface TokenGatedGroupRule {
+  type: "TokenGatedGroupRule";
+  tokenGatedRule: {
+    token: {
+      currency: Address;
+      standard: TokenStandard;
+      value: string;
+    };
+  };
+}
+
 interface TokenGatedRuleConfigProps {
-  rule: Extract<CommunityRule, { type: "TokenGatedGroupRule" }>;
+  rule: Extract<TokenGatedGroupRule, { type: "TokenGatedGroupRule" }>;
   onChange: (field: string, value: string) => void;
 }
 
 export function TokenGatedRuleConfig({ rule, onChange }: TokenGatedRuleConfigProps) {
+  const [tokenType, setTokenType] = useState<TokenStandard>(rule.tokenGatedRule.token.standard);
+  const [tokenValue, setTokenValue] = useState<string>(rule.tokenGatedRule.token.value);
+  const [tokenAddress, setTokenAddress] = useState<string>(rule.tokenGatedRule.token.currency);
+
   return (
-    <>
+    <div className="space-y-8 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="tokenType" className="flex items-center gap-2 text-base font-medium text-foreground">
             <Lock className="h-4 w-4 text-blue-600" />
             Token Type
           </Label>
-          <Select value={rule.tokenType} onValueChange={value => onChange("tokenType", value)}>
+          <Select value={tokenType} onValueChange={value => setTokenType(value as TokenStandard)}>
             <SelectTrigger className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700">
               <SelectValue />
             </SelectTrigger>
@@ -48,14 +64,17 @@ export function TokenGatedRuleConfig({ rule, onChange }: TokenGatedRuleConfigPro
         </div>
         <div className="space-y-2">
           <Label htmlFor="minBalance" className="text-base font-medium text-foreground">
-            {rule.tokenType === "ERC20" ? "Min Balance" : "Min Amount"}
+            {tokenType === "ERC20" ? "Min Balance" : "Min Amount"}
           </Label>
           <Input
             id="minBalance"
             type="number"
-            placeholder={rule.tokenType === "ERC20" ? "1.0" : "1"}
-            value={rule.minBalance}
-            onChange={e => onChange("minBalance", e.target.value)}
+            placeholder={tokenType === "ERC20" ? "1.0" : "1"}
+            value={tokenValue}
+            onChange={e => {
+              setTokenValue(e.target.value);
+              onChange("minBalance", e.target.value);
+            }}
             className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
           />
         </div>
@@ -67,25 +86,14 @@ export function TokenGatedRuleConfig({ rule, onChange }: TokenGatedRuleConfigPro
         <Input
           id="tokenAddress"
           placeholder="0x... token contract address"
-          value={rule.tokenAddress}
-          onChange={e => onChange("tokenAddress", e.target.value)}
+          value={tokenAddress}
+          onChange={e => {
+            setTokenAddress(e.target.value);
+            onChange("tokenAddress", e.target.value);
+          }}
           className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
         />
       </div>
-      {rule.tokenType === "ERC1155" && (
-        <div className="space-y-2">
-          <Label htmlFor="tokenId" className="text-base font-medium text-foreground">
-            Token ID
-          </Label>
-          <Input
-            id="tokenId"
-            placeholder="Token ID"
-            value={rule.tokenId || ""}
-            onChange={e => onChange("tokenId", e.target.value)}
-            className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
-          />
-        </div>
-      )}
-    </>
+    </div>
   );
 }

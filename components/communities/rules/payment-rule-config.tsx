@@ -1,24 +1,37 @@
-import React from "react";
-import CustomSelectItem from "@/components/ui/custom-select-item";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CommunityRule } from "@/lib/domain/communities/types";
-import { AlertTriangle, DollarSign } from "lucide-react";
+import { isMainnet } from "@/lib/env";
+import { Address } from "@/types/common";
+import { BigDecimal, bigDecimal, evmAddress } from "@lens-protocol/client";
+import { AlertTriangle } from "lucide-react";
 
-interface PaymentRuleConfigProps {
-  rule: Extract<CommunityRule, { type: "SimplePaymentGroupRule" }>;
-  tokenOptions: { value: string; label: string; symbol: string }[];
-  onChange: (field: string, value: string) => void;
+export interface SimplePaymentGroupRule {
+  type: "SimplePaymentGroupRule";
+  simplePaymentRule: {
+    native: BigDecimal;
+    recipient: Address;
+  };
 }
 
-export function PaymentRuleConfig({ rule, tokenOptions, onChange }: PaymentRuleConfigProps) {
+interface PaymentRuleConfigProps {
+  rule: Extract<SimplePaymentGroupRule, { type: "SimplePaymentGroupRule" }>;
+  onChange: (rule: SimplePaymentGroupRule) => void;
+}
+
+export function PaymentRuleConfig({ rule, onChange }: PaymentRuleConfigProps) {
+  const [amount, setAmount] = useState<BigDecimal>(rule.simplePaymentRule.native);
+  const [recipient, setRecipient] = useState<Address>(rule.simplePaymentRule.recipient);
+
+  const tokenOptions = isMainnet()
+    ? [{ value: "0x000000000000000000000000000000000000800A", label: "GHO", symbol: "GHO" }]
+    : [{ value: "0x000000000000000000000000000000000000800A", label: "GRASS", symbol: "GRASS" }];
+
   return (
-    <>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="amount" className="flex items-center gap-2 text-base font-medium text-foreground">
-            <DollarSign className="h-4 w-4 text-green-600" />
+    <div className="space-y-8 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className="grid gap-8 md:grid-cols-2">
+        <div className="space-y-3">
+          <Label htmlFor="amount" className="text-base font-medium text-foreground">
             Price
           </Label>
           <Input
@@ -26,49 +39,57 @@ export function PaymentRuleConfig({ rule, tokenOptions, onChange }: PaymentRuleC
             type="number"
             step="0.01"
             placeholder="10.00"
-            value={rule.amount}
-            onChange={e => onChange("amount", e.target.value)}
-            className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
+            value={amount}
+            onChange={e => {
+              setAmount(bigDecimal(e.target.value));
+              onChange({
+                type: "SimplePaymentGroupRule",
+                simplePaymentRule: {
+                  native: bigDecimal(e.target.value),
+                  recipient: evmAddress(recipient),
+                },
+              });
+            }}
+            className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
           />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-3">
           <Label htmlFor="token" className="text-base font-medium text-foreground">
             Payment Token
           </Label>
-          <Select value={rule.token} onValueChange={value => onChange("token", value)}>
-            <SelectTrigger className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base text-sm backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="rounded-2xl border-slate-300/60 bg-white/95 backdrop-blur-sm dark:border-gray-600 dark:bg-gray-800">
-              {tokenOptions.map(token => (
-                <CustomSelectItem
-                  key={token.value}
-                  value={token.value}
-                  className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-                >
-                  {token.label}
-                </CustomSelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input
+            id="token"
+            value={tokenOptions[0].label}
+            disabled
+            className="cursor-not-allowed rounded-2xl border-slate-300/60 bg-muted/50 text-base dark:border-gray-600 dark:bg-gray-700"
+          />
         </div>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3 pt-2">
         <Label htmlFor="recipient" className="text-base font-medium text-foreground">
           Payment Recipient
         </Label>
         <Input
           id="recipient"
           placeholder="Wallet address to receive payments"
-          value={rule.recipient}
-          onChange={e => onChange("recipient", e.target.value)}
-          className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
+          value={recipient}
+          onChange={e => {
+            setRecipient(e.target.value as Address);
+            onChange({
+              type: "SimplePaymentGroupRule",
+              simplePaymentRule: {
+                native: bigDecimal(amount),
+                recipient: evmAddress(e.target.value as Address),
+              },
+            });
+          }}
+          className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
         />
-        <p className="flex items-center gap-1 text-base text-muted-foreground">
+        <p className="mt-1 flex items-center gap-2 text-base text-muted-foreground">
           <AlertTriangle className="h-4 w-4 text-yellow-600" />
           Lens deducts 1.5% treasury fee automatically
         </p>
       </div>
-    </>
+    </div>
   );
 }
