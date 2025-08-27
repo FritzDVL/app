@@ -39,7 +39,7 @@ export function CommunityRulesConfig({ onCommunityRuleChange, recipient }: Commu
         const simplePaymentRule: SimplePaymentGroupRule = {
           type: "SimplePaymentGroupRule",
           simplePaymentRule: {
-            native: "",
+            native: bigDecimal("5"),
             recipient: recipient.address,
           },
         };

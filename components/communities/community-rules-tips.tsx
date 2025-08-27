@@ -1,11 +1,13 @@
 "use client";
 
 import React from "react";
+import { MembershipApprovalGroupRule } from "@/components/communities/rules/membership-approval-rule-config";
+import { SimplePaymentGroupRule } from "@/components/communities/rules/payment-rule-config";
+import { TokenGatedGroupRule } from "@/components/communities/rules/token-gated-rule-config";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { CommunityRule } from "@/lib/domain/communities/types";
 
 interface CommunityRulesTipsProps {
-  communityRule: CommunityRule;
+  communityRule: SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule;
 }
 
 export function CommunityRulesTips({ communityRule }: CommunityRulesTipsProps) {

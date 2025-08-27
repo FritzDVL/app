@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 import { CommunityRulesConfig } from "./community-rules-config";
+import { MembershipApprovalGroupRule } from "./rules/membership-approval-rule-config";
+import { SimplePaymentGroupRule } from "./rules/payment-rule-config";
+import { TokenGatedGroupRule } from "./rules/token-gated-rule-config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
@@ -10,7 +13,7 @@ import { useCommunityCreateForm } from "@/hooks/forms/use-community-create-form"
 import { Account, GroupRule } from "@lens-protocol/client";
 
 interface CommunityCreateFormProps {
-  onGroupRuleChange?: (groupRule: GroupRule) => void;
+  onGroupRuleChange?: (groupRule: SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule) => void;
   creator?: Account;
 }
 

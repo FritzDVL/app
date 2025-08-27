@@ -4,13 +4,17 @@ import { useState } from "react";
 import { CommunityCreateForm } from "@/components/communities/community-create-form";
 import { CommunityCreationTips } from "@/components/communities/community-creation-tips";
 import { CommunityRulesTips } from "@/components/communities/community-rules-tips";
+import { MembershipApprovalGroupRule } from "@/components/communities/rules/membership-approval-rule-config";
+import { SimplePaymentGroupRule } from "@/components/communities/rules/payment-rule-config";
+import { TokenGatedGroupRule } from "@/components/communities/rules/token-gated-rule-config";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
-import { CommunityRule } from "@/lib/domain/communities/types";
 import { useAuthStore } from "@/stores/auth-store";
 
 export default function NewCommunityPage() {
-  const [groupRule, setGroupRule] = useState<CommunityRule>({ type: "none" });
+  const [groupRule, setGroupRule] = useState<
+    SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule | undefined
+  >(undefined);
 
   const { account } = useAuthStore();
 
@@ -31,7 +35,7 @@ export default function NewCommunityPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             <CommunityCreationTips />
-            {groupRule.type !== "none" && <CommunityRulesTips communityRule={groupRule} />}
+            {groupRule && <CommunityRulesTips communityRule={groupRule} />}
           </div>
         </div>
       </main>

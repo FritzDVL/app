@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCommunityAction } from "@/app/actions/create-community";
+import { MembershipApprovalGroupRule } from "@/components/communities/rules/membership-approval-rule-config";
+import { SimplePaymentGroupRule } from "@/components/communities/rules/payment-rule-config";
+import { TokenGatedGroupRule } from "@/components/communities/rules/token-gated-rule-config";
 import { joinAndIncrementCommunityMember } from "@/lib/external/lens/primitives/groups";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
@@ -14,7 +17,7 @@ export interface CreateCommunityFormData {
   adminAddress: Address;
   logo?: File | null;
   tags?: string;
-  communityRule?: GroupRule | null;
+  communityRule?: SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule | null;
 }
 
 export function useCommunityCreateForm() {
@@ -90,10 +93,10 @@ export function useCommunityCreateForm() {
         actionFormData.append("image", formData.logo);
       }
       // Add communityRule as JSON string if not 'none'
-      if (formData.communityRule && formData.communityRule.type !== "none") {
+      if (formData.communityRule) {
         actionFormData.append("communityRule", JSON.stringify(formData.communityRule));
       }
-      console.log("Submitting community creation with data:", formData);
+
       // Show loading toast
       const loadingToastId = toast.loading("Creating Community", {
         description: "Setting up your community on Lens Protocol...",
