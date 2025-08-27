@@ -7,18 +7,9 @@ import { Users } from "lucide-react";
 
 interface JoinedCommunitiesProps {
   communities: Community[];
-  loading: boolean;
-  lensAccount: { address?: string } | null;
 }
 
-export function JoinedCommunities({ communities, loading }: JoinedCommunitiesProps) {
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-slate-500">Loading communities...</div>
-      </div>
-    );
-  }
+export function JoinedCommunities({ communities }: JoinedCommunitiesProps) {
   if (communities.length > 0) {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -67,6 +58,7 @@ export function JoinedCommunities({ communities, loading }: JoinedCommunitiesPro
       </div>
     );
   }
+
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <Users className="mb-4 h-12 w-12 text-slate-300" />

@@ -1,20 +1,13 @@
 import Link from "next/link";
 import ContentRenderer from "../shared/content-renderer";
+import { Reply } from "@/lib/domain/replies/types";
 import { ArrowRight, MessageCircle } from "lucide-react";
 
 interface RecentActivityProps {
-  replies: any[];
-  loading: boolean;
+  replies: Reply[];
 }
 
-export function RecentActivity({ replies, loading }: RecentActivityProps) {
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-slate-500">Loading recent activity...</div>
-      </div>
-    );
-  }
+export function RecentActivity({ replies }: RecentActivityProps) {
   if (replies.length > 0) {
     return (
       <div className="space-y-3">

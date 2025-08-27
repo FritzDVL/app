@@ -155,64 +155,69 @@ export function ThreadReplyCard({
               <ReplyVoting postid={postId(reply.id)} />
             </div>
             <div className="min-w-0 flex-1">
-              {/* Top row: author info */}
+              {/* Top row: author info and show context button at top right */}
               <div className="relative mb-3 flex flex-col gap-1 sm:mb-6 sm:flex-row sm:items-center sm:gap-2">
-                <Link
-                  href={`/u/${reply.author.username.replace("lens/", "")}`}
-                  className="flex items-center gap-2 hover:text-gray-900"
-                >
-                  <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
-                    <AvatarImage src={reply.author.avatar || "/placeholder.svg"} />
-                    <AvatarFallback className="bg-muted text-xs text-muted-foreground">
-                      {reply.author.name[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium text-foreground">{reply.author.name}</span>
-                </Link>
-                <span className="text-xs text-muted-foreground sm:text-sm">
-                  {reply.createdAt ? getTimeAgo(new Date(reply.createdAt)) : "Unknown date"}
-                </span>
-              </div>
-              {/* Context fetcher for parent post chain */}
-              {reply.parentReplyId && reply.parentReplyId !== rootPostId && (
-                <div className="mb-2">
-                  <button
-                    className={
-                      `inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium transition-colors ` +
-                      (showContext
-                        ? "border border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100 dark:border-brand-600 dark:bg-brand-900/50 dark:text-brand-300 dark:hover:bg-brand-900/70"
-                        : "bg-transparent text-brand-500 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300")
-                    }
-                    onClick={handleShowContext}
-                    disabled={loadingContext}
-                    aria-pressed={showContext}
-                    title={showContext ? "Hide context" : "Show context"}
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/u/${reply.author.username.replace("lens/", "")}`}
+                    className="flex items-center gap-2 hover:text-gray-900"
                   >
-                    <span className="inline-block">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        className="h-3 w-3 sm:h-4 sm:w-4"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                        />
-                      </svg>
-                    </span>
-                    <span className="hidden sm:inline">
-                      {loadingContext ? "Loading..." : showContext ? "Hide context" : "Show context"}
-                    </span>
-                    <span className="sm:hidden">{showContext ? "Hide" : "Context"}</span>
-                  </button>
-                  {showContext && contextChain.length > 0 && <ContextChain />}
+                    <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
+                      <AvatarImage src={reply.author.avatar || "/placeholder.svg"} />
+                      <AvatarFallback className="bg-muted text-xs text-muted-foreground">
+                        {reply.author.name[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium text-foreground">{reply.author.name}</span>
+                  </Link>
+                  <span className="text-xs text-muted-foreground sm:text-sm">
+                    {reply.createdAt ? getTimeAgo(new Date(reply.createdAt)) : "Unknown date"}
+                  </span>
                 </div>
+                {/* Show context button at top right */}
+                {reply.parentReplyId && reply.parentReplyId !== rootPostId && (
+                  <div className="absolute right-0 top-0">
+                    <button
+                      className={
+                        `inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium transition-colors ` +
+                        (showContext
+                          ? "border border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100 dark:border-brand-600 dark:bg-brand-900/50 dark:text-brand-300 dark:hover:bg-brand-900/70"
+                          : "bg-transparent text-brand-500 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300")
+                      }
+                      onClick={handleShowContext}
+                      disabled={loadingContext}
+                      aria-pressed={showContext}
+                      title={showContext ? "Hide context" : "Show context"}
+                    >
+                      <span className="inline-block">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="h-3 w-3 sm:h-4 sm:w-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                          />
+                        </svg>
+                      </span>
+                      <span className="hidden sm:inline">
+                        {loadingContext ? "Loading..." : showContext ? "Hide parent reply" : "In reply to"}
+                      </span>
+                      <span className="sm:hidden">{showContext ? "Hide" : "Parent"}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+              {/* Context chain UI below author row */}
+              {reply.parentReplyId && reply.parentReplyId !== rootPostId && showContext && contextChain.length > 0 && (
+                <ContextChain />
               )}
               {/* Content */}
               <ContentRenderer content={removeTrailingEmptyPTags(reply.content)} className="rich-text-content mb-2" />

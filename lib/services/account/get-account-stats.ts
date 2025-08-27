@@ -1,10 +1,6 @@
-/**
- * Get Account Stats Service
- * Fetches account statistics (followers, following, posts) using Lens Protocol
- */
 import { client } from "@/lib/external/lens/protocol-client";
+import { evmAddress } from "@lens-protocol/client";
 import { fetchAccountStats } from "@lens-protocol/client/actions";
-import { evmAddress } from "@lens-protocol/react";
 
 export interface AccountStats {
   followers: number;

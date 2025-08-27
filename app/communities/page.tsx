@@ -1,4 +1,4 @@
-import { CommunitiesClient } from "@/components/communities/communities-client";
+import { Communities } from "@/components/communities/communities";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { getAllCommunities } from "@/lib/services/community/get-all-communities";
 
@@ -8,7 +8,7 @@ export default async function CommunitiesPage() {
 
   return (
     <ProtectedRoute>
-      <CommunitiesClient initialCommunities={communities} />
+      <Communities communities={communities} />
     </ProtectedRoute>
   );
 }

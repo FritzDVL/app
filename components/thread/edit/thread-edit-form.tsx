@@ -16,11 +16,9 @@ import { Save } from "lucide-react";
 
 interface ThreadEditFormProps {
   thread: Thread;
-  onCancel: () => void;
-  onSuccess?: () => void;
 }
 
-export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormProps) {
+export function ThreadEditForm({ thread }: ThreadEditFormProps) {
   const suggestedTags = [
     "discussion",
     "help",
@@ -33,7 +31,7 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
     "governance",
     "research",
   ];
-  const { formData, isSaving, handleChange, handleSubmit } = useThreadEditForm(thread, onSuccess);
+  const { formData, isSaving, handleChange, handleSubmit } = useThreadEditForm(thread);
   const { tags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput(
     Array.isArray(thread.tags)
       ? (thread.tags as string[])
@@ -52,9 +50,7 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
 
   return (
     <>
-      <BackNavigationLink href={thread?.community ? `/communities/${thread.community}` : "/communities"}>
-        Back to Community
-      </BackNavigationLink>
+      <BackNavigationLink href={`/thread/${thread.address}`}>Back to Thread</BackNavigationLink>
       <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
@@ -125,14 +121,6 @@ export function ThreadEditForm({ thread, onCancel, onSuccess }: ThreadEditFormPr
 
             {/* Submit Buttons */}
             <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                className="rounded-full bg-gray-300 text-gray-800 hover:bg-gray-400"
-                onClick={onCancel}
-                disabled={isSaving}
-              >
-                Cancel
-              </Button>
               <Button
                 type="submit"
                 disabled={isSaving || !formData.title.trim() || !formData.content.trim()}
