@@ -5,11 +5,11 @@ import { Community } from "@/lib/domain/communities/types";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import { Users } from "lucide-react";
 
-interface JoinedCommunitiesProps {
+interface ProfileJoinedCommunitiesProps {
   communities: Community[];
 }
 
-export function JoinedCommunities({ communities }: JoinedCommunitiesProps) {
+export function ProfileJoinedCommunities({ communities }: ProfileJoinedCommunitiesProps) {
   if (communities.length > 0) {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

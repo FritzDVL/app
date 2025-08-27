@@ -1,4 +1,4 @@
-import { Profile } from "@/components/account/profile";
+import { Profile } from "@/components/profile/profile";
 import { Card, CardContent } from "@/components/ui/card";
 import { getAccountByUsername } from "@/lib/services/account/get-account-by-username";
 import { getAccountStats } from "@/lib/services/account/get-account-stats";

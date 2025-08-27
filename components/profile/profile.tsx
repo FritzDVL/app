@@ -1,6 +1,6 @@
-import { ProfileHeader } from "@/components/account/profile-header";
-import { ProfileStats } from "@/components/account/profile-stats";
-import { ProfileTabsManager } from "@/components/account/profile-tabs-manager";
+import { ProfileHeader } from "@/components/profile/profile-header";
+import { ProfileStats } from "@/components/profile/profile-stats";
+import { ProfileTabsManager } from "@/components/profile/profile-tabs-manager";
 import { Community } from "@/lib/domain/communities/types";
 import { Reply } from "@/lib/domain/replies/types";
 import { Account } from "@lens-protocol/client";
@@ -22,7 +22,7 @@ export function Profile({ account, stats, userReplies, joinedCommunities }: Prof
       <ProfileStats followers={stats.followers} following={stats.following} posts={stats.posts} reputation={0} />
 
       {/* Main Content */}
-      <ProfileTabsManager repliesTo={userReplies} joinedCommunities={joinedCommunities} lensAccount={account} />
+      <ProfileTabsManager repliesTo={userReplies} joinedCommunities={joinedCommunities} />
     </div>
   );
 }

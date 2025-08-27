@@ -3,11 +3,11 @@ import ContentRenderer from "../shared/content-renderer";
 import { Reply } from "@/lib/domain/replies/types";
 import { ArrowRight, MessageCircle } from "lucide-react";
 
-interface RecentActivityProps {
+interface ProfileRecentActivityProps {
   replies: Reply[];
 }
 
-export function RecentActivity({ replies }: RecentActivityProps) {
+export function ProfileRecentActivity({ replies }: ProfileRecentActivityProps) {
   if (replies.length > 0) {
     return (
       <div className="space-y-3">

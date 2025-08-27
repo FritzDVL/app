@@ -1,20 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { JoinedCommunities } from "@/components/account/joined-communities";
-import { ProfileTabs } from "@/components/account/profile-tabs";
-import { RecentActivity } from "@/components/account/recent-activity";
+import { ProfileJoinedCommunities } from "@/components/profile/profile-joined-communities";
+import { ProfileRecentActivity } from "@/components/profile/profile-recent-activity";
+import { ProfileTabs } from "@/components/profile/profile-tabs";
 import { Community } from "@/lib/domain/communities/types";
 import { Reply } from "@/lib/domain/replies/types";
-import { Account } from "@lens-protocol/client";
 
 interface ProfileTabsManagerProps {
   repliesTo: Reply[];
   joinedCommunities: Community[];
-  lensAccount: Account;
 }
 
-export function ProfileTabsManager({ repliesTo, joinedCommunities, lensAccount }: ProfileTabsManagerProps) {
+export function ProfileTabsManager({ repliesTo, joinedCommunities }: ProfileTabsManagerProps) {
   const [activeTab, setActiveTabState] = useState<"recent" | "forums">("recent");
   // Adapt setActiveTab to match ProfileTabs signature
   const setActiveTab = (tab: string) => {
@@ -26,8 +24,8 @@ export function ProfileTabsManager({ repliesTo, joinedCommunities, lensAccount }
       <div className="mb-4">
         <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
-      {activeTab === "recent" && <RecentActivity replies={repliesTo} />}
-      {activeTab === "forums" && <JoinedCommunities communities={joinedCommunities} />}
+      {activeTab === "recent" && <ProfileRecentActivity replies={repliesTo} />}
+      {activeTab === "forums" && <ProfileJoinedCommunities communities={joinedCommunities} />}
     </div>
   );
 }
