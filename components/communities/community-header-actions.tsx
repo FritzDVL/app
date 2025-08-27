@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LeaveCommunityDialog } from "@/components/communities/community-leave-dialog";
 import { Button } from "@/components/ui/button";
 import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
@@ -10,7 +11,7 @@ import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { useLeaveCommunity } from "@/hooks/communities/use-leave-community";
 import type { Community } from "@/lib/domain/communities/types";
 import { useAuthStore } from "@/stores/auth-store";
-import { Settings } from "lucide-react";
+import { LogIn, LogOut, PenTool } from "lucide-react";
 
 export function CommunityHeaderActions({ community }: { community: Community }) {
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
@@ -19,6 +20,7 @@ export function CommunityHeaderActions({ community }: { community: Community }) 
   const isModerator = useIsModerator(community);
   const { isLoggedIn } = useAuthStore();
   const { isMember, updateIsMember, isLoading: isMemberLoading } = useCommunityMembership(community.address);
+  const router = useRouter();
 
   const handleJoinCommunity = async () => {
     try {
@@ -41,34 +43,52 @@ export function CommunityHeaderActions({ community }: { community: Community }) 
   };
 
   return (
-    <div className="mt-4 flex w-full shrink-0 flex-col gap-2 md:ml-6 md:mt-0 md:w-auto md:flex-row">
-      <Button
-        disabled={!isLoggedIn || isMemberLoading}
-        onClick={isMember ? handleLeaveCommunity : handleJoinCommunity}
-        size="sm"
-        className={`w-full rounded-full px-4 py-2 font-medium transition-all duration-300 md:w-auto ${
-          isMember
-            ? "border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200"
-            : "bg-gradient-to-r from-brand-500 to-brand-600 text-white hover:from-brand-600 hover:to-brand-700"
-        }`}
-      >
-        {isMemberLoading ? "..." : isMember ? "Leave" : "Join"}
-      </Button>
-
-      {/* Settings Button - Only show for community mods */}
-      {isModerator && (
-        <Link href={`/communities/${community.address}/settings`}>
+    <div className="mt-0 flex w-full flex-row items-center justify-between gap-2 md:mt-2">
+      <div className="flex flex-row items-center gap-1.5">
+        {isMember && (
           <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full transition-all duration-300 hover:bg-accent hover:text-accent-foreground"
-            aria-label="Community Settings"
+            onClick={() => {
+              router.push(`/communities/${community.address}/new-thread`);
+            }}
+            variant="default"
+            size="sm"
+            className="h-8 bg-green-600 px-3 text-xs font-medium text-white shadow-sm transition-all duration-150 hover:bg-green-700 hover:shadow-md"
           >
-            <Settings className="h-4 w-4" />
+            <PenTool className="mr-1.5 h-3 w-3" />
+            <span className="hidden md:inline">New Thread</span>
+            <span className="md:hidden">New</span>
           </Button>
-        </Link>
-      )}
-
+        )}
+      </div>
+      <div className="flex flex-row items-center gap-1.5">
+        <Button
+          disabled={!isLoggedIn || isMemberLoading}
+          onClick={isMember ? handleLeaveCommunity : handleJoinCommunity}
+          size="sm"
+          variant={isMember ? "outline" : "default"}
+          className="h-8 px-3 text-xs font-medium transition-all duration-150"
+        >
+          {isMemberLoading ? (
+            <>
+              <span className="mr-1.5 h-2.5 w-2.5 animate-spin rounded-full border border-gray-400 border-t-transparent" />
+              <span className="hidden md:inline">Loading</span>
+              <span className="md:hidden">...</span>
+            </>
+          ) : isMember ? (
+            <>
+              <LogOut className="mr-1.5 h-3 w-3" />
+              <span className="hidden md:inline">Leave</span>
+              <span className="md:hidden">Leave</span>
+            </>
+          ) : (
+            <>
+              <LogIn className="mr-1.5 h-3 w-3" />
+              <span className="hidden md:inline">Join</span>
+              <span className="md:hidden">Join</span>
+            </>
+          )}
+        </Button>
+      </div>
       <LeaveCommunityDialog
         open={showLeaveDialog}
         onOpenChange={setShowLeaveDialog}

@@ -12,8 +12,8 @@ export function CommunityHeader({ community }: { community: Community }) {
     <>
       <Card className="mb-8 rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardContent className="p-6 md:p-8">
-          <div className="flex flex-col items-center space-y-4 md:flex-row md:items-start md:space-x-6 md:space-y-0">
-            {/* Logo, Name, and Join/Leave Button in a single row (stacked on mobile) */}
+          <div className="flex flex-col md:flex-row md:items-start md:space-x-6 md:space-y-0 items-center space-y-4">
+            {/* Logo */}
             <div className="flex h-[80px] w-[80px] items-center justify-center md:mr-6 md:h-[100px] md:w-[100px]">
               {community.logo ? (
                 <Image
@@ -29,8 +29,10 @@ export function CommunityHeader({ community }: { community: Community }) {
                 </div>
               )}
             </div>
-            <div className="w-full min-w-0 flex-1">
-              <div className="flex w-full flex-col items-center md:flex-row md:items-start md:justify-between">
+            {/* Main content: name, desc, stats + actions */}
+            <div className="flex flex-1 flex-col w-full min-w-0">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between w-full">
+                {/* Name, desc, stats */}
                 <div className="w-full min-w-0 flex-1 text-center md:text-left">
                   <h1 className="mb-2 truncate text-2xl font-bold text-foreground md:text-3xl">{community.name}</h1>
                   <p className="mx-auto mb-4 max-w-2xl whitespace-pre-line break-words text-muted-foreground md:mx-0">
@@ -47,6 +49,13 @@ export function CommunityHeader({ community }: { community: Community }) {
                     </div>
                   </div>
                 </div>
+                {/* Actions: desktop only, right-aligned */}
+                <div className="hidden md:flex md:items-start md:justify-end md:ml-8">
+                  <CommunityHeaderActions community={community} />
+                </div>
+              </div>
+              {/* Actions: mobile only, full width below */}
+              <div className="mt-4 flex md:hidden w-full justify-center">
                 <CommunityHeaderActions community={community} />
               </div>
             </div>
