@@ -31,7 +31,6 @@ export function CommunityEditForm({ community }: CommunityEditFormProps) {
           onChange={handleChange}
           placeholder="Enter community name..."
           required
-          className="rounded-2xl bg-white p-3 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:bg-gray-700"
         />
       </div>
 
@@ -47,7 +46,6 @@ export function CommunityEditForm({ community }: CommunityEditFormProps) {
           onChange={handleChange}
           placeholder="Describe your community..."
           required
-          className="min-h-[100px] w-full rounded-2xl bg-white p-3 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:bg-gray-700"
         />
       </div>
 
