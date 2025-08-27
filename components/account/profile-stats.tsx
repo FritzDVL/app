@@ -7,10 +7,9 @@ interface ProfileStatsProps {
   following: number;
   posts: number;
   reputation: number;
-  loading: boolean;
 }
 
-export function ProfileStats({ followers, following, posts, reputation, loading }: ProfileStatsProps) {
+export function ProfileStats({ followers, following, posts, reputation }: ProfileStatsProps) {
   const stats = [
     {
       label: "Followers",
@@ -24,13 +23,13 @@ export function ProfileStats({ followers, following, posts, reputation, loading 
     },
     {
       label: "Posts",
-      value: loading ? "..." : posts,
+      value: posts,
       icon: <FileText className="h-4 w-4 text-brand-500" />,
     },
     {
       label: "Reputation",
       value: reputation,
-      icon: <LensReputationLogo size={16} />, // Use the LensReputation logo here
+      icon: <LensReputationLogo size={16} />,
     },
   ];
 
