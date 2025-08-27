@@ -35,7 +35,7 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <h2 className="mb-3 flex items-center text-2xl font-bold text-foreground">
             <MessageCircle className="mr-3 h-6 w-6 text-brand-500" />
-            Discussions
+            Threads
           </h2>
         </div>
         <div className="mt-6">
@@ -60,8 +60,8 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
         ) : filteredThreads.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="mb-4 text-4xl">📝</div>
-            <h3 className="mb-2 text-lg font-semibold text-slate-900">No threads yet</h3>
-            <p className="text-slate-600">Be the first to start a discussion in this community!</p>
+            <h3 className="mb-2 text-lg font-semibold text-foreground">No threads yet</h3>
+            <p className="text-muted-foreground">Be the first to start a thread in this community!</p>
           </div>
         ) : (
           <div className="space-y-4">
