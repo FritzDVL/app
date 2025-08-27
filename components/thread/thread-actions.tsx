@@ -14,6 +14,7 @@ interface ThreadActionsProps {
 
 export function ThreadActions({ thread }: ThreadActionsProps) {
   const { canEdit } = useCanEditThread(thread);
+
   return (
     <div className="mb-4 flex items-center justify-between">
       <BackNavigationLink href={thread?.community ? `/communities/${thread.community}` : "/communities"}>
