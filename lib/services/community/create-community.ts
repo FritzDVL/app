@@ -26,16 +26,13 @@ export interface CreateCommunityResult {
  * Creates a community using the full business logic
  * Orchestrates the entire community creation process
  */
-export async function createCommunity(
-  formData: CreateCommunityFormData,
-  imageFile?: File,
-): Promise<CreateCommunityResult> {
+export async function createCommunity(formData: CreateCommunityFormData): Promise<CreateCommunityResult> {
   try {
     // 1. Upload image if provided
     let iconUri;
-    if (imageFile) {
+    if (formData.logo) {
       const acl = immutable(lensChain.id);
-      const { uri } = await storageClient.uploadFile(imageFile, { acl });
+      const { uri } = await storageClient.uploadFile(formData.logo, { acl });
       iconUri = uri;
     }
 

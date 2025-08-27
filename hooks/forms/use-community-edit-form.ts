@@ -24,37 +24,39 @@ export function useCommunityEditForm(community: Community) {
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: any } },
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        toast.error("Please select a valid image file");
-        return;
+    // Handle logo file input (set or clear)
+    if (name === "logo") {
+      if (value) {
+        // File selected: validate and set preview
+        if (!value.type?.startsWith("image/")) {
+          toast.error("Please select a valid image file");
+          return;
+        }
+        if (value.size > 5 * 1024 * 1024) {
+          toast.error("Image must be less than 5MB");
+          return;
+        }
+        setFormData(prev => ({ ...prev, logo: value }));
+        const url = URL.createObjectURL(value);
+        setPreviewUrl(url);
+      } else {
+        // File cleared
+        setFormData(prev => ({ ...prev, logo: null }));
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+          setPreviewUrl(null);
+        }
       }
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image must be less than 5MB");
-        return;
-      }
-      setFormData(prev => ({ ...prev, logo: file }));
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+      return;
     }
-  };
 
-  const clearImage = () => {
-    setFormData(prev => ({ ...prev, logo: null }));
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-      setPreviewUrl(null);
-    }
+    // Handle all other fields (text, textarea, etc.)
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,8 +111,6 @@ export function useCommunityEditForm(community: Community) {
     setPreviewUrl,
     loading,
     handleChange,
-    handleImageChange,
-    clearImage,
     handleSubmit,
   };
 }

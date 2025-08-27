@@ -1,14 +1,14 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ImageUploadInput } from "@/components/ui/image-upload-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityCreateForm } from "@/hooks/forms/use-community-create-form";
-import { useAuthStore } from "@/stores/auth-store";
 
 export function CommunityCreateForm() {
-  const { formData, loading, error, handleChange, handleImageChange, handleSubmit } = useCommunityCreateForm();
-  const { account, walletAddress } = useAuthStore();
+  const { formData, loading, error, handleChange, handleSubmit } = useCommunityCreateForm();
 
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
@@ -29,30 +29,18 @@ export function CommunityCreateForm() {
               value={formData.name}
               onChange={handleChange}
               placeholder="e.g. Lens Developers"
-              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               required
             />
           </div>
 
           {/* Image Upload */}
-          <div className="space-y-2">
-            <Label htmlFor="image" className="text-base font-medium text-foreground">
-              Community Image (optional)
-            </Label>
-            <Input
-              id="image"
-              name="image"
-              type="file"
-              accept="image/*"
-              className="w-full rounded-2xl border-slate-300/60 bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
-              onChange={handleImageChange}
-            />
-            {formData.logo && (
-              <div className="mt-2">
-                <span className="text-xs text-foreground">Selected: {formData.logo.name}</span>
-              </div>
-            )}
-          </div>
+          <ImageUploadInput
+            id="community-create-image"
+            label="Community Image (optional)"
+            recommended="PNG, JPG up to 5MB. Recommended: 200x200px"
+            disabled={loading}
+            onFileChange={file => handleChange({ target: { name: "logo", value: file } })}
+          />
 
           {/* Description */}
           <div className="space-y-2">
@@ -66,7 +54,6 @@ export function CommunityCreateForm() {
               onChange={handleChange}
               placeholder="Describe your community..."
               required
-              className="min-h-[80px] w-full rounded-2xl bg-white p-3 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:bg-gray-700"
             />
           </div>
 
@@ -82,7 +69,6 @@ export function CommunityCreateForm() {
               onChange={handleChange}
               placeholder="0x... (your wallet address)"
               required
-              className="rounded-2xl border-slate-300/60 bg-white/80 text-muted-foreground backdrop-blur-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               disabled={!!formData.adminAddress}
             />
           </div>

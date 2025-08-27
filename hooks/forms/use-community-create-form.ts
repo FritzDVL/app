@@ -38,14 +38,32 @@ export function useCommunityCreateForm() {
     }
   }, [account?.address]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (e.target.name === "imageFile") return;
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | { target: { name: string; value: any; files?: FileList } },
+  ) => {
+    const { name, value } = e.target;
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setFormData({ ...formData, logo: file });
+    // Handle logo file input (real input or programmatic)
+    if (name === "logo") {
+      let file: File | null = null;
+      if ("files" in e.target && e.target.files) {
+        // Real input event: use the first file only
+        file = e.target.files[0] || null;
+      } else if (value instanceof File) {
+        // Programmatic: value is a File
+        file = value;
+      } else if (value === null) {
+        // Programmatic: clear
+        file = null;
+      }
+      setFormData(prev => ({ ...prev, logo: file }));
+      return;
+    }
+
+    // Handle all other fields (text, textarea, etc.)
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,7 +82,7 @@ export function useCommunityCreateForm() {
       actionFormData.append("description", formData.description);
       actionFormData.append("adminAddress", formData.adminAddress);
       if (formData.logo) {
-        actionFormData.append("image", formData.logo);
+        actionFormData.append("logo", formData.logo);
       }
 
       // Show loading toast
@@ -112,7 +130,6 @@ export function useCommunityCreateForm() {
     loading,
     error,
     handleChange,
-    handleImageChange,
     handleSubmit,
   };
 }
