@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { CommunityHeaderActions } from "@/components/communities/community-header-actions";
+import { CommunityRuleMessage } from "@/components/communities/community-rule-message";
 import { Card, CardContent } from "@/components/ui/card";
 import { Community } from "@/lib/domain/communities/types";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
-import { GroupRuleType } from "@lens-protocol/client";
-import { DollarSign, KeyRound, MessageCircle, ShieldCheck, Users } from "lucide-react";
+import { MessageCircle, Users } from "lucide-react";
 
 export function CommunityHeader({ community }: { community: Community }) {
   if (!community) return null;
@@ -51,38 +51,7 @@ export function CommunityHeader({ community }: { community: Community }) {
                     {/* Community Rule Message */}
                     {Boolean(
                       community.rules?.required?.[0]?.type && community.rules?.required?.[0]?.type !== "none",
-                    ) && (
-                      <div className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 dark:bg-gray-700 dark:text-slate-200">
-                        {(() => {
-                          const ruleType = community.rules?.required?.[0]?.type;
-                          switch (ruleType) {
-                            case GroupRuleType.SimplePayment:
-                              return (
-                                <>
-                                  <DollarSign className="mr-1 h-4 w-4 text-yellow-500" />
-                                  Payment required
-                                </>
-                              );
-                            case GroupRuleType.TokenGated:
-                              return (
-                                <>
-                                  <KeyRound className="mr-1 h-4 w-4 text-indigo-500" />
-                                  Token required
-                                </>
-                              );
-                            case GroupRuleType.MembershipApproval:
-                              return (
-                                <>
-                                  <ShieldCheck className="mr-1 h-4 w-4 text-rose-500" />
-                                  Approval required
-                                </>
-                              );
-                            default:
-                              return null;
-                          }
-                        })()}
-                      </div>
-                    )}
+                    ) && <CommunityRuleMessage ruleType={community.rules?.required?.[0]?.type} />}
                   </div>
                 </div>
                 {/* Actions: desktop only, right-aligned */}

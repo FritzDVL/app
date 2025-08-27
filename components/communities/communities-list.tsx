@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { CommunityRuleMessage } from "@/components/communities/community-rule-message";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -95,66 +96,8 @@ export function CommunitiesList({ initialCommunities, isLoading, isError, error 
             {filteredCommunities.length > 0 ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
                 {filteredCommunities.map(community => {
-                  // Detect rule type for badge/icon
-                  let ruleIcon = null;
-                  let ruleText = null;
                   // --- Extract rule type from Lens GroupRules structure ---
-                  let ruleType: string | undefined = undefined;
-                  if (
-                    community.rules &&
-                    Array.isArray(community.rules.required) &&
-                    community.rules.required.length > 0
-                  ) {
-                    ruleType = community.rules.required[0]?.type;
-                  }
-                  console.log("Community rule type:", ruleType);
-                  if (ruleType && ruleType !== "none") {
-                    switch (ruleType) {
-                      case GroupRuleType.SimplePayment:
-                        ruleIcon = (
-                          <svg
-                            className="mr-1 h-4 w-4 text-yellow-500"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 0V4m0 16v-4" />
-                          </svg>
-                        );
-                        ruleText = "Payment required";
-                        break;
-                      case GroupRuleType.TokenGated:
-                        ruleIcon = (
-                          <svg
-                            className="mr-1 h-4 w-4 text-indigo-500"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M8 12h8M12 8v8" />
-                          </svg>
-                        );
-                        ruleText = "Token required";
-                        break;
-                      case GroupRuleType.MembershipApproval:
-                        ruleIcon = (
-                          <svg
-                            className="mr-1 h-4 w-4 text-rose-500"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                          </svg>
-                        );
-                        ruleText = "Approval required";
-                        break;
-                    }
-                  }
+                  const ruleType = community.rules?.required?.[0]?.type;
                   return (
                     <Link key={community.id} href={`/communities/${community.address}`} className="group">
                       <Card className="group w-full min-w-0 cursor-pointer rounded-2xl border bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800 sm:p-6">
@@ -182,11 +125,8 @@ export function CommunitiesList({ initialCommunities, isLoading, isError, error 
                             <div className="flex items-center gap-1 text-muted-foreground">
                               <Users className="h-4 w-4" />
                               <span>{community.memberCount.toLocaleString()}</span>
-                              {ruleIcon && (
-                                <span className="ml-2 flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-gray-700 dark:text-slate-200">
-                                  {ruleIcon}
-                                  {ruleText}
-                                </span>
+                              {ruleType && ruleType !== "none" && (
+                                <CommunityRuleMessage ruleType={ruleType as GroupRuleType} />
                               )}
                             </div>
                           </div>
