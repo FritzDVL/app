@@ -93,12 +93,13 @@ export async function createThread(
     }
 
     // 8. Transform to Thread object using adapter
-    const thread = await adaptFeedToThread(
-      createdFeed,
-      threadRecord,
-      author,
-      rootPost?.__typename === "Post" ? rootPost : null,
-    );
+    if (!rootPost || rootPost.__typename !== "Post") {
+      return {
+        success: false,
+        error: "Root post is missing or not a valid Post",
+      };
+    }
+    const thread = await adaptFeedToThread(createdFeed, threadRecord, author, rootPost);
 
     return {
       success: true,
