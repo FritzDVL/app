@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Community } from "@/lib/domain/communities/types";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
-import { MessageSquare, Search, Users } from "lucide-react";
+import { GroupRuleType } from "@lens-protocol/client";
+import { Group, MessageSquare, Search, Users } from "lucide-react";
 
 interface CommunitiesListProps {
   initialCommunities: Community[];
@@ -106,9 +107,10 @@ export function CommunitiesList({ initialCommunities, isLoading, isError, error 
                   ) {
                     ruleType = community.rules.required[0]?.type;
                   }
+                  console.log("Community rule type:", ruleType);
                   if (ruleType && ruleType !== "none") {
                     switch (ruleType) {
-                      case "SimplePaymentGroupRule":
+                      case GroupRuleType.SimplePayment:
                         ruleIcon = (
                           <svg
                             className="mr-1 h-4 w-4 text-yellow-500"
@@ -122,7 +124,7 @@ export function CommunitiesList({ initialCommunities, isLoading, isError, error 
                         );
                         ruleText = "Payment required";
                         break;
-                      case "TokenGatedGroupRule":
+                      case GroupRuleType.TokenGated:
                         ruleIcon = (
                           <svg
                             className="mr-1 h-4 w-4 text-indigo-500"
@@ -137,7 +139,7 @@ export function CommunitiesList({ initialCommunities, isLoading, isError, error 
                         );
                         ruleText = "Token required";
                         break;
-                      case "MembershipApprovalGroupRule":
+                      case GroupRuleType.MembershipApproval:
                         ruleIcon = (
                           <svg
                             className="mr-1 h-4 w-4 text-rose-500"
@@ -174,18 +176,18 @@ export function CommunitiesList({ initialCommunities, isLoading, isError, error 
                           </div>
                           <h3 className="mb-2 flex items-center text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
                             {community.name}
-                            {ruleIcon && (
-                              <span className="ml-2 flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-gray-700 dark:text-slate-200">
-                                {ruleIcon}
-                                {ruleText}
-                              </span>
-                            )}
                           </h3>
                           <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{community.description}</p>
                           <div className="flex items-center justify-between text-sm">
                             <div className="flex items-center gap-1 text-muted-foreground">
                               <Users className="h-4 w-4" />
                               <span>{community.memberCount.toLocaleString()}</span>
+                              {ruleIcon && (
+                                <span className="ml-2 flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-gray-700 dark:text-slate-200">
+                                  {ruleIcon}
+                                  {ruleText}
+                                </span>
+                              )}
                             </div>
                           </div>
                           {community.postCount !== undefined && (
