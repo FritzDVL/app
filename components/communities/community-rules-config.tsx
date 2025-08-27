@@ -9,9 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { CommunityRule } from "@/lib/domain/communities/types";
 import { isMainnet } from "@/lib/env";
-import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
 import { Account } from "@lens-protocol/client";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface CommunityRulesConfigProps {
   communityRule: CommunityRule;
@@ -109,22 +109,33 @@ export function CommunityRulesConfig({ communityRule, onCommunityRuleChange, rec
           {isEnabled ? "Configure how users can join your community" : "Community will be free to join for everyone"}
         </p>
       </div>
-      {/* Access Type Selection */}
-      {isEnabled && (
-        <>
-          <RuleTypeSelect value={communityRule.type} onChange={handleRuleTypeChange} />
-          {/* Modular config UIs */}
-          {communityRule.type === "SimplePaymentGroupRule" && (
-            <PaymentRuleConfig rule={communityRule} tokenOptions={tokenOptions} onChange={updatePaymentRule} />
-          )}
-          {communityRule.type === "TokenGatedGroupRule" && (
-            <TokenGatedRuleConfig rule={communityRule} onChange={updateTokenGatedRule} />
-          )}
-          {communityRule.type === "MembershipApprovalGroupRule" && (
-            <MembershipApprovalRuleConfig rule={communityRule} onChange={updateApprovalRule} />
-          )}
-        </>
-      )}
+      {/* Access Type Selection (animated) */}
+      <AnimatePresence initial={false}>
+        {isEnabled && (
+          <motion.div
+            key="rules-block"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+            style={{ overflow: "hidden" }}
+          >
+            <div className="pt-2">
+              <RuleTypeSelect value={communityRule.type} onChange={handleRuleTypeChange} />
+              {/* Modular config UIs */}
+              {communityRule.type === "SimplePaymentGroupRule" && (
+                <PaymentRuleConfig rule={communityRule} tokenOptions={tokenOptions} onChange={updatePaymentRule} />
+              )}
+              {communityRule.type === "TokenGatedGroupRule" && (
+                <TokenGatedRuleConfig rule={communityRule} onChange={updateTokenGatedRule} />
+              )}
+              {communityRule.type === "MembershipApprovalGroupRule" && (
+                <MembershipApprovalRuleConfig rule={communityRule} onChange={updateApprovalRule} />
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
