@@ -1,18 +1,14 @@
-import { ReputationStatusBanner } from "@/components/shared/reputation-status-banner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useLensReputationScore } from "@/hooks/common/use-lensreputation-score";
 import { useCommunityCreateForm } from "@/hooks/forms/use-community-create-form";
 import { useAuthStore } from "@/stores/auth-store";
-import { Address } from "@/types/common";
 
 export function CommunityCreateForm() {
   const { formData, loading, error, handleChange, handleImageChange, handleSubmit } = useCommunityCreateForm();
   const { account, walletAddress } = useAuthStore();
-  const { reputation, canCreateCommunity } = useLensReputationScore(walletAddress as Address, account?.address);
 
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
@@ -91,14 +87,6 @@ export function CommunityCreateForm() {
             />
           </div>
 
-          {/* Reputation Status */}
-          <ReputationStatusBanner
-            reputation={reputation}
-            canPerformAction={canCreateCommunity}
-            actionType="communities"
-            requiredScore={700}
-          />
-
           {error && <div className="text-sm text-red-600">{error}</div>}
 
           <div className="flex justify-end">
@@ -106,11 +94,7 @@ export function CommunityCreateForm() {
               type="submit"
               className="rounded-full bg-gradient-to-r from-green-500 to-green-600 px-6 font-semibold text-white hover:from-green-600 hover:to-green-700 dark:bg-gray-700"
               disabled={
-                loading ||
-                !canCreateCommunity ||
-                !formData.name.trim() ||
-                !formData.description.trim() ||
-                !formData.adminAddress.trim()
+                loading || !formData.name.trim() || !formData.description.trim() || !formData.adminAddress.trim()
               }
             >
               {loading ? (
