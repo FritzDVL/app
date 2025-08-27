@@ -117,7 +117,7 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
                 key={val}
                 size="sm"
                 variant={tipAmount === val && !customMode ? "default" : "outline"}
-                className={`flex-1 rounded-full px-0 py-2 font-semibold transition-all duration-150 ${tipAmount === val && !customMode ? "scale-105 ring-2 ring-green-200 dark:ring-green-700" : "hover:scale-105"} dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100`}
+                className={`flex-1 px-0 py-2 font-semibold transition-all duration-150 ${tipAmount === val && !customMode ? "scale-105 ring-2 ring-green-200 dark:ring-green-700" : "hover:scale-105"} dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100`}
                 onClick={() => {
                   setTipAmount(val);
                   setCustomMode(false);
@@ -129,7 +129,7 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
             <Button
               size="sm"
               variant={customMode ? "default" : "outline"}
-              className={`flex-1 rounded-full px-0 py-2 font-semibold transition-all duration-150 ${customMode ? "scale-105 ring-2 ring-green-200 dark:ring-green-700" : "hover:scale-105"} dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100`}
+              className={`flex-1 px-0 py-2 font-semibold transition-all duration-150 ${customMode ? "scale-105 ring-2 ring-green-200 dark:ring-green-700" : "hover:scale-105"} dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100`}
               onClick={() => {
                 setCustomMode(true);
                 setTipAmount(parseFloat(customValue) || 1);
@@ -175,7 +175,7 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
           {/* Send button */}
           <Button
             size="sm"
-            className="w-full rounded-full bg-green-600 font-semibold text-white shadow-sm hover:bg-green-700 dark:bg-green-500 dark:text-gray-900 dark:hover:bg-green-400"
+            className="w-full"        
             disabled={!tipAmount || tipAmount <= 0}
             onClick={handleTip}
           >

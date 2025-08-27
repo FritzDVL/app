@@ -60,7 +60,6 @@ export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
               value={formData.title}
               onChange={e => handleChange("title", e.target.value)}
               placeholder="What's your thread about?"
-              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
               required
             />
           </div>
@@ -74,7 +73,6 @@ export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
               value={formData.summary}
               onChange={e => handleChange("summary", e.target.value)}
               placeholder="Brief description (max 100 chars)"
-              className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 dark:bg-gray-700"
               maxLength={100}
             />
           </div>
@@ -83,7 +81,7 @@ export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
             <Label htmlFor="content" className="text-sm font-medium text-foreground">
               Content
             </Label>
-            <div className="rounded-2xl border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm dark:bg-gray-800">
+            <div className="rounded-2xl border-brand-200/40 bg-white/50backdrop-blur-sm dark:bg-gray-800">
               <TextEditor onChange={value => handleChange("content", value)} />
             </div>
           </div>

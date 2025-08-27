@@ -72,7 +72,6 @@ export function ThreadEditForm({ thread }: ThreadEditFormProps) {
                 value={formData.title}
                 onChange={e => handleChange("title", e.target.value)}
                 placeholder="Thread title"
-                className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-blue-100 dark:bg-gray-700"
                 required
               />
             </div>
@@ -87,7 +86,6 @@ export function ThreadEditForm({ thread }: ThreadEditFormProps) {
                 value={formData.summary}
                 onChange={e => handleChange("summary", e.target.value)}
                 placeholder="Brief description (max 100 chars)"
-                className="h-12 rounded-full border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 dark:bg-gray-700"
                 maxLength={100}
               />
             </div>
@@ -97,7 +95,7 @@ export function ThreadEditForm({ thread }: ThreadEditFormProps) {
               <Label htmlFor="edit-content" className="text-sm font-medium text-foreground">
                 Content
               </Label>
-              <div className="rounded-2xl border-brand-200/40 bg-white/50 p-4 backdrop-blur-sm dark:bg-gray-800">
+              <div className="rounded-2xl border-brand-200/40 bg-white/50 backdrop-blur-sm dark:bg-gray-800">
                 <TextEditor onChange={value => handleChange("content", value)} initialValue={initialContent} />
               </div>
             </div>
@@ -124,7 +122,6 @@ export function ThreadEditForm({ thread }: ThreadEditFormProps) {
               <Button
                 type="submit"
                 disabled={isSaving || !formData.title.trim() || !formData.content.trim()}
-                className="rounded-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50"
               >
                 {isSaving ? (
                   <span className="flex items-center gap-2">
