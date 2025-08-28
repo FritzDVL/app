@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SimplePaymentGroupRule } from "../types/payment-rule-config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useUpdateCommunityRules } from "@/hooks/communities/use-update-community-rules";
+import { useCommunityRules } from "@/hooks/communities/use-community-rules";
 import { Community } from "@/lib/domain/communities/types";
 import { Address } from "@/types/common";
 import { GroupRule, bigDecimal } from "@lens-protocol/client";
@@ -22,7 +22,7 @@ export function SimplePaymentRuleConfig({ community, currentRule }: SimplePaymen
   const [touched, setTouched] = useState(false);
 
   // Allow currentRule to be undefined
-  const { updateRules, loading, error } = useUpdateCommunityRules(community, currentRule?.id);
+  const { updateRules, loading, error } = useCommunityRules(community, currentRule?.id);
 
   const amountNum = Number(localAmount);
   const validAmount = !isNaN(amountNum) && amountNum > 0;

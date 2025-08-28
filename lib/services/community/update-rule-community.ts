@@ -1,7 +1,7 @@
 import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
 import { Community } from "@/lib/domain/communities/types";
 import { updateGroupRule } from "@/lib/external/lens/primitives/groups";
-import type { SessionClient } from "@lens-protocol/client";
+import type { RuleId, SessionClient } from "@lens-protocol/client";
 import type { WalletClient } from "viem";
 
 export interface UpdateCommunityRuleResult {
@@ -12,7 +12,7 @@ export interface UpdateCommunityRuleResult {
 export async function updateCommunityRule(
   community: Community,
   rule: SimplePaymentGroupRule | null,
-  ruleIdToRemove: string | undefined,
+  ruleIdToRemove: RuleId | undefined,
   sessionClient: SessionClient,
   walletClient: WalletClient,
 ): Promise<UpdateCommunityRuleResult> {

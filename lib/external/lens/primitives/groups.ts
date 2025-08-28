@@ -3,7 +3,7 @@ import { SimplePaymentGroupRule } from "@/components/communities/rules/types/pay
 import { Community, Moderator } from "@/lib/domain/communities/types";
 import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { evmAddress } from "@lens-protocol/client";
-import type { Group, GroupStatsResponse, SessionClient } from "@lens-protocol/client";
+import type { Group, GroupStatsResponse, RuleId, SessionClient } from "@lens-protocol/client";
 import {
   addAdmins,
   fetchAdminsFor,
@@ -232,22 +232,15 @@ export async function fetchAdminsFromGroup(address: string): Promise<Moderator[]
  */
 export async function updateGroupRule(
   groupAddress: string,
-  ruleIdToRemove: string | undefined,
+  ruleIdToRemove: RuleId | undefined,
   ruleToAdd: SimplePaymentGroupRule,
   sessionClient: SessionClient,
   walletClient: WalletClient,
 ): Promise<boolean> {
   // Remove the old rule if provided
   if (ruleIdToRemove) {
-    const removeResult = await updateGroupRules(sessionClient, {
-      group: groupAddress,
-      toRemove: [ruleIdToRemove],
-    })
-      .andThen(handleOperationWith(walletClient))
-      .andThen(sessionClient.waitForTransaction);
-
-    if (removeResult.isErr()) {
-      console.error("Error removing old rule from group:", removeResult.error);
+    const removed = await removeGroupRule(groupAddress, ruleIdToRemove, sessionClient, walletClient);
+    if (!removed) {
       return false;
     }
   }
@@ -268,6 +261,30 @@ export async function updateGroupRule(
 
   if (addResult.isErr()) {
     console.error("Error adding new rule to group:", addResult.error);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Removes a group rule by ruleId.
+ */
+export async function removeGroupRule(
+  groupAddress: string,
+  ruleIdToRemove: RuleId,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
+): Promise<boolean> {
+  const removeResult = await updateGroupRules(sessionClient, {
+    group: groupAddress,
+    toRemove: [ruleIdToRemove],
+  })
+    .andThen(handleOperationWith(walletClient))
+    .andThen(sessionClient.waitForTransaction);
+
+  if (removeResult.isErr()) {
+    console.error("Error removing rule from group:", removeResult.error);
     return false;
   }
 

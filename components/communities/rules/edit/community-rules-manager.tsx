@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { SimplePaymentRuleConfig } from "./simple-payment-rule-config";
 import { CommunityRuleMessage } from "@/components/communities/rules/community-rule-message";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useCommunityRules } from "@/hooks/communities/use-community-rules";
 import { Community } from "@/lib/domain/communities/types";
 import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
 import { GroupRule, GroupRuleType } from "@lens-protocol/client";
@@ -13,8 +15,10 @@ interface CommunityRulesManagerProps {
 export function CommunityRulesManager({ community }: CommunityRulesManagerProps) {
   const currentRule = community.rules?.required?.[0] as GroupRule | undefined;
   const currentRuleType = currentRule?.type as GroupRuleType | "none" | undefined;
-
   const [selectedRule, setSelectedRule] = useState<GroupRuleType | "none">(currentRuleType || "none");
+
+  // Add hook for rule actions
+  const { removeRule, loading, error } = useCommunityRules(community, currentRule?.id);
 
   return (
     <div className="space-y-6">
@@ -88,7 +92,12 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
           </SelectContent>
         </Select>
 
-        {/* Payment Rule Configuration */}
+        {selectedRule === "none" && currentRule && (
+          <Button onClick={() => removeRule(currentRule.id)} disabled={loading} className="mt-2" variant="destructive">
+            {loading ? "Removing..." : "Remove Rule"}
+          </Button>
+        )}
+
         {selectedRule === GroupRuleType.SimplePayment && (
           <SimplePaymentRuleConfig community={community} currentRule={currentRule} />
         )}
@@ -105,6 +114,7 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
         {/* {selectedRule === GroupRuleType.MembershipApproval && (
           <MembershipApprovalRuleConfig approvers={approvers} onChange={setApprovers} />
         )} */}
+        {error && <div className="mt-2 text-xs text-red-500">{error.message}</div>}
       </div>
     </div>
   );
