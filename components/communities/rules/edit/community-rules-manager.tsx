@@ -78,8 +78,12 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
           <SelectContent>
             <SelectItem value="none">No rule (open community)</SelectItem>
             <SelectItem value={GroupRuleType.SimplePayment}>Payment required</SelectItem>
-            <SelectItem value={GroupRuleType.TokenGated}>Token required</SelectItem>
-            <SelectItem value={GroupRuleType.MembershipApproval}>Approval required</SelectItem>
+            <SelectItem disabled value={GroupRuleType.TokenGated}>
+              Token required
+            </SelectItem>
+            <SelectItem disabled value={GroupRuleType.MembershipApproval}>
+              Approval required
+            </SelectItem>
           </SelectContent>
         </Select>
 
@@ -111,7 +115,7 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
         )}
 
         <Button onClick={() => console.log("Save rule:", selectedRule)} className="mt-4">
-          Save Rule
+          Update Rule
         </Button>
       </div>
     </div>
