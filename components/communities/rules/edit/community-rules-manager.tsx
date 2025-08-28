@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { SimplePaymentRuleConfig } from "./simple-payment-rule-config";
 import { CommunityRuleMessage } from "@/components/communities/rules/community-rule-message";
-import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Community } from "@/lib/domain/communities/types";
 import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
@@ -13,6 +13,7 @@ interface CommunityRulesManagerProps {
 export function CommunityRulesManager({ community }: CommunityRulesManagerProps) {
   const currentRule = community.rules?.required?.[0] as GroupRule | undefined;
   const currentRuleType = currentRule?.type as GroupRuleType | "none" | undefined;
+
   const [selectedRule, setSelectedRule] = useState<GroupRuleType | "none">(currentRuleType || "none");
 
   return (
@@ -88,35 +89,20 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
         </Select>
 
         {/* Payment Rule Configuration */}
-        {selectedRule === GroupRuleType.SimplePayment && (
-          <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
-            <h5 className="mb-3 font-medium text-foreground">Payment Configuration</h5>
-            <div className="space-y-4">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-foreground">Amount (GHO)</label>
-                <input
-                  type="number"
-                  step="0.001"
-                  min="0"
-                  placeholder="0.001"
-                  className="w-full rounded-2xl border border-brand-200/40 bg-gray-50/80 px-4 py-2 text-base ring-offset-background placeholder:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-200/40 focus-visible:ring-offset-2 dark:border-gray-700/60 dark:bg-slate-800/90"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-foreground">Recipient Address</label>
-                <input
-                  type="text"
-                  placeholder="0x..."
-                  className="w-full rounded-2xl border border-brand-200/40 bg-gray-50/80 px-4 py-2 text-base ring-offset-background placeholder:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-200/40 focus-visible:ring-offset-2 dark:border-gray-700/60 dark:bg-slate-800/90"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        <Button onClick={() => console.log("Save rule:", selectedRule)} className="mt-4">
-          Update Rule
-        </Button>
+        {selectedRule === GroupRuleType.SimplePayment && <SimplePaymentRuleConfig community={community} />}
+        {/* Token Gated Rule Configuration */}
+        {/* {selectedRule === GroupRuleType.TokenGated && (
+          <TokenGatedRuleConfig
+            tokenType={tokenGatedConfig.tokenType}
+            tokenAddress={tokenGatedConfig.tokenAddress}
+            tokenValue={tokenGatedConfig.tokenValue}
+            onChange={setTokenGatedConfig}
+          />
+        )} */}
+        {/* Membership Approval Rule Configuration */}
+        {/* {selectedRule === GroupRuleType.MembershipApproval && (
+          <MembershipApprovalRuleConfig approvers={approvers} onChange={setApprovers} />
+        )} */}
       </div>
     </div>
   );
