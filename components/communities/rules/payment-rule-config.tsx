@@ -50,19 +50,13 @@ export function PaymentRuleConfig({ rule, onChange }: PaymentRuleConfigProps) {
                 },
               });
             }}
-            className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
           />
         </div>
         <div className="space-y-3">
           <Label htmlFor="token" className="text-base font-medium text-foreground">
             Payment Token
           </Label>
-          <Input
-            id="token"
-            value={tokenOptions[0].label}
-            disabled
-            className="cursor-not-allowed rounded-2xl border-slate-300/60 bg-muted/50 text-base dark:border-gray-600 dark:bg-gray-700"
-          />
+          <Input id="token" value={tokenOptions[0].label} disabled />
         </div>
       </div>
       <div className="space-y-3 pt-2">
@@ -83,7 +77,6 @@ export function PaymentRuleConfig({ rule, onChange }: PaymentRuleConfigProps) {
               },
             });
           }}
-          className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
         />
         <p className="mt-1 flex items-center gap-2 text-base text-muted-foreground">
           <AlertTriangle className="h-4 w-4 text-yellow-600" />

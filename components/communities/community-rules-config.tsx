@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  MembershipApprovalGroupRule,
-  MembershipApprovalRuleConfig,
-} from "@/components/communities/rules/membership-approval-rule-config";
+import { MembershipApprovalGroupRule } from "@/components/communities/rules/membership-approval-rule-config";
 import { PaymentRuleConfig, SimplePaymentGroupRule } from "@/components/communities/rules/payment-rule-config";
 import { RuleTypeSelect } from "@/components/communities/rules/rule-type-select";
-import { TokenGatedGroupRule, TokenGatedRuleConfig } from "@/components/communities/rules/token-gated-rule-config";
+import { TokenGatedGroupRule } from "@/components/communities/rules/token-gated-rule-config";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Account, TokenStandard, bigDecimal, evmAddress } from "@lens-protocol/client";
@@ -19,8 +16,6 @@ interface CommunityRulesConfigProps {
   ) => void;
   recipient: Account;
 }
-
-// Token configurations for different networks
 
 export function CommunityRulesConfig({ onCommunityRuleChange, recipient }: CommunityRulesConfigProps) {
   const [isEnabled, setIsEnabled] = useState(false);

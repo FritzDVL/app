@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityCreateForm } from "@/hooks/forms/use-community-create-form";
-import { Account, GroupRule } from "@lens-protocol/client";
+import { Account } from "@lens-protocol/client";
 
 interface CommunityCreateFormProps {
   onGroupRuleChange?: (groupRule: SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule) => void;
@@ -51,7 +51,6 @@ export function CommunityCreateForm({ onGroupRuleChange, creator }: CommunityCre
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="e.g. Lens Developers"
-                className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
                 required
               />
             </div>
@@ -77,7 +76,6 @@ export function CommunityCreateForm({ onGroupRuleChange, creator }: CommunityCre
                 onChange={handleChange}
                 placeholder="Describe your community..."
                 required
-                className="min-h-[80px] w-full rounded-2xl border-slate-300/60 bg-white/80 p-3 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
               />
             </div>
 
@@ -93,7 +91,6 @@ export function CommunityCreateForm({ onGroupRuleChange, creator }: CommunityCre
                 onChange={handleChange}
                 placeholder="0x... (your wallet address)"
                 required
-                className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
                 disabled={!!formData.adminAddress}
               />
             </div>
