@@ -7,7 +7,7 @@ import { TokenGatedGroupRule } from "@/components/communities/rules/token-gated-
 import { joinAndIncrementCommunityMember } from "@/lib/external/lens/primitives/groups";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
-import { GroupRule, useSessionClient } from "@lens-protocol/react";
+import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
 
@@ -96,7 +96,6 @@ export function useCommunityCreateForm() {
       if (formData.communityRule) {
         actionFormData.append("communityRule", JSON.stringify(formData.communityRule));
       }
-
       // Show loading toast
       const loadingToastId = toast.loading("Creating Community", {
         description: "Setting up your community on Lens Protocol...",

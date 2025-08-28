@@ -67,7 +67,7 @@ export async function createCommunity(formData: CreateCommunityFormData): Promis
         required: [formData.communityRule],
       };
     }
-    console.dir(createGroupParams, { depth: null });
+
     const result = await createGroup(adminSessionClient, createGroupParams)
       .andThen(handleOperationWith(adminWallet))
       .andThen(adminSessionClient.waitForTransaction)

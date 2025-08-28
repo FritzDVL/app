@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { isMainnet } from "@/lib/env";
+import { getPaymentTokens } from "@/lib/shared/payment-tokens";
 import { Address } from "@/types/common";
 import { BigDecimal, bigDecimal, evmAddress } from "@lens-protocol/client";
 import { AlertTriangle } from "lucide-react";
@@ -23,9 +23,7 @@ export function PaymentRuleConfig({ rule, onChange }: PaymentRuleConfigProps) {
   const [amount, setAmount] = useState<BigDecimal>(rule.simplePaymentRule.native);
   const [recipient, setRecipient] = useState<Address>(rule.simplePaymentRule.recipient);
 
-  const tokenOptions = isMainnet()
-    ? [{ value: "0x000000000000000000000000000000000000800A", label: "GHO", symbol: "GHO" }]
-    : [{ value: "0x000000000000000000000000000000000000800A", label: "GRASS", symbol: "GRASS" }];
+  const tokenOptions = getPaymentTokens();
 
   return (
     <div className="space-y-8 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
