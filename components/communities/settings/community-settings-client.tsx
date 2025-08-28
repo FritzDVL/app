@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CommunityRulesManager } from "@/components/communities/community-rules-manager";
+import { CommunityRulesManager } from "@/components/communities/rules/edit/community-rules-manager";
 import { CommunityAccessDenied } from "@/components/communities/settings/community-access-denied";
 import { CommunityEditForm } from "@/components/communities/settings/community-edit-form";
 import { CommunityModeratorsManager } from "@/components/communities/settings/community-moderators-manager";

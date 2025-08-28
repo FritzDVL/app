@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CommunityRuleMessage } from "@/components/communities/community-rule-message";
+import { CommunityRuleMessage } from "@/components/communities/rules/community-rule-message";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Community } from "@/lib/domain/communities/types";

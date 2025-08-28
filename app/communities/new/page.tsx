@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { CommunityCreateForm } from "@/components/communities/community-create-form";
 import { CommunityCreationTips } from "@/components/communities/community-creation-tips";
-import { CommunityRulesTips } from "@/components/communities/community-rules-tips";
-import { MembershipApprovalGroupRule } from "@/components/communities/rules/membership-approval-rule-config";
-import { SimplePaymentGroupRule } from "@/components/communities/rules/payment-rule-config";
-import { TokenGatedGroupRule } from "@/components/communities/rules/token-gated-rule-config";
+import { CommunityCreateForm } from "@/components/communities/forms/community-create-form";
+import { CommunityRulesTips } from "@/components/communities/rules/community-rules-tips";
+import { MembershipApprovalGroupRule } from "@/components/communities/rules/types/membership-approval-rule-config";
+import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
+import { TokenGatedGroupRule } from "@/components/communities/rules/types/token-gated-rule-config";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { useAuthStore } from "@/stores/auth-store";

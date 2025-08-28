@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { CommunityRulesConfig } from "./community-rules-config";
-import { MembershipApprovalGroupRule } from "./rules/membership-approval-rule-config";
-import { SimplePaymentGroupRule } from "./rules/payment-rule-config";
-import { TokenGatedGroupRule } from "./rules/token-gated-rule-config";
+import { CommunityRulesConfig } from "../rules/community-rules-config";
+import { MembershipApprovalGroupRule } from "../rules/types/membership-approval-rule-config";
+import { SimplePaymentGroupRule } from "../rules/types/payment-rule-config";
+import { TokenGatedGroupRule } from "../rules/types/token-gated-rule-config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";

@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { MembershipApprovalGroupRule } from "@/components/communities/rules/membership-approval-rule-config";
-import { PaymentRuleConfig, SimplePaymentGroupRule } from "@/components/communities/rules/payment-rule-config";
 import { RuleTypeSelect } from "@/components/communities/rules/rule-type-select";
-import { TokenGatedGroupRule } from "@/components/communities/rules/token-gated-rule-config";
+import { MembershipApprovalGroupRule } from "@/components/communities/rules/types/membership-approval-rule-config";
+import { PaymentRuleConfig, SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
+import { TokenGatedGroupRule } from "@/components/communities/rules/types/token-gated-rule-config";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Account, TokenStandard, bigDecimal, evmAddress } from "@lens-protocol/client";

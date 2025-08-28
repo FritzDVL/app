@@ -1,5 +1,5 @@
 import React from "react";
-import { CommunityJoinBanner } from "@/components/communities/community-join-banner";
+import { CommunityJoinBanner } from "@/components/communities/display/community-join-banner";
 import { ThreadActions } from "@/components/thread/thread-actions";
 import { ThreadCard } from "@/components/thread/thread-card";
 import { ThreadRepliesList } from "@/components/thread/thread-replies-list";

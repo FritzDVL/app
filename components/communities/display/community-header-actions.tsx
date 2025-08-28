@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LeaveCommunityDialog } from "@/components/communities/community-leave-dialog";
+import { LeaveCommunityDialog } from "@/components/communities/display/community-leave-dialog";
 import { Button } from "@/components/ui/button";
 import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
-import { useIsModerator } from "@/hooks/communities/use-is-moderator";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { useLeaveCommunity } from "@/hooks/communities/use-leave-community";
 import type { Community } from "@/lib/domain/communities/types";
@@ -17,7 +15,6 @@ export function CommunityHeaderActions({ community }: { community: Community }) 
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const joinCommunity = useJoinCommunity(community);
   const leaveCommunity = useLeaveCommunity(community);
-  const isModerator = useIsModerator(community);
   const { isLoggedIn } = useAuthStore();
   const { isMember, updateIsMember, isLoading: isMemberLoading } = useCommunityMembership(community.address);
   const router = useRouter();

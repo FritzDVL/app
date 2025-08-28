@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { CommunityHeaderActions } from "@/components/communities/community-header-actions";
-import { CommunityRuleMessage } from "@/components/communities/community-rule-message";
+import { CommunityHeaderActions } from "@/components/communities/display/community-header-actions";
+import { CommunityRuleMessage } from "@/components/communities/rules/community-rule-message";
 import { Card, CardContent } from "@/components/ui/card";
 import { Community } from "@/lib/domain/communities/types";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
