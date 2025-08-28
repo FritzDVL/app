@@ -1,22 +1,44 @@
 import { useState } from "react";
+import { revalidateCommunityPath } from "@/app/actions/revalidate-path";
 import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
 import { Community } from "@/lib/domain/communities/types";
+import { updateCommunityRule } from "@/lib/services/community/update-rule-community";
+import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
+import { useWalletClient } from "wagmi";
 
-export function useUpdateCommunityRules(community: Community) {
+export function useUpdateCommunityRules(community: Community, currentRuleId?: string) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  const sessionClient = useSessionClient();
+  const walletClient = useWalletClient();
 
   const updateRules = async (newRule: SimplePaymentGroupRule | null) => {
     setLoading(true);
     setError(null);
     const toastId = toast.loading("Updating community rule...");
     try {
-      // Simulate an API call to update community rules
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // Here you would typically call your API to update the community rules
-      console.log("Updated community:", community.id, "with new rule:", newRule);
-      toast.success("Community rule updated!", { id: toastId });
+      if (!sessionClient.data || !walletClient.data) {
+        setError(new Error("Wallet or session client not ready"));
+        toast.error("Wallet or session client not ready", { id: toastId });
+        setLoading(false);
+        return;
+      }
+      const result = await updateCommunityRule(
+        community,
+        newRule,
+        currentRuleId,
+        sessionClient.data,
+        walletClient.data,
+      );
+      if (result.success) {
+        toast.success("Community rule updated!", { id: toastId });
+        revalidateCommunityPath(community.address);
+      } else {
+        toast.error(result.error || "An error occurred while updating the rule.", { id: toastId });
+        setError(new Error(result.error || "Unknown error"));
+      }
     } catch (err) {
       setError(err as Error);
       toast.error((err as Error).message || "An error occurred while updating the rule.", { id: toastId });

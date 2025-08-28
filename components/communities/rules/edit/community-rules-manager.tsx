@@ -89,7 +89,9 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
         </Select>
 
         {/* Payment Rule Configuration */}
-        {selectedRule === GroupRuleType.SimplePayment && <SimplePaymentRuleConfig community={community} />}
+        {selectedRule === GroupRuleType.SimplePayment && (
+          <SimplePaymentRuleConfig community={community} currentRule={currentRule} />
+        )}
         {/* Token Gated Rule Configuration */}
         {/* {selectedRule === GroupRuleType.TokenGated && (
           <TokenGatedRuleConfig

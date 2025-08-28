@@ -1,4 +1,5 @@
 import { client } from "../protocol-client";
+import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
 import { Community, Moderator } from "@/lib/domain/communities/types";
 import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { evmAddress } from "@lens-protocol/client";
@@ -11,6 +12,7 @@ import {
   fetchGroups,
   joinGroup,
   removeAdmins,
+  updateGroupRules,
 } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { toast } from "sonner";
@@ -223,4 +225,51 @@ export async function fetchAdminsFromGroup(address: string): Promise<Moderator[]
     console.error("Failed to fetch group admins from Lens:", error);
     throw new Error(`Failed to fetch group admins: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
+}
+
+/**
+ * Updates a group rule by first removing the old rule (if provided) and then adding the new rule as required.
+ */
+export async function updateGroupRule(
+  groupAddress: string,
+  ruleIdToRemove: string | undefined,
+  ruleToAdd: SimplePaymentGroupRule,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
+): Promise<boolean> {
+  // Remove the old rule if provided
+  if (ruleIdToRemove) {
+    const removeResult = await updateGroupRules(sessionClient, {
+      group: groupAddress,
+      toRemove: [ruleIdToRemove],
+    })
+      .andThen(handleOperationWith(walletClient))
+      .andThen(sessionClient.waitForTransaction);
+
+    if (removeResult.isErr()) {
+      console.error("Error removing old rule from group:", removeResult.error);
+      return false;
+    }
+  }
+
+  // Remove the 'type' root attribute for Lens API
+  const { type, ...ruleWithoutType } = ruleToAdd;
+  void type;
+
+  // Add the new rule
+  const addResult = await updateGroupRules(sessionClient, {
+    group: groupAddress,
+    toAdd: {
+      required: [ruleWithoutType],
+    },
+  })
+    .andThen(handleOperationWith(walletClient))
+    .andThen(sessionClient.waitForTransaction);
+
+  if (addResult.isErr()) {
+    console.error("Error adding new rule to group:", addResult.error);
+    return false;
+  }
+
+  return true;
 }

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useUpdateCommunityRules } from "@/hooks/communities/use-update-community-rules";
 import { Community } from "@/lib/domain/communities/types";
 import { Address } from "@/types/common";
-import { bigDecimal } from "@lens-protocol/client";
+import { GroupRule, bigDecimal } from "@lens-protocol/client";
 
 function isValidAddress(address: string): address is Address {
   return /^0x[a-fA-F0-9]{40}$/.test(address);
@@ -13,14 +13,16 @@ function isValidAddress(address: string): address is Address {
 
 interface SimplePaymentRuleConfigProps {
   community: Community;
+  currentRule?: GroupRule;
 }
 
-export function SimplePaymentRuleConfig({ community }: SimplePaymentRuleConfigProps) {
+export function SimplePaymentRuleConfig({ community, currentRule }: SimplePaymentRuleConfigProps) {
   const [localAmount, setLocalAmount] = useState("0.001");
   const [localRecipient, setLocalRecipient] = useState<Address | string>("0x0");
   const [touched, setTouched] = useState(false);
 
-  const { updateRules, loading, error } = useUpdateCommunityRules(community);
+  // Allow currentRule to be undefined
+  const { updateRules, loading, error } = useUpdateCommunityRules(community, currentRule?.id);
 
   const amountNum = Number(localAmount);
   const validAmount = !isNaN(amountNum) && amountNum > 0;
