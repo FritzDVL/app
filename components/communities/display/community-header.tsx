@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { CommunityHeaderActions } from "@/components/communities/display/community-header-actions";
-import { CommunityRuleMessage } from "@/components/communities/rules/community-rule-message";
+import { CommunityRuleDetails } from "@/components/communities/rules/community-rule-details";
 import { Card, CardContent } from "@/components/ui/card";
 import { Community } from "@/lib/domain/communities/types";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
@@ -49,9 +49,7 @@ export function CommunityHeader({ community }: { community: Community }) {
                       {community.threadsCount} threads
                     </div>
                     {/* Community Rule Message */}
-                    {Boolean(
-                      community.rules?.required?.[0]?.type && community.rules?.required?.[0]?.type !== "none",
-                    ) && <CommunityRuleMessage ruleType={community.rules?.required?.[0]?.type} />}
+                    <CommunityRuleDetails community={community} />
                   </div>
                 </div>
                 {/* Actions: desktop only, right-aligned */}
