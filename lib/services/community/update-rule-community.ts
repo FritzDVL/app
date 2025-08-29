@@ -1,3 +1,4 @@
+import { MembershipApprovalGroupRule } from "@/components/communities/rules/types/membership-approval-rule-config";
 import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
 import { TokenGatedGroupRule } from "@/components/communities/rules/types/token-gated-rule-config";
 import { Community } from "@/lib/domain/communities/types";
@@ -12,15 +13,12 @@ export interface UpdateCommunityRuleResult {
 
 export async function updateCommunityRule(
   community: Community,
-  rule: SimplePaymentGroupRule | TokenGatedGroupRule | null,
+  rule: SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule,
   ruleIdToRemove: RuleId | undefined,
   sessionClient: SessionClient,
   walletClient: WalletClient,
 ): Promise<UpdateCommunityRuleResult> {
   try {
-    if (!rule) {
-      return { success: false, error: "No rule provided" };
-    }
     const ok = await updateGroupRule(community.address, ruleIdToRemove, rule, sessionClient, walletClient);
     if (!ok) {
       return { success: false, error: "Failed to update group rule on Lens" };

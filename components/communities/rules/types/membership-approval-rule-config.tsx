@@ -5,7 +5,7 @@ import { Shield } from "lucide-react";
 
 export interface MembershipApprovalGroupRule {
   type: "MembershipApprovalGroupRule";
-  membershipApprovalRule: { enable: boolean };
+  membershipApprovalRule: { enable: true };
 }
 
 interface MembershipApprovalRuleConfigProps {

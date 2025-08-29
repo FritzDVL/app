@@ -1,4 +1,5 @@
 import { client } from "../protocol-client";
+import { MembershipApprovalGroupRule } from "@/components/communities/rules/types/membership-approval-rule-config";
 import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
 import { TokenGatedGroupRule } from "@/components/communities/rules/types/token-gated-rule-config";
 import { Community, Moderator } from "@/lib/domain/communities/types";
@@ -234,7 +235,7 @@ export async function fetchAdminsFromGroup(address: string): Promise<Moderator[]
 export async function updateGroupRule(
   groupAddress: string,
   ruleIdToRemove: RuleId | undefined,
-  ruleToAdd: SimplePaymentGroupRule | TokenGatedGroupRule,
+  ruleToAdd: SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule,
   sessionClient: SessionClient,
   walletClient: WalletClient,
 ): Promise<boolean> {

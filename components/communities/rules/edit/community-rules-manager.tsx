@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CommunityRuleMessage } from "@/components/communities/rules/community-rule-message";
+import { MembershipApprovalRuleEditConfig } from "@/components/communities/rules/edit/membership-approval-rule-edit-config";
 import { SimplePaymentRuleConfig } from "@/components/communities/rules/edit/simple-payment-rule-config";
 import { TokenGatedRuleEditConfig } from "@/components/communities/rules/edit/token-gated-rule-edit-config";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
 
   // Add hook for rule actions
   const { removeRule, loading, error } = useCommunityRules(community, currentRule?.id);
-  console.dir(currentRule);
+
   return (
     <div className="space-y-6">
       <div>
@@ -130,6 +131,18 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
                 </div>
               </div>
             )}
+
+            {/* MembershipApproval Rule Details */}
+            {currentRuleType === GroupRuleType.MembershipApproval && currentRule && (
+              <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+                <h4 className="mb-3 font-medium text-foreground">Membership Approval Configuration</h4>
+                <div className="text-sm text-muted-foreground">
+                  Only approved members can join this community. You (and optionally other moderators) will need to
+                  manually approve join requests.
+                </div>
+                <br />
+              </div>
+            )}
           </div>
         ) : (
           <div className="inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 dark:bg-gray-700 dark:text-slate-200">
@@ -149,9 +162,7 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
             <SelectItem value="none">No rule (open community)</SelectItem>
             <SelectItem value={GroupRuleType.SimplePayment}>Payment required</SelectItem>
             <SelectItem value={GroupRuleType.TokenGated}>Token required</SelectItem>
-            <SelectItem disabled value={GroupRuleType.MembershipApproval}>
-              Approval required
-            </SelectItem>
+            <SelectItem value={GroupRuleType.MembershipApproval}>Approval required</SelectItem>
           </SelectContent>
         </Select>
 
@@ -169,9 +180,9 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
           <TokenGatedRuleEditConfig community={community} currentRule={currentRule} />
         )}
         {/* Membership Approval Rule Configuration */}
-        {/* {selectedRule === GroupRuleType.MembershipApproval && (
-          <MembershipApprovalRuleConfig approvers={approvers} onChange={setApprovers} />
-        )} */}
+        {selectedRule === GroupRuleType.MembershipApproval && (
+          <MembershipApprovalRuleEditConfig community={community} currentRule={currentRule} />
+        )}
         {error && <div className="mt-2 text-xs text-red-500">{error.message}</div>}
       </div>
     </div>
