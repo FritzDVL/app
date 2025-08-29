@@ -21,7 +21,7 @@ export function ThreadRepliesList({ thread }: ThreadRepliesListProps) {
   const handleReply = async (parentId: string, content: string) => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
     if (parentId && content) {
-      await createReply(parentId, content, thread.address, thread.id);
+      await createReply(parentId, content, thread.feed.address, thread.id);
       setReplyingTo(null);
       setReplyContent(c => ({ ...c, [parentId]: "" }));
     }
@@ -44,7 +44,7 @@ export function ThreadRepliesList({ thread }: ThreadRepliesListProps) {
       setReplyContent={setReplyContent}
       handleReply={handleReply}
       rootPostId={thread.rootPost?.id || ""}
-      threadAddress={thread.address}
+      threadAddress={thread.feed.address}
     />
   );
 }

@@ -4,6 +4,7 @@ import React from "react";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { ThreadVoting } from "@/components/thread/thread-voting";
 import { Button } from "@/components/ui/button";
+import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { postId } from "@lens-protocol/react";
 import { Coins, Share } from "lucide-react";
@@ -18,8 +19,11 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
   // Default share logic if not provided
   const handleShare = () => {
     if (!thread) return;
-    const url = `https://lensforum.xyz/thread/${thread.address}`;
-    const shareText = `Check out this thread on LensForum: "${thread.title}"\n\n`;
+
+    const { title } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
+    const url = `https://lensforum.xyz/thread/${thread.feed.address}`;
+
+    const shareText = `Check out this thread on LensForum: "${title}"\n\n`;
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
 

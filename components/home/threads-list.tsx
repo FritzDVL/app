@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ThreadVotesDisplay } from "@/components/home/thread-votes-display";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo } from "@/lib/shared/utils";
 import { Clock, Edit3, MessageCircle } from "lucide-react";
@@ -84,59 +85,60 @@ export function ThreadsList({ threads, loadingThreads, error, activeCategory, se
           </div>
         ) : (
           <div className="w-full max-w-full space-y-6">
-            {threads.map(thread => (
-              <div
-                key={thread.id}
-                className="group w-full min-w-0 cursor-pointer rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg sm:p-6"
-              >
-                <div className="flex w-full min-w-0 flex-col gap-4 sm:flex-row sm:gap-4">
-                  <div className="w-full min-w-0 flex-1 space-y-4">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-                      <Link
-                        href={`/u/${thread.author.username.replace("lens/", "")}`}
-                        className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        <div className="relative">
-                          <Avatar className="h-8 w-8 ring-2 ring-background">
-                            <AvatarImage src={thread.author.avatar || undefined} />
-                            <AvatarFallback className="bg-primary text-xs font-medium text-primary-foreground">
-                              {thread.author.username.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                        <span className="font-medium">{thread.author.username}</span>
-                      </Link>
-                      <span className="text-border sm:inline">•</span>
-                      <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        {getTimeAgo(new Date(thread.created_at))}
-                      </span>
-                    </div>
-                    <div>
-                      <Link href={`/thread/${thread.address}`}>
-                        <h3 className="line-clamp-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
-                          {thread.title}
-                        </h3>
-                        {thread.summary && (
-                          <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{thread.summary}</p>
-                        )}
-                      </Link>
-                    </div>
-                    <div className="flex w-full max-w-full flex-wrap items-center justify-between gap-4">
-                      <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-                        <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-primary">
-                          <MessageCircle className="h-4 w-4" />
-                          <span>{thread.repliesCount || 0} replies</span>
-                        </div>
-                        <div className="flex cursor-pointer items-center gap-2 transition-colors">
-                          <ThreadVotesDisplay thread={thread} />
+            {threads.map(thread => {
+              const { title, summary } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
+              return (
+                <div
+                  key={thread.id}
+                  className="group w-full min-w-0 cursor-pointer rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg sm:p-6"
+                >
+                  <div className="flex w-full min-w-0 flex-col gap-4 sm:flex-row sm:gap-4">
+                    <div className="w-full min-w-0 flex-1 space-y-4">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                        <Link
+                          href={`/u/${thread.author.username.replace("lens/", "")}`}
+                          className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          <div className="relative">
+                            <Avatar className="h-8 w-8 ring-2 ring-background">
+                              <AvatarImage src={thread.author.avatar || undefined} />
+                              <AvatarFallback className="bg-primary text-xs font-medium text-primary-foreground">
+                                {thread.author.username.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                          </div>
+                          <span className="font-medium">{thread.author.username}</span>
+                        </Link>
+                        <span className="text-border sm:inline">•</span>
+                        <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Clock className="h-3 w-3" />
+                          {getTimeAgo(new Date(thread.created_at))}
+                        </span>
+                      </div>
+                      <div>
+                        <Link href={`/thread/${thread.feed.address}`}>
+                          <h3 className="line-clamp-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
+                            {title}
+                          </h3>
+                          {summary && <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{summary}</p>}
+                        </Link>
+                      </div>
+                      <div className="flex w-full max-w-full flex-wrap items-center justify-between gap-4">
+                        <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                          <div className="flex cursor-pointer items-center gap-2 transition-colors hover:text-primary">
+                            <MessageCircle className="h-4 w-4" />
+                            <span>{thread.repliesCount || 0} replies</span>
+                          </div>
+                          <div className="flex cursor-pointer items-center gap-2 transition-colors">
+                            <ThreadVotesDisplay thread={thread} />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

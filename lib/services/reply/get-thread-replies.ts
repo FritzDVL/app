@@ -27,7 +27,7 @@ export async function getThreadReplies(
 ): Promise<PaginatedRepliesResult> {
   try {
     // 1. Fetch posts with pagination
-    const { posts, pageInfo } = await fetchPostsByFeed(thread.address, pageSize, cursor);
+    const { posts, pageInfo } = await fetchPostsByFeed(thread.feed.address, pageSize, cursor);
 
     if (!posts.length) {
       return {
