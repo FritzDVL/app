@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { SimplePaymentRuleConfig } from "./simple-payment-rule-config";
 import { CommunityRuleMessage } from "@/components/communities/rules/community-rule-message";
+import { SimplePaymentRuleConfig } from "@/components/communities/rules/edit/simple-payment-rule-config";
+import { TokenGatedRuleEditConfig } from "@/components/communities/rules/edit/token-gated-rule-edit-config";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCommunityRules } from "@/hooks/communities/use-community-rules";
@@ -19,7 +20,7 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
 
   // Add hook for rule actions
   const { removeRule, loading, error } = useCommunityRules(community, currentRule?.id);
-
+  console.dir(currentRule);
   return (
     <div className="space-y-6">
       <div>
@@ -65,6 +66,70 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
                 </div>
               </div>
             )}
+
+            {/* TokenGated Rule Details */}
+            {currentRuleType === GroupRuleType.TokenGated && currentRule && (
+              <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+                <h4 className="mb-3 font-medium text-foreground">Token Gated Configuration</h4>
+                <div className="grid gap-3 text-sm">
+                  {(() => {
+                    const contractElement = currentRule.config.find(e => e.key === "assetContract");
+                    const contract =
+                      contractElement && contractElement.__typename === "AddressKeyValue"
+                        ? contractElement.address
+                        : "";
+
+                    const nameElement = currentRule.config.find(e => e.key === "assetName");
+                    const name = nameElement && nameElement.__typename === "StringKeyValue" ? nameElement.string : "";
+
+                    const symbolElement = currentRule.config.find(e => e.key === "assetSymbol");
+                    const symbol =
+                      symbolElement && symbolElement.__typename === "StringKeyValue" ? symbolElement.string : "";
+
+                    const standardElement = currentRule.config.find(e => e.key === "assetStandard");
+                    const standard =
+                      standardElement && standardElement.__typename === "IntKeyValue"
+                        ? standardElement.int === 20
+                          ? "ERC20"
+                          : standardElement.int === 721
+                            ? "ERC721"
+                            : standardElement.int
+                        : "";
+
+                    const amountElement = currentRule.config.find(e => e.key === "amount");
+                    const amount =
+                      amountElement && amountElement.__typename === "BigDecimalKeyValue"
+                        ? amountElement.bigDecimal
+                        : "";
+
+                    return (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Token Contract:</span>
+                          <span className="font-mono text-xs">{contract}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Name:</span>
+                          <span className="font-medium">{name}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Symbol:</span>
+                          <span className="font-medium">{symbol}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Standard:</span>
+                          <span className="font-medium">{standard}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Minimum Balance:</span>
+                          <span className="font-medium">{amount.toString()}</span>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 dark:bg-gray-700 dark:text-slate-200">
@@ -83,9 +148,7 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
           <SelectContent>
             <SelectItem value="none">No rule (open community)</SelectItem>
             <SelectItem value={GroupRuleType.SimplePayment}>Payment required</SelectItem>
-            <SelectItem disabled value={GroupRuleType.TokenGated}>
-              Token required
-            </SelectItem>
+            <SelectItem value={GroupRuleType.TokenGated}>Token required</SelectItem>
             <SelectItem disabled value={GroupRuleType.MembershipApproval}>
               Approval required
             </SelectItem>
@@ -102,14 +165,9 @@ export function CommunityRulesManager({ community }: CommunityRulesManagerProps)
           <SimplePaymentRuleConfig community={community} currentRule={currentRule} />
         )}
         {/* Token Gated Rule Configuration */}
-        {/* {selectedRule === GroupRuleType.TokenGated && (
-          <TokenGatedRuleConfig
-            tokenType={tokenGatedConfig.tokenType}
-            tokenAddress={tokenGatedConfig.tokenAddress}
-            tokenValue={tokenGatedConfig.tokenValue}
-            onChange={setTokenGatedConfig}
-          />
-        )} */}
+        {selectedRule === GroupRuleType.TokenGated && (
+          <TokenGatedRuleEditConfig community={community} currentRule={currentRule} />
+        )}
         {/* Membership Approval Rule Configuration */}
         {/* {selectedRule === GroupRuleType.MembershipApproval && (
           <MembershipApprovalRuleConfig approvers={approvers} onChange={setApprovers} />

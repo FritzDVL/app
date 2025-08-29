@@ -1,4 +1,5 @@
 import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
+import { TokenGatedGroupRule } from "@/components/communities/rules/types/token-gated-rule-config";
 import { Community } from "@/lib/domain/communities/types";
 import { updateGroupRule } from "@/lib/external/lens/primitives/groups";
 import type { RuleId, SessionClient } from "@lens-protocol/client";
@@ -11,7 +12,7 @@ export interface UpdateCommunityRuleResult {
 
 export async function updateCommunityRule(
   community: Community,
-  rule: SimplePaymentGroupRule | null,
+  rule: SimplePaymentGroupRule | TokenGatedGroupRule | null,
   ruleIdToRemove: RuleId | undefined,
   sessionClient: SessionClient,
   walletClient: WalletClient,

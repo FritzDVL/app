@@ -46,7 +46,7 @@ export function SimplePaymentRuleConfig({ community, currentRule }: SimplePaymen
     <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
       <h5 className="mb-3 font-medium text-foreground">Payment Configuration</h5>
       <div className="space-y-4">
-        <div>
+        <div className="space-y-2">
           <label className="mb-1 block text-sm font-medium text-foreground">Amount (GHO)</label>
           <Input
             type="number"
@@ -76,7 +76,7 @@ export function SimplePaymentRuleConfig({ community, currentRule }: SimplePaymen
           />
           {!validAmount && touched && <div className="mt-1 text-xs text-red-500">Amount must be greater than 0</div>}
         </div>
-        <div>
+        <div className="space-y-2">
           <label className="mb-1 block text-sm font-medium text-foreground">Recipient Address</label>
           <Input
             type="text"

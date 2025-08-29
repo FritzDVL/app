@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { revalidateCommunityPath } from "@/app/actions/revalidate-path";
 import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
+import { TokenGatedGroupRule } from "@/components/communities/rules/types/token-gated-rule-config";
 import { Community } from "@/lib/domain/communities/types";
 import { removeCommunityRule } from "@/lib/services/community/remove-rule-community";
 import { updateCommunityRule } from "@/lib/services/community/update-rule-community";
@@ -16,7 +17,7 @@ export function useCommunityRules(community: Community, currentRuleId?: RuleId) 
   const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
 
-  const updateRules = async (newRule: SimplePaymentGroupRule | null) => {
+  const updateRules = async (newRule: SimplePaymentGroupRule | TokenGatedGroupRule | null) => {
     setLoading(true);
     setError(null);
     const toastId = toast.loading("Updating community rule...");

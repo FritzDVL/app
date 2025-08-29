@@ -1,5 +1,6 @@
 import { client } from "../protocol-client";
 import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
+import { TokenGatedGroupRule } from "@/components/communities/rules/types/token-gated-rule-config";
 import { Community, Moderator } from "@/lib/domain/communities/types";
 import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { evmAddress } from "@lens-protocol/client";
@@ -233,7 +234,7 @@ export async function fetchAdminsFromGroup(address: string): Promise<Moderator[]
 export async function updateGroupRule(
   groupAddress: string,
   ruleIdToRemove: RuleId | undefined,
-  ruleToAdd: SimplePaymentGroupRule,
+  ruleToAdd: SimplePaymentGroupRule | TokenGatedGroupRule,
   sessionClient: SessionClient,
   walletClient: WalletClient,
 ): Promise<boolean> {
