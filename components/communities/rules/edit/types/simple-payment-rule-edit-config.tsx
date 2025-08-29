@@ -11,12 +11,12 @@ function isValidAddress(address: string): address is Address {
   return /^0x[a-fA-F0-9]{40}$/.test(address);
 }
 
-interface SimplePaymentRuleConfigProps {
+interface SimplePaymentRuleEditConfigProps {
   community: Community;
   currentRule?: GroupRule;
 }
 
-export function SimplePaymentRuleConfig({ community, currentRule }: SimplePaymentRuleConfigProps) {
+export function SimplePaymentRuleEditConfig({ community, currentRule }: SimplePaymentRuleEditConfigProps) {
   const [localAmount, setLocalAmount] = useState("0.001");
   const [localRecipient, setLocalRecipient] = useState<Address | string>("0x0");
   const [touched, setTouched] = useState(false);
