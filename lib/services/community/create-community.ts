@@ -57,8 +57,8 @@ export async function createCommunity(formData: CreateCommunityFormData): Promis
     // 5. Create the group on Lens Protocol with optional group rules
     const createGroupParams: any = {
       metadataUri: uri,
-      admins: [evmAddress(formData.adminAddress), ADMIN_USER_ADDRESS],
-      owner: evmAddress(formData.adminAddress),
+      admins: [evmAddress(formData.adminAddress)],
+      owner: ADMIN_USER_ADDRESS,
     };
 
     // Add group rules if specified
