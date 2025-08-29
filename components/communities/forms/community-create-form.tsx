@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { CommunityCreateRulesForm } from "./community-create-rules-form";
+// import { CommunityCreateRulesForm } from "./community-create-rules-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
@@ -93,10 +93,10 @@ export function CommunityCreateForm({ onGroupRuleChange, creator }: CommunityCre
               />
             </div>
 
-            <CommunityCreateRulesForm
+            {/* <CommunityCreateRulesForm
               onCommunityRuleChange={rule => handleChange({ target: { name: "communityRule", value: rule } })}
               recipient={creator}
-            />
+            /> */}
 
             {error && <div className="text-base text-red-600">{error}</div>}
 
