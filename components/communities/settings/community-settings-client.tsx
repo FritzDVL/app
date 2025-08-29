@@ -64,7 +64,7 @@ export function CommunitySettingsClient({ community }: CommunitySettingsClientPr
               activeTab === "rules"
                 ? "bg-primary text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+            } disabled:cursor-not-allowed disabled:opacity-60`}
           >
             <BookOpen className="mr-2 inline h-4 w-4" />
             Rules
