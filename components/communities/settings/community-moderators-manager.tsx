@@ -36,12 +36,12 @@ export function CommunityModeratorsManager({ community }: CommunityModeratorsMan
   const walletClient = useWalletClient();
 
   const { addModerator, loading: addLoading } = useAddModerator(
-    community.address as Address,
+    community.group.address as Address,
     sessionClient,
     walletClient,
   );
   const { removeModerator, loading: removeLoading } = useRemoveModerator(
-    community.address as Address,
+    community.group.address as Address,
     sessionClient,
     walletClient,
   );

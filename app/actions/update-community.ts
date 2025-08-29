@@ -19,7 +19,7 @@ export async function updateCommunityAction(
     const description = formData.get("description") as string;
     const logoFile = formData.get("logo") as File | null;
 
-    if (!community.address) {
+    if (!community.group.address) {
       return {
         success: false,
         error: "Missing community address",
@@ -40,8 +40,8 @@ export async function updateCommunityAction(
       };
     }
 
-    revalidatePath(`/communities/${community.address}`);
-    revalidatePath(`/communities/${community.address}/settings`);
+    revalidatePath(`/communities/${community.group.address}`);
+    revalidatePath(`/communities/${community.group.address}/settings`);
     revalidatePath(`/`);
 
     return {

@@ -53,7 +53,7 @@ export function CommunityEditForm({ community }: CommunityEditFormProps) {
       <ImageUploadInput
         id="logo-upload"
         label="Community Logo"
-        currentImageUrl={community.logo ? groveLensUrlToHttp(community.logo) : undefined}
+        currentImageUrl={community.group.metadata?.icon ? groveLensUrlToHttp(community.group.metadata.icon) : undefined}
         currentImageAlt={community.name}
         onFileChange={file => handleChange({ target: { name: "logo", value: file } })}
         recommended="PNG, JPG up to 5MB. Recommended: 200x200px"
@@ -62,10 +62,7 @@ export function CommunityEditForm({ community }: CommunityEditFormProps) {
 
       {/* Submit Button */}
       <div className="flex justify-end pt-4">
-        <Button
-          type="submit"
-          disabled={loading}
-        >
+        <Button type="submit" disabled={loading}>
           {loading ? (
             <>
               <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />

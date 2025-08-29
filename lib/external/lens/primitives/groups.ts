@@ -148,7 +148,7 @@ export async function joinAndIncrementCommunityMember(
   walletClient: any,
 ): Promise<boolean> {
   const joinResult = await joinGroup(sessionClient, {
-    group: evmAddress(community.address),
+    group: evmAddress(community.group.address),
   })
     .andThen(handleOperationWith(walletClient))
     .andThen(sessionClient.waitForTransaction);

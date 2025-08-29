@@ -16,7 +16,7 @@ export function CommunityHeaderActions({ community }: { community: Community }) 
   const joinCommunity = useJoinCommunity(community);
   const leaveCommunity = useLeaveCommunity(community);
   const { isLoggedIn } = useAuthStore();
-  const { isMember, updateIsMember, isLoading: isMemberLoading } = useCommunityMembership(community.address);
+  const { isMember, updateIsMember, isLoading: isMemberLoading } = useCommunityMembership(community.group.address);
   const router = useRouter();
 
   const handleJoinCommunity = async () => {
@@ -45,7 +45,7 @@ export function CommunityHeaderActions({ community }: { community: Community }) 
         {isMember && (
           <Button
             onClick={() => {
-              router.push(`/communities/${community.address}/new-thread`);
+              router.push(`/communities/${community.group.address}/new-thread`);
             }}
             variant="default"
             size="sm"

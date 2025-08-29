@@ -25,7 +25,7 @@ export async function joinCommunity(
 ): Promise<JoinLeaveResult> {
   try {
     const result = await joinGroup(sessionClient, {
-      group: evmAddress(community.address),
+      group: evmAddress(community.group.address),
     }).andThen(handleOperationWith(walletClient));
 
     if (result.isOk()) {

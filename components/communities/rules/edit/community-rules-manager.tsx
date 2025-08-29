@@ -15,7 +15,7 @@ interface CommunityRulesManagerProps {
 }
 
 export function CommunityRulesManager({ community }: CommunityRulesManagerProps) {
-  const currentRule = community.rules?.required?.[0] as GroupRule | undefined;
+  const currentRule = community.group.rules?.required?.[0] as GroupRule | undefined;
   const currentRuleType = currentRule?.type as GroupRuleType | "none" | undefined;
   const [selectedRule, setSelectedRule] = useState<GroupRuleType | "none">(currentRuleType || "none");
 

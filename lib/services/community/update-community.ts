@@ -43,7 +43,7 @@ export async function updateCommunity(
     const newMetadata = group({
       name: groupName,
       description: data.description,
-      icon: iconUri ? iconUri : community.logo,
+      icon: iconUri ? iconUri : community.group.metadata?.icon.logo,
     });
 
     // 4. Upload new metadata to Grove
@@ -52,12 +52,12 @@ export async function updateCommunity(
 
     // 5. Update group metadata on Lens
     const result = await setGroupMetadata(sessionClient, {
-      group: community.address,
+      group: community.group.address,
       metadataUri,
     })
       .andThen(handleOperationWith(walletClient))
       .andThen(sessionClient.waitForTransaction)
-      .andThen(() => fetchGroup(sessionClient, { group: community.address }));
+      .andThen(() => fetchGroup(sessionClient, { group: community.group.address }));
 
     if (result.isErr()) {
       return {
@@ -69,14 +69,14 @@ export async function updateCommunity(
 
     // 6. Update name and updatedAt in the database.
     if (updatedGroup) {
-      await updateCommunityDb(community.address, data.name);
+      await updateCommunityDb(community.group.address, data.name);
     }
 
     // 7. Fetch updated group stats, DB record, and moderators
     const [groupStats, dbCommunity, moderators] = await Promise.all([
-      fetchGroupStatsFromLens(community.address),
-      fetchCommunityDb(community.address),
-      fetchAdminsFromGroup(community.address),
+      fetchGroupStatsFromLens(community.group.address),
+      fetchCommunityDb(community.group.address),
+      fetchAdminsFromGroup(community.group.address),
     ]);
 
     if (!dbCommunity || !groupStats) {

@@ -36,7 +36,7 @@ export function useCommunityRules(community: Community, currentRuleId?: RuleId) 
       );
       if (result.success) {
         toast.success("Community rule updated!", { id: toastId });
-        revalidateCommunityPath(community.address);
+        revalidateCommunityPath(community.group.address);
       } else {
         toast.error(result.error || "An error occurred while updating the rule.", { id: toastId });
         setError(new Error(result.error || "Unknown error"));
@@ -63,7 +63,7 @@ export function useCommunityRules(community: Community, currentRuleId?: RuleId) 
       const result = await removeCommunityRule(community, ruleId, sessionClient.data, walletClient.data);
       if (result.success) {
         toast.success("Community rule removed!", { id: toastId });
-        revalidateCommunityPath(community.address);
+        revalidateCommunityPath(community.group.address);
       } else {
         toast.error(result.error || "An error occurred while removing the rule.", { id: toastId });
         setError(new Error(result.error || "Unknown error"));

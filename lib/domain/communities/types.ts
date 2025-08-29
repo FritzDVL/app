@@ -1,18 +1,14 @@
 import { Address } from "@/types/common";
-import { GroupRules } from "@lens-protocol/client";
+import { Group } from "@lens-protocol/client";
 
 export interface Community {
   id: string;
-  address: Address;
   name: string;
-  description: string;
-  memberCount: number;
-  postCount?: number;
-  logo?: string | undefined;
-  threadsCount: number;
+  group: Group;
   moderators: Moderator[];
-  owner: Address;
-  rules?: GroupRules;
+  postCount?: number;
+  memberCount: number;
+  threadsCount: number;
   createdAt: string;
 }
 

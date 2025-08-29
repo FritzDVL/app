@@ -124,7 +124,7 @@ export function useCommunityCreateForm() {
       const joined = await joinAndIncrementCommunityMember(result.community, sessionClient.data, walletClient.data);
 
       if (joined) {
-        router.push(`/communities/${result.community.address}`);
+        router.push(`/communities/${result.community.group.address}`);
       }
     } catch (err: any) {
       setError(err.message || "Failed to create community");

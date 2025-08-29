@@ -11,19 +11,15 @@ export function adaptGroupToCommunity(
   dbCommunity: CommunitySupabase,
   moderators: Moderator[],
 ): Community {
-  const groupTimestamp = group.timestamp ? new Date(group.timestamp).toISOString() : new Date().toISOString();
+  const createdAt = group.timestamp ? new Date(group.timestamp).toISOString() : new Date().toISOString();
 
   return {
     id: dbCommunity.id,
-    address: group.address,
-    name: dbCommunity.name || "",
-    description: group.metadata?.description || "",
-    logo: group.metadata?.icon || undefined,
+    name: dbCommunity.name || group.metadata?.name || "",
+    group,
+    moderators,
     memberCount: groupStats.totalMembers || 0,
     threadsCount: dbCommunity.threads_count || 0,
-    moderators,
-    owner: group.owner,
-    rules: group.rules,
-    createdAt: groupTimestamp,
+    createdAt,
   };
 }
