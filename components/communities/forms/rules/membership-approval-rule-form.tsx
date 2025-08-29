@@ -8,12 +8,12 @@ export interface MembershipApprovalGroupRule {
   membershipApprovalRule: { enable: true };
 }
 
-interface MembershipApprovalRuleConfigProps {
+interface MembershipApprovalRuleFormProps {
   rule: Extract<MembershipApprovalGroupRule, { type: "MembershipApprovalGroupRule" }>;
   onChange: (approvers: Address[]) => void;
 }
 
-export function MembershipApprovalRuleConfig({ rule, onChange }: MembershipApprovalRuleConfigProps) {
+export function MembershipApprovalRuleForm({ rule, onChange }: MembershipApprovalRuleFormProps) {
   return (
     <div className="space-y-8 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="space-y-2">

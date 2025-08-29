@@ -14,12 +14,12 @@ export interface SimplePaymentGroupRule {
   };
 }
 
-interface PaymentRuleConfigProps {
+interface SimplePaymentRuleForm {
   rule: Extract<SimplePaymentGroupRule, { type: "SimplePaymentGroupRule" }>;
   onChange: (rule: SimplePaymentGroupRule) => void;
 }
 
-export function PaymentRuleConfig({ rule, onChange }: PaymentRuleConfigProps) {
+export function SimplePaymentRuleForm({ rule, onChange }: SimplePaymentRuleForm) {
   const [amount, setAmount] = useState<BigDecimal>(rule.simplePaymentRule.native);
   const [recipient, setRecipient] = useState<Address>(rule.simplePaymentRule.recipient);
 

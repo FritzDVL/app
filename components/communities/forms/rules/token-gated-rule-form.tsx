@@ -18,12 +18,12 @@ export interface TokenGatedGroupRule {
   };
 }
 
-interface TokenGatedRuleConfigProps {
+interface TokenGatedRuleFormProps {
   rule: Extract<TokenGatedGroupRule, { type: "TokenGatedGroupRule" }>;
   onChange: (field: string, value: string) => void;
 }
 
-export function TokenGatedRuleConfig({ rule, onChange }: TokenGatedRuleConfigProps) {
+export function TokenGatedRuleForm({ rule, onChange }: TokenGatedRuleFormProps) {
   const [tokenType, setTokenType] = useState<TokenStandard>(rule.tokenGatedRule.token.standard);
   const [tokenValue, setTokenValue] = useState<string>(rule.tokenGatedRule.token.value);
   const [tokenAddress, setTokenAddress] = useState<string>(rule.tokenGatedRule.token.currency);

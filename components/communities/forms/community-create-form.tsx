@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { CommunityRulesConfig } from "../rules/community-rules-config";
-import { MembershipApprovalGroupRule } from "../rules/types/membership-approval-rule-config";
-import { SimplePaymentGroupRule } from "../rules/types/payment-rule-config";
-import { TokenGatedGroupRule } from "../rules/types/token-gated-rule-config";
+import { CommunityCreateRulesForm } from "./community-create-rules-form";
+import { MembershipApprovalGroupRule } from "./rules/membership-approval-rule-form";
+import { SimplePaymentGroupRule } from "./rules/simple-payment-rule-form";
+import { TokenGatedGroupRule } from "./rules/token-gated-rule-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
@@ -95,7 +95,7 @@ export function CommunityCreateForm({ onGroupRuleChange, creator }: CommunityCre
               />
             </div>
 
-            <CommunityRulesConfig
+            <CommunityCreateRulesForm
               onCommunityRuleChange={rule => handleChange({ target: { name: "communityRule", value: rule } })}
               recipient={creator}
             />

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SimplePaymentGroupRule } from "../types/payment-rule-config";
+import { SimplePaymentGroupRule } from "../../../forms/rules/simple-payment-rule-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCommunityRules } from "@/hooks/communities/use-community-rules";

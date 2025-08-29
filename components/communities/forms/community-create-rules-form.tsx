@@ -1,23 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
-import { RuleTypeSelect } from "@/components/communities/rules/rule-type-select";
-import { MembershipApprovalGroupRule } from "@/components/communities/rules/types/membership-approval-rule-config";
-import { PaymentRuleConfig, SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
-import { TokenGatedGroupRule } from "@/components/communities/rules/types/token-gated-rule-config";
+import { MembershipApprovalGroupRule } from "@/components/communities/forms/rules/membership-approval-rule-form";
+import {
+  SimplePaymentGroupRule,
+  SimplePaymentRuleForm,
+} from "@/components/communities/forms/rules/simple-payment-rule-form";
+import { TokenGatedGroupRule } from "@/components/communities/forms/rules/token-gated-rule-form";
+import { RuleTypeSelect } from "@/components/communities/forms/rules/rule-type-select";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Account, TokenStandard, bigDecimal, evmAddress } from "@lens-protocol/client";
 import { AnimatePresence, motion } from "framer-motion";
 
-interface CommunityRulesConfigProps {
+interface CommunityCreateRulesFormProps {
   onCommunityRuleChange: (
     rule: SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule | undefined,
   ) => void;
   recipient: Account;
 }
 
-export function CommunityRulesConfig({ onCommunityRuleChange, recipient }: CommunityRulesConfigProps) {
+export function CommunityCreateRulesForm({ onCommunityRuleChange, recipient }: CommunityCreateRulesFormProps) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [communityRule, setCommunityRule] = useState<
     SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule | undefined
@@ -116,7 +119,7 @@ export function CommunityRulesConfig({ onCommunityRuleChange, recipient }: Commu
               <RuleTypeSelect value={communityRule?.type || "SimplePaymentGroupRule"} onChange={handleRuleTypeChange} />
               {/* Modular config UIs */}
               {communityRule && communityRule.type === "SimplePaymentGroupRule" && (
-                <PaymentRuleConfig rule={communityRule} onChange={updatePaymentRule} />
+                <SimplePaymentRuleForm rule={communityRule} onChange={updatePaymentRule} />
               )}
               {/* {communityRule && communityRule.type === "TokenGatedGroupRule" && (
                 <TokenGatedRuleConfig rule={communityRule} onChange={updateTokenGatedRule} />

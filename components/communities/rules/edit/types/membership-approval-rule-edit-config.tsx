@@ -1,4 +1,4 @@
-import { MembershipApprovalGroupRule } from "../types/membership-approval-rule-config";
+import { MembershipApprovalGroupRule } from "../../../forms/rules/membership-approval-rule-form";
 import { Button } from "@/components/ui/button";
 import { useCommunityRules } from "@/hooks/communities/use-community-rules";
 import { Community } from "@/lib/domain/communities/types";

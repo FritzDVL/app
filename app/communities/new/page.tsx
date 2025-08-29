@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { CommunityCreationTips } from "@/components/communities/community-creation-tips";
 import { CommunityCreateForm } from "@/components/communities/forms/community-create-form";
+import { MembershipApprovalGroupRule } from "@/components/communities/forms/rules/membership-approval-rule-form";
+import { SimplePaymentGroupRule } from "@/components/communities/forms/rules/simple-payment-rule-form";
+import { TokenGatedGroupRule } from "@/components/communities/forms/rules/token-gated-rule-form";
 import { CommunityRulesTips } from "@/components/communities/rules/community-rules-tips";
-import { MembershipApprovalGroupRule } from "@/components/communities/rules/types/membership-approval-rule-config";
-import { SimplePaymentGroupRule } from "@/components/communities/rules/types/payment-rule-config";
-import { TokenGatedGroupRule } from "@/components/communities/rules/types/token-gated-rule-config";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { useAuthStore } from "@/stores/auth-store";

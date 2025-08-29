@@ -10,7 +10,11 @@ interface CommunityRuleDetailsProps {
 export const CommunityRuleDetails: React.FC<CommunityRuleDetailsProps> = ({ community, className = "" }) => {
   const currentRule = community.rules?.required?.[0];
   const ruleType = currentRule?.type;
-  if (!ruleType || ruleType === "none") return null;
+
+  if (!ruleType || ruleType === "none") {
+    return null;
+  }
+
   switch (ruleType) {
     case GroupRuleType.SimplePayment:
       const symbolElement = currentRule.config.find(e => e.key === "assetSymbol" && e.__typename === "StringKeyValue");
@@ -25,6 +29,7 @@ export const CommunityRuleDetails: React.FC<CommunityRuleDetailsProps> = ({ comm
           <DollarSign className="mr-1 h-4 w-4 text-yellow-500" /> {amount} {symbol} required{" "}
         </div>
       );
+
     case GroupRuleType.TokenGated:
       const tokenSymbolElement = currentRule.config.find(
         e => e.key === "assetSymbol" && e.__typename === "StringKeyValue",
@@ -40,6 +45,7 @@ export const CommunityRuleDetails: React.FC<CommunityRuleDetailsProps> = ({ comm
           <KeyRound className="mr-1 h-4 w-4 text-indigo-500" /> {minAmount} {tokenSymbol} required{" "}
         </div>
       );
+
     case GroupRuleType.MembershipApproval:
       return (
         <div
@@ -49,6 +55,7 @@ export const CommunityRuleDetails: React.FC<CommunityRuleDetailsProps> = ({ comm
           <ShieldCheck className="mr-1 h-4 w-4 text-rose-500" /> Approval required{" "}
         </div>
       );
+
     default:
       return null;
   }

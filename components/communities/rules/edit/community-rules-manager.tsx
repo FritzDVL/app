@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { CommunityRuleMessage } from "@/components/communities/rules/community-rule-message";
-import { MembershipApprovalRuleEditConfig } from "@/components/communities/rules/edit/membership-approval-rule-edit-config";
-import { SimplePaymentRuleConfig } from "@/components/communities/rules/edit/simple-payment-rule-config";
-import { TokenGatedRuleEditConfig } from "@/components/communities/rules/edit/token-gated-rule-edit-config";
+import { MembershipApprovalRuleEditConfig } from "@/components/communities/rules/edit/types/membership-approval-rule-edit-config";
+import { SimplePaymentRuleConfig } from "@/components/communities/rules/edit/types/simple-payment-rule-config";
+import { TokenGatedRuleEditConfig } from "@/components/communities/rules/edit/types/token-gated-rule-edit-config";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCommunityRules } from "@/hooks/communities/use-community-rules";
