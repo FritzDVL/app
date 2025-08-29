@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import CustomSelectItem from "@/components/ui/custom-select-item";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Address } from "@/types/common";
 import { TokenStandard } from "@lens-protocol/client";
-import { Lock } from "lucide-react";
 
 export interface TokenGatedGroupRule {
   type: "TokenGatedGroupRule";
@@ -20,79 +17,110 @@ export interface TokenGatedGroupRule {
 
 interface TokenGatedRuleFormProps {
   rule: Extract<TokenGatedGroupRule, { type: "TokenGatedGroupRule" }>;
-  onChange: (field: string, value: string) => void;
+  onChange: (rule: TokenGatedGroupRule) => void;
+}
+
+function isValidAddress(address: string): address is Address {
+  return /^0x[a-fA-F0-9]{40}$/.test(address);
 }
 
 export function TokenGatedRuleForm({ rule, onChange }: TokenGatedRuleFormProps) {
-  const [tokenType, setTokenType] = useState<TokenStandard>(rule.tokenGatedRule.token.standard);
-  const [tokenValue, setTokenValue] = useState<string>(rule.tokenGatedRule.token.value);
+  const [tokenStandard, setTokenStandard] = useState<TokenStandard>(rule.tokenGatedRule.token.standard);
   const [tokenAddress, setTokenAddress] = useState<string>(rule.tokenGatedRule.token.currency);
+  const [tokenValue, setTokenValue] = useState<string>(rule.tokenGatedRule.token.value);
+  const [touched, setTouched] = useState(false);
+
+  const validAddress = isValidAddress(tokenAddress);
+  const valueNum = Number(tokenValue);
+  const validValue = !isNaN(valueNum) && valueNum > 0;
+
+  const handleStandardChange = (v: string) => {
+    setTokenStandard(v as TokenStandard);
+    setTouched(true);
+    onChange({
+      type: "TokenGatedGroupRule",
+      tokenGatedRule: {
+        token: {
+          currency: tokenAddress as Address,
+          standard: v as TokenStandard,
+          value: tokenValue,
+        },
+      },
+    });
+  };
+
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTokenAddress(e.target.value);
+    setTouched(true);
+    onChange({
+      type: "TokenGatedGroupRule",
+      tokenGatedRule: {
+        token: {
+          currency: e.target.value as Address,
+          standard: tokenStandard,
+          value: tokenValue,
+        },
+      },
+    });
+  };
+
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTokenValue(e.target.value);
+    setTouched(true);
+    onChange({
+      type: "TokenGatedGroupRule",
+      tokenGatedRule: {
+        token: {
+          currency: tokenAddress as Address,
+          standard: tokenStandard,
+          value: e.target.value,
+        },
+      },
+    });
+  };
 
   return (
-    <div className="space-y-8 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-      <div className="grid grid-cols-2 gap-4">
+    <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+      <h5 className="mb-3 font-medium text-foreground">Token Gated Configuration</h5>
+      <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="tokenType" className="flex items-center gap-2 text-base font-medium text-foreground">
-            <Lock className="h-4 w-4 text-blue-600" />
-            Token Type
-          </Label>
-          <Select value={tokenType} onValueChange={value => setTokenType(value as TokenStandard)}>
-            <SelectTrigger className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700">
+          <label className="mb-1 block text-sm font-medium text-foreground">Token Standard</label>
+          <Select value={tokenStandard} onValueChange={handleStandardChange}>
+            <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-slate-300/60 bg-white/95 backdrop-blur-sm dark:border-gray-600 dark:bg-gray-800">
-              <CustomSelectItem
-                value="ERC20"
-                className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-              >
-                ERC-20
-              </CustomSelectItem>
-              <CustomSelectItem
-                value="ERC721"
-                className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-              >
-                NFT
-              </CustomSelectItem>
-              <CustomSelectItem
-                value="ERC1155"
-                className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
-              >
-                ERC-1155
-              </CustomSelectItem>
+            <SelectContent>
+              <SelectItem value={TokenStandard.Erc20}>ERC20 (Token)</SelectItem>
+              <SelectItem value={TokenStandard.Erc721}>ERC721 (NFT)</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="minBalance" className="text-base font-medium text-foreground">
-            {tokenType === "ERC20" ? "Min Balance" : "Min Amount"}
-          </Label>
+          <label className="mb-1 block text-sm font-medium text-foreground">Token Contract Address</label>
           <Input
-            id="minBalance"
-            type="number"
-            placeholder={tokenType === "ERC20" ? "1.0" : "1"}
-            value={tokenValue}
-            onChange={e => {
-              setTokenValue(e.target.value);
-              onChange("minBalance", e.target.value);
-            }}
-            className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
+            type="text"
+            placeholder="0x..."
+            value={tokenAddress}
+            onChange={handleAddressChange}
+            onBlur={() => setTouched(true)}
           />
+          {!validAddress && touched && <div className="mt-1 text-xs text-red-500">Enter a valid Ethereum address</div>}
         </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="tokenAddress" className="text-base font-medium text-foreground">
-          Token Contract Address
-        </Label>
-        <Input
-          id="tokenAddress"
-          placeholder="0x... token contract address"
-          value={tokenAddress}
-          onChange={e => {
-            setTokenAddress(e.target.value);
-            onChange("tokenAddress", e.target.value);
-          }}
-          className="h-12 rounded-2xl border-slate-300/60 bg-white/80 text-lg backdrop-blur-sm focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"
-        />
+        <div className="space-y-2">
+          <label className="mb-1 block text-sm font-medium text-foreground">
+            {`Minimum Balance (${tokenStandard === TokenStandard.Erc721 ? "NFTs" : "Tokens"})`}
+          </label>
+          <Input
+            type="number"
+            step="1"
+            min="1"
+            placeholder="1"
+            value={tokenValue}
+            onChange={handleValueChange}
+            onBlur={() => setTouched(true)}
+          />
+          {!validValue && touched && <div className="mt-1 text-xs text-red-500">Value must be greater than 0</div>}
+        </div>
       </div>
     </div>
   );

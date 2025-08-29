@@ -1,13 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { MembershipApprovalGroupRule } from "@/components/communities/forms/rules/membership-approval-rule-form";
+import {
+  MembershipApprovalGroupRule,
+  MembershipApprovalRuleForm,
+} from "@/components/communities/forms/rules/membership-approval-rule-form";
+import { RuleTypeSelect } from "@/components/communities/forms/rules/rule-type-select";
 import {
   SimplePaymentGroupRule,
   SimplePaymentRuleForm,
 } from "@/components/communities/forms/rules/simple-payment-rule-form";
-import { TokenGatedGroupRule } from "@/components/communities/forms/rules/token-gated-rule-form";
-import { RuleTypeSelect } from "@/components/communities/forms/rules/rule-type-select";
+import { TokenGatedGroupRule, TokenGatedRuleForm } from "@/components/communities/forms/rules/token-gated-rule-form";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Account, TokenStandard, bigDecimal, evmAddress } from "@lens-protocol/client";
@@ -83,14 +86,14 @@ export function CommunityCreateRulesForm({ onCommunityRuleChange, recipient }: C
     setCommunityRule(rule);
     onCommunityRuleChange(rule);
   };
-  // const updateTokenGatedRule = (rule: TokenGatedGroupRule) => {
-  //   setCommunityRule(rule);
-  //   onCommunityRuleChange(rule);
-  // };
-  // const updateApprovalRule = (rule: MembershipApprovalGroupRule) => {
-  //   setCommunityRule(rule);
-  //   onCommunityRuleChange(rule);
-  // };
+  const updateTokenGatedRule = (rule: TokenGatedGroupRule) => {
+    setCommunityRule(rule);
+    onCommunityRuleChange(rule);
+  };
+  const updateApprovalRule = (rule: MembershipApprovalGroupRule) => {
+    setCommunityRule(rule);
+    onCommunityRuleChange(rule);
+  };
 
   return (
     <>
@@ -121,12 +124,12 @@ export function CommunityCreateRulesForm({ onCommunityRuleChange, recipient }: C
               {communityRule && communityRule.type === "SimplePaymentGroupRule" && (
                 <SimplePaymentRuleForm rule={communityRule} onChange={updatePaymentRule} />
               )}
-              {/* {communityRule && communityRule.type === "TokenGatedGroupRule" && (
-                <TokenGatedRuleConfig rule={communityRule} onChange={updateTokenGatedRule} />
+              {communityRule && communityRule.type === "TokenGatedGroupRule" && (
+                <TokenGatedRuleForm rule={communityRule} onChange={updateTokenGatedRule} />
               )}
               {communityRule && communityRule.type === "MembershipApprovalGroupRule" && (
-                <MembershipApprovalRuleConfig rule={communityRule} onChange={updateApprovalRule} />
-              )} */}
+                <MembershipApprovalRuleForm onChange={updateApprovalRule} />
+              )}
             </div>
           </motion.div>
         )}

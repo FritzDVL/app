@@ -28,7 +28,6 @@ export function RuleTypeSelect({ value, onChange }: RuleTypeSelectProps) {
             </div>
           </CustomSelectItem>
           <CustomSelectItem
-            disabled
             value="TokenGatedGroupRule"
             className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
           >
@@ -38,7 +37,6 @@ export function RuleTypeSelect({ value, onChange }: RuleTypeSelectProps) {
             </div>
           </CustomSelectItem>
           <CustomSelectItem
-            disabled
             value="MembershipApprovalGroupRule"
             className="rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-brand-50/80 focus:bg-brand-50/80 data-[highlighted]:bg-brand-50/80 data-[state=checked]:bg-brand-500 data-[state=checked]:text-white dark:hover:bg-brand-900/30 dark:focus:bg-brand-900/30 dark:data-[highlighted]:bg-brand-900/30 dark:data-[state=checked]:bg-brand-600"
           >

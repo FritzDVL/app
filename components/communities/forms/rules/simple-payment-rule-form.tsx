@@ -40,13 +40,14 @@ export function SimplePaymentRuleForm({ rule, onChange }: SimplePaymentRuleForm)
             value={amount}
             onChange={e => {
               setAmount(bigDecimal(e.target.value));
-              onChange({
+              const newRule: SimplePaymentGroupRule = {
                 type: "SimplePaymentGroupRule",
                 simplePaymentRule: {
                   native: bigDecimal(e.target.value),
                   recipient: evmAddress(recipient),
                 },
-              });
+              };
+              onChange(newRule);
             }}
           />
         </div>
