@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useCommunityRules } from "@/hooks/communities/use-community-rules";
 import { Community } from "@/lib/domain/communities/types";
