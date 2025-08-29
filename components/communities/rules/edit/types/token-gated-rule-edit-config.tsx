@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { TokenGatedGroupRule } from "@/components/communities/forms/rules/token-gated-rule-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCommunityRules } from "@/hooks/communities/use-community-rules";
 import { Community } from "@/lib/domain/communities/types";
+import { TokenGatedGroupRule } from "@/lib/domain/rules/types";
 import { Address } from "@/types/common";
 import { TokenStandard, bigDecimal } from "@lens-protocol/client";
 import { GroupRule } from "@lens-protocol/client";

@@ -1,8 +1,5 @@
 import { useEffect } from "react";
 import { CommunityCreateRulesForm } from "./community-create-rules-form";
-import { MembershipApprovalGroupRule } from "./rules/membership-approval-rule-form";
-import { SimplePaymentGroupRule } from "./rules/simple-payment-rule-form";
-import { TokenGatedGroupRule } from "./rules/token-gated-rule-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
@@ -10,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCommunityCreateForm } from "@/hooks/forms/use-community-create-form";
+import { MembershipApprovalGroupRule, SimplePaymentGroupRule, TokenGatedGroupRule } from "@/lib/domain/rules/types";
 import { Account } from "@lens-protocol/client";
 
 interface CommunityCreateFormProps {

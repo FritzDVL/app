@@ -1,9 +1,5 @@
 import React, { useEffect } from "react";
-
-export interface MembershipApprovalGroupRule {
-  type: "MembershipApprovalGroupRule";
-  membershipApprovalRule: { enable: true };
-}
+import { MembershipApprovalGroupRule } from "@/lib/domain/rules/types";
 
 interface MembershipApprovalRuleFormProps {
   onChange: (rule: MembershipApprovalGroupRule) => void;

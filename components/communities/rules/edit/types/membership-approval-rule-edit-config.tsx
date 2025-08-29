@@ -1,7 +1,8 @@
-import { MembershipApprovalGroupRule } from "../../../forms/rules/membership-approval-rule-form";
+
 import { Button } from "@/components/ui/button";
 import { useCommunityRules } from "@/hooks/communities/use-community-rules";
 import { Community } from "@/lib/domain/communities/types";
+import { MembershipApprovalGroupRule } from "@/lib/domain/rules/types";
 import { GroupRule } from "@lens-protocol/client";
 
 interface MembershipApprovalRuleEditConfigProps {

@@ -1,18 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  MembershipApprovalGroupRule,
-  MembershipApprovalRuleForm,
-} from "@/components/communities/forms/rules/membership-approval-rule-form";
+import { MembershipApprovalRuleForm } from "@/components/communities/forms/rules/membership-approval-rule-form";
 import { RuleTypeSelect } from "@/components/communities/forms/rules/rule-type-select";
-import {
-  SimplePaymentGroupRule,
-  SimplePaymentRuleForm,
-} from "@/components/communities/forms/rules/simple-payment-rule-form";
-import { TokenGatedGroupRule, TokenGatedRuleForm } from "@/components/communities/forms/rules/token-gated-rule-form";
+import { SimplePaymentRuleForm } from "@/components/communities/forms/rules/simple-payment-rule-form";
+import { TokenGatedRuleForm } from "@/components/communities/forms/rules/token-gated-rule-form";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { MembershipApprovalGroupRule, SimplePaymentGroupRule, TokenGatedGroupRule } from "@/lib/domain/rules/types";
 import { Account, TokenStandard, bigDecimal, evmAddress } from "@lens-protocol/client";
 import { AnimatePresence, motion } from "framer-motion";
 

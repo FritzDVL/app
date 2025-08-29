@@ -1,8 +1,6 @@
 import { client } from "../protocol-client";
-import { MembershipApprovalGroupRule } from "@/components/communities/forms/rules/membership-approval-rule-form";
-import { SimplePaymentGroupRule } from "@/components/communities/forms/rules/simple-payment-rule-form";
-import { TokenGatedGroupRule } from "@/components/communities/forms/rules/token-gated-rule-form";
 import { Community, Moderator } from "@/lib/domain/communities/types";
+import { MembershipApprovalGroupRule, SimplePaymentGroupRule, TokenGatedGroupRule } from "@/lib/domain/rules/types";
 import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
 import { evmAddress } from "@lens-protocol/client";
 import type { Group, GroupStatsResponse, RuleId, SessionClient } from "@lens-protocol/client";

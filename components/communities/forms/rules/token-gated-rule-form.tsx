@@ -1,19 +1,9 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TokenGatedGroupRule } from "@/lib/domain/rules/types";
 import { Address } from "@/types/common";
 import { TokenStandard } from "@lens-protocol/client";
-
-export interface TokenGatedGroupRule {
-  type: "TokenGatedGroupRule";
-  tokenGatedRule: {
-    token: {
-      currency: Address;
-      standard: TokenStandard;
-      value: string;
-    };
-  };
-}
 
 interface TokenGatedRuleFormProps {
   rule: Extract<TokenGatedGroupRule, { type: "TokenGatedGroupRule" }>;

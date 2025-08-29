@@ -1,18 +1,11 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SimplePaymentGroupRule } from "@/lib/domain/rules/types";
 import { getPaymentTokens } from "@/lib/shared/payment-tokens";
 import { Address } from "@/types/common";
 import { BigDecimal, bigDecimal, evmAddress } from "@lens-protocol/client";
 import { AlertTriangle } from "lucide-react";
-
-export interface SimplePaymentGroupRule {
-  type: "SimplePaymentGroupRule";
-  simplePaymentRule: {
-    native: BigDecimal;
-    recipient: Address;
-  };
-}
 
 interface SimplePaymentRuleForm {
   rule: Extract<SimplePaymentGroupRule, { type: "SimplePaymentGroupRule" }>;

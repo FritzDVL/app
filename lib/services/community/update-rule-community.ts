@@ -1,7 +1,5 @@
-import { MembershipApprovalGroupRule } from "@/components/communities/forms/rules/membership-approval-rule-form";
-import { SimplePaymentGroupRule } from "@/components/communities/forms/rules/simple-payment-rule-form";
-import { TokenGatedGroupRule } from "@/components/communities/forms/rules/token-gated-rule-form";
 import { Community } from "@/lib/domain/communities/types";
+import { MembershipApprovalGroupRule, SimplePaymentGroupRule, TokenGatedGroupRule } from "@/lib/domain/rules/types";
 import { updateGroupRule } from "@/lib/external/lens/primitives/groups";
 import type { RuleId, SessionClient } from "@lens-protocol/client";
 import type { WalletClient } from "viem";

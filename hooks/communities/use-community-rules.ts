@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { revalidateCommunityPath } from "@/app/actions/revalidate-path";
-import { MembershipApprovalGroupRule } from "@/components/communities/forms/rules/membership-approval-rule-form";
-import { SimplePaymentGroupRule } from "@/components/communities/forms/rules/simple-payment-rule-form";
-import { TokenGatedGroupRule } from "@/components/communities/forms/rules/token-gated-rule-form";
 import { Community } from "@/lib/domain/communities/types";
+import { MembershipApprovalGroupRule, SimplePaymentGroupRule, TokenGatedGroupRule } from "@/lib/domain/rules/types";
 import { removeCommunityRule } from "@/lib/services/community/remove-rule-community";
 import { updateCommunityRule } from "@/lib/services/community/update-rule-community";
 import type { RuleId } from "@lens-protocol/client";

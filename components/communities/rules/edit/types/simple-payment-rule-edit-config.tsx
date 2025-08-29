@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { SimplePaymentGroupRule } from "../../../forms/rules/simple-payment-rule-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCommunityRules } from "@/hooks/communities/use-community-rules";
 import { Community } from "@/lib/domain/communities/types";
+import { SimplePaymentGroupRule } from "@/lib/domain/rules/types";
 import { Address } from "@/types/common";
 import { GroupRule, bigDecimal } from "@lens-protocol/client";
 
