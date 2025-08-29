@@ -32,15 +32,7 @@ export async function getLatestRepliesByAuthor(author: Address, limit: number = 
     const replies: Reply[] = [];
     for (const post of posts) {
       try {
-        replies.push(
-          adaptPostToReply(post, {
-            name: post.author.username?.localName || "Unknown Author",
-            username: post.author.username?.value || "unknown",
-            avatar: post.author.metadata?.picture || "",
-            reputation: post.author.score || 0,
-            address: post.author.address,
-          }),
-        );
+        replies.push(adaptPostToReply(post));
       } catch (error) {
         console.warn(`Error transforming post ${post.id}:`, error);
         continue;

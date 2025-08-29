@@ -4,7 +4,6 @@
  */
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { Reply } from "@/lib/domain/replies/types";
-import { fetchAccountsBatch } from "@/lib/external/lens/primitives/accounts";
 import { client } from "@/lib/external/lens/protocol-client";
 import { Post, postId } from "@lens-protocol/client";
 import { fetchPost } from "@lens-protocol/client/actions";
@@ -35,23 +34,7 @@ export async function getReply(replyId: string): Promise<{
       };
     }
 
-    // Fetch author account
-    const author = post.author;
-
-    if (!author) {
-      return {
-        success: false,
-        error: "Author not found",
-      };
-    }
-
-    const reply = adaptPostToReply(post, {
-      name: author.username?.localName || "Unknown Author",
-      username: author.username?.value || "unknown",
-      avatar: author.metadata?.picture || "",
-      reputation: author.score || 0,
-      address: author.address,
-    });
+    const reply = adaptPostToReply(post);
 
     return {
       success: true,

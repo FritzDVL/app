@@ -7,6 +7,7 @@ import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { getReplyContent } from "@/lib/domain/replies/content";
 import { Reply as ReplyType } from "@/lib/domain/replies/types";
 import { getRepliesByParentId } from "@/lib/services/reply/get-replies-by-parent-id";
 import { getReply } from "@/lib/services/reply/get-reply";
@@ -60,19 +61,19 @@ export function ThreadReplyCard({
     const result = await getReply(parentId);
     if (!result.success || !result.reply || result.reply.id === rootPostId) return acc;
     acc.unshift(result.reply); // prepend for top-down order
-    if (result.reply.parentReplyId && result.reply.parentReplyId !== rootPostId) {
-      return fetchContextChain(result.reply.parentReplyId, acc);
+    if (result.reply.post.commentOn?.id && result.reply.post.commentOn.id !== rootPostId) {
+      return fetchContextChain(result.reply.post.commentOn.id, acc);
     }
     return acc;
   };
 
   // Handler to fetch and show context chain
   const handleShowContext = async () => {
-    if (!reply.parentReplyId || reply.parentReplyId === rootPostId) return;
+    if (!reply.post.commentOn?.id || reply.post.commentOn.id === rootPostId) return;
     setLoadingContext(true);
     try {
       if (!showContext) {
-        const chain = await fetchContextChain(reply.parentReplyId);
+        const chain = await fetchContextChain(reply.post.commentOn.id);
         setContextChain(chain);
         setShowContext(true);
       } else {
@@ -111,38 +112,45 @@ export function ThreadReplyCard({
     setTimeout(() => setCopied(false), 1200);
   };
 
+  const content = getReplyContent(reply.post);
+
   // Context chain UI
   const ContextChain = () => (
     <div className="mb-2 flex flex-col gap-2">
-      {contextChain.map((ctx, idx) => (
-        <div key={ctx.id} className="relative flex items-start gap-2 pl-3">
-          {/* Vertical line for chain */}
-          {idx < contextChain.length - 1 && (
-            <span
-              className="absolute left-0 top-5 h-full w-px bg-brand-100 dark:bg-gray-600"
-              style={{ minHeight: 32 }}
-            />
-          )}
-          <Avatar className="mt-0.5 h-4 w-4">
-            <AvatarImage src={ctx.author.avatar || "/placeholder.svg"} />
-            <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-[9px] text-white">
-              {ctx.author.name[0].toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 rounded border border-brand-100 bg-slate-50 px-2 py-1 dark:border-gray-600 dark:bg-gray-700">
-            <div className="mb-0.5 flex items-center gap-2">
-              <span className="text-xs font-medium text-gray-900 dark:text-gray-100">{ctx.author.name}</span>
-              <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                {ctx.createdAt ? getTimeAgo(new Date(ctx.createdAt)) : "Unknown date"}
-              </span>
+      {contextChain.map((ctx, idx) => {
+        const ctxContent = ctx.post.metadata.__typename === "ArticleMetadata" ? ctx.post.metadata.content : "";
+        return (
+          <div key={ctx.id} className="relative flex items-start gap-2 pl-3">
+            {/* Vertical line for chain */}
+            {idx < contextChain.length - 1 && (
+              <span
+                className="absolute left-0 top-5 h-full w-px bg-brand-100 dark:bg-gray-600"
+                style={{ minHeight: 32 }}
+              />
+            )}
+            <Avatar className="mt-0.5 h-4 w-4">
+              <AvatarImage src={ctx.post.author.metadata?.picture} />
+              <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-[9px] text-white">
+                {ctx.post.author.metadata?.name?.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 rounded border border-brand-100 bg-slate-50 px-2 py-1 dark:border-gray-600 dark:bg-gray-700">
+              <div className="mb-0.5 flex items-center gap-2">
+                <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
+                  {ctx.post.author.metadata?.name}
+                </span>
+                <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                  {getTimeAgo(new Date(ctx.post.timestamp))}
+                </span>
+              </div>
+              <div
+                className="rich-text-content text-gray-700 dark:text-gray-300"
+                dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(ctxContent) }}
+              />
             </div>
-            <div
-              className="rich-text-content text-gray-700 dark:text-gray-300"
-              dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(ctx.content) }}
-            />
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 
@@ -159,23 +167,23 @@ export function ThreadReplyCard({
               <div className="relative mb-3 flex flex-col gap-1 sm:mb-6 sm:flex-row sm:items-center sm:gap-2">
                 <div className="flex items-center gap-2">
                   <Link
-                    href={`/u/${reply.author.username.replace("lens/", "")}`}
+                    href={`/u/${reply.post.author.username?.value}`}
                     className="flex items-center gap-2 hover:text-gray-900"
                   >
                     <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
-                      <AvatarImage src={reply.author.avatar || "/placeholder.svg"} />
+                      <AvatarImage src={reply.post.author.metadata?.picture} />
                       <AvatarFallback className="bg-muted text-xs text-muted-foreground">
-                        {reply.author.name[0].toUpperCase()}
+                        {reply.post.author.metadata?.name?.toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="text-sm font-medium text-foreground">{reply.author.name}</span>
+                    <span className="text-sm font-medium text-foreground">{reply.post.author.metadata?.name}</span>
                   </Link>
                   <span className="text-xs text-muted-foreground sm:text-sm">
-                    {reply.createdAt ? getTimeAgo(new Date(reply.createdAt)) : "Unknown date"}
+                    {getTimeAgo(new Date(reply.post.timestamp))}
                   </span>
                 </div>
                 {/* Show context button at top right */}
-                {reply.parentReplyId && reply.parentReplyId !== rootPostId && (
+                {reply.post.commentOn?.id && reply.post.commentOn.id !== rootPostId && (
                   <div className="absolute right-0 top-0">
                     <button
                       className={
@@ -216,11 +224,12 @@ export function ThreadReplyCard({
                 )}
               </div>
               {/* Context chain UI below author row */}
-              {reply.parentReplyId && reply.parentReplyId !== rootPostId && showContext && contextChain.length > 0 && (
-                <ContextChain />
-              )}
+              {reply.post.commentOn?.id &&
+                reply.post.commentOn.id !== rootPostId &&
+                showContext &&
+                contextChain.length > 0 && <ContextChain />}
               {/* Content */}
-              <ContentRenderer content={removeTrailingEmptyPTags(reply.content)} className="rich-text-content mb-2" />
+              <ContentRenderer content={removeTrailingEmptyPTags(content)} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
               <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 {/* Tips counter and replies button bottom left */}
@@ -238,7 +247,7 @@ export function ThreadReplyCard({
                     title={showReplies ? "Hide replies" : "Show replies"}
                   >
                     <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                    <span>{loadingReplies ? "..." : reply.repliesCount || "0"}</span>
+                    <span>{loadingReplies ? "..." : reply.post.stats.comments || "0"}</span>
                   </button>
 
                   <div className="flex items-center gap-1 text-xs text-gray-500 sm:text-sm">
