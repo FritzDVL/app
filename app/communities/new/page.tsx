@@ -1,11 +1,21 @@
 "use client";
 
-import { CommunityCreateForm } from "@/components/communities/community-create-form";
+import { useState } from "react";
 import { CommunityCreationTips } from "@/components/communities/community-creation-tips";
+import { CommunityCreateForm } from "@/components/communities/forms/community-create-form";
+import { CommunityRulesTips } from "@/components/communities/rules/community-rules-tips";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
+import { MembershipApprovalGroupRule, SimplePaymentGroupRule, TokenGatedGroupRule } from "@/lib/domain/rules/types";
+import { useAuthStore } from "@/stores/auth-store";
 
 export default function NewCommunityPage() {
+  const [groupRule, setGroupRule] = useState<
+    SimplePaymentGroupRule | TokenGatedGroupRule | MembershipApprovalGroupRule | undefined
+  >(undefined);
+
+  const { account } = useAuthStore();
+
   return (
     <ProtectedRoute>
       <main className="mx-auto max-w-7xl px-4 py-8">
@@ -18,11 +28,12 @@ export default function NewCommunityPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           {/* Main Content Area */}
           <div className="lg:col-span-3">
-            <CommunityCreateForm />
+            <CommunityCreateForm onGroupRuleChange={setGroupRule} creator={account ?? undefined} />
           </div>
           {/* Sidebar */}
           <div className="space-y-6">
             <CommunityCreationTips />
+            {groupRule && <CommunityRulesTips communityRule={groupRule} />}
           </div>
         </div>
       </main>

@@ -8,3 +8,7 @@ export function getCurrentEnv(): Env {
   if (env === Env.TESTNET) return Env.TESTNET;
   return Env.MAINNET;
 }
+
+export function isMainnet(): boolean {
+  return getCurrentEnv() === Env.MAINNET;
+}

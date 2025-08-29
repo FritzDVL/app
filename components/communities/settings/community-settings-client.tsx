@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CommunityRulesManager } from "@/components/communities/rules/edit/community-rules-manager";
 import { CommunityAccessDenied } from "@/components/communities/settings/community-access-denied";
 import { CommunityEditForm } from "@/components/communities/settings/community-edit-form";
 import { CommunityModeratorsManager } from "@/components/communities/settings/community-moderators-manager";
@@ -14,7 +15,7 @@ interface CommunitySettingsClientProps {
 }
 
 export function CommunitySettingsClient({ community }: CommunitySettingsClientProps) {
-  const [activeTab, setActiveTab] = useState("general");
+  const [activeTab, setActiveTab] = useState<"general" | "moderators" | "rules">("general");
   const isModerator = useIsModerator(community);
 
   if (!isModerator) {
@@ -58,9 +59,12 @@ export function CommunitySettingsClient({ community }: CommunitySettingsClientPr
           </button>
           <button
             disabled
-            className={
-              "cursor-not-allowed rounded-lg bg-transparent px-3 py-2 text-xs font-medium text-muted-foreground opacity-50 sm:rounded-xl sm:px-6 sm:py-3 sm:text-sm"
-            }
+            onClick={() => setActiveTab("rules")}
+            className={`rounded-lg px-3 py-2 text-xs font-medium transition-all sm:rounded-xl sm:px-6 sm:py-3 sm:text-sm ${
+              activeTab === "rules"
+                ? "bg-primary text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            } disabled:cursor-not-allowed disabled:opacity-60`}
           >
             <BookOpen className="mr-2 inline h-4 w-4" />
             Rules
@@ -79,6 +83,12 @@ export function CommunitySettingsClient({ community }: CommunitySettingsClientPr
         {activeTab === "moderators" && (
           <CommunitySettingsTabPanel icon={Users} title="Manage Moderators">
             <CommunityModeratorsManager community={community} />
+          </CommunitySettingsTabPanel>
+        )}
+
+        {activeTab === "rules" && (
+          <CommunitySettingsTabPanel icon={BookOpen} title="Community Rules">
+            <CommunityRulesManager community={community} />
           </CommunitySettingsTabPanel>
         )}
       </div>

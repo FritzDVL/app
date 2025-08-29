@@ -1,4 +1,4 @@
-import { CommunityThreads } from "@/components/communities/community-threads";
+import { CommunityThreads } from "@/components/communities/threads/community-threads";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { getCommunity } from "@/lib/services/community/get-community";
 import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";

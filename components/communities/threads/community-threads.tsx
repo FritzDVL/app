@@ -1,7 +1,7 @@
-import { CommunityHeader } from "@/components/communities//community-header";
-import { CommunityNavActions } from "@/components/communities/community-nav-actions";
-import { CommunitySidebar } from "@/components/communities/community-sidebar";
-import { CommunityThreadsList } from "@/components/communities/community-threads-list";
+import { CommunityHeader } from "@/components/communities/display/community-header";
+import { CommunityNavActions } from "@/components/communities/display/community-nav-actions";
+import { CommunitySidebar } from "@/components/communities/display/community-sidebar";
+import { CommunityThreadsList } from "@/components/communities/threads/community-threads-list";
 import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
 

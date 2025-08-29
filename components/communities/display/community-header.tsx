@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { CommunityHeaderActions } from "@/components/communities/community-header-actions";
+import { CommunityHeaderActions } from "@/components/communities/display/community-header-actions";
+import { CommunityRuleDetails } from "@/components/communities/rules/community-rule-details";
 import { Card, CardContent } from "@/components/ui/card";
 import { Community } from "@/lib/domain/communities/types";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
@@ -12,7 +13,7 @@ export function CommunityHeader({ community }: { community: Community }) {
     <>
       <Card className="mb-8 rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardContent className="p-6 md:p-8">
-          <div className="flex flex-col md:flex-row md:items-start md:space-x-6 md:space-y-0 items-center space-y-4">
+          <div className="flex flex-col items-center space-y-4 md:flex-row md:items-start md:space-x-6 md:space-y-0">
             {/* Logo */}
             <div className="flex h-[80px] w-[80px] items-center justify-center md:mr-6 md:h-[100px] md:w-[100px]">
               {community.logo ? (
@@ -30,8 +31,8 @@ export function CommunityHeader({ community }: { community: Community }) {
               )}
             </div>
             {/* Main content: name, desc, stats + actions */}
-            <div className="flex flex-1 flex-col w-full min-w-0">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between w-full">
+            <div className="flex w-full min-w-0 flex-1 flex-col">
+              <div className="flex w-full flex-col md:flex-row md:items-start md:justify-between">
                 {/* Name, desc, stats */}
                 <div className="w-full min-w-0 flex-1 text-center md:text-left">
                   <h1 className="mb-2 truncate text-2xl font-bold text-foreground md:text-3xl">{community.name}</h1>
@@ -47,15 +48,17 @@ export function CommunityHeader({ community }: { community: Community }) {
                       <MessageCircle className="mr-2 h-4 w-4" />
                       {community.threadsCount} threads
                     </div>
+                    {/* Community Rule Message */}
+                    <CommunityRuleDetails community={community} />
                   </div>
                 </div>
                 {/* Actions: desktop only, right-aligned */}
-                <div className="hidden md:flex md:items-start md:justify-end md:ml-8">
+                <div className="hidden md:ml-8 md:flex md:items-start md:justify-end">
                   <CommunityHeaderActions community={community} />
                 </div>
               </div>
               {/* Actions: mobile only, full width below */}
-              <div className="mt-4 flex md:hidden w-full justify-center">
+              <div className="mt-4 flex w-full justify-center md:hidden">
                 <CommunityHeaderActions community={community} />
               </div>
             </div>

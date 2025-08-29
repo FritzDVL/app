@@ -54,12 +54,21 @@ export async function createCommunity(formData: CreateCommunityFormData): Promis
     const acl = immutable(lensChain.id);
     const { uri } = await storageClient.uploadAsJson(groupMetadata, { acl });
 
-    // 5. Create the group on Lens Protocol
-    const result = await createGroup(adminSessionClient, {
+    // 5. Create the group on Lens Protocol with optional group rules
+    const createGroupParams: any = {
       metadataUri: uri,
-      admins: [evmAddress(formData.adminAddress), ADMIN_USER_ADDRESS],
-      owner: evmAddress(formData.adminAddress),
-    })
+      admins: [evmAddress(formData.adminAddress)],
+      owner: ADMIN_USER_ADDRESS,
+    };
+
+    // Add group rules if specified
+    if (formData.communityRule) {
+      createGroupParams.rules = {
+        required: [formData.communityRule],
+      };
+    }
+
+    const result = await createGroup(adminSessionClient, createGroupParams)
       .andThen(handleOperationWith(adminWallet))
       .andThen(adminSessionClient.waitForTransaction)
       .andThen((txHash: unknown) => {

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { CommunitiesHeader } from "@/components/communities/communities-header";
-import { CommunitiesList } from "@/components/communities/communities-list";
-import { CommunitiesStats } from "@/components/communities/communities-stats";
+import { CommunitiesHeader } from "@/components/communities/list/communities-header";
+import { CommunitiesList } from "@/components/communities/list/communities-list";
+import { CommunitiesStats } from "@/components/communities/list/communities-stats";
 import { Community } from "@/lib/domain/communities/types";
 
 interface CommunitiesProps {

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { CommunityRules } from "@/components/communities/community-rules";
 import { ProtectedRoute } from "@/components/pages/protected-route";
+import { RulesGuidelines } from "@/components/shared/rules-guidelines";
 import { ThreadCreateForm } from "@/components/thread/thread-create-form";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -40,7 +40,7 @@ export default function NewThreadPage() {
           </div>
           {/* Sidebar */}
           <div className="space-y-6">
-            <CommunityRules variant="posting" />
+            <RulesGuidelines variant="posting" />
           </div>
         </div>
       </main>

@@ -5,7 +5,7 @@ interface Rule {
   type?: "positive" | "negative" | "neutral";
 }
 
-interface CommunityRulesProps {
+interface RulesGuidelinesProps {
   title?: string;
   rules?: Rule[] | string[];
   className?: string;
@@ -31,7 +31,7 @@ const DEFAULT_POSTING_GUIDELINES: Rule[] = [
   { text: "No spam or self-promotion", type: "negative" },
 ];
 
-export function CommunityRules({ title, rules, className = "", variant = "community" }: CommunityRulesProps) {
+export function RulesGuidelines({ title, rules, className = "", variant = "community" }: RulesGuidelinesProps) {
   // Determine default rules and title based on variant
   const defaultRules = variant === "posting" ? DEFAULT_POSTING_GUIDELINES : DEFAULT_COMMUNITY_RULES;
   const defaultTitle = variant === "posting" ? "Guidelines" : "Community Rules";

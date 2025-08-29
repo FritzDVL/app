@@ -1,8 +1,5 @@
-/**
- * Community Domain Types
- * Basic domain types for community functionality
- */
 import { Address } from "@/types/common";
+import { GroupRules } from "@lens-protocol/client";
 
 export interface Community {
   id: string;
@@ -15,7 +12,8 @@ export interface Community {
   threadsCount: number;
   moderators: Moderator[];
   owner: Address;
-  createdAt: string; // ISO date string
+  rules?: GroupRules;
+  createdAt: string;
 }
 
 export interface Moderator {

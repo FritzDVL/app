@@ -1,6 +1,6 @@
-import { CommunityModerators } from "@/components/communities/community-moderators";
-import { CommunityOwner } from "@/components/communities/community-owner";
-import { CommunityRules } from "@/components/communities/community-rules";
+import { CommunityOwner } from "@/components/communities/display/community-owner";
+import { CommunityModerators } from "@/components/communities/display/community-moderators";
+import { RulesGuidelines } from "@/components/shared/rules-guidelines";
 import { Community } from "@/lib/domain/communities/types";
 
 export function CommunitySidebar({ community }: { community: Community }) {
@@ -10,7 +10,7 @@ export function CommunitySidebar({ community }: { community: Community }) {
     <div className="space-y-8">
       <CommunityOwner owner={community.owner} />
       <CommunityModerators moderators={community.moderators} />
-      <CommunityRules />
+      <RulesGuidelines />
     </div>
   );
 }

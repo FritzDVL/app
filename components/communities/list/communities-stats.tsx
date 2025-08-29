@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "../ui/card";
+import { Card, CardContent, CardHeader } from "../../ui/card";
 import { Community } from "@/lib/domain/communities/types";
 
 type CommunitiesStatsProps = {
