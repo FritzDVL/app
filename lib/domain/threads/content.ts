@@ -36,6 +36,15 @@ export const stripThreadArticleFormatting = (content: string): string => {
   return result;
 };
 
+export const stripThreadPrefixOnly = (content: string): string => {
+  let result = content;
+  const prefixRegex = new RegExp(
+    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}https://lensforum\\.xyz/thread/[\\w\\d]+\\s*\\n+`,
+  );
+  result = result.replace(prefixRegex, "");
+  return result;
+};
+
 export const hasThreadContentPrefix = (content: string): boolean => {
   return content.startsWith(`*${THREAD_CONTENT_PREFIX}`) || content.startsWith(THREAD_CONTENT_PREFIX);
 };
