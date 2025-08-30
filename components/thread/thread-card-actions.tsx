@@ -1,13 +1,17 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { ThreadReplyBox } from "./thread-reply-box";
+import { revalidateCommunityPath, revalidateThreadPath } from "@/app/actions/revalidate-path";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { ThreadVoting } from "@/components/thread/thread-voting";
 import { Button } from "@/components/ui/button";
+import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
+import { useAuthStore } from "@/stores/auth-store";
 import { postId } from "@lens-protocol/react";
-import { Coins, Share } from "lucide-react";
+import { Coins, Reply as ReplyIcon, Share } from "lucide-react";
 
 interface ThreadCardActionsProps {
   thread: Thread;
@@ -15,6 +19,23 @@ interface ThreadCardActionsProps {
 
 export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
   const threadPostId = thread.rootPost?.id;
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+  const { createReply } = useReplyCreate();
+  const { isLoggedIn } = useAuthStore();
+
+  const handleReply = async () => {
+    if (!thread || !thread.rootPost || !thread.rootPost.id) return;
+    if (replyingTo && replyContent[replyingTo]) {
+      const reply = await createReply(thread.rootPost.id, replyContent[replyingTo], thread.feed.address, thread.id);
+      if (reply) {
+        setReplyingTo(null);
+        setReplyContent(c => ({ ...c, [replyingTo]: "" }));
+        revalidateThreadPath(thread.feed.address);
+        revalidateCommunityPath(thread.community);
+      }
+    }
+  };
 
   // Default share logic if not provided
   const handleShare = () => {
@@ -27,16 +48,41 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
 
+  const canTip = thread.rootPost.operations?.canTip;
+  const canReply = thread.rootPost.operations?.canComment.__typename === "PostOperationValidationPassed";
+
   return (
     <div className="mt-6 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex items-center gap-4 text-muted-foreground">
+      {/* Left: Stats Tips */}
+      <div className="flex items-center justify-start gap-4 text-muted-foreground sm:flex-1">
         <div className="flex items-center gap-1">
           <Coins className="h-4 w-4" />
           <span className="text-sm">{thread.rootPost?.stats.tips}</span>
         </div>
       </div>
-      <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
+      {/* Center: ThreadVoting */}
+      <div className="mt-2 flex items-center justify-start sm:mt-0 sm:flex-1 sm:justify-center">
         {threadPostId && <ThreadVoting postid={postId(threadPostId)} />}
+      </div>
+      {/* Right: Reply, Tip, Share */}
+      <div className="mt-2 flex w-full items-center justify-start gap-2 sm:mt-0 sm:w-auto sm:flex-1 sm:justify-end">
+        {canReply && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+            onClick={() => setReplyingTo("main")}
+            disabled={!isLoggedIn}
+          >
+            <ReplyIcon className="mr-2 h-4 w-4" />
+            Reply
+          </Button>
+        )}
+        {canTip && (
+          <div className="min-w-0">
+            <TipGhoPopover to={threadPostId} />
+          </div>
+        )}
         <Button
           variant="ghost"
           size="sm"
@@ -46,12 +92,21 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
           <Share className="mr-2 h-4 w-4" />
           <span className="truncate">Share</span>
         </Button>
-        {threadPostId && (
-          <div className="min-w-0">
-            <TipGhoPopover to={threadPostId} />
-          </div>
-        )}
       </div>
+      {/* Reply Box */}
+      {replyingTo === "main" && (
+        <div className="mt-2 w-full">
+          <ThreadReplyBox
+            value={replyContent["main"] || ""}
+            onCancel={() => {
+              setReplyingTo(null);
+              setReplyContent(c => ({ ...c, main: "" }));
+            }}
+            onSubmit={handleReply}
+            onChange={val => setReplyContent(c => ({ ...c, main: val }))}
+          />
+        </div>
+      )}
     </div>
   );
 }

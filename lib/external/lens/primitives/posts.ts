@@ -1,15 +1,7 @@
 import { client } from "@/lib/external/lens/protocol-client";
 import { APP_ADDRESS } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
-import type {
-  AnyPost,
-  Post as LensPost,
-  PageSize,
-  Post,
-  PostId,
-  PublicClient,
-  SessionClient,
-} from "@lens-protocol/client";
+import type { AnyPost, Post as LensPost, Post, PostId, PublicClient, SessionClient } from "@lens-protocol/client";
 import { PostReferenceType, ReferenceRelevancyFilter, evmAddress } from "@lens-protocol/client";
 import { fetchPost, fetchPostReferences, fetchPosts } from "@lens-protocol/client/actions";
 
@@ -32,9 +24,10 @@ export async function fetchPostWithClient(postId: string, lensClient: SessionCli
 /**
  * Batch fetch multiple posts from Lens Protocol
  */
-export async function fetchPostsBatch(postIds: string[]): Promise<Post[]> {
+export async function fetchPostsBatch(postIds: string[], sessionClient?: SessionClient): Promise<Post[]> {
   if (!postIds.length) return [];
-  const result = await fetchPosts(client, { filter: { posts: postIds } });
+  const lensClient = sessionClient ?? client;
+  const result = await fetchPosts(lensClient, { filter: { posts: postIds } });
   if (!result.isOk() || !result.value.items) return [];
 
   return (result.value.items as Post[]).filter(post => post && post.__typename === "Post" && postIds.includes(post.id));
@@ -45,8 +38,7 @@ export async function fetchPostsBatch(postIds: string[]): Promise<Post[]> {
  */
 export async function fetchPostsByFeed(
   threadAddress: string,
-  pageSize?: PageSize,
-  cursor?: string | null,
+  sessionClient?: SessionClient,
 ): Promise<PaginatedPostsResult> {
   const params: any = {
     filter: {
@@ -54,10 +46,8 @@ export async function fetchPostsByFeed(
     },
   };
 
-  if (pageSize) params.pageSize = pageSize;
-  if (cursor) params.cursor = cursor;
-
-  const result = await fetchPosts(client, params);
+  const lensClient = sessionClient ?? client;
+  const result = await fetchPosts(lensClient, params);
 
   if (!result.isOk() || !result.value.items) {
     return { posts: [], pageInfo: { prev: null, next: null } };

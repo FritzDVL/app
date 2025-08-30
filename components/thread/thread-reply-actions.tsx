@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/stores/auth-store";
 import { PostId } from "@lens-protocol/client";
 import { Reply } from "lucide-react";
 import { toast } from "sonner";
@@ -10,10 +9,17 @@ interface ThreadReplyActionsProps {
   replyId: string;
   threadAddress: string;
   setReplyingTo?: (id: string | null) => void;
+  canReply: boolean;
+  canTip: boolean;
 }
 
-export function ThreadReplyActions({ replyId, threadAddress, setReplyingTo }: ThreadReplyActionsProps) {
-  const { isLoggedIn } = useAuthStore();
+export function ThreadReplyActions({
+  replyId,
+  threadAddress,
+  setReplyingTo,
+  canReply,
+  canTip,
+}: ThreadReplyActionsProps) {
   const [copied, setCopied] = useState(false);
 
   const handleReply = () => {
@@ -31,20 +37,20 @@ export function ThreadReplyActions({ replyId, threadAddress, setReplyingTo }: Th
 
   return (
     <div className="flex items-center gap-1 sm:gap-2">
-      {setReplyingTo && isLoggedIn && (
+      {setReplyingTo && canReply && (
         <Button
           variant="ghost"
           size="sm"
           className="h-7 px-2 text-xs text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 sm:h-8 sm:px-3 sm:text-sm"
           onClick={handleReply}
-          disabled={!isLoggedIn}
+          disabled={!canReply}
         >
           <Reply className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
           <span className="hidden sm:inline">Reply</span>
           <span className="sm:hidden">Rep</span>
         </Button>
       )}
-      <TipGhoPopover to={replyId as PostId} />
+      {canTip && <TipGhoPopover to={replyId as PostId} />}
       <Button
         variant="ghost"
         size="sm"

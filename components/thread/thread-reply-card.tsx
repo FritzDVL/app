@@ -40,6 +40,9 @@ export function ThreadReplyCard({ reply, thread }: ThreadReplyCardProps) {
     }
   };
 
+  const canReply = reply.post.operations?.canComment.__typename === "PostOperationValidationPassed";
+  const canTip = reply.post.operations?.canTip;
+
   return (
     <div className="space-y-2" id={reply.id}>
       <Card className="rounded-lg bg-white shadow-sm dark:border-gray-700/60 dark:bg-gray-800">
@@ -87,6 +90,8 @@ export function ThreadReplyCard({ reply, thread }: ThreadReplyCardProps) {
                     replyId={reply.id}
                     threadAddress={threadAddress}
                     setReplyingTo={() => setShowReplyBox(true)}
+                    canReply={canReply}
+                    canTip={!!canTip}
                   />
                 </div>
               </div>
