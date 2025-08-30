@@ -1,7 +1,8 @@
 import ContentRenderer from "@/components/shared/content-renderer";
 import { Card, CardContent } from "@/components/ui/card";
-import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
+import { getThreadTitleAndSummary, stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
+import { getTimeAgo } from "@/lib/shared/utils";
 
 function getThreadContent(thread: Thread): string {
   const metadata = thread?.rootPost?.metadata;
@@ -11,7 +12,9 @@ function getThreadContent(thread: Thread): string {
   return "";
 }
 
-export function ThreadSimpleMainCard({ thread }: { thread: any }) {
+export function ThreadSimpleMainCard({ thread }: { thread: Thread }) {
+  const { title } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
+
   return (
     <div>
       <Card className="rounded-lg bg-gray-50/50 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/50">
@@ -20,16 +23,14 @@ export function ThreadSimpleMainCard({ thread }: { thread: any }) {
             <div className="space-y-3">
               {/* Thread Title */}
               <div>
-                <h3 className="line-clamp-2 text-lg font-semibold text-foreground">
-                  {thread.title || "Untitled Thread"}
-                </h3>
+                <h3 className="line-clamp-2 text-lg font-semibold text-foreground">{title}</h3>
               </div>
 
               {/* Thread Content Preview - Truncated */}
               {getThreadContent(thread) && (
                 <div className="line-clamp-3 text-sm text-muted-foreground">
                   <ContentRenderer
-                    content={stripThreadArticleFormatting(getThreadContent(thread)).slice(0, 200) + "..."}
+                    content={stripThreadArticleFormatting(getThreadContent(thread))}
                     className="text-sm"
                   />
                 </div>
@@ -60,21 +61,19 @@ export function ThreadSimpleMainCard({ thread }: { thread: any }) {
                   <span>by</span>
                   <span className="font-medium">{thread.author?.name || "Unknown"}</span>
                 </div>
-                {thread.created_at && (
-                  <>
-                    <span>•</span>
-                    <div className="flex items-center gap-1">
-                      <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <span>{new Date(thread.created_at).toLocaleDateString()}</span>
-                    </div>
-                  </>
-                )}
+                <>
+                  <span>•</span>
+                  <div className="flex items-center gap-1">
+                    <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>{getTimeAgo(new Date(thread.rootPost.timestamp))}</span>
+                  </div>
+                </>
               </div>
             </div>
           )}
