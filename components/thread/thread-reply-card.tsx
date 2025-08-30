@@ -118,7 +118,7 @@ export function ThreadReplyCard({
   const ContextChain = () => (
     <div className="mb-2 flex flex-col gap-2">
       {contextChain.map((ctx, idx) => {
-        const ctxContent = ctx.post.metadata.__typename === "ArticleMetadata" ? ctx.post.metadata.content : "";
+        const ctxContent = getReplyContent(ctx.post);
         return (
           <div key={ctx.id} className="relative flex items-start gap-2 pl-3">
             {/* Vertical line for chain */}
@@ -143,9 +143,9 @@ export function ThreadReplyCard({
                   {getTimeAgo(new Date(ctx.post.timestamp))}
                 </span>
               </div>
-              <div
+              <ContentRenderer
+                content={removeTrailingEmptyPTags(ctxContent)}
                 className="rich-text-content text-gray-700 dark:text-gray-300"
-                dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(ctxContent) }}
               />
             </div>
           </div>
