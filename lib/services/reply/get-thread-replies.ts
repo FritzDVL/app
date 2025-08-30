@@ -57,9 +57,9 @@ export async function getThreadReplies(
       }
     }
 
-    // Filter the rootPost if it exists
+    // Filter rootpost and quotes if present
     if (thread.rootPost && typeof thread.rootPost.id === "string") {
-      replies = replies.filter(r => r.id !== thread.rootPost!.id);
+      replies = replies.filter(r => r.id !== thread.rootPost!.id).filter(r => r.post.commentOn !== null);
     }
 
     return {
