@@ -3,20 +3,16 @@ import Link from "next/link";
 import { ReplyVoting } from "../reply/reply-voting";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { ContentRenderer } from "@/components/shared/content-renderer";
-import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
+import { ThreadReplyActions } from "@/components/thread/thread-reply-actions";
+import { ThreadReplyInReplyTo } from "@/components/thread/thread-reply-in-reply-to";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getReplyContent } from "@/lib/domain/replies/content";
 import { Reply as ReplyType } from "@/lib/domain/replies/types";
 import { getRepliesByParentId } from "@/lib/services/reply/get-replies-by-parent-id";
-import { getReply } from "@/lib/services/reply/get-reply";
 import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/shared/utils";
-import { useAuthStore } from "@/stores/auth-store";
-import { PostId } from "@lens-protocol/client";
 import { postId } from "@lens-protocol/react";
-import { Coins, MessageSquare, Reply } from "lucide-react";
-import { toast } from "sonner";
+import { Coins, MessageSquare } from "lucide-react";
 
 export function ThreadReplyCard({
   reply,
@@ -40,49 +36,10 @@ export function ThreadReplyCard({
   rootPostId: string;
   threadAddress: string;
 }) {
-  // State for showing context
-  const [showContext, setShowContext] = useState(false);
-  const [contextChain, setContextChain] = useState<ReplyType[]>([]);
-  const [loadingContext, setLoadingContext] = useState(false);
-
   // State and logic for showing child replies
   const [showReplies, setShowReplies] = useState(false);
   const [childReplies, setChildReplies] = useState<ReplyType[]>([]);
   const [loadingReplies, setLoadingReplies] = useState(false);
-
-  // State for copying reply link
-  const [copied, setCopied] = useState(false);
-
-  const { isLoggedIn } = useAuthStore();
-
-  // Recursively fetch context chain, stopping at rootPostId
-  const fetchContextChain = async (parentId: string, acc: ReplyType[] = []): Promise<ReplyType[]> => {
-    if (!parentId || parentId === rootPostId) return acc;
-    const result = await getReply(parentId);
-    if (!result.success || !result.reply || result.reply.id === rootPostId) return acc;
-    acc.unshift(result.reply); // prepend for top-down order
-    if (result.reply.post.commentOn?.id && result.reply.post.commentOn.id !== rootPostId) {
-      return fetchContextChain(result.reply.post.commentOn.id, acc);
-    }
-    return acc;
-  };
-
-  // Handler to fetch and show context chain
-  const handleShowContext = async () => {
-    if (!reply.post.commentOn?.id || reply.post.commentOn.id === rootPostId) return;
-    setLoadingContext(true);
-    try {
-      if (!showContext) {
-        const chain = await fetchContextChain(reply.post.commentOn.id);
-        setContextChain(chain);
-        setShowContext(true);
-      } else {
-        setShowContext(false);
-      }
-    } finally {
-      setLoadingContext(false);
-    }
-  };
 
   // Handler to show/hide child replies
   const handleShowReplies = async () => {
@@ -102,57 +59,7 @@ export function ThreadReplyCard({
     }
   };
 
-  // Handler to copy reply link
-  const handleCopyLink = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-    const url = `${window.location.origin}/thread/${threadAddress}/reply/${reply.id}`;
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
-    toast.success("Reply link copied to clipboard!");
-    setTimeout(() => setCopied(false), 1200);
-  };
-
   const content = getReplyContent(reply.post);
-
-  // Context chain UI
-  const ContextChain = () => (
-    <div className="mb-2 flex flex-col gap-2">
-      {contextChain.map((ctx, idx) => {
-        const ctxContent = getReplyContent(ctx.post);
-        return (
-          <div key={ctx.id} className="relative flex items-start gap-2 pl-3">
-            {/* Vertical line for chain */}
-            {idx < contextChain.length - 1 && (
-              <span
-                className="absolute left-0 top-5 h-full w-px bg-brand-100 dark:bg-gray-600"
-                style={{ minHeight: 32 }}
-              />
-            )}
-            <Avatar className="mt-0.5 h-4 w-4">
-              <AvatarImage src={ctx.post.author.metadata?.picture} />
-              <AvatarFallback className="bg-gradient-to-r from-brand-400 to-brand-600 text-[9px] text-white">
-                {ctx.post.author.metadata?.name?.toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 rounded border border-brand-100 bg-slate-50 px-2 py-1 dark:border-gray-600 dark:bg-gray-700">
-              <div className="mb-0.5 flex items-center gap-2">
-                <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
-                  {ctx.post.author.metadata?.name}
-                </span>
-                <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                  {getTimeAgo(new Date(ctx.post.timestamp))}
-                </span>
-              </div>
-              <ContentRenderer
-                content={removeTrailingEmptyPTags(ctxContent)}
-                className="rich-text-content text-gray-700 dark:text-gray-300"
-              />
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
 
   return (
     <div className="space-y-2" id={reply.id}>
@@ -182,52 +89,16 @@ export function ThreadReplyCard({
                     {getTimeAgo(new Date(reply.post.timestamp))}
                   </span>
                 </div>
-                {/* Show context button at top right */}
-                {reply.post.commentOn?.id && reply.post.commentOn.id !== rootPostId && (
-                  <div className="absolute right-0 top-0">
-                    <button
-                      className={
-                        `inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium transition-colors ` +
-                        (showContext
-                          ? "border border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100 dark:border-brand-600 dark:bg-brand-900/50 dark:text-brand-300 dark:hover:bg-brand-900/70"
-                          : "bg-transparent text-brand-500 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300")
-                      }
-                      onClick={handleShowContext}
-                      disabled={loadingContext}
-                      aria-pressed={showContext}
-                      title={showContext ? "Hide context" : "Show context"}
-                    >
-                      <span className="inline-block">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          className="h-3 w-3 sm:h-4 sm:w-4"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                          />
-                        </svg>
-                      </span>
-                      <span className="hidden sm:inline">
-                        {loadingContext ? "Loading..." : showContext ? "Hide parent reply" : "In reply to"}
-                      </span>
-                      <span className="sm:hidden">{showContext ? "Hide" : "Parent"}</span>
-                    </button>
-                  </div>
-                )}
+                {/* removed ThreadReplyInReplyTo from this top row to avoid placing context next to avatar */}
               </div>
-              {/* Context chain UI below author row */}
-              {reply.post.commentOn?.id &&
-                reply.post.commentOn.id !== rootPostId &&
-                showContext &&
-                contextChain.length > 0 && <ContextChain />}
+
+              {/* In-reply-to context chain: render below the author row (above content) */}
+              {reply.post.commentOn?.id && reply.post.commentOn.id !== rootPostId && (
+                <div className="mb-2">
+                  <ThreadReplyInReplyTo parentId={reply.post.commentOn.id} rootPostId={rootPostId} />
+                </div>
+              )}
+
               {/* Content */}
               <ContentRenderer content={removeTrailingEmptyPTags(content)} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
@@ -255,46 +126,7 @@ export function ThreadReplyCard({
                     <span>{(reply as any).tips ?? 0}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 sm:gap-2">
-                  {setReplyingTo && isLoggedIn && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 px-2 text-xs text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 sm:h-8 sm:px-3 sm:text-sm"
-                      onClick={() => setReplyingTo(reply.id)}
-                      disabled={!isLoggedIn}
-                    >
-                      <Reply className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                      <span className="hidden sm:inline">Reply</span>
-                      <span className="sm:hidden">Rep</span>
-                    </Button>
-                  )}
-                  <TipGhoPopover to={reply.id as PostId} />
-                  {/* Copy reply link button at the bottom right */}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`h-7 px-2 text-xs text-green-600 hover:text-green-700 focus:outline-none dark:text-green-400 dark:hover:text-green-300 sm:h-8 sm:px-2 sm:text-sm ${copied ? "text-green-500" : ""}`}
-                    title="Copy reply link"
-                    onClick={handleCopyLink}
-                  >
-                    <svg
-                      className="mr-1 h-3 w-3 sm:h-4 sm:w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15 7h2a5 5 0 0 1 0 10h-2m-6 0H7a5 5 0 0 1 0-10h2m1 5h4"
-                      />
-                    </svg>
-                    <span className="hidden sm:inline">{copied ? "Copied!" : "Copy link"}</span>
-                    <span className="sm:hidden">{copied ? "✓" : "Copy"}</span>
-                  </Button>
-                </div>
+                <ThreadReplyActions replyId={reply.id} threadAddress={threadAddress} setReplyingTo={setReplyingTo} />
               </div>
               {replyingTo === reply.id && replyContent && setReplyingTo && setReplyContent && handleReply && (
                 <ThreadReplyBox

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ThreadReplies } from "@/components/thread/thread-replies";
+import { ThreadReplyCard } from "@/components/thread/thread-reply-card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThreadReplies } from "@/hooks/queries/use-thread-replies";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
@@ -36,15 +36,21 @@ export function ThreadRepliesList({ thread }: ThreadRepliesListProps) {
   }
 
   return (
-    <ThreadReplies
-      replies={replies}
-      replyingTo={replyingTo}
-      replyContent={replyContent}
-      setReplyingTo={setReplyingTo}
-      setReplyContent={setReplyContent}
-      handleReply={handleReply}
-      rootPostId={thread.rootPost?.id || ""}
-      threadAddress={thread.feed.address}
-    />
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold text-foreground">{replies.length} Replies</h3>
+      {replies.map(reply => (
+        <ThreadReplyCard
+          key={reply.id}
+          reply={reply}
+          replyingTo={replyingTo}
+          replyContent={replyContent}
+          setReplyingTo={setReplyingTo}
+          setReplyContent={setReplyContent}
+          handleReply={handleReply}
+          rootPostId={thread.rootPost?.id || ""}
+          threadAddress={thread.feed.address}
+        />
+      ))}
+    </div>
   );
 }
