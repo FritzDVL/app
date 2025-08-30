@@ -30,7 +30,6 @@ export function CommunityHeaderActions({ communityAddr }: CommunityHeaderActions
       const community = await getCommunity(communityAddr, sessionClient.data);
       if (community.success && community.community) {
         setCommunity(community.community);
-        console.log("Community data updated:", community.community);
       }
     } catch (error) {
       console.error("Error fetching community data:", error);
