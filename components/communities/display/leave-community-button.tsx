@@ -3,16 +3,15 @@ import { Community } from "@/lib/domain/communities/types";
 import { useAuthStore } from "@/stores/auth-store";
 import { LogOut } from "lucide-react";
 
-export function LeaveCommunityButton({
-  community,
-  onDialogOpen,
-}: {
+interface LeaveCommunityButtonProps {
   community: Community;
   onDialogOpen: (open: boolean) => void;
-}) {
+}
+
+export function LeaveCommunityButton({ community, onDialogOpen }: LeaveCommunityButtonProps) {
   const { isLoggedIn } = useAuthStore();
 
-  const handleLeave = () => {
+  const handleOpenLeaveDialog = () => {
     onDialogOpen(true);
   };
 
@@ -24,7 +23,7 @@ export function LeaveCommunityButton({
   return (
     <Button
       disabled={!isLoggedIn}
-      onClick={handleLeave}
+      onClick={handleOpenLeaveDialog}
       size="sm"
       variant="outline"
       className="h-8 px-3 text-xs font-medium transition-all duration-150"

@@ -6,15 +6,19 @@ import { LogIn } from "lucide-react";
 
 interface JoinCommunityButtonProps {
   community: Community;
+  onStatusChange: () => void;
 }
 
-export function JoinCommunityButton({ community }: JoinCommunityButtonProps) {
+export function JoinCommunityButton({ community, onStatusChange }: JoinCommunityButtonProps) {
   const { isLoggedIn } = useAuthStore();
   const joinCommunity = useJoinCommunity(community);
 
   const handleJoin = async () => {
     try {
-      await joinCommunity();
+      const joined = await joinCommunity();
+      if (joined) {
+        onStatusChange();
+      }
     } catch (error) {
       console.error("Error joining community:", error);
     }

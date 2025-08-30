@@ -26,7 +26,9 @@ export async function joinCommunity(
   try {
     const result = await joinGroup(sessionClient, {
       group: evmAddress(community.group.address),
-    }).andThen(handleOperationWith(walletClient));
+    })
+      .andThen(handleOperationWith(walletClient))
+      .andThen(sessionClient.waitForTransaction);
 
     if (result.isOk()) {
       await incrementCommunityMembersCount(community.id);

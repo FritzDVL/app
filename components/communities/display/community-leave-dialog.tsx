@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -7,15 +8,34 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useLeaveCommunity } from "@/hooks/communities/use-leave-community";
+import { Community } from "@/lib/domain/communities/types";
 import { AlertCircle } from "lucide-react";
 
 interface LeaveCommunityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  community: Community;
+  onStatusChange: () => void;
 }
 
-export function LeaveCommunityDialog({ open, onOpenChange, onConfirm }: LeaveCommunityDialogProps) {
+export function LeaveCommunityDialog({ open, onOpenChange, community, onStatusChange }: LeaveCommunityDialogProps) {
+  const leaveCommunity = useLeaveCommunity(community);
+  const [loading, setLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    try {
+      await leaveCommunity();
+      onStatusChange();
+    } catch {
+      // error handled in hook
+    } finally {
+      setLoading(false);
+      onOpenChange(false);
+    }
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="w-full max-w-md rounded-3xl bg-white p-8 backdrop-blur-sm dark:border-gray-600/60 dark:bg-gray-700">
@@ -34,12 +54,10 @@ export function LeaveCommunityDialog({ open, onOpenChange, onConfirm }: LeaveCom
           </AlertDialogCancel>
           <AlertDialogAction
             className="rounded-full bg-gradient-to-r from-red-500 to-red-600 px-6 py-2 font-semibold text-white transition-all duration-300 hover:scale-105 hover:from-red-600 hover:to-red-700"
-            onClick={() => {
-              onOpenChange(false);
-              onConfirm();
-            }}
+            onClick={handleConfirm}
+            disabled={loading}
           >
-            Leave
+            {loading ? "Leaving..." : "Leave"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

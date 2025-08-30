@@ -16,26 +16,30 @@ interface CommunityHeaderActionsProps {
 }
 
 export function CommunityHeaderActions({ communityAddr }: CommunityHeaderActionsProps) {
-  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [community, setCommunity] = useState<Community | null>(null);
+  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
+
   const { isLoggedIn } = useAuthStore();
   const sessionClient = useSessionClient();
 
+  const refetchCommunity = async () => {
+    if (sessionClient.loading || !sessionClient.data) {
+      return;
+    }
+    try {
+      const community = await getCommunity(communityAddr, sessionClient.data);
+      if (community.success && community.community) {
+        setCommunity(community.community);
+        console.log("Community data updated:", community.community);
+      }
+    } catch (error) {
+      console.error("Error fetching community data:", error);
+    }
+  };
+
   useEffect(() => {
-    const doFetchCommunity = async () => {
-      if (sessionClient.loading || !sessionClient.data) {
-        return;
-      }
-      try {
-        const community = await getCommunity(communityAddr, sessionClient.data);
-        if (community.success && community.community) {
-          setCommunity(community.community);
-        }
-      } catch (error) {
-        console.error("Error fetching community data:", error);
-      }
-    };
-    doFetchCommunity();
+    refetchCommunity();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [communityAddr, sessionClient.data, sessionClient.loading]);
 
   const handleDialogOpen = (open: boolean) => setShowLeaveDialog(open);
@@ -43,17 +47,22 @@ export function CommunityHeaderActions({ communityAddr }: CommunityHeaderActions
   if (!isLoggedIn || !community) {
     return null;
   }
-  console.log("Rendering CommunityHeaderActions with community:", community);
+
   return (
     <div className="mt-0 flex w-full flex-row items-center justify-between gap-2 md:mt-2">
       <div className="flex flex-row items-center gap-1.5">
         <NewThreadButton community={community} />
       </div>
       <div className="flex flex-row items-center gap-1.5">
-        <JoinCommunityButton community={community} />
+        <JoinCommunityButton community={community} onStatusChange={refetchCommunity} />
         <LeaveCommunityButton community={community} onDialogOpen={handleDialogOpen} />
       </div>
-      <LeaveCommunityDialog open={showLeaveDialog} onOpenChange={setShowLeaveDialog} onConfirm={() => {}} />
+      <LeaveCommunityDialog
+        open={showLeaveDialog}
+        onOpenChange={setShowLeaveDialog}
+        community={community}
+        onStatusChange={refetchCommunity}
+      />
     </div>
   );
 }
