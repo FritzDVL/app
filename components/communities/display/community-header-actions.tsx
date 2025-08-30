@@ -1,115 +1,59 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { LeaveCommunityDialog } from "@/components/communities/display/community-leave-dialog";
-import { Button } from "@/components/ui/button";
-import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
-import { useJoinCommunity } from "@/hooks/communities/use-join-community";
-import { useLeaveCommunity } from "@/hooks/communities/use-leave-community";
-import type { Community } from "@/lib/domain/communities/types";
+import { JoinCommunityButton } from "@/components/communities/display/join-community-button";
+import { LeaveCommunityButton } from "@/components/communities/display/leave-community-button";
+import { NewThreadButton } from "@/components/communities/display/new-thread-button";
+import { Community } from "@/lib/domain/communities/types";
+import { getCommunity } from "@/lib/services/community/get-community";
 import { useAuthStore } from "@/stores/auth-store";
-import { LogIn, LogOut, PenTool } from "lucide-react";
+import { Address } from "@/types/common";
+import { useSessionClient } from "@lens-protocol/react";
 
-export function CommunityHeaderActions({ community }: { community: Community }) {
+interface CommunityHeaderActionsProps {
+  communityAddr: Address;
+}
+
+export function CommunityHeaderActions({ communityAddr }: CommunityHeaderActionsProps) {
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
-  const joinCommunity = useJoinCommunity(community);
-  const leaveCommunity = useLeaveCommunity(community);
+  const [community, setCommunity] = useState<Community | null>(null);
   const { isLoggedIn } = useAuthStore();
-  const { isMember, updateIsMember, isLoading: isMemberLoading } = useCommunityMembership(community.group.address);
-  const router = useRouter();
+  const sessionClient = useSessionClient();
 
-  const handleJoinCommunity = async () => {
-    try {
-      const status = await joinCommunity();
-      updateIsMember(status);
-    } catch (error) {
-      console.error("Error joining community:", error);
-    }
-  };
+  useEffect(() => {
+    const doFetchCommunity = async () => {
+      if (sessionClient.loading || !sessionClient.data) {
+        return;
+      }
+      try {
+        const community = await getCommunity(communityAddr, sessionClient.data);
+        if (community.success && community.community) {
+          setCommunity(community.community);
+        }
+      } catch (error) {
+        console.error("Error fetching community data:", error);
+      }
+    };
+    doFetchCommunity();
+  }, [communityAddr, sessionClient.data, sessionClient.loading]);
 
-  const handleLeaveCommunity = async () => setShowLeaveDialog(true);
+  const handleDialogOpen = (open: boolean) => setShowLeaveDialog(open);
 
-  const confirmLeaveCommunity = async () => {
-    try {
-      await leaveCommunity();
-      updateIsMember(false);
-    } catch (error) {
-      console.error("Error leaving community:", error);
-    }
-  };
-
+  if (!isLoggedIn || !community) {
+    return null;
+  }
+  console.log("Rendering CommunityHeaderActions with community:", community);
   return (
     <div className="mt-0 flex w-full flex-row items-center justify-between gap-2 md:mt-2">
       <div className="flex flex-row items-center gap-1.5">
-        {isMember && (
-          <Button
-            onClick={() => {
-              router.push(`/communities/${community.group.address}/new-thread`);
-            }}
-            variant="default"
-            size="sm"
-            className="h-8 bg-green-600 px-3 text-xs font-medium text-white shadow-sm transition-all duration-150 hover:bg-green-700 hover:shadow-md"
-          >
-            <PenTool className="mr-1.5 h-3 w-3" />
-            <span className="hidden md:inline">New Thread</span>
-            <span className="md:hidden">New</span>
-          </Button>
-        )}
+        <NewThreadButton community={community} />
       </div>
       <div className="flex flex-row items-center gap-1.5">
-        {community.group.operations && community.group.operations.canJoin && (
-          <Button
-            disabled={!isLoggedIn || isMemberLoading}
-            onClick={handleJoinCommunity}
-            size="sm"
-            variant="default"
-            className="h-8 px-3 text-xs font-medium transition-all duration-150"
-          >
-            {isMemberLoading ? (
-              <>
-                <span className="mr-1.5 h-2.5 w-2.5 animate-spin rounded-full border border-gray-400 border-t-transparent" />
-                <span className="hidden md:inline">Loading</span>
-                <span className="md:hidden">...</span>
-              </>
-            ) : (
-              <>
-                <LogIn className="mr-1.5 h-3 w-3" />
-                <span className="hidden md:inline">Join</span>
-                <span className="md:hidden">Join</span>
-              </>
-            )}
-          </Button>
-        )}
-        {community.group.operations && community.group.operations.canLeave && (
-          <Button
-            disabled={!isLoggedIn || isMemberLoading}
-            onClick={handleLeaveCommunity}
-            size="sm"
-            variant="outline"
-            className="h-8 px-3 text-xs font-medium transition-all duration-150"
-          >
-            {isMemberLoading ? (
-              <>
-                <span className="mr-1.5 h-2.5 w-2.5 animate-spin rounded-full border border-gray-400 border-t-transparent" />
-                <span className="hidden md:inline">Loading</span>
-                <span className="md:hidden">...</span>
-              </>
-            ) : (
-              <>
-                <LogOut className="mr-1.5 h-3 w-3" />
-                <span className="hidden md:inline">Leave</span>
-                <span className="md:hidden">Leave</span>
-              </>
-            )}
-          </Button>
-        )}
+        <JoinCommunityButton community={community} />
+        <LeaveCommunityButton community={community} onDialogOpen={handleDialogOpen} />
       </div>
-      <LeaveCommunityDialog
-        open={showLeaveDialog}
-        onOpenChange={setShowLeaveDialog}
-        onConfirm={confirmLeaveCommunity}
-      />
+      <LeaveCommunityDialog open={showLeaveDialog} onOpenChange={setShowLeaveDialog} onConfirm={() => {}} />
     </div>
   );
 }

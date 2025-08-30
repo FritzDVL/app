@@ -54,12 +54,12 @@ export function CommunityHeader({ community }: { community: Community }) {
                 </div>
                 {/* Actions: desktop only, right-aligned */}
                 <div className="hidden md:ml-8 md:flex md:items-start md:justify-end">
-                  <CommunityHeaderActions community={community} />
+                  <CommunityHeaderActions communityAddr={community.group.address} />
                 </div>
               </div>
               {/* Actions: mobile only, full width below */}
               <div className="mt-4 flex w-full justify-center md:hidden">
-                <CommunityHeaderActions community={community} />
+                <CommunityHeaderActions communityAddr={community.group.address} />
               </div>
             </div>
           </div>

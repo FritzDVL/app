@@ -10,6 +10,8 @@ import {
   fetchGroupStatsFromLens,
 } from "@/lib/external/lens/primitives/groups";
 import { fetchCommunity as fetchCommunityDb } from "@/lib/external/supabase/communities";
+import { Address } from "@/types/common";
+import { SessionClient } from "@lens-protocol/client";
 
 export interface CommunityResult {
   success: boolean;
@@ -20,7 +22,7 @@ export interface CommunityResult {
 /**
  * Gets a single community by address using service approach
  */
-export async function getCommunity(address: string): Promise<CommunityResult> {
+export async function getCommunity(address: Address, sessionClient?: SessionClient): Promise<CommunityResult> {
   try {
     // Fetch database community
     const dbCommunity = await fetchCommunityDb(address);
@@ -33,7 +35,7 @@ export async function getCommunity(address: string): Promise<CommunityResult> {
 
     // Fetch Lens data in parallel
     const [group, groupStats, moderators] = await Promise.all([
-      fetchGroupFromLens(address),
+      fetchGroupFromLens(address, sessionClient),
       fetchGroupStatsFromLens(address),
       fetchAdminsFromGroup(address),
     ]);
