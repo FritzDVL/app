@@ -9,7 +9,7 @@ import { useWalletClient } from "wagmi";
 export function useThreadCreation() {
   const [isCreating, setIsCreating] = useState(false);
 
-  const { data: sessionClient } = useSessionClient();
+  const sessionClient = useSessionClient();
   const walletClient = useWalletClient();
 
   const createThreadWithService = async (
@@ -17,18 +17,22 @@ export function useThreadCreation() {
     formData: CreateThreadFormData,
     onSuccess?: (thread: Thread) => void,
   ): Promise<void> => {
-    if (!sessionClient || !walletClient.data) {
+    if (!sessionClient.data || sessionClient.loading) {
+      toast.error("Authentication required", { description: "Please sign in to create a thread." });
+      throw new Error("Authentication required");
+    }
+    if (!walletClient.data) {
       toast.error("Connection required", {
         description: "Please connect your wallet and sign in to create a thread.",
       });
-      return;
+      throw new Error("Wallet connection required");
     }
 
     setIsCreating(true);
 
     const loadingToastId = toast.loading("Creating Thread", { description: "Publishing thread..." });
     try {
-      const result = await createThread(communityAddress, formData, sessionClient, walletClient.data!);
+      const result = await createThread(communityAddress, formData, sessionClient.data, walletClient.data!);
 
       if (!result.success) {
         throw new Error(result.error || "Failed to create thread");
