@@ -1,40 +1,44 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { ReplyVoting } from "../reply/reply-voting";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { ContentRenderer } from "@/components/shared/content-renderer";
 import { ThreadReplyActions } from "@/components/thread/thread-reply-actions";
-import { ThreadReplyChild } from "@/components/thread/thread-reply-child";
 import { ThreadReplyInReplyTo } from "@/components/thread/thread-reply-in-reply-to";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
+import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { getReplyContent } from "@/lib/domain/replies/content";
-import { Reply as ReplyType } from "@/lib/domain/replies/types";
+import { Reply } from "@/lib/domain/replies/types";
+import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/shared/utils";
 import { postId } from "@lens-protocol/react";
 
-export function ThreadReplyCard({
-  reply,
-  replyingTo,
-  replyContent,
-  setReplyingTo,
-  setReplyContent,
-  handleReply,
-  children,
-  rootPostId,
-  threadAddress,
-}: {
-  reply: ReplyType & { _depth?: number };
-  replyingTo?: string | null;
-  replyContent?: { [key: string]: string };
-  setReplyingTo?: (id: string | null) => void;
-  setReplyContent?: (fn: (c: any) => any) => void;
-  handleReply?: (parentId: string, content: string) => Promise<void>;
-  children?: React.ReactNode;
-  depth?: number;
-  rootPostId: string;
-  threadAddress: string;
-}) {
+interface ThreadReplyCardProps {
+  reply: Reply;
+  thread: Thread;
+}
+
+export function ThreadReplyCard({ reply, thread }: ThreadReplyCardProps) {
   const content = getReplyContent(reply.post);
+  const rootPostId = thread.rootPost?.id || "";
+  const threadAddress = thread.feed.address;
+
+  const [showReplyBox, setShowReplyBox] = useState(false);
+  const [replyContent, setReplyContent] = useState("");
+
+  const { createReply } = useReplyCreate();
+  const handleReply = async () => {
+    if (!replyContent.trim()) return;
+    try {
+      await createReply(reply.id, replyContent, threadAddress, thread.id);
+      setReplyContent("");
+      setShowReplyBox(false);
+    } finally {
+    }
+  };
 
   return (
     <div className="space-y-2" id={reply.id}>
@@ -47,7 +51,7 @@ export function ThreadReplyCard({
             <div className="min-w-0 flex-1">
               {/* Top row: author info and show context button at top right */}
               <div className="relative mb-3 flex flex-col gap-1 sm:mb-6 sm:flex-row sm:items-center sm:gap-2">
-                <div className="flex items-center gap-2">
+                <div className="flex w-full items-center justify-between gap-2">
                   <Link
                     href={`/u/${reply.post.author.username?.value}`}
                     className="flex items-center gap-2 hover:text-gray-900"
@@ -64,7 +68,6 @@ export function ThreadReplyCard({
                     {getTimeAgo(new Date(reply.post.timestamp))}
                   </span>
                 </div>
-                {/* removed ThreadReplyInReplyTo from this top row to avoid placing context next to avatar */}
               </div>
 
               {/* In-reply-to context chain: render below the author row (above content) */}
@@ -77,46 +80,31 @@ export function ThreadReplyCard({
               {/* Content */}
               <ContentRenderer content={removeTrailingEmptyPTags(content)} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
-              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                {/* Tips counter and replies button bottom left */}
-                <ThreadReplyChild
-                  reply={reply}
-                  replyingTo={replyingTo}
-                  replyContent={replyContent}
-                  setReplyingTo={setReplyingTo}
-                  setReplyContent={setReplyContent}
-                  handleReply={handleReply}
-                  rootPostId={rootPostId}
-                  threadAddress={threadAddress}
-                />
-                <ThreadReplyActions replyId={reply.id} threadAddress={threadAddress} setReplyingTo={setReplyingTo} />
+              <div className="mt-3 flex flex-row items-center justify-between gap-2">
+                <div />
+                <div className="flex w-full justify-end sm:w-auto">
+                  <ThreadReplyActions
+                    replyId={reply.id}
+                    threadAddress={threadAddress}
+                    setReplyingTo={() => setShowReplyBox(true)}
+                  />
+                </div>
               </div>
-              {replyingTo === reply.id && replyContent && setReplyingTo && setReplyContent && handleReply && (
+              {showReplyBox && (
                 <ThreadReplyBox
-                  value={replyContent[reply.id] || ""}
+                  value={replyContent}
                   onCancel={() => {
-                    setReplyingTo(null);
-                    setReplyContent(c => ({ ...c, [reply.id]: "" }));
+                    setShowReplyBox(false);
+                    setReplyContent("");
                   }}
-                  onSubmit={async () => {
-                    const raw = replyContent[reply.id] || "";
-                    const withoutTrailingPTags = removeTrailingEmptyPTags(raw);
-                    const trimmed = withoutTrailingPTags.replace(/(\S)(\s+)$/g, "$1");
-                    if (!trimmed.trim()) return;
-                    await handleReply(reply.id, trimmed);
-                    setReplyContent(c => ({ ...c, [reply.id]: "" }));
-                  }}
-                  onChange={val => {
-                    const trimmed = val.replace(/(\S)(\s+)$/g, "$1");
-                    setReplyContent(c => ({ ...c, [reply.id]: trimmed }));
-                  }}
+                  onSubmit={handleReply}
+                  onChange={setReplyContent}
                 />
               )}
             </div>
           </div>
         </CardContent>
       </Card>
-      {children}
     </div>
   );
 }
