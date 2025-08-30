@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { revalidateCommunityPath, revalidateThreadPath } from "@/app/actions/revalidate-path";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
@@ -10,7 +10,8 @@ import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { useAuthStore } from "@/stores/auth-store";
-import { postId } from "@lens-protocol/react";
+import { fetchPost } from "@lens-protocol/client/actions";
+import { Post, postId, useSessionClient } from "@lens-protocol/react";
 import { Coins, Reply as ReplyIcon, Share } from "lucide-react";
 
 interface ThreadCardActionsProps {
@@ -18,11 +19,34 @@ interface ThreadCardActionsProps {
 }
 
 export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
-  const threadPostId = thread.rootPost?.id;
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+  const [canTip, setCanTip] = useState<boolean>(false);
+  const [canReply, setCanReply] = useState<boolean>(false);
+
+  const threadPostId = thread.rootPost?.id;
   const { createReply } = useReplyCreate();
   const { isLoggedIn } = useAuthStore();
+  const sessionClient = useSessionClient();
+
+  useEffect(() => {
+    const doFetchRootPostOps = async () => {
+      if (sessionClient.data && !sessionClient.loading) {
+        const rootPostResult = await fetchPost(sessionClient.data, {
+          post: thread.rootPost.id,
+        });
+        if (rootPostResult.isErr()) {
+          console.error("Error fetching root post operations:", rootPostResult.error);
+        } else {
+          const post = rootPostResult.value as Post;
+          setCanReply(post.operations?.canComment.__typename === "PostOperationValidationPassed");
+          setCanTip(!!post.operations?.canTip);
+        }
+      }
+    };
+
+    doFetchRootPostOps();
+  }, [thread.rootPost.id, sessionClient.data, sessionClient.loading]);
 
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
@@ -47,9 +71,6 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
     const shareText = `Check out this thread on LensForum: "${title}"\n\n`;
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
-
-  const canTip = thread.rootPost.operations?.canTip;
-  const canReply = thread.rootPost.operations?.canComment.__typename === "PostOperationValidationPassed";
 
   return (
     <div className="mt-6 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
