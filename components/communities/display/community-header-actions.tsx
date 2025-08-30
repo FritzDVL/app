@@ -58,33 +58,52 @@ export function CommunityHeaderActions({ community }: { community: Community }) 
         )}
       </div>
       <div className="flex flex-row items-center gap-1.5">
-        <Button
-          disabled={!isLoggedIn || isMemberLoading}
-          onClick={isMember ? handleLeaveCommunity : handleJoinCommunity}
-          size="sm"
-          variant={isMember ? "outline" : "default"}
-          className="h-8 px-3 text-xs font-medium transition-all duration-150"
-        >
-          {isMemberLoading ? (
-            <>
-              <span className="mr-1.5 h-2.5 w-2.5 animate-spin rounded-full border border-gray-400 border-t-transparent" />
-              <span className="hidden md:inline">Loading</span>
-              <span className="md:hidden">...</span>
-            </>
-          ) : isMember ? (
-            <>
-              <LogOut className="mr-1.5 h-3 w-3" />
-              <span className="hidden md:inline">Leave</span>
-              <span className="md:hidden">Leave</span>
-            </>
-          ) : (
-            <>
-              <LogIn className="mr-1.5 h-3 w-3" />
-              <span className="hidden md:inline">Join</span>
-              <span className="md:hidden">Join</span>
-            </>
-          )}
-        </Button>
+        {community.group.operations && community.group.operations.canJoin && (
+          <Button
+            disabled={!isLoggedIn || isMemberLoading}
+            onClick={handleJoinCommunity}
+            size="sm"
+            variant="default"
+            className="h-8 px-3 text-xs font-medium transition-all duration-150"
+          >
+            {isMemberLoading ? (
+              <>
+                <span className="mr-1.5 h-2.5 w-2.5 animate-spin rounded-full border border-gray-400 border-t-transparent" />
+                <span className="hidden md:inline">Loading</span>
+                <span className="md:hidden">...</span>
+              </>
+            ) : (
+              <>
+                <LogIn className="mr-1.5 h-3 w-3" />
+                <span className="hidden md:inline">Join</span>
+                <span className="md:hidden">Join</span>
+              </>
+            )}
+          </Button>
+        )}
+        {community.group.operations && community.group.operations.canLeave && (
+          <Button
+            disabled={!isLoggedIn || isMemberLoading}
+            onClick={handleLeaveCommunity}
+            size="sm"
+            variant="outline"
+            className="h-8 px-3 text-xs font-medium transition-all duration-150"
+          >
+            {isMemberLoading ? (
+              <>
+                <span className="mr-1.5 h-2.5 w-2.5 animate-spin rounded-full border border-gray-400 border-t-transparent" />
+                <span className="hidden md:inline">Loading</span>
+                <span className="md:hidden">...</span>
+              </>
+            ) : (
+              <>
+                <LogOut className="mr-1.5 h-3 w-3" />
+                <span className="hidden md:inline">Leave</span>
+                <span className="md:hidden">Leave</span>
+              </>
+            )}
+          </Button>
+        )}
       </div>
       <LeaveCommunityDialog
         open={showLeaveDialog}
