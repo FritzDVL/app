@@ -30,6 +30,7 @@ export function ThreadReplyCard({ reply, thread }: ThreadReplyCardProps) {
   const [replyContent, setReplyContent] = useState("");
 
   const { createReply } = useReplyCreate();
+
   const handleReply = async () => {
     if (!replyContent.trim()) return;
     try {
