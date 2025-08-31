@@ -70,6 +70,18 @@ export const getThreadAuthor = (author: Account) => ({
   address: author.address as Address,
 });
 
+export function getThreadContent(post: Post): string {
+  if (!post || !post.metadata) {
+    return "";
+  }
+  let content = "";
+  if (post.metadata.__typename === "ArticleMetadata") {
+    content = post.metadata.content || "";
+  }
+
+  return stripThreadPrefixOnly(content);
+}
+
 export const getThreadTags = async (post: Post): Promise<string[]> => {
   const resolvedUrl = storageClient.resolve(post.contentUri);
 

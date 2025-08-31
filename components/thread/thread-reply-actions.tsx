@@ -7,19 +7,12 @@ import { toast } from "sonner";
 
 interface ThreadReplyActionsProps {
   replyId: string;
-  threadAddress: string;
   setReplyingTo?: (id: string | null) => void;
   canReply: boolean;
   canTip: boolean;
 }
 
-export function ThreadReplyActions({
-  replyId,
-  threadAddress,
-  setReplyingTo,
-  canReply,
-  canTip,
-}: ThreadReplyActionsProps) {
+export function ThreadReplyActions({ replyId, setReplyingTo, canReply, canTip }: ThreadReplyActionsProps) {
   const [copied, setCopied] = useState(false);
 
   const handleReply = () => {
@@ -28,7 +21,7 @@ export function ThreadReplyActions({
 
   const handleCopyLink = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    const url = `${window.location.origin}/thread/${threadAddress}/reply/${replyId}`;
+    const url = `${window.location.origin}/reply/${replyId}`;
     await navigator.clipboard.writeText(url);
     setCopied(true);
     toast.success("Reply link copied to clipboard!");
