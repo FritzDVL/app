@@ -80,7 +80,7 @@ export async function createReply(
     }
 
     // 5. Transform post to reply - using the correct author parameter
-    const reply = adaptPostToReply(createdPost, replyAuthor);
+    const reply = adaptPostToReply(createdPost);
 
     return {
       success: true,

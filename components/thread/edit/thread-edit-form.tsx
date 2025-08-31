@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TextEditor } from "@/components/editor/text-editor";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { TagsInput } from "@/components/ui/tags-input";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { useThreadEditForm } from "@/hooks/forms/use-thread-edit-form";
-import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
+import { getThreadTags, stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { Save } from "lucide-react";
 
@@ -19,6 +19,16 @@ interface ThreadEditFormProps {
 }
 
 export function ThreadEditForm({ thread }: ThreadEditFormProps) {
+  const [initialTags, setInitialTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    const doFetchTags = async () => {
+      const result = await getThreadTags(thread.rootPost);
+      setInitialTags(result);
+    };
+    doFetchTags();
+  }, []);
+
   const suggestedTags = [
     "discussion",
     "help",
@@ -32,16 +42,7 @@ export function ThreadEditForm({ thread }: ThreadEditFormProps) {
     "research",
   ];
   const { formData, isSaving, handleChange, handleSubmit } = useThreadEditForm(thread);
-  const { tags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput(
-    Array.isArray(thread.tags)
-      ? (thread.tags as string[])
-      : typeof thread.tags === "string"
-        ? (thread.tags as string)
-            .split(",")
-            .map((t: string) => t.trim())
-            .filter(Boolean)
-        : [],
-  );
+  const { tags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput(initialTags);
 
   const initialContent =
     thread.rootPost?.metadata?.__typename == "ArticleMetadata"
@@ -50,7 +51,7 @@ export function ThreadEditForm({ thread }: ThreadEditFormProps) {
 
   return (
     <>
-      <BackNavigationLink href={`/thread/${thread.address}`}>Back to Thread</BackNavigationLink>
+      <BackNavigationLink href={`/thread/${thread.feed.address}`}>Back to Thread</BackNavigationLink>
       <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
@@ -119,10 +120,7 @@ export function ThreadEditForm({ thread }: ThreadEditFormProps) {
 
             {/* Submit Buttons */}
             <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="submit"
-                disabled={isSaving || !formData.title.trim() || !formData.content.trim()}
-              >
+              <Button type="submit" disabled={isSaving || !formData.title.trim() || !formData.content.trim()}>
                 {isSaving ? (
                   <span className="flex items-center gap-2">
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></span>

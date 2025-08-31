@@ -1,29 +1,23 @@
-/**
- * Thread Content Domain Operations
- * Pure business logic for thread content formatting
- */
+import { Thread } from "./types";
+import { storageClient } from "@/lib/external/grove/client";
+import { Address } from "@/types/common";
+import { Account, Feed, Post } from "@lens-protocol/client";
 
-const THREAD_CONTENT_PREFIX = "LensForum Thread: ";
+export const THREAD_CONTENT_PREFIX = "LensForum Thread: ";
 
-/**
- * Adds prefix, title, and summary to content.
- */
-export function formatThreadArticleContent(
+export const formatThreadArticleContent = (
   content: string,
   threadUrl: string,
   title?: string,
   summary?: string,
-): string {
+): string => {
   const titleSection = title ? `# **${title}**\n\n` : "";
   const summarySection = summary ? `*${summary}*\n\n` : "";
   const prefixSection = `${THREAD_CONTENT_PREFIX}${threadUrl}\n\n`;
   return `${prefixSection}${titleSection}${summarySection}${content}`;
-}
+};
 
-/**
- * Removes prefix, title, and summary from content.
- */
-export function stripThreadArticleFormatting(content: string): string {
+export const stripThreadArticleFormatting = (content: string): string => {
   let result = content;
 
   // Step 1: Remove the prefix line
@@ -41,14 +35,62 @@ export function stripThreadArticleFormatting(content: string): string {
   result = result.replace(summaryRegex, "");
 
   return result;
-}
+};
 
-/**
- * Checks if content has the LensForum thread prefix
- * Useful for validation and content type detection
- */
-export function hasThreadContentPrefix(content: string): boolean {
+export const stripThreadPrefixOnly = (content: string): string => {
+  let result = content;
+  const prefixRegex = new RegExp(
+    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}https://lensforum\\.xyz/thread/[\\w\\d]+\\s*\\n+`,
+  );
+  result = result.replace(prefixRegex, "");
+  return result;
+};
+
+export const hasThreadContentPrefix = (content: string): boolean => {
   return content.startsWith(`*${THREAD_CONTENT_PREFIX}`) || content.startsWith(THREAD_CONTENT_PREFIX);
-}
+};
 
-export { THREAD_CONTENT_PREFIX };
+export const getThreadTitleAndSummary = (rootPost: Post, feed: Feed) => {
+  if (rootPost.metadata.__typename === "ArticleMetadata") {
+    return {
+      title: rootPost.metadata.title,
+      summary: rootPost.metadata.attributes.find(attr => attr.key === "subtitle")?.value || "",
+    };
+  }
+  return {
+    title: feed.metadata?.name || `Thread ${feed.address.slice(-6)}`,
+    summary: feed.metadata?.description || "No content available",
+  };
+};
+
+export const getThreadAuthor = (author: Account) => ({
+  name: author.username?.localName || "Unknown Author",
+  username: author.username?.value || "unknown",
+  avatar: author.metadata?.picture || "",
+  reputation: author.score || 0,
+  address: author.address as Address,
+});
+
+export const getThreadTags = async (post: Post): Promise<string[]> => {
+  const resolvedUrl = storageClient.resolve(post.contentUri);
+
+  let contentData = null;
+  try {
+    const contentResponse = await fetch(resolvedUrl);
+    if (contentResponse.ok) {
+      contentData = await contentResponse.json();
+    }
+  } catch (error) {
+    console.warn(`Failed to fetch content for root post:`, error);
+  }
+
+  return contentData?.tags || [];
+};
+
+export const getThreadContent = (thread: Thread): string => {
+  const metadata = thread.rootPost.metadata;
+  if (metadata.__typename === "ArticleMetadata") {
+    return metadata.content;
+  }
+  return "";
+};

@@ -8,7 +8,7 @@ interface CommunityRuleDetailsProps {
   className?: string;
 }
 export const CommunityRuleDetails: React.FC<CommunityRuleDetailsProps> = ({ community, className = "" }) => {
-  const currentRule = community.rules?.required?.[0];
+  const currentRule = community.group.rules?.required?.[0];
   const ruleType = currentRule?.type;
 
   if (!ruleType || ruleType === "none") {

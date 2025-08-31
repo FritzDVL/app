@@ -6,7 +6,7 @@ import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchPostsByFeed } from "@/lib/external/lens/primitives/posts";
-import { PageSize } from "@lens-protocol/client";
+import { SessionClient } from "@lens-protocol/client";
 
 export interface PaginatedRepliesResult {
   success: boolean;
@@ -20,14 +20,10 @@ export interface PaginatedRepliesResult {
 /**
  * Gets replies for a thread with pagination using service approach
  */
-export async function getThreadReplies(
-  thread: Thread,
-  pageSize: PageSize = PageSize.Fifty,
-  cursor?: string | null,
-): Promise<PaginatedRepliesResult> {
+export async function getThreadReplies(thread: Thread, sessionClient?: SessionClient): Promise<PaginatedRepliesResult> {
   try {
     // 1. Fetch posts with pagination
-    const { posts, pageInfo } = await fetchPostsByFeed(thread.address, pageSize, cursor);
+    const { posts, pageInfo } = await fetchPostsByFeed(thread.feed.address, sessionClient);
 
     if (!posts.length) {
       return {
@@ -50,24 +46,16 @@ export async function getThreadReplies(
           });
           continue;
         }
-        replies.push(
-          adaptPostToReply(post, {
-            name: author.username?.localName || "Unknown Author",
-            username: author.username?.value || "unknown",
-            avatar: author.metadata?.picture || "",
-            reputation: author.score || 0,
-            address: author.address,
-          }),
-        );
+        replies.push(adaptPostToReply(post));
       } catch (error) {
         console.warn(`Error transforming post ${post.id}:`, error);
         continue;
       }
     }
 
-    // Filter the rootPost if it exists
+    // Filter rootpost and quotes if present
     if (thread.rootPost && typeof thread.rootPost.id === "string") {
-      replies = replies.filter(r => r.id !== thread.rootPost!.id);
+      replies = replies.filter(r => r.id !== thread.rootPost!.id).filter(r => r.post.commentOn !== null);
     }
 
     return {

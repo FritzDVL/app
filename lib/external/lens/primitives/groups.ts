@@ -21,9 +21,10 @@ import { Address, WalletClient } from "viem";
 /**
  * Fetches a single group from Lens Protocol
  */
-export async function fetchGroupFromLens(address: string): Promise<Group | null> {
+export async function fetchGroupFromLens(address: string, sessionClient?: SessionClient): Promise<Group | null> {
   try {
-    const result = await fetchGroup(client, { group: evmAddress(address) });
+    const lensClient = sessionClient || client;
+    const result = await fetchGroup(lensClient, { group: evmAddress(address) });
 
     if (result.isErr() || !result.value) {
       return null;
@@ -148,7 +149,7 @@ export async function joinAndIncrementCommunityMember(
   walletClient: any,
 ): Promise<boolean> {
   const joinResult = await joinGroup(sessionClient, {
-    group: evmAddress(community.address),
+    group: evmAddress(community.group.address),
   })
     .andThen(handleOperationWith(walletClient))
     .andThen(sessionClient.waitForTransaction);

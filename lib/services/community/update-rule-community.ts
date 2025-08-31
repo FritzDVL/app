@@ -17,7 +17,7 @@ export async function updateCommunityRule(
   walletClient: WalletClient,
 ): Promise<UpdateCommunityRuleResult> {
   try {
-    const ok = await updateGroupRule(community.address, ruleIdToRemove, rule, sessionClient, walletClient);
+    const ok = await updateGroupRule(community.group.address, ruleIdToRemove, rule, sessionClient, walletClient);
     if (!ok) {
       return { success: false, error: "Failed to update group rule on Lens" };
     }

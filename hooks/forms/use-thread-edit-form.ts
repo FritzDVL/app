@@ -10,8 +10,8 @@ import { useWalletClient } from "wagmi";
 export function useThreadEditForm(thread: Thread, onSuccess?: () => void) {
   // Initialize form state with thread data
   const [formData, setFormData] = useState({
-    title: thread.title,
-    summary: thread.summary,
+    title: thread.feed.metadata?.name || "",
+    summary: thread.feed.metadata?.description || "",
     content: stripThreadArticleFormatting(
       thread?.rootPost?.metadata &&
         typeof thread.rootPost.metadata === "object" &&
@@ -71,7 +71,7 @@ export function useThreadEditForm(thread: Thread, onSuccess?: () => void) {
       }
 
       // Revalidate the thread path after successful update
-      await revalidateThreadAndListPaths(thread.address);
+      await revalidateThreadAndListPaths(thread.feed.address);
 
       // Show success toast and reset state
       toast.success("Thread updated successfully", { id: loadingToastId });

@@ -1,13 +1,15 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
+import { getThreadTags, getThreadTitleAndSummary, stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo } from "@/lib/shared/utils";
 
-function getThreadContent(thread: any): string {
-  const metadata = thread?.rootPost?.metadata;
+function getThreadContent(thread: Thread): string {
+  const metadata = thread.rootPost?.metadata;
   if (metadata && typeof metadata === "object" && "content" in metadata) {
     return metadata.content ?? "";
   }
@@ -19,7 +21,19 @@ interface ThreadCardInfoProps {
 }
 
 export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
+  const [tags, setTags] = useState<string[]>([]);
+
   const isEdited = thread.rootPost?.isEdited;
+  const { title, summary } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
+
+  useEffect(() => {
+    const doFetchTags = async () => {
+      const result = await getThreadTags(thread.rootPost);
+      setTags(result);
+    };
+    doFetchTags();
+  }, [thread.rootPost]);
+
   return (
     <div className="space-y-3">
       {/* Header row with avatar+name on left and timestamp on right */}
@@ -67,10 +81,10 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
       </div>
       {/* Title, summary and content in one block */}
       <div className="px-8">
-        <h1 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">{thread.title}</h1>
-        {thread.summary && (
+        <h1 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">{title}</h1>
+        {summary && (
           <p className="mt-1 max-w-2xl text-base text-sm font-medium italic text-gray-500 dark:text-gray-400">
-            {thread.summary}
+            {summary}
           </p>
         )}
         <div className="mt-3 flex flex-col gap-2">
@@ -82,9 +96,9 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
       </div>
       {/* Tags */}
       <div className="flex flex-col gap-1">
-        {Array.isArray(thread.tags) && thread.tags.length > 0 && (
+        {tags && tags.length > 0 && (
           <div className="flex flex-wrap items-center gap-1">
-            {thread.tags.map((tag: string) => (
+            {tags.map((tag: string) => (
               <span
                 key={tag}
                 className="inline-block rounded-full border border-gray-200 bg-transparent px-2 py-0.5 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400"

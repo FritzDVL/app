@@ -81,7 +81,7 @@ export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
             <Label htmlFor="content" className="text-sm font-medium text-foreground">
               Content
             </Label>
-            <div className="rounded-2xl border-brand-200/40 bg-white/50backdrop-blur-sm dark:bg-gray-800">
+            <div className="bg-white/50backdrop-blur-sm rounded-2xl border-brand-200/40 dark:bg-gray-800">
               <TextEditor onChange={value => handleChange("content", value)} />
             </div>
           </div>

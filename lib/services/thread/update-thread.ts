@@ -45,7 +45,7 @@ export async function updateThread(
         content: updateData.content,
         tags: updateData.tags,
         postId: thread.rootPost.id,
-        feedAddress: thread.address,
+        feedAddress: thread.feed.address,
         author: thread.author.address,
       },
       sessionClient,

@@ -16,9 +16,9 @@ export function CommunityHeader({ community }: { community: Community }) {
           <div className="flex flex-col items-center space-y-4 md:flex-row md:items-start md:space-x-6 md:space-y-0">
             {/* Logo */}
             <div className="flex h-[80px] w-[80px] items-center justify-center md:mr-6 md:h-[100px] md:w-[100px]">
-              {community.logo ? (
+              {community.group.metadata?.icon ? (
                 <Image
-                  src={groveLensUrlToHttp(community.logo)}
+                  src={groveLensUrlToHttp(community.group.metadata?.icon)}
                   alt={community.name}
                   width={100}
                   height={100}
@@ -37,7 +37,7 @@ export function CommunityHeader({ community }: { community: Community }) {
                 <div className="w-full min-w-0 flex-1 text-center md:text-left">
                   <h1 className="mb-2 truncate text-2xl font-bold text-foreground md:text-3xl">{community.name}</h1>
                   <p className="mx-auto mb-4 max-w-2xl whitespace-pre-line break-words text-muted-foreground md:mx-0">
-                    {community.description}
+                    {community.group.metadata?.description}
                   </p>
                   <div className="flex flex-col items-center space-y-2 text-sm text-muted-foreground md:flex-row md:space-x-6 md:space-y-0">
                     <div className="flex items-center">
@@ -54,12 +54,12 @@ export function CommunityHeader({ community }: { community: Community }) {
                 </div>
                 {/* Actions: desktop only, right-aligned */}
                 <div className="hidden md:ml-8 md:flex md:items-start md:justify-end">
-                  <CommunityHeaderActions community={community} />
+                  <CommunityHeaderActions communityAddr={community.group.address} />
                 </div>
               </div>
               {/* Actions: mobile only, full width below */}
               <div className="mt-4 flex w-full justify-center md:hidden">
-                <CommunityHeaderActions community={community} />
+                <CommunityHeaderActions communityAddr={community.group.address} />
               </div>
             </div>
           </div>

@@ -11,7 +11,7 @@ interface CommunityJoinBannerProps {
 }
 
 export function CommunityJoinBanner({ community }: CommunityJoinBannerProps) {
-  const { isMember, isLoading, updateIsMember } = useCommunityMembership(community.address);
+  const { isMember, isLoading, updateIsMember } = useCommunityMembership(community.group.address);
   const join = useJoinCommunity(community);
 
   const handleJoin = async () => {

@@ -22,11 +22,11 @@ export function ThreadCardReplyBox({ thread }: ThreadCardReplyBoxProps) {
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
     if (replyingTo && replyContent[replyingTo]) {
-      const reply = await createReply(thread.rootPost.id, replyContent[replyingTo], thread.address, thread.id);
+      const reply = await createReply(thread.rootPost.id, replyContent[replyingTo], thread.feed.address, thread.id);
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, [replyingTo]: "" }));
-        revalidateThreadPath(thread.address);
+        revalidateThreadPath(thread.feed.address);
         revalidateCommunityPath(thread.community);
       }
     }

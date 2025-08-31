@@ -1,4 +1,3 @@
-import { CommunityJoinBanner } from "@/components/communities/display/community-join-banner";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { Thread } from "@/components/thread/thread";
 import { getCommunity } from "@/lib/services/community/get-community";

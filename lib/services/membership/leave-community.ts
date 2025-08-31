@@ -25,8 +25,10 @@ export async function leaveCommunity(
 ): Promise<JoinLeaveResult> {
   try {
     const result = await leaveGroup(sessionClient, {
-      group: evmAddress(community.address),
-    }).andThen(handleOperationWith(walletClient));
+      group: evmAddress(community.group.address),
+    })
+      .andThen(handleOperationWith(walletClient))
+      .andThen(sessionClient.waitForTransaction);
 
     if (result.isOk()) {
       await decrementCommunityMembersCount(community.id);

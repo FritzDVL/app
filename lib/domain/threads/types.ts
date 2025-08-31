@@ -3,11 +3,22 @@
  * Pure domain types for thread-related business logic
  */
 import { Address } from "@/types/common";
-import { Post } from "@lens-protocol/client";
+import { Feed, Post } from "@lens-protocol/client";
 
 /**
  * Thread creation form data - domain model
  */
+export interface Thread {
+  id: string;
+  feed: Feed;
+  community: Address;
+  rootPost: Post;
+  author: ThreadAuthor;
+  repliesCount: number;
+  timeAgo: string;
+  created_at: string;
+}
+
 export interface CreateThreadFormData {
   title: string;
   summary: string;
@@ -16,28 +27,10 @@ export interface CreateThreadFormData {
   author: Address;
 }
 
-interface AuthorBase {
+interface ThreadAuthor {
   name: string;
   username: string;
   avatar: string;
   reputation: number;
   address: Address;
-}
-
-export interface ThreadAuthor extends AuthorBase {}
-
-export interface Thread {
-  id: string;
-  community: Address;
-  address: Address;
-  title: string;
-  summary: string;
-  author: ThreadAuthor;
-  rootPost: Post | null;
-  upvotes: number;
-  downvotes: number;
-  repliesCount: number;
-  timeAgo: string;
-  tags: string[];
-  created_at: string;
 }

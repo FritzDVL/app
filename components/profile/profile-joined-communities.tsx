@@ -16,14 +16,14 @@ export function ProfileJoinedCommunities({ communities }: ProfileJoinedCommuniti
         {communities.map(function (community) {
           return (
             <Link
-              key={community.address}
-              href={`/communities/${community.address}`}
+              key={community.group.address}
+              href={`/communities/${community.group.address}`}
               className="group flex flex-col rounded-2xl border bg-white p-5 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800"
             >
               <div className="flex items-center space-x-4">
                 <div className="flex items-center">
                   <Image
-                    src={groveLensUrlToHttp(community.logo ?? undefined) || "/logo.png"}
+                    src={groveLensUrlToHttp(community.group.metadata?.icon ?? undefined) || "/logo.png"}
                     alt={community.name}
                     width={48}
                     height={48}
@@ -36,11 +36,11 @@ export function ProfileJoinedCommunities({ communities }: ProfileJoinedCommuniti
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {(() => {
-                        const words = community.description?.split(" ") || [];
+                        const words = community.group.metadata?.description?.split(" ") || [];
                         if (words.length > 10) {
                           return words.slice(0, 10).join(" ") + "...";
                         }
-                        return community.description;
+                        return community.group.metadata?.description;
                       })()}
                     </div>
                   </div>

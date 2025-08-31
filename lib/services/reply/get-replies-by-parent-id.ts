@@ -29,15 +29,7 @@ export async function getRepliesByParentId(parentId: PostId): Promise<RepliesRes
           });
           continue;
         }
-        replies.push(
-          adaptPostToReply(post, {
-            name: author.username?.localName || "Unknown Author",
-            username: author.username?.value || "unknown",
-            avatar: author.metadata?.picture || "",
-            reputation: author.score || 0,
-            address: author.address,
-          }),
-        );
+        replies.push(adaptPostToReply(post));
       } catch (error) {
         console.warn(`Error transforming post ${post.id}:`, error);
         continue;

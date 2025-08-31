@@ -15,7 +15,7 @@ export interface EditCommunityFormData {
 export function useCommunityEditForm(community: Community) {
   const [formData, setFormData] = useState<EditCommunityFormData>({
     name: community.name,
-    description: community.description,
+    description: community.group.metadata?.description ?? "",
     logo: null,
   });
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -81,9 +81,8 @@ export function useCommunityEditForm(community: Community) {
     try {
       const result = await updateCommunity(community, data, sessionClient.data, walletClient.data);
       if (result.success) {
-        if (community?.address) {
-          await revalidateCommunityAndListPaths(community.address);
-        }
+        await revalidateCommunityAndListPaths(community.group.address);
+
         toast.success("Community updated!", {
           id: loadingToastId,
           description: "Your changes have been saved.",

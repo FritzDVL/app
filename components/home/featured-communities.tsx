@@ -28,15 +28,15 @@ export function FeaturedCommunities({ featuredCommunities }: FeaturedCommunities
           {featuredCommunities.map(community => (
             <Link
               key={community.id}
-              href={`/communities/${community.address}`}
+              href={`/communities/${community.group.address}`}
               className="group block w-full cursor-pointer rounded-xl border border-slate-200/60 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-brand-300/60 hover:shadow-sm dark:bg-gray-800"
             >
               <div className="flex w-full min-w-0 items-center gap-3">
                 <div className="shrink-0">
                   <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm font-semibold text-slate-600">
-                    {community.logo ? (
+                    {community.group.metadata?.icon ? (
                       <Image
-                        src={groveLensUrlToHttp(community.logo)}
+                        src={groveLensUrlToHttp(community.group.metadata.icon)}
                         alt={community.name}
                         width={32}
                         height={32}
@@ -52,9 +52,9 @@ export function FeaturedCommunities({ featuredCommunities }: FeaturedCommunities
                     {community.name}
                   </h4>
                   <p className="truncate text-xs text-slate-500">{community.memberCount.toLocaleString()} members</p>
-                  {community.description && (
-                    <p className="truncate text-muted-foreground" title={community.description}>
-                      {community.description}
+                  {community.group.metadata?.description && (
+                    <p className="truncate text-muted-foreground" title={community.group.metadata.description}>
+                      {community.group.metadata.description}
                     </p>
                   )}
                 </div>
