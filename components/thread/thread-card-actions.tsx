@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { revalidateCommunityPath, revalidateThreadPath } from "@/app/actions/revalidate-path";
 import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
+import { ThreadShareDialog } from "@/components/thread/thread-share-dialog";
 import { ThreadVoting } from "@/components/thread/thread-voting";
 import { Button } from "@/components/ui/button";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
@@ -23,6 +24,7 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
   const [canTip, setCanTip] = useState<boolean>(false);
   const [canReply, setCanReply] = useState<boolean>(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
   const threadPostId = thread.rootPost?.id;
   const { createReply } = useReplyCreate();
@@ -63,6 +65,11 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
 
   // Default share logic if not provided
   const handleShare = () => {
+    setShareDialogOpen(true);
+  };
+
+  // Handler for posting to Lens (to be implemented)
+  const handlePostToLens = async () => {
     if (!thread) return;
 
     const { title } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
@@ -71,6 +78,8 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
     const shareText = `Check out this thread on LensForum: "${title}"\n\n`;
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
+
+  const threadUrl = `https://lensforum.xyz/thread/${thread.feed.address}`;
 
   return (
     <div>
@@ -114,6 +123,12 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
             <Share className="mr-2 h-4 w-4" />
             <span className="truncate">Share</span>
           </Button>
+          <ThreadShareDialog
+            open={shareDialogOpen}
+            onClose={() => setShareDialogOpen(false)}
+            threadUrl={threadUrl}
+            onPostToLens={handlePostToLens}
+          />
         </div>
       </div>
       {/* Reply Box (always below actions row) */}

@@ -94,7 +94,7 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
           className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
           disabled={!isLoggedIn || !canTip}
         >
-          <Coins className="mr-2 h-4 w-4" />
+          <Coins className="h-4 w-4" />
           Tip
         </Button>
       </PopoverTrigger>
