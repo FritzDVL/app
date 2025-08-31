@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createCommunityAction } from "@/app/actions/create-community";
 import { MembershipApprovalGroupRule, SimplePaymentGroupRule, TokenGatedGroupRule } from "@/lib/domain/rules/types";
-import { joinAndIncrementCommunityMember } from "@/lib/external/lens/primitives/groups";
+import { createCommunity } from "@/lib/services/community/create-community";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
 import { useSessionClient } from "@lens-protocol/react";
@@ -99,8 +98,8 @@ export function useCommunityCreateForm() {
         description: "Setting up your community on Lens Protocol...",
       });
 
-      // Call Server Action
-      const result = await createCommunityAction(actionFormData);
+      // Call service to create community
+      const result = await createCommunity(actionFormData, sessionClient.data, walletClient.data);
 
       if (!result.success) {
         toast.error("Creation Failed", {
@@ -121,11 +120,11 @@ export function useCommunityCreateForm() {
         });
         return;
       }
-      const joined = await joinAndIncrementCommunityMember(result.community, sessionClient.data, walletClient.data);
+      // const joined = await joinAndIncrementCommunityMember(result.community, sessionClient.data, walletClient.data);
 
-      if (joined) {
-        router.push(`/communities/${result.community.group.address}`);
-      }
+      // if (joined) {
+      router.push(`/communities/${result.community.group.address}`);
+      // }
     } catch (err: any) {
       setError(err.message || "Failed to create community");
     } finally {
