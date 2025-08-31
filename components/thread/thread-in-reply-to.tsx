@@ -6,12 +6,12 @@ import { getReply } from "@/lib/services/reply/get-reply";
 import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/shared/utils";
 import { ChevronDown } from "lucide-react";
 
-interface ThreadReplyInReplyToProps {
+interface ThreadInReplyToProps {
   parentId: string;
   rootPostId: string;
 }
 
-export function ThreadReplyInReplyTo({ parentId, rootPostId }: ThreadReplyInReplyToProps) {
+export function ThreadInReplyTo({ parentId, rootPostId }: ThreadInReplyToProps) {
   const [showContext, setShowContext] = useState(false);
   const [inReplyTo, setInReplyTo] = useState<Reply[]>([]);
   const [loadingContext, setLoadingContext] = useState(false);

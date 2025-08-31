@@ -34,10 +34,6 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
       console.error("No session client available");
       return;
     }
-    // if (!canTip) {
-    //   console.error("Account cannot tip");
-    //   return;
-    // }
 
     // Replace comma with dot in customValue before parsing
     let amount = tipAmount;
@@ -173,12 +169,7 @@ export function TipGhoPopover({ to }: TipGhoPopoverProps) {
             />
           </div>
           {/* Send button */}
-          <Button
-            size="sm"
-            className="w-full"        
-            disabled={!tipAmount || tipAmount <= 0}
-            onClick={handleTip}
-          >
+          <Button size="sm" className="w-full" disabled={!tipAmount || tipAmount <= 0} onClick={handleTip}>
             Send Tip
           </Button>
         </div>

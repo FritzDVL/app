@@ -21,9 +21,7 @@ export function CommunitiesHeader({ total }: CommunitiesHeaderProps) {
             <p className="mt-1 text-muted-foreground">Discover and join communities in the Lens ecosystem</p>
           </div>
           <Link href="/communities/new">
-            <Button>
-              Create Community
-            </Button>
+            <Button>Create Community</Button>
           </Link>
         </div>
       </CardContent>

@@ -1,7 +1,6 @@
-import { client } from "../protocol-client";
-import { Community, Moderator } from "@/lib/domain/communities/types";
+import { Moderator } from "@/lib/domain/communities/types";
 import { MembershipApprovalGroupRule, SimplePaymentGroupRule, TokenGatedGroupRule } from "@/lib/domain/rules/types";
-import { incrementCommunityMembersCount } from "@/lib/external/supabase/communities";
+import { client } from "@/lib/external/lens/protocol-client";
 import { evmAddress } from "@lens-protocol/client";
 import type { Group, GroupStatsResponse, RuleId, SessionClient } from "@lens-protocol/client";
 import {
@@ -10,12 +9,10 @@ import {
   fetchGroup,
   fetchGroupStats,
   fetchGroups,
-  joinGroup,
   removeAdmins,
   updateGroupRules,
 } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
-import { toast } from "sonner";
 import { Address, WalletClient } from "viem";
 
 /**
@@ -137,32 +134,6 @@ export async function fetchGroupAdminsBatch(
   } catch (error) {
     console.error("Failed to batch fetch group admins from Lens:", error);
     throw new Error(`Failed to batch fetch group admins: ${error instanceof Error ? error.message : "Unknown error"}`);
-  }
-}
-
-/**
- * Joins a group and increments the community member count
- */
-export async function joinAndIncrementCommunityMember(
-  community: Community,
-  sessionClient: any,
-  walletClient: any,
-): Promise<boolean> {
-  const joinResult = await joinGroup(sessionClient, {
-    group: evmAddress(community.group.address),
-  })
-    .andThen(handleOperationWith(walletClient))
-    .andThen(sessionClient.waitForTransaction);
-
-  if (joinResult.isOk()) {
-    await incrementCommunityMembersCount(community.id);
-    return true;
-  } else {
-    console.error("Error joining community:", joinResult.error);
-    toast.error("Action Failed", {
-      description: "Unable to update your membership status. Please try again.",
-    });
-    return false;
   }
 }
 

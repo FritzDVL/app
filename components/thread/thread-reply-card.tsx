@@ -6,7 +6,7 @@ import { ReplyVoting } from "../reply/reply-voting";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { ContentRenderer } from "@/components/shared/content-renderer";
 import { ThreadReplyActions } from "@/components/thread/thread-reply-actions";
-import { ThreadReplyInReplyTo } from "@/components/thread/thread-reply-in-reply-to";
+import { ThreadInReplyTo } from "@/components/thread/thread-in-reply-to";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
@@ -77,7 +77,7 @@ export function ThreadReplyCard({ reply, thread }: ThreadReplyCardProps) {
               {/* In-reply-to context chain: render below the author row (above content) */}
               {reply.post.commentOn?.id && reply.post.commentOn.id !== rootPostId && (
                 <div className="mb-2">
-                  <ThreadReplyInReplyTo parentId={reply.post.commentOn.id} rootPostId={rootPostId} />
+                  <ThreadInReplyTo parentId={reply.post.commentOn.id} rootPostId={rootPostId} />
                 </div>
               )}
 

@@ -1,7 +1,3 @@
-/**
- * useReply Hook
- * React Query hook for fetching a single reply by ID
- */
 import { getReply } from "@/lib/services/reply/get-reply";
 import { useQuery } from "@tanstack/react-query";
 
