@@ -1,13 +1,6 @@
-/**
- * Thread Domain Types
- * Pure domain types for thread-related business logic
- */
 import { Address } from "@/types/common";
 import { Feed, Post } from "@lens-protocol/client";
 
-/**
- * Thread creation form data - domain model
- */
 export interface Thread {
   id: string;
   feed: Feed;

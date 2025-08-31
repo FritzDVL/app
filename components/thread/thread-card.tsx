@@ -1,6 +1,6 @@
 import React from "react";
 import { ThreadCardActions } from "@/components/thread/thread-card-actions";
-import { ThreadCardInfo } from "@/components/thread/thread-info";
+import { ThreadCardInfo } from "@/components/thread/thread-card-info";
 import { Card, CardContent } from "@/components/ui/card";
 import { Thread } from "@/lib/domain/threads/types";
 

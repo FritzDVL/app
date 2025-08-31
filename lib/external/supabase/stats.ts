@@ -1,9 +1,5 @@
 "use server";
 
-/**
- * Forum Statistics Operations
- * External layer for forum-wide statistics from Supabase
- */
 import { supabaseClient } from "./client";
 import { ForumStats } from "@/lib/domain/communities/types";
 

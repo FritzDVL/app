@@ -1,4 +1,3 @@
-import { Thread } from "./types";
 import { storageClient } from "@/lib/external/grove/client";
 import { Address } from "@/types/common";
 import { Account, Feed, Post } from "@lens-protocol/client";
@@ -85,12 +84,4 @@ export const getThreadTags = async (post: Post): Promise<string[]> => {
   }
 
   return contentData?.tags || [];
-};
-
-export const getThreadContent = (thread: Thread): string => {
-  const metadata = thread.rootPost.metadata;
-  if (metadata.__typename === "ArticleMetadata") {
-    return metadata.content;
-  }
-  return "";
 };

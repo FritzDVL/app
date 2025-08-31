@@ -1,10 +1,11 @@
 import { CommunitySettingsClient } from "@/components/communities/settings/community-settings-client";
 import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { getCommunity } from "@/lib/services/community/get-community";
+import { Address } from "@/types/common";
 
 export default async function CommunitySettingsPage({ params }: { params: { address: string } }) {
   const communityAddress = params.address;
-  const communityResult = await getCommunity(communityAddress);
+  const communityResult = await getCommunity(communityAddress as Address);
   const community = communityResult.success ? communityResult.community : null;
 
   if (!community) {

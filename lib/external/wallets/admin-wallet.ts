@@ -1,7 +1,6 @@
 "use server";
 
 import { lensChain } from "@/lib/external/lens/chain";
-import { Address } from "@/types/common";
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 

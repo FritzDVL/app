@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { AvatarProfileLink } from "@/components/notifications/avatar-profile-link";
 import { NotificationCard } from "@/components/notifications/notification-card";
 import ContentRenderer from "@/components/shared/content-renderer";
@@ -47,11 +46,11 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
                 {notification.comment.feed.metadata && (
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-medium text-gray-900 dark:text-gray-100">
-                      in "
+                      in &quot;
                       {(notification.comment.feed.metadata.description?.length ?? 0) > 50
                         ? (notification.comment.feed.metadata.description?.slice(0, 50) ?? "") + "..."
                         : (notification.comment.feed.metadata.description ?? "")}
-                      "
+                      &quot;
                     </span>
                   </p>
                 )}
