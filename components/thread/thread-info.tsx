@@ -32,7 +32,7 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
       setTags(result);
     };
     doFetchTags();
-  }, []);
+  }, [thread.rootPost]);
 
   return (
     <div className="space-y-3">

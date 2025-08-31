@@ -73,60 +73,65 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
   };
 
   return (
-    <div className="mt-6 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
-      {/* Left: Stats Tips */}
-      <div className="flex items-center justify-start gap-4 text-muted-foreground sm:flex-1">
-        <div className="flex items-center gap-1">
-          <Coins className="h-4 w-4" />
-          <span className="text-sm">{thread.rootPost?.stats.tips}</span>
+    <div>
+      <div className="mt-6 flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Left: Stats Tips */}
+        <div className="flex items-center justify-start gap-4 text-muted-foreground sm:flex-1">
+          <div className="flex items-center gap-1">
+            <Coins className="h-4 w-4" />
+            <span className="text-sm">{thread.rootPost?.stats.tips}</span>
+          </div>
         </div>
-      </div>
-      {/* Center: ThreadVoting */}
-      <div className="mt-2 flex items-center justify-start sm:mt-0 sm:flex-1 sm:justify-center">
-        {threadPostId && <ThreadVoting postid={postId(threadPostId)} />}
-      </div>
-      {/* Right: Reply, Tip, Share */}
-      <div className="mt-2 flex w-full items-center justify-start gap-2 sm:mt-0 sm:w-auto sm:flex-1 sm:justify-end">
-        {canReply && (
+        {/* Center: ThreadVoting */}
+        <div className="mt-2 flex items-center justify-start sm:mt-0 sm:flex-1 sm:justify-center">
+          {threadPostId && <ThreadVoting postid={postId(threadPostId)} />}
+        </div>
+        {/* Right: Reply, Tip, Share */}
+        <div className="mt-2 flex w-full items-center justify-start gap-2 sm:mt-0 sm:w-auto sm:flex-1 sm:justify-end">
+          {canReply && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+              onClick={() => setReplyingTo("main")}
+              disabled={!isLoggedIn}
+            >
+              <ReplyIcon className="mr-2 h-4 w-4" />
+              Reply
+            </Button>
+          )}
+          {canTip && (
+            <div className="min-w-0">
+              <TipGhoPopover to={threadPostId} />
+            </div>
+          )}
           <Button
             variant="ghost"
             size="sm"
-            className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
-            onClick={() => setReplyingTo("main")}
-            disabled={!isLoggedIn}
+            onClick={handleShare}
+            className="min-w-0 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
           >
-            <ReplyIcon className="mr-2 h-4 w-4" />
-            Reply
+            <Share className="mr-2 h-4 w-4" />
+            <span className="truncate">Share</span>
           </Button>
-        )}
-        {canTip && (
-          <div className="min-w-0">
-            <TipGhoPopover to={threadPostId} />
-          </div>
-        )}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleShare}
-          className="min-w-0 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
-        >
-          <Share className="mr-2 h-4 w-4" />
-          <span className="truncate">Share</span>
-        </Button>
-      </div>
-      {/* Reply Box */}
-      {replyingTo === "main" && (
-        <div className="mt-2 w-full">
-          <ThreadReplyBox
-            value={replyContent["main"] || ""}
-            onCancel={() => {
-              setReplyingTo(null);
-              setReplyContent(c => ({ ...c, main: "" }));
-            }}
-            onSubmit={handleReply}
-            onChange={val => setReplyContent(c => ({ ...c, main: val }))}
-          />
         </div>
+      </div>
+      {/* Reply Box (always below actions row) */}
+      {replyingTo === "main" && (
+        <>
+          <div className="mt-6 w-full border-t border-border" />
+          <div className="mt-4 w-full">
+            <ThreadReplyBox
+              value={replyContent["main"] || ""}
+              onCancel={() => {
+                setReplyingTo(null);
+                setReplyContent(c => ({ ...c, main: "" }));
+              }}
+              onSubmit={handleReply}
+              onChange={val => setReplyContent(c => ({ ...c, main: val }))}
+            />
+          </div>
+        </>
       )}
     </div>
   );
