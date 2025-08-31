@@ -25,9 +25,8 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
   }, [notification]);
 
   // Navigation URLs
-  const threadAddress = notification.comment.feed.address;
   const replyId = notification.comment.id;
-  const viewReplyUrl = `/thread/${threadAddress}/reply/${replyId}`;
+  const viewReplyUrl = `/reply/${replyId}`;
 
   return (
     <NotificationCard href={viewReplyUrl}>

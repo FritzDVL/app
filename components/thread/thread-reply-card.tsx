@@ -5,8 +5,8 @@ import Link from "next/link";
 import { ReplyVoting } from "../reply/reply-voting";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { ContentRenderer } from "@/components/shared/content-renderer";
-import { ThreadReplyActions } from "@/components/thread/thread-reply-actions";
 import { ThreadInReplyTo } from "@/components/thread/thread-in-reply-to";
+import { ThreadReplyActions } from "@/components/thread/thread-reply-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
@@ -89,7 +89,6 @@ export function ThreadReplyCard({ reply, thread }: ThreadReplyCardProps) {
                 <div className="flex w-full justify-end sm:w-auto">
                   <ThreadReplyActions
                     replyId={reply.id}
-                    threadAddress={threadAddress}
                     setReplyingTo={() => setShowReplyBox(true)}
                     canReply={canReply}
                     canTip={!!canTip}
