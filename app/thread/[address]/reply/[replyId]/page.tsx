@@ -90,11 +90,7 @@ export default function ReplyPage() {
             {/* Glowing border effect */}
             <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-brand-200 to-brand-300 opacity-20 blur-sm dark:from-brand-600 dark:to-brand-700"></div>
             <div className="relative rounded-lg border-2 border-brand-200 bg-white shadow-lg dark:border-brand-600 dark:bg-gray-800">
-              <ThreadReplyCard
-                reply={reply}
-                rootPostId={thread.rootPost?.id || ""}
-                threadAddress={threadAddress as string}
-              />
+              <ThreadReplyCard reply={reply} thread={thread} />
             </div>
           </div>
         </div>
