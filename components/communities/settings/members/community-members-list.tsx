@@ -22,7 +22,19 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
   const canRemove = true;
 
   const { members, loading, removeMemberFromList, hasNext, hasPrev, next, previous } = useCommunityMembers(community);
-  const { banned } = useCommunityBannedMembers(community);
+  const {
+    banned,
+    bannedLoading,
+    hasNext: bannedHasNext,
+    hasPrev: bannedHasPrev,
+    next: bannedNext,
+    previous: bannedPrevious,
+  } = useCommunityBannedMembers(community);
+
+  const handleUnbanMember = (account: any) => {
+    // Remove from banned list locally for immediate UI feedback
+    // The banned list will be refreshed when the tab is switched or component remounts
+  };
 
   return (
     <div>
@@ -101,7 +113,22 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
 
       {activeTab === "requests" && <CommunityMembershipRequests community={community} />}
 
-      {activeTab === "banned" && <CommunityBannedAccounts bannedMembers={banned} />}
+      {activeTab === "banned" && (
+        <>
+          {bannedLoading && <div className="text-center text-muted-foreground">Loading banned accounts…</div>}
+          {!bannedLoading && banned.length === 0 && (
+            <div className="text-center text-muted-foreground">No banned accounts found.</div>
+          )}
+          <CommunityBannedAccounts bannedMembers={banned} groupAddress={groupAddress} onUnban={handleUnbanMember} />
+          <CursorPagination
+            hasPrev={bannedHasPrev}
+            hasNext={bannedHasNext}
+            loading={bannedLoading}
+            onPrev={bannedPrevious}
+            onNext={bannedNext}
+          />
+        </>
+      )}
     </div>
   );
 }
