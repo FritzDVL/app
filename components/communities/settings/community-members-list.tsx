@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { CommunityMemberCard } from "./community-member-card";
-import { CommunityMembershipRequests } from "./community-membership-requests";
+import { CommunityBannedAccounts } from "@/components/communities/settings/community-banned-accounts";
+import { CommunityMemberCard } from "@/components/communities/settings/community-member-card";
+import { CommunityMembershipRequests } from "@/components/communities/settings/community-membership-requests";
 import { CursorPagination } from "@/components/shared/cursor-pagination";
 import { Community } from "@/lib/domain/communities/types";
 import { client } from "@/lib/external/lens/protocol-client";
@@ -136,15 +137,7 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
 
       {activeTab === "requests" && <CommunityMembershipRequests community={community} />}
 
-      {activeTab === "banned" && (
-        <div className="rounded-lg border border-dashed border-red-200 bg-red-50/50 p-8 text-center dark:border-red-800 dark:bg-red-900/10">
-          <UserX className="mx-auto mb-4 h-12 w-12 text-red-500" />
-          <h3 className="mb-2 text-lg font-semibold text-foreground">Banned Accounts</h3>
-          <p className="text-muted-foreground">
-            This feature is coming soon. You&apos;ll be able to manage banned users here.
-          </p>
-        </div>
-      )}
+      {activeTab === "banned" && <CommunityBannedAccounts community={community} />}
     </div>
   );
 }
