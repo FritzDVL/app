@@ -3,10 +3,9 @@ import { CommunityBannedAccounts } from "@/components/communities/settings/commu
 import { CommunityMemberCard } from "@/components/communities/settings/community-member-card";
 import { CommunityMembershipRequests } from "@/components/communities/settings/community-membership-requests";
 import { CursorPagination } from "@/components/shared/cursor-pagination";
+import { useCommunityBannedMembers } from "@/hooks/communities/use-community-banned-members";
+import { useCommunityMembers } from "@/hooks/communities/use-community-members";
 import { Community } from "@/lib/domain/communities/types";
-import { client } from "@/lib/external/lens/protocol-client";
-import { GroupMember, PageSize, PaginatedResultInfo, evmAddress } from "@lens-protocol/client";
-import { fetchGroupMembers } from "@lens-protocol/client/actions";
 import { UserCheck, UserX, Users } from "lucide-react";
 
 interface CommunityMembersListProps {
@@ -15,50 +14,15 @@ interface CommunityMembersListProps {
 
 export function CommunityMembersList({ community }: CommunityMembersListProps) {
   const [activeTab, setActiveTab] = useState<"members" | "requests" | "banned">("members");
-  const [members, setMembers] = useState<GroupMember[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [pageInfo, setPageInfo] = useState<PaginatedResultInfo | null>(null);
+  const [totalMembers, setTotalMembers] = useState(community.memberCount);
 
   const groupAddress = community?.group?.address;
   const showRequestsTab = !!community.group?.membershipApprovalEnabled;
   // const canRemove = community.group.operations?.canRemoveMember.__typename === "GroupOperationValidationPassed";
   const canRemove = true;
 
-  const fetchMembers = async (cursor?: string | null) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchGroupMembers(client, {
-        group: evmAddress(groupAddress),
-        pageSize: PageSize.Ten,
-        ...(cursor ? { cursor } : {}),
-      });
-      if (result.isErr()) {
-        setError(result.error.message || "Failed to fetch members");
-        setLoading(false);
-        return;
-      }
-      const { items, pageInfo } = result.value;
-      setMembers(items as GroupMember[]);
-      setPageInfo(pageInfo as PaginatedResultInfo);
-    } catch (e: any) {
-      setError(e.message || "Unknown error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOnMemberRemoved = (member: GroupMember) => {
-    setMembers(prev => prev.filter(m => m.account.address !== member.account.address));
-  };
-
-  useEffect(() => {
-    if (groupAddress) {
-      fetchMembers();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupAddress]);
+  const { members, loading, removeMemberFromList, hasNext, hasPrev, next, previous } = useCommunityMembers(community);
+  const { banned } = useCommunityBannedMembers(community);
 
   return (
     <div>
@@ -75,7 +39,7 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
           <Users className="h-4 w-4" />
           Members
           <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-            {community.memberCount}
+            {totalMembers}
           </span>
         </button>
         {showRequestsTab && (
@@ -105,7 +69,7 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
           <UserX className="h-4 w-4" />
           Banned
           <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-600 dark:bg-red-900/30 dark:text-red-400">
-            0
+            {banned.length}
           </span>
         </button>
       </div>
@@ -114,8 +78,7 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
       {activeTab === "members" && (
         <>
           {loading && <div className="text-center text-muted-foreground">Loading members…</div>}
-          {error && <div className="text-center text-red-500">{error}</div>}
-          {!loading && !error && members.length === 0 && (
+          {!loading && members.length === 0 && (
             <div className="text-center text-muted-foreground">No members found.</div>
           )}
           <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -125,23 +88,20 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
                 member={member}
                 community={community}
                 canRemove={canRemove}
-                onRemove={handleOnMemberRemoved}
+                onRemove={member => {
+                  removeMemberFromList(member);
+                  setTotalMembers(total => total - 1);
+                }}
               />
             ))}
           </ul>
-          <CursorPagination
-            hasPrev={!!(pageInfo && pageInfo.prev)}
-            hasNext={!!(pageInfo && pageInfo.next)}
-            loading={loading}
-            onPrev={pageInfo && pageInfo.prev ? () => fetchMembers(pageInfo.prev) : undefined}
-            onNext={pageInfo && pageInfo.next ? () => fetchMembers(pageInfo.next) : undefined}
-          />
+          <CursorPagination hasPrev={hasPrev} hasNext={hasNext} loading={loading} onPrev={previous} onNext={next} />
         </>
       )}
 
       {activeTab === "requests" && <CommunityMembershipRequests community={community} />}
 
-      {activeTab === "banned" && <CommunityBannedAccounts community={community} />}
+      {activeTab === "banned" && <CommunityBannedAccounts bannedMembers={banned} />}
     </div>
   );
 }
