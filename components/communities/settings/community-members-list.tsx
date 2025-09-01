@@ -21,17 +21,9 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
   const [pageInfo, setPageInfo] = useState<PaginatedResultInfo | null>(null);
 
   const groupAddress = community?.group?.address;
-
-  // Only show requests tab if membership approval is enabled
   const showRequestsTab = !!community.group?.membershipApprovalEnabled;
-
-  // If the current tab is 'requests' but the feature is not enabled, fallback to 'members'
-  React.useEffect(() => {
-    if (!showRequestsTab && activeTab === "requests") {
-      setActiveTab("members");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showRequestsTab]);
+  // const canRemove = community.group.operations?.canRemoveMember.__typename === "GroupOperationValidationPassed";
+  const canRemove = true;
 
   const fetchMembers = async (cursor?: string | null) => {
     setLoading(true);
@@ -57,8 +49,14 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
     }
   };
 
+  const handleOnMemberRemoved = (member: GroupMember) => {
+    setMembers(prev => prev.filter(m => m.account.address !== member.account.address));
+  };
+
   useEffect(() => {
-    if (groupAddress) fetchMembers();
+    if (groupAddress) {
+      fetchMembers();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupAddress]);
 
@@ -122,7 +120,13 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
           )}
           <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {members.map(member => (
-              <CommunityMemberCard key={member.account.address} member={member} />
+              <CommunityMemberCard
+                key={member.account.address}
+                member={member}
+                community={community}
+                canRemove={canRemove}
+                onRemove={handleOnMemberRemoved}
+              />
             ))}
           </ul>
           <CursorPagination
