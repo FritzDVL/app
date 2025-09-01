@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { CommunityBannedAccounts } from "@/components/communities/settings/community-banned-accounts";
-import { CommunityMemberCard } from "@/components/communities/settings/community-member-card";
-import { CommunityMembershipRequests } from "@/components/communities/settings/community-membership-requests";
+import { CommunityBannedAccounts } from "@/components/communities/settings/members/community-banned-accounts";
+import { CommunityMemberCard } from "@/components/communities/settings/members/community-member-card";
+import { CommunityMembershipRequests } from "@/components/communities/settings/members/community-membership-requests";
 import { CursorPagination } from "@/components/shared/cursor-pagination";
 import { useCommunityBannedMembers } from "@/hooks/communities/use-community-banned-members";
 import { useCommunityMembers } from "@/hooks/communities/use-community-members";
