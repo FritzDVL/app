@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { GroupMember, evmAddress } from "@lens-protocol/client";
-import { removeGroupMembers } from "@lens-protocol/client/actions";
+import { banGroupAccounts, removeGroupMembers } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
@@ -31,19 +31,36 @@ export function useCommunityRemoveMember(): UseCommunityRemoveMemberResult {
 
     setIsLoading(true);
     try {
-      const result = await removeGroupMembers(sessionClient.data, {
+      // First, remove the member from the group
+      const removeResult = await removeGroupMembers(sessionClient.data, {
         group: evmAddress(groupAddress),
         accounts: [evmAddress(member.account.address)],
-        ban,
       })
         .andThen(handleOperationWith(walletClient.data))
         .andThen(sessionClient.data.waitForTransaction);
 
-      if (result.isErr()) {
-        toast.error(result.error.message || "Failed to remove member");
+      if (removeResult.isErr()) {
+        toast.error(removeResult.error.message || "Failed to remove member");
         setIsLoading(false);
         return false;
       }
+
+      // If ban is true, also ban the account
+      if (ban) {
+        const banResult = await banGroupAccounts(sessionClient.data, {
+          group: evmAddress(groupAddress),
+          accounts: [evmAddress(member.account.address)],
+        })
+          .andThen(handleOperationWith(walletClient.data))
+          .andThen(sessionClient.data.waitForTransaction);
+
+        if (banResult.isErr()) {
+          toast.error(banResult.error.message || "Member removed but failed to ban");
+          setIsLoading(false);
+          return false;
+        }
+      }
+
       setIsLoading(false);
       toast.success(ban ? "Member removed and banned successfully." : "Member removed successfully.");
       return true;
