@@ -35,7 +35,9 @@ export function useCommunityRemoveMember(): UseCommunityRemoveMemberResult {
         group: evmAddress(groupAddress),
         accounts: [evmAddress(member.account.address)],
         ban,
-      }).andThen(handleOperationWith(walletClient.data));
+      })
+        .andThen(handleOperationWith(walletClient.data))
+        .andThen(sessionClient.data.waitForTransaction);
 
       if (result.isErr()) {
         toast.error(result.error.message || "Failed to remove member");
