@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { GroupMember, evmAddress } from "@lens-protocol/client";
 import { removeGroupMembers } from "@lens-protocol/client/actions";
+import { handleOperationWith } from "@lens-protocol/client/viem";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
+import { useWalletClient } from "wagmi";
 
 interface UseCommunityRemoveMemberResult {
   removeMember: (groupAddress: string, member: GroupMember, ban: boolean) => Promise<boolean>;
@@ -11,11 +13,19 @@ interface UseCommunityRemoveMemberResult {
 
 export function useCommunityRemoveMember(): UseCommunityRemoveMemberResult {
   const [isLoading, setIsLoading] = useState(false);
+
   const sessionClient = useSessionClient();
+  const walletClient = useWalletClient();
 
   const removeMember = async (groupAddress: string, member: GroupMember, ban: boolean) => {
     if (!sessionClient.data) {
       toast.error("You must be logged in to manage members.");
+      return false;
+    }
+    if (!walletClient.data) {
+      toast.error("Wallet not connected", {
+        description: "Please connect your wallet to remove a member.",
+      });
       return false;
     }
 
@@ -25,7 +35,8 @@ export function useCommunityRemoveMember(): UseCommunityRemoveMemberResult {
         group: evmAddress(groupAddress),
         accounts: [evmAddress(member.account.address)],
         ban,
-      });
+      }).andThen(handleOperationWith(walletClient.data));
+
       if (result.isErr()) {
         toast.error(result.error.message || "Failed to remove member");
         setIsLoading(false);

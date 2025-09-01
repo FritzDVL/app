@@ -16,14 +16,12 @@ export function CommunityBannedAccounts({ community }: CommunityBannedAccountsPr
   const [error, setError] = useState<string | null>(null);
   const [pageInfo, setPageInfo] = useState<PaginatedResultInfo | null>(null);
 
-  const groupAddress = community.group.address;
-
   const fetchBanned = async (cursor?: string | null) => {
     setLoading(true);
     setError(null);
     try {
       const result = await fetchGroupBannedAccounts(client, {
-        group: evmAddress(groupAddress),
+        group: evmAddress(community.group.address),
         ...(cursor ? { cursor } : {}),
       });
       if (result.isErr()) {
@@ -42,9 +40,11 @@ export function CommunityBannedAccounts({ community }: CommunityBannedAccountsPr
   };
 
   useEffect(() => {
-    if (groupAddress) fetchBanned();
+    if (community.group.address) {
+      fetchBanned();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupAddress]);
+  }, [community.group.address]);
 
   return (
     <div className="py-6">
