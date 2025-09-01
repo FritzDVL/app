@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CommunityMemberCard } from "@/components/communities/settings/members/community-user-card";
 import { RemoveMemberDialog } from "@/components/communities/settings/members/remove-member-dialog";
 import { CursorPagination } from "@/components/shared/cursor-pagination";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useCommunityMembers } from "@/hooks/communities/use-community-members";
 import { useCommunityRemoveMember } from "@/hooks/communities/use-community-remove-member";
 import { Community } from "@/lib/domain/communities/types";
@@ -25,10 +26,16 @@ export function CommunityMembers({ community }: CommunityMembersProps) {
     }
   };
 
+  if (loading) {
+    return <LoadingSpinner text="Loading members..." />;
+  }
+
+  if (members.length === 0) {
+    return <div className="text-center text-muted-foreground">No members found.</div>;
+  }
+
   return (
     <>
-      {loading && <div className="text-center text-muted-foreground">Loading members…</div>}
-      {!loading && members.length === 0 && <div className="text-center text-muted-foreground">No members found.</div>}
       <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {members.map(member => {
           const avatarUrl = member.account.metadata?.picture || "/logo.png";

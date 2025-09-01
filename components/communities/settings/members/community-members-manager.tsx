@@ -20,13 +20,13 @@ export function CommunityMembersManager({ community }: CommunityMembersManagerPr
   return (
     <div>
       {/* Sub-tabs */}
-      <div className="mb-6 flex items-center space-x-1 rounded-lg bg-muted p-1">
+      <div className="mb-6 flex items-center justify-center gap-1">
         <button
           onClick={() => setActiveTab("members")}
-          className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
             activeTab === "members"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
           }`}
         >
           <Users className="h-4 w-4" />
@@ -35,10 +35,10 @@ export function CommunityMembersManager({ community }: CommunityMembersManagerPr
         {showRequestsTab && (
           <button
             onClick={() => setActiveTab("requests")}
-            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
               activeTab === "requests"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
             }`}
           >
             <UserCheck className="h-4 w-4" />
@@ -47,10 +47,10 @@ export function CommunityMembersManager({ community }: CommunityMembersManagerPr
         )}
         <button
           onClick={() => setActiveTab("banned")}
-          className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
             activeTab === "banned"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
           }`}
         >
           <UserX className="h-4 w-4" />

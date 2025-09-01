@@ -4,6 +4,7 @@ import { CommunityMemberCard } from "@/components/communities/settings/members/c
 import { UnbanMemberDialog } from "@/components/communities/settings/members/unban-member-dialog";
 import { CursorPagination } from "@/components/shared/cursor-pagination";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useCommunityBannedMembers } from "@/hooks/communities/use-community-banned-members";
 import { useCommunityUnbanMember } from "@/hooks/communities/use-community-unban-member";
 import { Community } from "@/lib/domain/communities/types";
@@ -53,7 +54,11 @@ export function CommunityBannedAccounts({ community }: CommunityBannedAccountsPr
     setSelectedAccount(null);
   };
 
-  if (banned.length === 0 && !bannedLoading) {
+  if (bannedLoading) {
+    return <LoadingSpinner text="Loading banned accounts..." />;
+  }
+
+  if (banned.length === 0) {
     return <div className="text-center text-muted-foreground">No banned accounts found.</div>;
   }
 
