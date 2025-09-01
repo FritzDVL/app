@@ -6,6 +6,7 @@ import { CursorPagination } from "@/components/shared/cursor-pagination";
 import { useCommunityBannedMembers } from "@/hooks/communities/use-community-banned-members";
 import { useCommunityMembers } from "@/hooks/communities/use-community-members";
 import { Community } from "@/lib/domain/communities/types";
+import { GroupBannedAccount } from "@lens-protocol/client";
 import { UserCheck, UserX, Users } from "lucide-react";
 
 interface CommunityMembersListProps {
@@ -15,6 +16,7 @@ interface CommunityMembersListProps {
 export function CommunityMembersList({ community }: CommunityMembersListProps) {
   const [activeTab, setActiveTab] = useState<"members" | "requests" | "banned">("members");
   const [totalMembers, setTotalMembers] = useState(community.memberCount);
+  const [totalBanned, setTotalBanned] = useState(0);
 
   const groupAddress = community?.group?.address;
   const showRequestsTab = !!community.group?.membershipApprovalEnabled;
@@ -25,16 +27,21 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
   const {
     banned,
     bannedLoading,
+    removeBannedFromList,
     hasNext: bannedHasNext,
     hasPrev: bannedHasPrev,
     next: bannedNext,
     previous: bannedPrevious,
   } = useCommunityBannedMembers(community);
 
-  const handleUnbanMember = (account: any) => {
-    // Remove from banned list locally for immediate UI feedback
-    // The banned list will be refreshed when the tab is switched or component remounts
+  const handleUnbanMember = (banned: GroupBannedAccount) => {
+    removeBannedFromList(banned);
+    setTotalBanned(total => total - 1);
   };
+
+  useEffect(() => {
+    setTotalBanned(banned.length);
+  }, [banned]);
 
   return (
     <div>
@@ -81,7 +88,7 @@ export function CommunityMembersList({ community }: CommunityMembersListProps) {
           <UserX className="h-4 w-4" />
           Banned
           <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-600 dark:bg-red-900/30 dark:text-red-400">
-            {banned.length}
+            {totalBanned}
           </span>
         </button>
       </div>

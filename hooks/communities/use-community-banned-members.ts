@@ -40,6 +40,10 @@ export function useCommunityBannedMembers(community: Community) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [community.group.address]);
 
+  const removeBannedFromList = (banned: GroupBannedAccount) => {
+    setBanned(prev => prev.filter(m => m.account.address !== banned.account.address));
+  };
+
   const hasNext = !!(bannedPageInfo && bannedPageInfo.next);
   const hasPrev = !!(bannedPageInfo && bannedPageInfo.prev);
 
@@ -50,6 +54,7 @@ export function useCommunityBannedMembers(community: Community) {
     banned,
     bannedLoading,
     fetchBannedMembers,
+    removeBannedFromList,
     hasNext,
     hasPrev,
     next,
