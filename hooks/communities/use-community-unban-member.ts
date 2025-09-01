@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { GroupBannedAccount, evmAddress } from "@lens-protocol/client";
 import { unbanGroupAccounts } from "@lens-protocol/client/actions";
+import { handleOperationWith } from "@lens-protocol/client/viem";
 import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
-import { handleOperationWith } from "@lens-protocol/client/viem";
 
 export function useCommunityUnbanMember() {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,12 +24,14 @@ export function useCommunityUnbanMember() {
     }
 
     setIsLoading(true);
+    const toastId = toast.loading("Unbanning member...");
     try {
       const result = await unbanGroupAccounts(sessionClient.data, {
         group: evmAddress(groupAddress),
         accounts: [evmAddress(bannedAccount.account.address)],
       }).andThen(handleOperationWith(walletClient));
 
+      toast.dismiss(toastId);
       if (result.isErr()) {
         toast.error(result.error.message || "Failed to unban member");
         setIsLoading(false);
@@ -39,6 +41,7 @@ export function useCommunityUnbanMember() {
       toast.success("Member unbanned successfully.");
       return true;
     } catch (e: any) {
+      toast.dismiss(toastId);
       toast.error(e.message || "Unknown error unbanning member");
       setIsLoading(false);
       return false;

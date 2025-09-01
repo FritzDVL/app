@@ -4,9 +4,9 @@ import { useState } from "react";
 import { CommunityRulesManager } from "@/components/communities/rules/edit/community-rules-manager";
 import { CommunityAccessDenied } from "@/components/communities/settings/community-access-denied";
 import { CommunityEditForm } from "@/components/communities/settings/community-edit-form";
-import { CommunityModeratorsManager } from "@/components/communities/settings/moderators/community-moderators-manager";
 import { CommunitySettingsTabPanel } from "@/components/communities/settings/community-settings-tab-panel";
-import { CommunityMembersList } from "@/components/communities/settings/members/community-members-list";
+import { CommunityMembersManager } from "@/components/communities/settings/members/community-members-manager";
+import { CommunityModeratorsManager } from "@/components/communities/settings/moderators/community-moderators-manager";
 import { useIsModerator } from "@/hooks/communities/use-is-moderator";
 import { Community } from "@/lib/domain/communities/types";
 import { BookOpen, Settings, Sword, Users } from "lucide-react";
@@ -100,7 +100,7 @@ export function CommunitySettingsClient({ community }: CommunitySettingsClientPr
 
         {activeTab === "members" && (
           <CommunitySettingsTabPanel icon={Users} title="Community Members">
-            <CommunityMembersList community={community} />
+            <CommunityMembersManager community={community} />
           </CommunitySettingsTabPanel>
         )}
 

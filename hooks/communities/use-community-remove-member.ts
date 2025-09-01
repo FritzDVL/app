@@ -30,6 +30,7 @@ export function useCommunityRemoveMember(): UseCommunityRemoveMemberResult {
     }
 
     setIsLoading(true);
+    const toastId = toast.loading(ban ? "Removing and banning member..." : "Removing member...");
     try {
       // First, remove the member from the group
       const removeResult = await removeGroupMembers(sessionClient.data, {
@@ -40,6 +41,7 @@ export function useCommunityRemoveMember(): UseCommunityRemoveMemberResult {
         .andThen(sessionClient.data.waitForTransaction);
 
       if (removeResult.isErr()) {
+        toast.dismiss(toastId);
         toast.error(removeResult.error.message || "Failed to remove member");
         setIsLoading(false);
         return false;
@@ -55,6 +57,7 @@ export function useCommunityRemoveMember(): UseCommunityRemoveMemberResult {
           .andThen(sessionClient.data.waitForTransaction);
 
         if (banResult.isErr()) {
+          toast.dismiss(toastId);
           toast.error(banResult.error.message || "Member removed but failed to ban");
           setIsLoading(false);
           return false;
@@ -62,9 +65,11 @@ export function useCommunityRemoveMember(): UseCommunityRemoveMemberResult {
       }
 
       setIsLoading(false);
+      toast.dismiss(toastId);
       toast.success(ban ? "Member removed and banned successfully." : "Member removed successfully.");
       return true;
     } catch (e: any) {
+      toast.dismiss(toastId);
       toast.error(e.message || "Unknown error removing member");
       setIsLoading(false);
       return false;
