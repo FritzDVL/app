@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { revalidateThreadPath } from "@/app/actions/revalidate-path";
 import { Button } from "@/components/ui/button";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
+import { getCommunity } from "@/lib/services/community/get-community";
 import { useAuthStore } from "@/stores/auth-store";
+import { useSessionClient } from "@lens-protocol/react";
 import { Plus, Users } from "lucide-react";
 
 interface CommunityJoinBannerProps {
@@ -15,14 +17,26 @@ interface CommunityJoinBannerProps {
 }
 
 export function CommunityJoinBanner({ community, thread }: CommunityJoinBannerProps) {
-  const [isMember, updateIsMember] = useState(community.group.operations?.isMember === true);
+  const [isMember, setIsMember] = useState<boolean>(false);
 
   const { isLoggedIn } = useAuthStore();
+  const { data: sessionClient } = useSessionClient();
   const join = useJoinCommunity(community);
+
+  useEffect(() => {
+    const doFetchCommunityOps = async () => {
+      if (!sessionClient) return;
+      const communityWithOps = await getCommunity(community.group.address, sessionClient);
+      if (communityWithOps.success && communityWithOps.community) {
+        setIsMember(!!communityWithOps.community.group.operations?.isMember);
+      }
+    };
+    doFetchCommunityOps();
+  }, [community, sessionClient]);
 
   const handleJoin = async () => {
     await join();
-    updateIsMember(true);
+    setIsMember(true);
     revalidateThreadPath(thread.feed.address);
   };
 
