@@ -8,7 +8,6 @@ import { Address } from "@/types/common";
 export default async function ThreadPage({ params }: { params: { address: string } }) {
   const threadAddress = params.address as Address;
 
-  // Obtener datos en el servidor
   const thread = await getThread(threadAddress);
   if (thread.error) {
     return (

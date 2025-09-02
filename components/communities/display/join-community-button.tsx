@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { Community } from "@/lib/domain/communities/types";
 import { useAuthStore } from "@/stores/auth-store";
-import { LogIn } from "lucide-react";
+import { LogIn, ShieldX } from "lucide-react";
 
 interface JoinCommunityButtonProps {
   community: Community;
@@ -29,6 +29,15 @@ export function JoinCommunityButton({ community, onStatusChange }: JoinCommunity
     return null;
   }
 
+  if (operations.isBanned) {
+    return (
+      <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 shadow-sm dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400">
+        <ShieldX className="h-4 w-4 flex-shrink-0" />
+        <span className="hidden md:inline">Banned from community</span>
+        <span className="md:hidden">Banned</span>
+      </div>
+    );
+  }
   const canJoin = operations.canJoin.__typename === "GroupOperationValidationPassed" && !operations.isBanned;
   if (!canJoin) {
     return null;

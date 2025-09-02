@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useThreadReplies(thread: Thread) {
   const sessionClient = useSessionClient();
-  const enabled = !!thread && !!sessionClient.data && !sessionClient.loading;
+  const enabled = !!thread && !sessionClient.loading;
 
   const sessionKey = sessionClient.data ? JSON.stringify(sessionClient.data.getAuthenticatedUser()) : "no-session";
 

@@ -8,6 +8,7 @@ import { ThreadShareDialog } from "@/components/thread/thread-share-dialog";
 import { ThreadVoting } from "@/components/thread/thread-voting";
 import { Button } from "@/components/ui/button";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
+import { Community } from "@/lib/domain/communities/types";
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { useAuthStore } from "@/stores/auth-store";
@@ -17,9 +18,10 @@ import { Coins, Reply as ReplyIcon, Share } from "lucide-react";
 
 interface ThreadCardActionsProps {
   thread: Thread;
+  community: Community;
 }
 
-export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
+export function ThreadCardActions({ thread, community }: ThreadCardActionsProps) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
   const [canTip, setCanTip] = useState<boolean>(false);
@@ -37,6 +39,7 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
         const rootPostResult = await fetchPost(sessionClient.data, {
           post: thread.rootPost.id,
         });
+
         if (rootPostResult.isErr()) {
           console.error("Error fetching root post operations:", rootPostResult.error);
         } else {
@@ -48,7 +51,7 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
     };
 
     doFetchRootPostOps();
-  }, [thread.rootPost.id, sessionClient.data, sessionClient.loading]);
+  }, [thread.rootPost.id, sessionClient.data, sessionClient.loading, community]);
 
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
@@ -95,7 +98,7 @@ export function ThreadCardActions({ thread }: ThreadCardActionsProps) {
         <div className="mt-2 flex items-center justify-start sm:mt-0 sm:flex-1 sm:justify-center">
           {threadPostId && <ThreadVoting postid={postId(threadPostId)} />}
         </div>
-        {/* Right: Reply, Tip, Share */}
+        {/* Right: Join Community, Reply, Tip, Share */}
         <div className="mt-2 flex w-full items-center justify-start gap-2 sm:mt-0 sm:w-auto sm:flex-1 sm:justify-end">
           {canReply && (
             <Button
