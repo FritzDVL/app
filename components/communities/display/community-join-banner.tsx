@@ -1,17 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { revalidateThreadPath } from "@/app/actions/revalidate-path";
 import { Button } from "@/components/ui/button";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { Community } from "@/lib/domain/communities/types";
+import { Thread } from "@/lib/domain/threads/types";
 import { useAuthStore } from "@/stores/auth-store";
 import { Plus, Users } from "lucide-react";
 
 interface CommunityJoinBannerProps {
   community: Community;
+  thread: Thread;
 }
 
-export function CommunityJoinBanner({ community }: CommunityJoinBannerProps) {
+export function CommunityJoinBanner({ community, thread }: CommunityJoinBannerProps) {
   const [isMember, updateIsMember] = useState(community.group.operations?.isMember === true);
 
   const { isLoggedIn } = useAuthStore();
@@ -20,6 +23,7 @@ export function CommunityJoinBanner({ community }: CommunityJoinBannerProps) {
   const handleJoin = async () => {
     await join();
     updateIsMember(true);
+    revalidateThreadPath(thread.feed.address);
   };
 
   const showBanner = !isMember && isLoggedIn;
