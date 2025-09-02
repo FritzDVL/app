@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useCommunityMembership } from "@/hooks/communities/use-community-membership";
 import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { Community } from "@/lib/domain/communities/types";
+import { useAuthStore } from "@/stores/auth-store";
 import { Plus, Users } from "lucide-react";
 
 interface CommunityJoinBannerProps {
@@ -11,7 +12,9 @@ interface CommunityJoinBannerProps {
 }
 
 export function CommunityJoinBanner({ community }: CommunityJoinBannerProps) {
-  const { isMember, isLoading, updateIsMember } = useCommunityMembership(community.group.address);
+  const [isMember, updateIsMember] = useState(community.group.operations?.isMember === true);
+
+  const { isLoggedIn } = useAuthStore();
   const join = useJoinCommunity(community);
 
   const handleJoin = async () => {
@@ -19,8 +22,8 @@ export function CommunityJoinBanner({ community }: CommunityJoinBannerProps) {
     updateIsMember(true);
   };
 
-  // Don't show banner if user is already a member or data is loading
-  if (isLoading || isMember) {
+  const showBanner = !isMember && isLoggedIn;
+  if (!showBanner) {
     return null;
   }
 
