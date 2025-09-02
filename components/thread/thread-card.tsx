@@ -7,11 +7,10 @@ import { Thread } from "@/lib/domain/threads/types";
 
 interface ThreadCardProps {
   thread: Thread;
-  community?: Community;
+  community: Community;
 }
 
 export function ThreadCard({ thread, community }: ThreadCardProps) {
-  if (!thread) return null;
   return (
     <>
       <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">

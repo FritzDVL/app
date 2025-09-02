@@ -7,20 +7,18 @@ import { TipGhoPopover } from "@/components/shared/tip-gho-popover";
 import { ThreadShareDialog } from "@/components/thread/thread-share-dialog";
 import { ThreadVoting } from "@/components/thread/thread-voting";
 import { Button } from "@/components/ui/button";
-import { useJoinCommunity } from "@/hooks/communities/use-join-community";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { Community } from "@/lib/domain/communities/types";
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
-import { getCommunity } from "@/lib/services/community/get-community";
 import { useAuthStore } from "@/stores/auth-store";
 import { fetchPost } from "@lens-protocol/client/actions";
 import { Post, postId, useSessionClient } from "@lens-protocol/react";
-import { Coins, LogIn, Reply as ReplyIcon, Share } from "lucide-react";
+import { Coins, Reply as ReplyIcon, Share } from "lucide-react";
 
 interface ThreadCardActionsProps {
   thread: Thread;
-  community?: Community;
+  community: Community;
 }
 
 export function ThreadCardActions({ thread, community }: ThreadCardActionsProps) {
@@ -29,14 +27,11 @@ export function ThreadCardActions({ thread, community }: ThreadCardActionsProps)
   const [canTip, setCanTip] = useState<boolean>(false);
   const [canReply, setCanReply] = useState<boolean>(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
-  const [isMember, setIsMember] = useState<boolean>(false);
-  const [checkingMembership, setCheckingMembership] = useState<boolean>(true);
 
   const threadPostId = thread.rootPost?.id;
   const { createReply } = useReplyCreate();
   const { isLoggedIn } = useAuthStore();
   const sessionClient = useSessionClient();
-  const joinCommunity = useJoinCommunity(community!);
 
   useEffect(() => {
     const doFetchRootPostOps = async () => {
@@ -55,24 +50,7 @@ export function ThreadCardActions({ thread, community }: ThreadCardActionsProps)
       }
     };
 
-    const doFetchCommunityOps = async () => {
-      if (community && sessionClient.data && !sessionClient.loading) {
-        setCheckingMembership(true);
-        try {
-          const communityWithOps = await getCommunity(community.group.address, sessionClient.data);
-          if (communityWithOps.success && communityWithOps.community) {
-            setIsMember(!!communityWithOps.community.group.operations?.isMember);
-          }
-        } catch (error) {
-          console.error("Error fetching community operations:", error);
-        } finally {
-          setCheckingMembership(false);
-        }
-      }
-    };
-
     doFetchRootPostOps();
-    doFetchCommunityOps();
   }, [thread.rootPost.id, sessionClient.data, sessionClient.loading, community]);
 
   const handleReply = async () => {
@@ -122,17 +100,6 @@ export function ThreadCardActions({ thread, community }: ThreadCardActionsProps)
         </div>
         {/* Right: Join Community, Reply, Tip, Share */}
         <div className="mt-2 flex w-full items-center justify-start gap-2 sm:mt-0 sm:w-auto sm:flex-1 sm:justify-end">
-          {community && isLoggedIn && !isMember && !checkingMembership && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={joinCommunity}
-              className="min-w-0 border border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100 hover:text-brand-800 dark:border-brand-800 dark:bg-brand-900/20 dark:text-brand-400 dark:hover:bg-brand-900/40 dark:hover:text-brand-300"
-            >
-              <LogIn className="mr-2 h-4 w-4" />
-              <span className="truncate">Join</span>
-            </Button>
-          )}
           {canReply && (
             <Button
               variant="ghost"
