@@ -11,7 +11,17 @@ interface JoinCommunityButtonProps {
 
 export function JoinCommunityButton({ community, onStatusChange }: JoinCommunityButtonProps) {
   const { isLoggedIn } = useAuthStore();
+
   const joinCommunity = useJoinCommunity(community);
+  const requestJoin = useJoinCommunity(community);
+
+  const handleJoinRequest = async () => {
+    try {
+      await requestJoin();
+    } catch (error) {
+      console.error("Error requesting to join community:", error);
+    }
+  };
 
   const handleJoin = async () => {
     try {
@@ -39,8 +49,25 @@ export function JoinCommunityButton({ community, onStatusChange }: JoinCommunity
     );
   }
   const canJoin = operations.canJoin.__typename === "GroupOperationValidationPassed" && !operations.isBanned;
+  const needsMembershipApproval = community.group.membershipApprovalEnabled;
+
   if (!canJoin) {
     return null;
+  }
+
+  if (needsMembershipApproval) {
+    return (
+      <Button
+        disabled={!isLoggedIn}
+        onClick={handleJoinRequest}
+        size="sm"
+        variant="default"
+        className="h-8 px-3 text-xs font-medium transition-all duration-150"
+      >
+        <LogIn className="mr-1.5 h-3 w-3" />
+        <span className="hidden md:inline">Request join</span>
+      </Button>
+    );
   }
 
   return (
