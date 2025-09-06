@@ -4,12 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { ReplyVoting } from "../reply/reply-voting";
 import { ThreadReplyBox } from "./thread-reply-box";
+import { ThreadReplyModeratorActions } from "./thread-reply-moderator-actions";
 import { ContentRenderer } from "@/components/shared/content-renderer";
 import { ThreadInReplyTo } from "@/components/thread/thread-in-reply-to";
 import { ThreadReplyActions } from "@/components/thread/thread-reply-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
+import { Community } from "@/lib/domain/communities/types";
 import { getReplyContent } from "@/lib/domain/replies/content";
 import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
@@ -19,9 +21,10 @@ import { postId } from "@lens-protocol/react";
 interface ThreadReplyCardProps {
   reply: Reply;
   thread: Thread;
+  community?: Community;
 }
 
-export function ThreadReplyCard({ reply, thread }: ThreadReplyCardProps) {
+export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardProps) {
   const content = getReplyContent(reply.post);
   const rootPostId = thread.rootPost?.id || "";
   const threadAddress = thread.feed.address;
@@ -68,9 +71,12 @@ export function ThreadReplyCard({ reply, thread }: ThreadReplyCardProps) {
                     </Avatar>
                     <span className="text-sm font-medium text-foreground">{reply.post.author.metadata?.name}</span>
                   </Link>
-                  <span className="text-xs text-muted-foreground sm:text-sm">
-                    {getTimeAgo(new Date(reply.post.timestamp))}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground sm:text-sm">
+                      {getTimeAgo(new Date(reply.post.timestamp))}
+                    </span>
+                    {community && <ThreadReplyModeratorActions reply={reply} community={community} />}
+                  </div>
                 </div>
               </div>
 

@@ -45,7 +45,7 @@ export function Thread({ community, thread }: ThreadProps) {
         )}
         <ThreadActions thread={thread} />
         <ThreadCard thread={thread} community={community} />
-        <ThreadRepliesList thread={thread} />
+        <ThreadRepliesList thread={thread} community={community} />
       </div>
     </>
   );
