@@ -1,6 +1,7 @@
 import React from "react";
 import Mention from "@/components/editor/mention";
 import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 
 interface ContentRendererProps {
   content: string;
@@ -42,6 +43,7 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
   return (
     <div className={className}>
       <ReactMarkdown
+        remarkPlugins={[remarkBreaks]}
         components={{
           p: ({ children }) => renderParagraphWithMentions(children),
         }}

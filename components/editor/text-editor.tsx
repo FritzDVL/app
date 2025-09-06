@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { defineExtension } from "./extension";
 import "./text-editor.css";
 import BlockHandle from "@/components/editor/block-handle";

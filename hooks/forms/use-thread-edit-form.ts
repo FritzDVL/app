@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { revalidateCommunityAndListPaths, revalidateThreadAndListPaths } from "@/app/actions/revalidate-path";
+import { revalidateThreadAndListPaths } from "@/app/actions/revalidate-path";
 import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { updateThread } from "@/lib/services/thread/update-thread";

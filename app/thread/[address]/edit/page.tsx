@@ -1,5 +1,4 @@
 import React from "react";
-import { notFound } from "next/navigation";
 import { ThreadEditForm } from "@/components/thread/edit/thread-edit-form";
 import { getThread } from "@/lib/services/thread/get-thread";
 
