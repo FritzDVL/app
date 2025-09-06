@@ -72,10 +72,10 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
                     <span className="text-sm font-medium text-foreground">{reply.post.author.metadata?.name}</span>
                   </Link>
                   <div className="flex items-center gap-2">
+                    {community && <ThreadReplyModeratorActions reply={reply} community={community} />}
                     <span className="text-xs text-muted-foreground sm:text-sm">
                       {getTimeAgo(new Date(reply.post.timestamp))}
                     </span>
-                    {community && <ThreadReplyModeratorActions reply={reply} community={community} />}
                   </div>
                 </div>
               </div>

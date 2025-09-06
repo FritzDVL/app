@@ -13,10 +13,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useIsModerator } from "@/hooks/communities/use-is-moderator";
+import { useHideReply } from "@/hooks/replies/use-hide-reply";
 import { Community } from "@/lib/domain/communities/types";
 import { Reply } from "@/lib/domain/replies/types";
 import { EyeOff } from "lucide-react";
-import { toast } from "sonner";
 
 interface ThreadReplyModeratorActionsProps {
   reply: Reply;
@@ -26,36 +26,19 @@ interface ThreadReplyModeratorActionsProps {
 
 export function ThreadReplyModeratorActions({ reply, community, isHidden = false }: ThreadReplyModeratorActionsProps) {
   const [showHideDialog, setShowHideDialog] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const isModerator = useIsModerator(community);
+  const { hideReplyAction, unhideReplyAction, isLoading } = useHideReply();
 
-  // Don't render if user is not a moderator
   if (!isModerator) {
     return null;
   }
 
   const handleHideReply = async () => {
-    setIsLoading(true);
-    try {
-      // TODO: Implement actual Lens API call to hide reply
-      console.log("Hiding reply:", reply.id);
+    const success = isHidden ? await unhideReplyAction(reply.post.id) : await hideReplyAction(reply.post.id);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      toast.success("Reply hidden successfully", {
-        description: "The reply has been hidden from the community.",
-      });
-
+    if (success) {
       setShowHideDialog(false);
-    } catch (error) {
-      console.error("Error hiding reply:", error);
-      toast.error("Failed to hide reply", {
-        description: "Please try again later.",
-      });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -76,6 +59,7 @@ export function ThreadReplyModeratorActions({ reply, community, isHidden = false
         </Button>
       ) : (
         <Button
+          disabled
           variant="ghost"
           size="sm"
           onClick={() => setShowHideDialog(true)}
@@ -108,7 +92,7 @@ export function ThreadReplyModeratorActions({ reply, community, isHidden = false
             <div className="py-4">
               <div className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
                 <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                  ⚠️ Hidden replies can still be seen by moderators and the original author
+                  ⚠️ Hidden replies can still be seen by moderators
                 </p>
               </div>
             </div>
