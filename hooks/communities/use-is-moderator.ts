@@ -10,6 +10,6 @@ export function useIsModerator(community: Community): boolean {
       return false;
     }
 
-    return community.moderators.some(mod => mod.address.toLowerCase() === account.address.toLowerCase());
-  }, [account, community.moderators]);
+    return account.address === community.group.owner;
+  }, [account, community.group.owner]);
 }
