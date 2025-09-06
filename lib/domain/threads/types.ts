@@ -9,6 +9,7 @@ export interface Thread {
   author: ThreadAuthor;
   repliesCount: number;
   timeAgo: string;
+  isVisible: boolean;
   created_at: string;
 }
 
