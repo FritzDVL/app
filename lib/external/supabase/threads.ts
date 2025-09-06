@@ -88,6 +88,7 @@ export async function fetchCommunityThreads(communityLensAddress: string): Promi
     .from("community_threads")
     .select("*, community:communities(*)")
     .eq("community_id", community.id)
+    .eq("visible", true)
     .order("created_at", { ascending: false });
 
   if (threadsError) {
@@ -153,6 +154,7 @@ export async function fetchLatestThreads(limit: number = 5): Promise<CommunityTh
   const { data: threads, error } = await supabase
     .from("community_threads")
     .select("*, community:communities(*)")
+    .eq("visible", true)
     .order("created_at", { ascending: false })
     .limit(limit);
 
@@ -175,6 +177,7 @@ export async function fetchFeaturedThreads(limit: number = 5): Promise<Community
     .from("community_threads")
     .select("*, community:communities(*)")
     .eq("featured", true)
+    .eq("visible", true)
     .order("created_at", { ascending: false })
     .limit(limit);
 
