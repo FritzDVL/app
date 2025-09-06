@@ -61,6 +61,7 @@ export async function fetchAllCommunities(): Promise<CommunitySupabase[]> {
   const { data: communities, error } = await supabase
     .from("communities")
     .select("*, threads_count:community_threads(count)")
+    .eq("visible", true)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -86,6 +87,8 @@ export async function fetchCommunity(lensGroupAddress: string): Promise<Communit
     .from("communities")
     .select("*, threads_count:community_threads(count)")
     .eq("lens_group_address", lensGroupAddress)
+    .eq("visible", true)
+    .eq("community_threads.visible", true)
     .single();
 
   if (error) {
@@ -115,6 +118,7 @@ export async function fetchFeaturedCommunities(): Promise<CommunitySupabase[]> {
     .from("communities")
     .select("*")
     .eq("featured", 1)
+    .eq("visible", true)
     .order("created_at", { ascending: true });
 
   if (error) {

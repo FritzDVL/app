@@ -9,6 +9,7 @@ export interface Community {
   postCount?: number;
   memberCount: number;
   threadsCount: number;
+  isVisible: boolean;
   createdAt: string;
 }
 

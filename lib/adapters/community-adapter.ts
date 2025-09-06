@@ -20,6 +20,7 @@ export function adaptGroupToCommunity(
     moderators,
     memberCount: groupStats.totalMembers || 0,
     threadsCount: dbCommunity.threads_count || 0,
+    isVisible: dbCommunity.visible,
     createdAt,
   };
 }

@@ -1,10 +1,35 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)";
+  };
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
   public: {
     Tables: {
@@ -17,6 +42,7 @@ export type Database = {
           members_count: number;
           name: string;
           updated_at: string;
+          visible: boolean;
         };
         Insert: {
           created_at?: string;
@@ -26,6 +52,7 @@ export type Database = {
           members_count?: number;
           name: string;
           updated_at?: string;
+          visible?: boolean;
         };
         Update: {
           created_at?: string;
@@ -35,6 +62,7 @@ export type Database = {
           members_count?: number;
           name?: string;
           updated_at?: string;
+          visible?: boolean;
         };
         Relationships: [];
       };
@@ -48,7 +76,9 @@ export type Database = {
           lens_feed_address: string;
           replies_count: number;
           root_post_id: string | null;
+          slug: string | null;
           updated_at: string;
+          visible: boolean;
         };
         Insert: {
           author: string;
@@ -59,7 +89,9 @@ export type Database = {
           lens_feed_address: string;
           replies_count?: number;
           root_post_id?: string | null;
+          slug?: string | null;
           updated_at?: string;
+          visible?: boolean;
         };
         Update: {
           author?: string;
@@ -70,7 +102,9 @@ export type Database = {
           lens_feed_address?: string;
           replies_count?: number;
           root_post_id?: string | null;
+          slug?: string | null;
           updated_at?: string;
+          visible?: boolean;
         };
         Relationships: [
           {
@@ -223,6 +257,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },
@@ -237,6 +274,7 @@ export interface CommunitySupabase {
   name: string;
   lens_group_address: string;
   threads_count?: number;
+  visible: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -249,5 +287,6 @@ export interface CommunityThreadSupabase {
   author: string;
   created_at: string;
   updated_at: string;
+  visible: boolean;
   replies_count: number;
 }

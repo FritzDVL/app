@@ -23,6 +23,7 @@ export const adaptFeedToThread = async (
     author: getThreadAuthor(author),
     repliesCount: threadRecord.replies_count || 0,
     timeAgo: getTimeAgo(new Date(threadRecord.created_at)),
+    isVisible: threadRecord.visible,
     created_at: threadRecord.created_at,
   };
 };
