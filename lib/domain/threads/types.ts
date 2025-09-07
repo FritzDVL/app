@@ -1,9 +1,8 @@
 import { Address } from "@/types/common";
-import { Feed, Post } from "@lens-protocol/client";
+import { Post } from "@lens-protocol/client";
 
 export interface Thread {
   id: string;
-  feed: Feed;
   community: Address;
   rootPost: Post;
   author: ThreadAuthor;

@@ -1,10 +1,15 @@
 import { Moderator } from "@/lib/domain/communities/types";
 import { MembershipApprovalGroupRule, SimplePaymentGroupRule, TokenGatedGroupRule } from "@/lib/domain/rules/types";
+import { storageClient } from "@/lib/external/grove/client";
+import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
+import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
+import { immutable } from "@lens-chain/storage-client";
 import { evmAddress } from "@lens-protocol/client";
 import type { Group, GroupStatsResponse, RuleId, SessionClient } from "@lens-protocol/client";
 import {
   addAdmins,
+  createGroup,
   fetchAdminsFor,
   fetchGroup,
   fetchGroupStats,
@@ -13,7 +18,58 @@ import {
   updateGroupRules,
 } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
+import { group } from "@lens-protocol/metadata";
 import { Address, WalletClient } from "viem";
+
+export async function createLensGroup(
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
+  params: {
+    name: string;
+    description: string;
+    adminAddress: string;
+    iconUri?: string;
+    communityRule?: any;
+  },
+): Promise<Group | null> {
+  try {
+    const groupName = params.name.replace(/\s+/g, "-").slice(0, 20);
+    const groupMetadata = group({
+      name: groupName,
+      description: params.description,
+      ...(params.iconUri ? { icon: params.iconUri } : {}),
+    });
+    const acl = immutable(lensChain.id);
+    const { uri } = await storageClient.uploadAsJson(groupMetadata, { acl });
+
+    const createGroupParams: any = {
+      metadataUri: uri,
+      admins: [evmAddress(params.adminAddress), ADMIN_USER_ADDRESS],
+      owner: evmAddress(params.adminAddress),
+    };
+    if (params.communityRule) {
+      createGroupParams.rules = {
+        required: [params.communityRule],
+      };
+    }
+
+    const result = await createGroup(sessionClient, createGroupParams)
+      .andThen(handleOperationWith(walletClient))
+      .andThen(sessionClient.waitForTransaction)
+      .andThen((txHash: unknown) => {
+        return fetchGroup(sessionClient, { txHash: txHash as string });
+      });
+
+    if (result.isErr() || !result.value) {
+      return null;
+    }
+
+    return result.value as Group;
+  } catch (error) {
+    console.error("Failed to create group in Lens:", error);
+    return null;
+  }
+}
 
 /**
  * Fetches a single group from Lens Protocol

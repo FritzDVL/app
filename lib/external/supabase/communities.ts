@@ -1,27 +1,17 @@
 "use server";
 
-/**
- * Community Database Operations
- * External layer for community-related Supabase operations
- */
 import { supabaseClient } from "./client";
 import { Address } from "@/types/common";
 import { CommunitySupabase } from "@/types/supabase";
 
-/**
- * Persists a new community to the database
- * @param lensGroupAddress - The Lens Protocol group address
- * @param name - Community name
- * @returns The created community record
- */
-export async function persistCommunity(lensGroupAddress: string, name: string): Promise<CommunitySupabase> {
+export async function persistCommunity(group: Address, feed: Address, name: string): Promise<CommunitySupabase> {
   const supabase = await supabaseClient();
 
   // Check if community already exists
   const { data: existingCommunity, error: fetchError } = await supabase
     .from("communities")
     .select("*")
-    .eq("lens_group_address", lensGroupAddress)
+    .eq("lens_group_address", group)
     .single();
 
   if (fetchError && fetchError.code !== "PGRST116") {
@@ -29,7 +19,7 @@ export async function persistCommunity(lensGroupAddress: string, name: string): 
   }
 
   if (existingCommunity) {
-    console.log(`Community already exists in database: ${lensGroupAddress}`);
+    console.log(`Community already exists in database: ${group}`);
     return existingCommunity;
   }
 
@@ -37,8 +27,9 @@ export async function persistCommunity(lensGroupAddress: string, name: string): 
   const { data: newCommunity, error: insertError } = await supabase
     .from("communities")
     .insert({
-      lens_group_address: lensGroupAddress,
+      lens_group_address: group,
       name,
+      feed: feed,
     })
     .select()
     .single();
@@ -47,7 +38,7 @@ export async function persistCommunity(lensGroupAddress: string, name: string): 
     throw new Error(`Failed to create community: ${insertError.message}`);
   }
 
-  console.log(`Community persisted to database: ${lensGroupAddress}`);
+  console.log(`Community persisted to database: ${group}`);
   return newCommunity;
 }
 
