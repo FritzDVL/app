@@ -92,7 +92,7 @@ export async function fetchCommunity(lensGroupAddress: string): Promise<Communit
 
   // threads_count will be an array with a single object { count: number }
   if (community) {
-    return { ...community, threads_count: community.threads_count?.[0]?.count ?? 0 };
+    return { ...community, feed: community.feed, threads_count: community.threads_count?.[0]?.count ?? 0 };
   }
 
   return community;

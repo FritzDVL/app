@@ -15,7 +15,7 @@ export default async function CommunityPage({ params }: { params: Promise<{ addr
   }
 
   // Fetch threads on the server
-  const threadsResult = await getCommunityThreads(communityAddress);
+  const threadsResult = await getCommunityThreads(community);
   const threads = threadsResult.success ? (threadsResult.threads ?? []) : [];
 
   return (

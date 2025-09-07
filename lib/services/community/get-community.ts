@@ -4,6 +4,7 @@
  */
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community } from "@/lib/domain/communities/types";
+import { fetchFeed } from "@/lib/external/lens/primitives/feeds";
 import {
   fetchAdminsFromGroup,
   fetchGroupFromLens,
@@ -34,20 +35,21 @@ export async function getCommunity(address: Address, sessionClient?: SessionClie
     }
 
     // Fetch Lens data in parallel
-    const [group, groupStats, moderators] = await Promise.all([
+    const [group, feed, groupStats, moderators] = await Promise.all([
       fetchGroupFromLens(address, sessionClient),
+      fetchFeed(dbCommunity.feed as Address),
       fetchGroupStatsFromLens(address),
       fetchAdminsFromGroup(address),
     ]);
 
-    if (!group || !groupStats) {
+    if (!group || !groupStats || !feed) {
       return {
         success: false,
         error: "Failed to fetch community data from Lens Protocol",
       };
     }
 
-    const community = adaptGroupToCommunity(group, groupStats, dbCommunity, moderators);
+    const community = adaptGroupToCommunity(group, feed, groupStats, dbCommunity, moderators);
 
     return {
       success: true,

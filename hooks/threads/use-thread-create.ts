@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Community } from "@/lib/domain/communities/types";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { createThread } from "@/lib/services/thread/create-thread";
@@ -13,7 +14,7 @@ export function useThreadCreation() {
   const walletClient = useWalletClient();
 
   const createThreadWithService = async (
-    communityAddress: string,
+    community: Community,
     formData: CreateThreadFormData,
     onSuccess?: (thread: Thread) => void,
   ): Promise<void> => {
@@ -32,7 +33,7 @@ export function useThreadCreation() {
 
     const loadingToastId = toast.loading("Creating Thread", { description: "Publishing thread..." });
     try {
-      const result = await createThread(communityAddress, formData, sessionClient.data, walletClient.data!);
+      const result = await createThread(community, formData, sessionClient.data, walletClient.data!);
 
       if (!result.success) {
         throw new Error(result.error || "Failed to create thread");

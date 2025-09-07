@@ -1,17 +1,9 @@
-/**
- * Create Thread Service
- * Creates a thread using hybrid server/client logic:
- * 1. SERVER: Creates feed via Server Action (admin clients)
- * 2. CLIENT: Creates article/post (user session + wallet)
- * 3. SERVER: Persists and adapts data
- */
-import { createThreadFeedAction } from "@/app/actions/create-thread";
 import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
+import { Community } from "@/lib/domain/communities/types";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
 import { createThreadArticle } from "@/lib/external/lens/primitives/articles";
-import { persistCommunityThread, persistRootPostId } from "@/lib/external/supabase/threads";
 import { SessionClient } from "@lens-protocol/client";
 import { WalletClient } from "viem";
 
@@ -21,49 +13,24 @@ export interface CreateThreadResult {
   error?: string;
 }
 
-/**
- * Creates a thread using the full business logic
- * Orchestrates the entire thread creation process including root post
- */
 export async function createThread(
-  communityAddress: string,
+  community: Community,
   formData: CreateThreadFormData,
   sessionClient: SessionClient,
   walletClient: WalletClient,
 ): Promise<CreateThreadResult> {
   try {
-    // 1. Create the feed via Server Action (server-side with admin clients)
-    const feedResult = await createThreadFeedAction(formData.title, formData.summary, communityAddress);
-
-    if (!feedResult.success) {
-      console.error("[Service] Error creating thread feed:", feedResult.error);
-      return {
-        success: false,
-        error: feedResult.error || "Failed to create thread feed",
-      };
-    }
-
-    const createdFeed = feedResult.feed;
-    if (!createdFeed) {
-      return {
-        success: false,
-        error: "Failed to create feed: No feed returned",
-      };
-    }
-
     // 4. Create the root post for the thread using article primitive
-    const articleResult = await createThreadArticle(
-      {
-        title: formData.title,
-        content: formData.content,
-        summary: formData.summary,
-        author: formData.author,
-        tags: formData.tags,
-        feedAddress: createdFeed.address,
-      },
-      sessionClient,
-      walletClient,
-    );
+    const articleFormData = {
+      title: formData.title,
+      content: formData.content,
+      author: formData.author,
+      summary: formData.summary,
+      tags: formData.tags,
+      feedAddress: community.feed.address,
+    };
+
+    const articleResult = await createThreadArticle(articleFormData, sessionClient, walletClient);
 
     if (!articleResult.success) {
       console.error("[Service] Error creating thread article:", articleResult.error);
@@ -74,14 +41,6 @@ export async function createThread(
     }
 
     const rootPost = articleResult.post;
-
-    // 5. Persist the thread in Supabase
-    const threadRecord = await persistCommunityThread(communityAddress, createdFeed.address, formData.author);
-
-    // 6. Update thread record with root post ID if available
-    if (rootPost?.id) {
-      await persistRootPostId(threadRecord.id, rootPost.id);
-    }
 
     // 7. Fetch author account for transformation
     const author = await fetchAccountFromLens(formData.author);
@@ -99,7 +58,7 @@ export async function createThread(
         error: "Root post is missing or not a valid Post",
       };
     }
-    const thread = await adaptFeedToThread(createdFeed, threadRecord, author, rootPost);
+    const thread = await adaptFeedToThread(community, author, rootPost);
 
     return {
       success: true,

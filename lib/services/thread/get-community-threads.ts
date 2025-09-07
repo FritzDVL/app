@@ -1,12 +1,7 @@
-/**
- * Get Community Threads Service
- * Gets all threads for a community using optimized batch operations
- */
 import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
+import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
-import { fetchFeedsBatch } from "@/lib/external/lens/primitives/feeds";
-import { fetchPostsBatch } from "@/lib/external/lens/primitives/posts";
-import { fetchCommunityThreads } from "@/lib/external/supabase/threads";
+import { fetchPostsByFeed } from "@/lib/external/lens/primitives/posts";
 
 export interface ThreadsResult {
   success: boolean;
@@ -18,52 +13,22 @@ export interface ThreadsResult {
  * Gets all threads for a community using optimized batch operations
  * Orchestrates database, Lens Protocol calls, and data transformation
  */
-export async function getCommunityThreads(communityAddress: string): Promise<ThreadsResult> {
+export async function getCommunityThreads(community: Community): Promise<ThreadsResult> {
   try {
-    // 1. Fetch thread records from database
-    const threadRecords = await fetchCommunityThreads(communityAddress);
-    if (!threadRecords.length) {
-      return {
-        success: true,
-        threads: [],
-      };
-    }
+    // 1. Fetch posts for the community feed
+    const { posts } = await fetchPostsByFeed(community.feed.address);
 
-    // 2. Extract unique addresses for batching
-    const feedAddresses = threadRecords.map(record => record.lens_feed_address);
-    const rootPostIds = threadRecords.map(record => record.root_post_id).filter((id): id is string => id !== null);
-
-    // 3. Batch fetch all data in parallel
-    const [feedResults, rootPostResults] = await Promise.all([
-      fetchFeedsBatch(feedAddresses),
-      rootPostIds.length > 0 ? fetchPostsBatch(rootPostIds) : Promise.resolve([]),
-    ]);
-
-    // 4. Create lookup maps for O(1) access
-    const feedMap = new Map();
-    for (const { address, result } of feedResults) {
-      feedMap.set(address, result);
-    }
-    const rootPostMap = new Map();
-    for (const post of rootPostResults) {
-      if (post && post.id) rootPostMap.set(post.id, post);
-    }
-
-    // 5. Transform threads¡
-    const threads = (
-      await Promise.all(
-        threadRecords.map(async threadRecord => {
-          const feed = feedMap.get(threadRecord.lens_feed_address);
-          const rootPost = threadRecord.root_post_id ? rootPostMap.get(threadRecord.root_post_id) : null;
-          // author y rootPost siempre existen según tu aclaración
-          return adaptFeedToThread(feed, threadRecord, rootPost?.author, rootPost);
-        })
-      )
-    ).filter(Boolean) as Thread[];
+    // 2. Transform posts into threads
+    const threads = await Promise.all(
+      posts.map(async post => {
+        // Use the community object, post.author, and post
+        return adaptFeedToThread(community, post.author, post);
+      }),
+    );
 
     return {
       success: true,
-      threads,
+      threads: threads.filter(Boolean) as Thread[],
     };
   } catch (error) {
     console.error("Failed to fetch community threads:", error);

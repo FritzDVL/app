@@ -106,6 +106,7 @@ export async function createCommunity(
     // 8. Transform and return the new community
     const newCommunity = adaptGroupToCommunity(
       newGroup,
+      newFeed,
       {
         totalMembers: 0,
         __typename: "GroupStatsResponse",

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { useThreadCreation } from "@/hooks/threads/use-thread-create";
+import { Community } from "@/lib/domain/communities/types";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { validateCreateThreadForm } from "@/lib/domain/threads/validation";
 import { useAuthStore } from "@/stores/auth-store";
@@ -9,11 +10,11 @@ import { Address } from "@/types/common";
 import { toast } from "sonner";
 
 interface UseThreadCreateFormProps {
-  communityAddress: string;
+  community: Community;
   author: Address;
 }
 
-export function useThreadCreateForm({ communityAddress, author }: UseThreadCreateFormProps) {
+export function useThreadCreateForm({ community, author }: UseThreadCreateFormProps) {
   const [formData, setFormData] = useState<CreateThreadFormData>({
     title: "",
     summary: "",
@@ -50,12 +51,14 @@ export function useThreadCreateForm({ communityAddress, author }: UseThreadCreat
       return;
     }
     try {
-      await createThread(communityAddress, formDataToUse, () => {
-        setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
-        setTags([]);
-        setTagInput("");
-      });
-      router.push(`/communities/${communityAddress}`);
+      await createThread(community, formDataToUse);
+
+      // Reset form after successful submission
+      setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
+      setTags([]);
+      setTagInput("");
+
+      router.push(`/communities/${community.group.address}`);
     } catch (error) {
       console.error("Error in handleSubmit:", error);
     }
