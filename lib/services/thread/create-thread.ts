@@ -33,7 +33,7 @@ export async function createThread(
 
     const articleResult = await createThreadArticle(articleFormData, sessionClient, walletClient);
 
-    if (!articleResult.success) {
+    if (!articleResult.success || !articleResult.post) {
       console.error("[Service] Error creating thread article:", articleResult.error);
       return {
         success: false,
@@ -64,7 +64,13 @@ export async function createThread(
     // 4. Save thread in database
     try {
       const authorDb = author.username?.localName || author.address;
-      await persistCommunityThread(community.group.address, formData.title, formData.summary, authorDb);
+      await persistCommunityThread(
+        community.group.address,
+        formData.title,
+        formData.summary,
+        authorDb,
+        articleResult.post?.id,
+      );
     } catch (dbError) {
       console.error("Failed to persist thread in database:", dbError);
       return {

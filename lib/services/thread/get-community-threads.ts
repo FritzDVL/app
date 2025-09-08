@@ -1,7 +1,8 @@
 import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
-import { fetchPostsByFeed } from "@/lib/external/lens/primitives/posts";
+import { fetchPostsBatch } from "@/lib/external/lens/primitives/posts";
+import { fetchCommunityThreads } from "@/lib/external/supabase/threads";
 
 export interface ThreadsResult {
   success: boolean;
@@ -15,8 +16,11 @@ export interface ThreadsResult {
  */
 export async function getCommunityThreads(community: Community): Promise<ThreadsResult> {
   try {
+    const threadsDb = await fetchCommunityThreads(community.id);
+
     // 1. Fetch posts for the community feed
-    const { posts } = await fetchPostsByFeed(community.feed.address);
+    const postsIds = threadsDb.map(t => t.root_post_id).filter((id): id is string => id !== null);
+    const posts = await fetchPostsBatch(postsIds);
 
     // 2. Transform posts into threads
     const threads = await Promise.all(

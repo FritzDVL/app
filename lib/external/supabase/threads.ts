@@ -20,6 +20,7 @@ export async function persistCommunityThread(
   title: string,
   summary: string,
   author: Address,
+  rootPostId: string,
 ): Promise<CommunityThreadSupabase> {
   const supabase = await supabaseClient();
 
@@ -49,6 +50,7 @@ export async function persistCommunityThread(
     .insert({
       community_id: community.id,
       lens_feed_address: "0x0",
+      root_post_id: rootPostId,
       title,
       summary,
       author: author,
@@ -68,29 +70,14 @@ export async function persistCommunityThread(
  * @param communityLensAddress - The Lens Protocol group address
  * @returns Array of thread records with their Lens feed addresses
  */
-export async function fetchCommunityThreads(communityLensAddress: string): Promise<CommunityThreadSupabase[]> {
+export async function fetchCommunityThreads(communityId: string): Promise<CommunityThreadSupabase[]> {
   const supabase = await supabaseClient();
-
-  // First get the community
-  const { data: community, error: communityError } = await supabase
-    .from("communities")
-    .select("*")
-    .eq("lens_group_address", communityLensAddress)
-    .single();
-
-  if (communityError) {
-    if (communityError.code === "PGRST116") {
-      // Community not found, return empty array
-      return [];
-    }
-    throw new Error(`Failed to fetch community: ${communityError.message}`);
-  }
 
   // Then get all threads for this community, joining the community object
   const { data: threads, error: threadsError } = await supabase
     .from("community_threads")
     .select("*, community:communities(*)")
-    .eq("community_id", community.id)
+    .eq("community_id", communityId)
     .eq("visible", true)
     .order("created_at", { ascending: false });
 
@@ -124,26 +111,6 @@ export async function fetchThread(lensFeedAddress: string): Promise<CommunityThr
   }
 
   return thread;
-}
-
-/**
- * Persists the root post address for a thread in the community_threads table
- * @param threadId - The thread's id (primary key)
- * @param rootPostId - The root post id to persist
- * @returns void
- */
-export async function persistRootPostId(threadId: string, rootPostId: string): Promise<void> {
-  const supabase = await supabaseClient();
-
-  const { error } = await supabase
-    .from("community_threads")
-    .update({ root_post_id: rootPostId })
-    .eq("id", threadId)
-    .single();
-
-  if (error) {
-    throw new Error(`Failed to update root_post_address: ${error.message}`);
-  }
 }
 
 /**
