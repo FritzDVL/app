@@ -22,7 +22,7 @@ export async function getCommunityThreads(community: Community): Promise<Threads
     const threads = await Promise.all(
       posts.map(async post => {
         // Use the community object, post.author, and post
-        return adaptFeedToThread(community, post.author, post);
+        return adaptFeedToThread(post.author, post);
       }),
     );
 

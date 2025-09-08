@@ -5,7 +5,7 @@
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
-import { fetchPostsByFeed } from "@/lib/external/lens/primitives/posts";
+import { fetchCommentsByPostId, fetchPostsByFeed } from "@/lib/external/lens/primitives/posts";
 import { SessionClient } from "@lens-protocol/client";
 
 export interface PaginatedRepliesResult {
@@ -23,7 +23,10 @@ export interface PaginatedRepliesResult {
 export async function getThreadReplies(thread: Thread, sessionClient?: SessionClient): Promise<PaginatedRepliesResult> {
   try {
     // 1. Fetch posts with pagination
-    const { posts, pageInfo } = await fetchPostsByFeed(thread.feed.address, sessionClient);
+    const posts = await fetchCommentsByPostId(thread.rootPost.id);
+    console.log(posts);
+    // Assume fetchCommentsByPostId returns an object with pageInfo, otherwise set to null or {}
+    const pageInfo = posts && (posts as any).pageInfo ? (posts as any).pageInfo : {};
 
     if (!posts.length) {
       return {

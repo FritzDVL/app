@@ -49,7 +49,7 @@ export async function getCommunity(address: Address, sessionClient?: SessionClie
       };
     }
 
-    const community = adaptGroupToCommunity(group, feed, groupStats, dbCommunity, moderators);
+    const community = adaptGroupToCommunity(group, groupStats, dbCommunity, moderators);
 
     return {
       success: true,

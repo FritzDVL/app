@@ -22,7 +22,7 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
     if (!searchQuery.trim()) return threads;
     const query = searchQuery.toLowerCase();
     return threads.filter(t => {
-      const { title, summary } = getThreadTitleAndSummary(t.rootPost, t.feed);
+      const { title, summary } = getThreadTitleAndSummary(t.rootPost);
       return (title && title.toLowerCase().includes(query)) || (summary && summary.toLowerCase().includes(query));
     });
   }, [threads, searchQuery]);
@@ -65,7 +65,7 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
           <div className="space-y-4">
             <AnimatePresence initial={false}>
               {filteredThreads.map(thread => {
-                const { title, summary } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
+                const { title, summary } = getThreadTitleAndSummary(thread.rootPost);
                 return (
                   <motion.div
                     key={thread.id}
@@ -84,7 +84,7 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
                     <Card
                       className="group w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800"
                       onClick={() => {
-                        router.push(`/thread/${thread.feed.address}`);
+                        router.push(`/thread/${thread.rootPost.slug}`);
                       }}
                     >
                       <CardContent className="p-4 sm:p-6">

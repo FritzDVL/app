@@ -1,6 +1,6 @@
 import { storageClient } from "@/lib/external/grove/client";
 import { Address } from "@/types/common";
-import { Account, Feed, Post } from "@lens-protocol/client";
+import { Account, Post } from "@lens-protocol/client";
 
 export const THREAD_CONTENT_PREFIX = "LensForum Thread: ";
 
@@ -49,7 +49,7 @@ export const hasThreadContentPrefix = (content: string): boolean => {
   return content.startsWith(`*${THREAD_CONTENT_PREFIX}`) || content.startsWith(THREAD_CONTENT_PREFIX);
 };
 
-export const getThreadTitleAndSummary = (rootPost: Post, feed: Feed) => {
+export const getThreadTitleAndSummary = (rootPost: Post) => {
   if (rootPost.metadata.__typename === "ArticleMetadata") {
     return {
       title: rootPost.metadata.title,
@@ -57,8 +57,8 @@ export const getThreadTitleAndSummary = (rootPost: Post, feed: Feed) => {
     };
   }
   return {
-    title: feed.metadata?.name || `Thread ${feed.address.slice(-6)}`,
-    summary: feed.metadata?.description || "No content available",
+    title: `Thread`,
+    summary: "No content available",
   };
 };
 

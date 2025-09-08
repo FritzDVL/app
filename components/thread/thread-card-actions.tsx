@@ -56,11 +56,11 @@ export function ThreadCardActions({ thread, community }: ThreadCardActionsProps)
   const handleReply = async () => {
     if (!thread || !thread.rootPost || !thread.rootPost.id) return;
     if (replyingTo && replyContent[replyingTo]) {
-      const reply = await createReply(thread.rootPost.id, replyContent[replyingTo], thread.feed.address, thread.id);
+      const reply = await createReply(thread.rootPost.id, replyContent[replyingTo], thread.rootPost.slug, thread.id);
       if (reply) {
         setReplyingTo(null);
         setReplyContent(c => ({ ...c, [replyingTo]: "" }));
-        revalidateThreadPath(thread.feed.address);
+        revalidateThreadPath(thread.rootPost.slug);
         revalidateCommunityPath(thread.community);
       }
     }
@@ -75,14 +75,14 @@ export function ThreadCardActions({ thread, community }: ThreadCardActionsProps)
   const handlePostToLens = async () => {
     if (!thread) return;
 
-    const { title } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
-    const url = `https://lensforum.xyz/thread/${thread.feed.address}`;
+    const { title } = getThreadTitleAndSummary(thread.rootPost);
+    const url = `https://lensforum.xyz/thread/${thread.rootPost.slug}`;
 
     const shareText = `Check out this thread on LensForum: "${title}"\n\n`;
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
 
-  const threadUrl = `https://lensforum.xyz/thread/${thread.feed.address}`;
+  const threadUrl = `https://lensforum.xyz/thread/${thread.rootPost.slug}`;
 
   return (
     <div>

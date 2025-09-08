@@ -78,7 +78,7 @@ export async function fetchCommentsByPostId(postId: PostId): Promise<LensPost[]>
   const result = await fetchPostReferences(client, {
     referencedPost: postId,
     referenceTypes: [PostReferenceType.CommentOn],
-    relevancyFilter: ReferenceRelevancyFilter.Relevant,
+    // relevancyFilter: ReferenceRelevancyFilter.Relevant,
   });
 
   if (!result.isOk() || !result.value.items) return [];

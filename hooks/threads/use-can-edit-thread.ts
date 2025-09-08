@@ -24,7 +24,7 @@ export function useCanEditThread(thread: Thread): UseCanEditThreadReturn {
       if (!sessionClient.data) {
         return;
       }
-      const threadWithOps = await getThread(thread.feed.address, sessionClient.data);
+      const threadWithOps = await getThread(thread.rootPost.id, sessionClient.data);
       if (threadWithOps.error || !threadWithOps.thread) {
         setCanEdit(false);
         setIsLoading(false);

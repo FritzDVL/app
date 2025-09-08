@@ -27,7 +27,7 @@ export function ThreadActions({ thread }: ThreadActionsProps) {
           size="sm"
           className="border border-yellow-200 bg-yellow-100 text-yellow-800 hover:bg-yellow-200 hover:text-yellow-900 dark:border-yellow-400 dark:bg-yellow-300/20 dark:text-yellow-200 dark:hover:bg-yellow-300/40 dark:hover:text-yellow-100"
         >
-          <Link href={`/thread/${thread.feed.address}/edit`}>
+          <Link href={`/thread/${thread.rootPost.slug}/edit`}>
             <Edit className="mr-2 h-4 w-4" />
             Edit Thread
           </Link>

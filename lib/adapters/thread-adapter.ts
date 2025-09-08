@@ -1,4 +1,3 @@
-import { Community } from "../domain/communities/types";
 import { getThreadAuthor } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo } from "@/lib/shared/utils";
@@ -8,10 +7,10 @@ import { Account, Post } from "@lens-protocol/client";
  * Transform a Lens Feed object and thread record to a Thread object
  * Optimized version that accepts pre-fetched root post to avoid redundant API calls
  */
-export const adaptFeedToThread = async (community: Community, author: Account, rootPost: Post): Promise<Thread> => {
+export const adaptFeedToThread = async (author: Account, rootPost: Post): Promise<Thread> => {
   return {
     id: rootPost.id,
-    community: community.group.address,
+    community: rootPost.feed.group?.address,
     rootPost,
     author: getThreadAuthor(author),
     repliesCount: rootPost.stats.comments || 0,

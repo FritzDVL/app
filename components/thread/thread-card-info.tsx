@@ -24,7 +24,7 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
   const [tags, setTags] = useState<string[]>([]);
 
   const isEdited = thread.rootPost?.isEdited;
-  const { title, summary } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
+  const { title, summary } = getThreadTitleAndSummary(thread.rootPost);
 
   useEffect(() => {
     const doFetchTags = async () => {

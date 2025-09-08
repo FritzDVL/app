@@ -15,7 +15,7 @@ export async function revalidateCommunityAndListPaths(address: Address) {
   await Promise.all([revalidateCommunityPath(address), revalidateCommunitiesPath()]);
 }
 
-export async function revalidateThreadPath(address: Address) {
+export async function revalidateThreadPath(address: string) {
   revalidatePath(`/thread/${address}`);
 }
 

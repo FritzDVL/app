@@ -58,7 +58,7 @@ export async function createThread(
         error: "Root post is missing or not a valid Post",
       };
     }
-    const thread = await adaptFeedToThread(community, author, rootPost);
+    const thread = await adaptFeedToThread(author, rootPost);
 
     return {
       success: true,

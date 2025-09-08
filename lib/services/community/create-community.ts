@@ -2,7 +2,6 @@ import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community, Moderator } from "@/lib/domain/communities/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
-import { createFeed } from "@/lib/external/lens/primitives/feeds";
 import { createLensGroup } from "@/lib/external/lens/primitives/groups";
 import { client } from "@/lib/external/lens/protocol-client";
 import { persistCommunity } from "@/lib/external/supabase/communities";
@@ -52,7 +51,7 @@ export async function createCommunity(
     const creatorSessionClient = sessionClient;
     const creatorWalletClient = walletClient;
 
-    // 4. Create the group on Lens Protocol using extracted function
+    // 5. Create the group on Lens Protocol using extracted function
     const newGroup = await createLensGroup(creatorSessionClient, creatorWalletClient, {
       name,
       description,
@@ -70,23 +69,8 @@ export async function createCommunity(
       };
     }
 
-    // 5. Create a new feed for the community
-    const newFeed = await createFeed({
-      title: name,
-      description: description || "",
-      communityAddress: newGroup.address,
-    });
-    if (!newFeed) {
-      const errMsg = "Failed to create feed";
-      console.error("[Service] Error creating feed:", errMsg);
-      return {
-        success: false,
-        error: errMsg,
-      };
-    }
-
     // 6. Persist the community in Supabase
-    const persistedCommunity = await persistCommunity(newGroup.address, newFeed.address, name);
+    const persistedCommunity = await persistCommunity(newGroup.address, newGroup.feed?.address, name);
 
     // 7. Fetch moderators
     const adminsResult = await fetchAdminsFor(client, {
@@ -106,7 +90,6 @@ export async function createCommunity(
     // 8. Transform and return the new community
     const newCommunity = adaptGroupToCommunity(
       newGroup,
-      newFeed,
       {
         totalMembers: 0,
         __typename: "GroupStatsResponse",

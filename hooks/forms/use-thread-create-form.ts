@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
-import { useThreadCreation } from "@/hooks/threads/use-thread-create";
 import { Community } from "@/lib/domain/communities/types";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { validateCreateThreadForm } from "@/lib/domain/threads/validation";
+import { createThread as createThreadService } from "@/lib/services/thread/create-thread";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
+import { useSessionClient } from "@lens-protocol/react";
 import { toast } from "sonner";
+import { useWalletClient } from "wagmi";
 
 interface UseThreadCreateFormProps {
   community: Community;
@@ -22,11 +24,13 @@ export function useThreadCreateForm({ community, author }: UseThreadCreateFormPr
     tags: "",
     author: author,
   });
+  const [isCreating, setIsCreating] = useState(false);
 
-  const { createThread, isCreating } = useThreadCreation();
-  const { account } = useAuthStore();
-  const router = useRouter();
   const { tags, setTags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput();
+  const { account } = useAuthStore();
+  const sessionClient = useSessionClient();
+  const walletClient = useWalletClient();
+  const router = useRouter();
 
   const handleChange = (field: keyof CreateThreadFormData, value: string) => {
     setFormData({ ...formData, [field]: value });
@@ -37,6 +41,16 @@ export function useThreadCreateForm({ community, author }: UseThreadCreateFormPr
     if (!account?.address) {
       toast.error("Authentication Error", { description: "User address not found" });
       return;
+    }
+    if (!sessionClient.data || sessionClient.loading) {
+      toast.error("Authentication required", { description: "Please sign in to create a thread." });
+      throw new Error("Authentication required");
+    }
+    if (!walletClient.data) {
+      toast.error("Connection required", {
+        description: "Please connect your wallet and sign in to create a thread.",
+      });
+      throw new Error("Wallet connection required");
     }
 
     const formDataToUse = customFormData ?? {
@@ -51,15 +65,16 @@ export function useThreadCreateForm({ community, author }: UseThreadCreateFormPr
       return;
     }
     try {
-      await createThread(community, formDataToUse);
-
+      setIsCreating(true);
+      await createThreadService(community, formDataToUse, sessionClient.data, walletClient.data!);
+      setIsCreating(false);
       // Reset form after successful submission
       setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
       setTags([]);
       setTagInput("");
-
       router.push(`/communities/${community.group.address}`);
     } catch (error) {
+      setIsCreating(false);
       console.error("Error in handleSubmit:", error);
     }
   };
