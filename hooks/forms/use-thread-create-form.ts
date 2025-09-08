@@ -66,8 +66,10 @@ export function useThreadCreateForm({ community, author }: UseThreadCreateFormPr
     }
     try {
       setIsCreating(true);
+      toast.loading("Creating thread...", { description: "Your thread is being created." });
       await createThreadService(community, formDataToUse, sessionClient.data, walletClient.data!);
       setIsCreating(false);
+      toast.success("Thread created!", { description: "Your thread was successfully created." });
       // Reset form after successful submission
       setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
       setTags([]);
@@ -75,6 +77,7 @@ export function useThreadCreateForm({ community, author }: UseThreadCreateFormPr
       router.push(`/communities/${community.group.address}`);
     } catch (error) {
       setIsCreating(false);
+      toast.error("Failed to create thread", { description: "An error occurred while creating your thread." });
       console.error("Error in handleSubmit:", error);
     }
   };

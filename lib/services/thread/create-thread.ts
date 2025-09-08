@@ -1,3 +1,4 @@
+import { revalidateCommunityAndListPaths } from "@/app/actions/revalidate-path";
 import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
@@ -78,6 +79,9 @@ export async function createThread(
         error: `Failed to persist thread in database: ${dbError instanceof Error ? dbError.message : String(dbError)}`,
       };
     }
+
+    // 5. Revalidate paths
+    await revalidateCommunityAndListPaths(community.group.address);
 
     return {
       success: true,
