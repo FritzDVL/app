@@ -4,6 +4,7 @@ import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
 import { createThreadArticle } from "@/lib/external/lens/primitives/articles";
+import { persistCommunityThread } from "@/lib/external/supabase/threads";
 import { SessionClient } from "@lens-protocol/client";
 import { WalletClient } from "viem";
 
@@ -20,7 +21,7 @@ export async function createThread(
   walletClient: WalletClient,
 ): Promise<CreateThreadResult> {
   try {
-    // 4. Create the root post for the thread using article primitive
+    // 1. Create the root post for the thread using article primitive
     const articleFormData = {
       title: formData.title,
       content: formData.content,
@@ -42,7 +43,7 @@ export async function createThread(
 
     const rootPost = articleResult.post;
 
-    // 7. Fetch author account for transformation
+    // 2. Fetch author account for transformation
     const author = await fetchAccountFromLens(formData.author);
     if (!author) {
       return {
@@ -51,7 +52,7 @@ export async function createThread(
       };
     }
 
-    // 8. Transform to Thread object using adapter
+    // 3. Transform to Thread object using adapter
     if (!rootPost || rootPost.__typename !== "Post") {
       return {
         success: false,
@@ -59,6 +60,18 @@ export async function createThread(
       };
     }
     const thread = await adaptFeedToThread(author, rootPost);
+
+    // 4. Save thread in database
+    try {
+      const authorDb = author.username?.localName || author.address;
+      await persistCommunityThread(community.group.address, formData.title, formData.summary, authorDb);
+    } catch (dbError) {
+      console.error("Failed to persist thread in database:", dbError);
+      return {
+        success: false,
+        error: `Failed to persist thread in database: ${dbError instanceof Error ? dbError.message : String(dbError)}`,
+      };
+    }
 
     return {
       success: true,

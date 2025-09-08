@@ -55,7 +55,7 @@ export type Database = {
         Row: {
           created_at: string;
           featured: number;
-          feed: string | null;
+          feed: string;
           id: string;
           lens_group_address: string;
           members_count: number;
@@ -66,7 +66,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           featured?: number;
-          feed?: string | null;
+          feed: string;
           id?: string;
           lens_group_address: string;
           members_count?: number;
@@ -77,7 +77,7 @@ export type Database = {
         Update: {
           created_at?: string;
           featured?: number;
-          feed?: string | null;
+          feed?: string;
           id?: string;
           lens_group_address?: string;
           members_count?: number;
@@ -98,6 +98,8 @@ export type Database = {
           replies_count: number;
           root_post_id: string | null;
           slug: string | null;
+          summary: string;
+          title: string;
           updated_at: string;
           visible: boolean;
         };
@@ -111,6 +113,8 @@ export type Database = {
           replies_count?: number;
           root_post_id?: string | null;
           slug?: string | null;
+          summary?: string;
+          title?: string;
           updated_at?: string;
           visible?: boolean;
         };
@@ -124,6 +128,8 @@ export type Database = {
           replies_count?: number;
           root_post_id?: string | null;
           slug?: string | null;
+          summary?: string;
+          title?: string;
           updated_at?: string;
           visible?: boolean;
         };

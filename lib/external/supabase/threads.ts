@@ -17,7 +17,8 @@ import { CommunitySupabase, CommunityThreadSupabase } from "@/types/supabase";
  */
 export async function persistCommunityThread(
   communityLensAddress: string,
-  lensFeedAddress: string,
+  title: string,
+  summary: string,
   author: Address,
 ): Promise<CommunityThreadSupabase> {
   const supabase = await supabaseClient();
@@ -47,8 +48,10 @@ export async function persistCommunityThread(
     .from("community_threads")
     .insert({
       community_id: community.id,
-      lens_feed_address: lensFeedAddress,
-      author,
+      lens_feed_address: "0x0",
+      title,
+      summary,
+      author: author,
     })
     .select("*, community:communities(*)")
     .single();
