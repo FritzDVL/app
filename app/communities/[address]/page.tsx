@@ -4,7 +4,13 @@ import { getCommunity } from "@/lib/services/community/get-community";
 import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
 import { Address } from "@/types/common";
 
-export default async function CommunityPage({ params }: { params: Promise<{ address: string }> }) {
+export default async function CommunityPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ address: string }>;
+  searchParams?: { page?: string };
+}) {
   const { address: communityAddress } = await params;
 
   const communityResult = await getCommunity(communityAddress as Address);
@@ -14,13 +20,18 @@ export default async function CommunityPage({ params }: { params: Promise<{ addr
     return <div className="text-center text-red-500">Community not found</div>;
   }
 
-  // Fetch threads on the server
-  const threadsResult = await getCommunityThreads(community);
+  // Pagination logic
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const limit = 10;
+  const offset = (page - 1) * limit;
+
+  // Fetch threads on the server with pagination
+  const threadsResult = await getCommunityThreads(community, { limit, offset });
   const threads = threadsResult.success ? (threadsResult.threads ?? []) : [];
 
   return (
     <ProtectedRoute>
-      <CommunityThreads community={community} threads={threads} />
+      <CommunityThreads community={community} threads={threads} page={page} limit={limit} />
     </ProtectedRoute>
   );
 }

@@ -70,16 +70,27 @@ export async function persistCommunityThread(
  * @param communityLensAddress - The Lens Protocol group address
  * @returns Array of thread records with their Lens feed addresses
  */
-export async function fetchCommunityThreads(communityId: string): Promise<CommunityThreadSupabase[]> {
+export async function fetchCommunityThreads(
+  communityId: string,
+  limit?: number,
+  offset?: number,
+): Promise<CommunityThreadSupabase[]> {
   const supabase = await supabaseClient();
 
-  // Then get all threads for this community, joining the community object
-  const { data: threads, error: threadsError } = await supabase
+  let query = supabase
     .from("community_threads")
     .select("*, community:communities(*)")
     .eq("community_id", communityId)
     .eq("visible", true)
     .order("created_at", { ascending: false });
+
+  if (typeof limit === "number" && typeof offset === "number") {
+    query = query.range(offset, offset + limit - 1);
+  } else if (typeof limit === "number") {
+    query = query.range(0, limit - 1);
+  }
+
+  const { data: threads, error: threadsError } = await query;
 
   if (threadsError) {
     throw new Error(`Failed to fetch threads: ${threadsError.message}`);

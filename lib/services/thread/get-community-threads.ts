@@ -14,9 +14,13 @@ export interface ThreadsResult {
  * Gets all threads for a community using optimized batch operations
  * Orchestrates database, Lens Protocol calls, and data transformation
  */
-export async function getCommunityThreads(community: Community): Promise<ThreadsResult> {
+export async function getCommunityThreads(
+  community: Community,
+  options?: { limit?: number; offset?: number },
+): Promise<ThreadsResult> {
   try {
-    const threadsDb = await fetchCommunityThreads(community.id);
+    // Fetch threads from DB with pagination
+    const threadsDb = await fetchCommunityThreads(community.id, options?.limit, options?.offset);
 
     // 1. Fetch posts for the community feed
     const postsIds = threadsDb.map(t => t.root_post_id).filter((id): id is string => id !== null);
