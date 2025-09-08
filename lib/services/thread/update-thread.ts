@@ -37,7 +37,6 @@ export async function updateThread(
       };
     }
 
-    // Llama a la nueva función Lens
     const result = await updateArticleLens(
       {
         title: updateData.title,
@@ -45,7 +44,7 @@ export async function updateThread(
         content: updateData.content,
         tags: updateData.tags,
         postId: thread.rootPost.id,
-        feedAddress: thread.feed.address,
+        feedAddress: "0x0",
         author: thread.author.address,
       },
       sessionClient,
@@ -54,8 +53,9 @@ export async function updateThread(
     if (!result.success) {
       return { success: false, error: result.error };
     }
-
-    await updateThreadDb(thread.id);
+    console.log(thread.id, updateData.title, updateData.summary);
+    // Update thread in Supabase with new title, summary, and postId if needed
+    await updateThreadDb(thread.id, updateData.title, updateData.summary);
 
     return { success: true };
   } catch (error) {

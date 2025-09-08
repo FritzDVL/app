@@ -14,13 +14,13 @@ export interface ThreadResult {
  * Gets a single thread by its Lens feed address
  * Orchestrates database, Lens Protocol calls, and data transformation
  */
-export async function getThread(threadAddress: string, sessionClient?: SessionClient): Promise<ThreadResult> {
+export async function getThread(rootPostId: string, sessionClient?: SessionClient): Promise<ThreadResult> {
   try {
-    // 4. Fetch root post if not already included in threadRecord
+    // 1. Fetch post from Lens Protocol
     const lensClient = sessionClient || client;
-    const rootPost = await fetchPostWithClient(threadAddress as string, lensClient);
+    const rootPost = await fetchPostWithClient(rootPostId as string, lensClient);
 
-    // 5. Transform data using adapter
+    // 2. Transform post into thread
     const thread = await adaptFeedToThread(rootPost.author, rootPost as Post);
 
     return {

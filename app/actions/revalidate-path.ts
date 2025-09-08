@@ -23,6 +23,6 @@ export async function revalidateThreadsPath() {
   revalidatePath(`/thread`);
 }
 
-export async function revalidateThreadAndListPaths(address: Address) {
+export async function revalidateThreadAndListPaths(address: string) {
   await Promise.all([revalidateThreadPath(address), revalidateThreadsPath()]);
 }

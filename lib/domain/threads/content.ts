@@ -49,10 +49,10 @@ export const hasThreadContentPrefix = (content: string): boolean => {
   return content.startsWith(`*${THREAD_CONTENT_PREFIX}`) || content.startsWith(THREAD_CONTENT_PREFIX);
 };
 
-export const getThreadTitleAndSummary = (rootPost: Post) => {
+export const getThreadTitleAndSummary = (rootPost: Post): { title: string; summary: string } => {
   if (rootPost.metadata.__typename === "ArticleMetadata") {
     return {
-      title: rootPost.metadata.title,
+      title: rootPost.metadata.title || "Untitled Thread",
       summary: rootPost.metadata.attributes.find(attr => attr.key === "subtitle")?.value || "",
     };
   }

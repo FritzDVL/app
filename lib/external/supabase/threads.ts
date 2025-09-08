@@ -93,13 +93,13 @@ export async function fetchCommunityThreads(communityId: string): Promise<Commun
  * @param lensFeedAddress - The Lens Protocol feed address
  * @returns The thread record or null if not found
  */
-export async function fetchThread(lensFeedAddress: string): Promise<CommunityThreadSupabase | null> {
+export async function fetchThread(id: string): Promise<CommunityThreadSupabase | null> {
   const supabase = await supabaseClient();
 
   const { data: thread, error } = await supabase
     .from("community_threads")
     .select("*, community:communities(*)")
-    .eq("lens_feed_address", lensFeedAddress)
+    .eq("id", id)
     .single();
 
   if (error) {
@@ -172,17 +172,15 @@ export async function incrementThreadRepliesCount(threadId: string): Promise<voi
   }
 }
 
-/**
- * Actualiza solo el campo updated_at de un thread en la tabla community_threads
- * @param threadId - The thread's id (primary key)
- * @returns void
- */
-export async function updateThread(threadId: string): Promise<void> {
+export async function updateThread(rootPostId: string, title: string, summary: string): Promise<void> {
   const supabase = await supabaseClient();
+
+  const currentTime = new Date().toISOString();
+
   const { error } = await supabase
     .from("community_threads")
-    .update({ updated_at: new Date().toISOString() })
-    .eq("id", threadId)
+    .update({ updated_at: currentTime, title, summary })
+    .eq("root_post_id", rootPostId)
     .single();
   if (error) {
     throw new Error(`Failed to update updated_at: ${error.message}`);

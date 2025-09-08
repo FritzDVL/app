@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { revalidateThreadAndListPaths } from "@/app/actions/revalidate-path";
-import { stripThreadArticleFormatting } from "@/lib/domain/threads/content";
+import { getThreadTitleAndSummary, stripThreadArticleFormatting } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { updateThread } from "@/lib/services/thread/update-thread";
 import { useSessionClient } from "@lens-protocol/react";
@@ -8,17 +8,17 @@ import { toast } from "sonner";
 import { useWalletClient } from "wagmi";
 
 export function useThreadEditForm(thread: Thread, onSuccess?: () => void) {
+  const { title, summary } = getThreadTitleAndSummary(thread.rootPost);
+  const content = stripThreadArticleFormatting(
+    thread?.rootPost?.metadata && typeof thread.rootPost.metadata === "object" && "content" in thread.rootPost.metadata
+      ? (thread.rootPost.metadata.content ?? "")
+      : "",
+  );
   // Initialize form state with thread data
   const [formData, setFormData] = useState({
-    title: thread.feed.metadata?.name || "",
-    summary: thread.feed.metadata?.description || "",
-    content: stripThreadArticleFormatting(
-      thread?.rootPost?.metadata &&
-        typeof thread.rootPost.metadata === "object" &&
-        "content" in thread.rootPost.metadata
-        ? (thread.rootPost.metadata.content ?? "")
-        : "",
-    ),
+    title: title,
+    summary: summary,
+    content: content,
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -71,7 +71,7 @@ export function useThreadEditForm(thread: Thread, onSuccess?: () => void) {
       }
 
       // Revalidate the thread path after successful update
-      await revalidateThreadAndListPaths(thread.feed.address);
+      await revalidateThreadAndListPaths(thread.rootPost.id);
 
       // Show success toast and reset state
       toast.success("Thread updated successfully", { id: loadingToastId });

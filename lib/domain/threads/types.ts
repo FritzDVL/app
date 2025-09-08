@@ -4,12 +4,14 @@ import { Post } from "@lens-protocol/client";
 export interface Thread {
   id: string;
   community: Address;
-  rootPost: Post;
   author: ThreadAuthor;
+  rootPost: Post;
+  title: string;
+  summary: string;
   repliesCount: number;
-  timeAgo: string;
   isVisible: boolean;
   created_at: string;
+  updatedAt: string;
 }
 
 export interface CreateThreadFormData {
