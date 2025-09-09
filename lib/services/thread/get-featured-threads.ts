@@ -4,13 +4,12 @@
  */
 import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Thread } from "@/lib/domain/threads/types";
-import { fetchFeedsBatch } from "@/lib/external/lens/primitives/feeds";
 import { fetchPostsBatch } from "@/lib/external/lens/primitives/posts";
 import { fetchFeaturedThreads as fetchFeaturedThreadsDb } from "@/lib/external/supabase/threads";
 
 export interface ThreadsResult {
   success: boolean;
-  threads?: Thread[];
+  threads: Thread[];
   error?: string;
 }
 
@@ -29,20 +28,12 @@ export async function getFeaturedThreads(limit: number = 5): Promise<ThreadsResu
     }
 
     // 2. Extract unique addresses for batching
-    const feedAddresses = threadRecords.map(record => record.lens_feed_address);
     const rootPostIds = threadRecords.map(record => record.root_post_id).filter((id): id is string => id !== null);
 
     // 3. Batch fetch all data in parallel
-    const [feedResults, rootPostResults] = await Promise.all([
-      fetchFeedsBatch(feedAddresses),
+    const [rootPostResults] = await Promise.all([
       rootPostIds.length > 0 ? fetchPostsBatch(rootPostIds) : Promise.resolve([]),
     ]);
-
-    // 4. Create lookup maps for O(1) access
-    const feedMap = new Map();
-    feedResults.forEach(({ address, result }) => {
-      feedMap.set(address, result);
-    });
 
     const rootPostMap = new Map();
     rootPostResults.forEach(post => {
@@ -51,11 +42,10 @@ export async function getFeaturedThreads(limit: number = 5): Promise<ThreadsResu
 
     // 5. Transform threads using cached data (map/filter for performance)
     const threadPromises = threadRecords.map(async threadRecord => {
-      const feed = feedMap.get(threadRecord.lens_feed_address);
       const rootPost = threadRecord.root_post_id ? rootPostMap.get(threadRecord.root_post_id) : null;
-      const author = rootPost?.author;
-      if (!feed || !author) return null;
-      return await adaptFeedToThread(feed, threadRecord, author, rootPost);
+      const author = rootPost.author;
+      if (!author) return null;
+      return await adaptFeedToThread(author, threadRecord, rootPost);
     });
 
     const threads = (await Promise.all(threadPromises)).filter(Boolean) as Thread[];
@@ -68,6 +58,7 @@ export async function getFeaturedThreads(limit: number = 5): Promise<ThreadsResu
     console.error("Failed to fetch featured threads:", error);
     return {
       success: false,
+      threads: [],
       error: error instanceof Error ? error.message : "Failed to fetch featured threads",
     };
   }
