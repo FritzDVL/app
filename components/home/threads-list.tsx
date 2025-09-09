@@ -117,7 +117,6 @@ export function ThreadsList({ threads, loadingThreads, error, activeCategory, se
                                   {thread.author.username?.localName.charAt(0).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
-                              <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-500 dark:border-gray-800"></div>
                             </div>
                             <span className="hidden font-medium sm:inline">{thread.author.username?.localName}</span>
                           </Link>
