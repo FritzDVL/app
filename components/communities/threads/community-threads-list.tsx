@@ -68,7 +68,7 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
               return (
                 <Card
                   key={thread.id}
-                  className="group w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800"
+                  className={`group w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800 ${thread.rootPost.app && thread.rootPost.app.metadata?.name !== "LensForumV1" ? "bg-orange-50 dark:bg-orange-900/10" : ""}`}
                   onClick={() => {
                     router.push(`/thread/${thread.rootPost.id}`);
                   }}
@@ -85,8 +85,9 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-col">
-                            <h3 className="mb-1 cursor-pointer text-base font-semibold text-foreground transition-colors group-hover:text-brand-600">
+                            <h3 className="flex cursor-pointer items-center text-base font-semibold text-foreground transition-colors group-hover:text-brand-600">
                               {title}
+                              {/* Badge removed from here, only shown next to time */}
                             </h3>
                             <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">{summary}</p>
                             {/* Remove tags display for now */}
@@ -94,21 +95,24 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
                         </div>
                       </div>
                       {/* DESKTOP VERSION */}
-                      <div className="hidden sm:flex sm:items-start sm:space-x-4">
-                        <div
-                          className="flex min-w-[50px] flex-col items-center space-y-1"
-                          onClick={e => e.stopPropagation()}
-                        >
+                      <div className="hidden w-full sm:flex sm:flex-row">
+                        {/* Votaciones columna izquierda */}
+                        <div className="flex h-full min-w-[50px] flex-col items-center justify-center">
                           {thread.rootPost && <ReplyVoting postid={postId(thread.rootPost.id)} />}
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="mb-2 flex items-center space-x-2">{/* Remove tags display for now */}</div>
-                          <h3 className="mb-2 cursor-pointer text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
-                            {title}
-                          </h3>
-                          <p className="mb-3 line-clamp-2 text-muted-foreground">{summary}</p>
-                          <div className="flex items-center justify-between text-sm text-muted-foreground">
-                            <div className="flex items-center space-x-4">
+                        {/* Espacio entre votaciones y contenido */}
+                        <div className="w-6" />
+                        {/* Card principal */}
+                        <div className="flex flex-1 flex-col justify-between">
+                          {/* Top: título/resumen izquierda, autor derecha */}
+                          <div className="flex w-full items-start">
+                            <div className="flex min-w-0 flex-1 flex-col">
+                              <h3 className="line-clamp-1 text-lg font-semibold text-foreground transition-colors group-hover:text-brand-600">
+                                {title}
+                              </h3>
+                              <p className="mb-1 line-clamp-2 text-sm text-muted-foreground">{summary}</p>
+                            </div>
+                            <div className="ml-4 flex min-w-[160px] items-center justify-end">
                               {thread.author && (
                                 <Link
                                   href={`/u/${thread.author.username?.localName}`}
@@ -126,14 +130,26 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
                                   <span>{thread.author.username?.localName}</span>
                                 </Link>
                               )}
-                              <span>{getTimeAgo(new Date(thread.created_at))}</span>
                             </div>
+                          </div>
+                          {/* Bottom: replies/app izquierda, timeAgo derecha */}
+                          <div className="mt-2 flex w-full items-center justify-between text-sm text-muted-foreground">
                             <div className="flex items-center space-x-2">
                               <div className="flex items-center">
                                 <MessageCircle className="mr-1 h-4 w-4" />
                                 {thread.repliesCount} replies
                               </div>
+                              {thread.rootPost.app && thread.rootPost.app.metadata?.name !== "LensForumV1" && (
+                                <span className="ml-2 text-xs text-muted-foreground">
+                                  {thread.rootPost.app.metadata?.name && thread.rootPost.app.metadata.name.trim() !== ""
+                                    ? thread.rootPost.app.metadata.name
+                                    : "Other app"}
+                                </span>
+                              )}
                             </div>
+                            <span className="text-xs text-muted-foreground">
+                              {getTimeAgo(new Date(thread.created_at))}
+                            </span>
                           </div>
                         </div>
                       </div>

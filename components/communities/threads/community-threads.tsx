@@ -50,8 +50,7 @@ export function CommunityThreads({
     setShowAllPosts(newValue);
     // Reset to first page when toggling
     setPage(1);
-    router.replace(`?page=1`);
-    const result = await getCommunityThreads(community, { limit, offset: 0 });
+    const result = await getCommunityThreads(community, { limit, offset: 0, showAllPosts: newValue });
     setThreads(result.success ? (result.threads ?? []) : []);
   };
 

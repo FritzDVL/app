@@ -55,6 +55,13 @@ export const getThreadTitleAndSummary = (rootPost: Post): { title: string; summa
       title: rootPost.metadata.title || "Untitled Thread",
       summary: rootPost.metadata.attributes.find(attr => attr.key === "subtitle")?.value || "",
     };
+  } else if (rootPost.metadata?.__typename === "TextOnlyMetadata") {
+    if (rootPost.metadata?.content) {
+      return {
+        title: rootPost.metadata.content.split(" ").slice(0, 8).join(" ") + "...",
+        summary: rootPost.metadata.content.split(" ").slice(0, 20).join(" ") + "...",
+      };
+    }
   }
   return {
     title: `Thread`,

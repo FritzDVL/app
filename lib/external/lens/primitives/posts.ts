@@ -2,7 +2,7 @@ import { client } from "@/lib/external/lens/protocol-client";
 import { APP_ADDRESS } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
 import type { AnyPost, Post as LensPost, Post, PostId, PublicClient, SessionClient } from "@lens-protocol/client";
-import { PostReferenceType, ReferenceRelevancyFilter, evmAddress } from "@lens-protocol/client";
+import { PostReferenceType, evmAddress } from "@lens-protocol/client";
 import { fetchPost, fetchPostReferences, fetchPosts } from "@lens-protocol/client/actions";
 
 export interface PaginatedPostsResult {
@@ -39,6 +39,7 @@ export async function fetchPostsBatch(postIds: string[], sessionClient?: Session
 export async function fetchPostsByFeed(
   threadAddress: string,
   sessionClient?: SessionClient,
+  options?: { sort?: "asc" | "desc" },
 ): Promise<PaginatedPostsResult> {
   const params: any = {
     filter: {
@@ -59,10 +60,11 @@ export async function fetchPostsByFeed(
     (item: any) => item && item.__typename === "Post" && item.author && item.author.address,
   ) as LensPost[];
 
+  const sortOrder = options?.sort ?? "asc";
   const sortedPosts = validPosts.toSorted((a, b) => {
     const aTime = a.timestamp ? new Date(a.timestamp).getTime() : 0;
     const bTime = b.timestamp ? new Date(b.timestamp).getTime() : 0;
-    return aTime - bTime;
+    return sortOrder === "desc" ? bTime - aTime : aTime - bTime;
   });
 
   return {

@@ -12,6 +12,7 @@ export interface Thread {
   isVisible: boolean;
   created_at: string;
   updatedAt: string;
+  app?: string;
 }
 
 export interface CreateThreadFormData {
