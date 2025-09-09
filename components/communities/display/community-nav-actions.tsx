@@ -19,7 +19,7 @@ export function CommunityNavActions({ community }: { community: Community }) {
           size="sm"
           className="border border-yellow-200 bg-yellow-100 text-yellow-800 hover:bg-yellow-200 hover:text-yellow-900 dark:border-yellow-400 dark:bg-yellow-300/20 dark:text-yellow-200 dark:hover:bg-yellow-300/40 dark:hover:text-yellow-100"
         >
-          <Link href={`/communities/${community.group.address}/settings`}>
+          <Link href={`/communities/${community.group.address}/edit`}>
             <Edit className="mr-2 h-4 w-4" />
             Edit Community
           </Link>
