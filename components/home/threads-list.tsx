@@ -116,7 +116,7 @@ export function ThreadsList({ threads, loadingThreads, error, activeCategory, se
                         </span>
                       </div>
                       <div>
-                        <Link href={`/thread/${thread.id}`}>
+                        <Link href={`/thread/${thread.rootPost.id}`} className="min-w-0">
                           <h3 className="line-clamp-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
                             {title}
                           </h3>
