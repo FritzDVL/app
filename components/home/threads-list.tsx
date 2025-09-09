@@ -86,7 +86,7 @@ export function ThreadsList({ threads, loadingThreads, error, activeCategory, se
         ) : (
           <div className="w-full max-w-full space-y-6">
             {threads.map(thread => {
-              const { title, summary } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
+              const { title, summary } = getThreadTitleAndSummary(thread.rootPost);
               return (
                 <div
                   key={thread.id}
@@ -96,18 +96,18 @@ export function ThreadsList({ threads, loadingThreads, error, activeCategory, se
                     <div className="w-full min-w-0 flex-1 space-y-4">
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
                         <Link
-                          href={`/u/${thread.author.username.replace("lens/", "")}`}
+                          href={`/u/${thread.author.username?.localName}`}
                           className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
                         >
                           <div className="relative">
                             <Avatar className="h-8 w-8 ring-2 ring-background">
-                              <AvatarImage src={thread.author.avatar || undefined} />
+                              <AvatarImage src={thread.author.metadata?.picture || undefined} />
                               <AvatarFallback className="bg-primary text-xs font-medium text-primary-foreground">
-                                {thread.author.username.charAt(0).toUpperCase()}
+                                {thread.author.username?.localName.charAt(0).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
                           </div>
-                          <span className="font-medium">{thread.author.username}</span>
+                          <span className="font-medium">{thread.author.username?.localName}</span>
                         </Link>
                         <span className="text-border sm:inline">•</span>
                         <span className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -116,7 +116,7 @@ export function ThreadsList({ threads, loadingThreads, error, activeCategory, se
                         </span>
                       </div>
                       <div>
-                        <Link href={`/thread/${thread.feed.address}`}>
+                        <Link href={`/thread/${thread.id}`}>
                           <h3 className="line-clamp-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
                             {title}
                           </h3>
