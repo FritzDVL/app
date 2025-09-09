@@ -6,6 +6,7 @@ import { CommunityHeader } from "@/components/communities/display/community-head
 import { CommunityNavActions } from "@/components/communities/display/community-nav-actions";
 import { CommunitySidebar } from "@/components/communities/display/community-sidebar";
 import { CommunityThreadsList } from "@/components/communities/threads/community-threads-list";
+import { CrosspostSwitch } from "@/components/communities/threads/crosspost-switch";
 import {
   Pagination,
   PaginationContent,
@@ -30,6 +31,8 @@ export function CommunityThreads({
 }) {
   const [threads, setThreads] = useState<Thread[]>(initialThreads);
   const [page, setPage] = useState(initialPage);
+  const [showAllPosts, setShowAllPosts] = useState(false);
+
   const router = useRouter();
   const hasPrev = page > 1;
   const hasNext = threads.length === limit;
@@ -42,6 +45,16 @@ export function CommunityThreads({
     setThreads(result.success ? (result.threads ?? []) : []);
   };
 
+  const handleToggleShowAllPosts = async () => {
+    const newValue = !showAllPosts;
+    setShowAllPosts(newValue);
+    // Reset to first page when toggling
+    setPage(1);
+    router.replace(`?page=1`);
+    const result = await getCommunityThreads(community, { limit, offset: 0 });
+    setThreads(result.success ? (result.threads ?? []) : []);
+  };
+
   const prevPageUrl = hasPrev ? `?page=${page - 1}` : undefined;
   const nextPageUrl = hasNext ? `?page=${page + 1}` : undefined;
 
@@ -51,6 +64,7 @@ export function CommunityThreads({
         <div className="lg:col-span-3">
           <CommunityNavActions community={community} />
           <CommunityHeader community={community} />
+          <CrosspostSwitch checked={showAllPosts} onCheckedChange={handleToggleShowAllPosts} />
           <CommunityThreadsList threads={threads} />
           <div className="mt-8 flex justify-center">
             <Pagination>
