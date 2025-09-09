@@ -95,33 +95,33 @@ export function ThreadsList({ threads, loadingThreads, error, activeCategory, se
                   <div className="flex w-full min-w-0 flex-col gap-4 sm:flex-row sm:gap-4">
                     <div className="w-full min-w-0 flex-1 space-y-4">
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-                        <Link
-                          href={`/u/${thread.author.username?.localName}`}
-                          className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
-                        >
-                          <div className="relative">
-                            <Avatar className="h-8 w-8 ring-2 ring-background">
-                              <AvatarImage src={thread.author.metadata?.picture || undefined} />
-                              <AvatarFallback className="bg-primary text-xs font-medium text-primary-foreground">
-                                {thread.author.username?.localName.charAt(0).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          </div>
-                          <span className="font-medium">{thread.author.username?.localName}</span>
-                        </Link>
-                        <span className="text-border sm:inline">•</span>
-                        <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Clock className="h-3 w-3" />
-                          {getTimeAgo(new Date(thread.created_at))}
-                        </span>
-                      </div>
-                      <div>
-                        <Link href={`/thread/${thread.rootPost.id}`} className="min-w-0">
-                          <h3 className="line-clamp-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
-                            {title}
-                          </h3>
-                          {summary && <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{summary}</p>}
-                        </Link>
+                        {/* Title and summary left */}
+                        <div className="min-w-0 flex-1">
+                          <Link href={`/thread/${thread.rootPost.id}`} className="min-w-0">
+                            <h3 className="line-clamp-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
+                              {title}
+                            </h3>
+                            {summary && <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{summary}</p>}
+                          </Link>
+                        </div>
+                        {/* Avatar right */}
+                        <div className="ml-4 flex items-center">
+                          <Link
+                            href={`/u/${thread.author.username?.localName}`}
+                            className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                          >
+                            <div className="relative">
+                              <Avatar className="h-8 w-8 shadow-sm ring-2 ring-white dark:ring-gray-800">
+                                <AvatarImage src={thread.author.metadata?.picture || undefined} />
+                                <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-xs font-medium text-white">
+                                  {thread.author.username?.localName.charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-500 dark:border-gray-800"></div>
+                            </div>
+                            <span className="hidden font-medium sm:inline">{thread.author.username?.localName}</span>
+                          </Link>
+                        </div>
                       </div>
                       <div className="flex w-full max-w-full flex-wrap items-center justify-between gap-4">
                         <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
@@ -133,6 +133,11 @@ export function ThreadsList({ threads, loadingThreads, error, activeCategory, se
                             <ThreadVotesDisplay thread={thread} />
                           </div>
                         </div>
+                        {/* TimeAgo bottom right */}
+                        <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+                          <Clock className="h-3 w-3" />
+                          {getTimeAgo(new Date(thread.created_at))}
+                        </span>
                       </div>
                     </div>
                   </div>
