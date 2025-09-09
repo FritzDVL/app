@@ -28,7 +28,7 @@ export default async function CommunityPage({
   // Fetch threads on the server with pagination
   const threadsResult = await getCommunityThreads(community, { limit, offset });
   const threads = threadsResult.success ? (threadsResult.threads ?? []) : [];
-
+  console.log("Threads Result:", threadsResult);
   return (
     <ProtectedRoute>
       <CommunityThreads community={community} threads={threads} page={page} limit={limit} />

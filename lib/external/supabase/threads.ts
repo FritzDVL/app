@@ -100,18 +100,30 @@ export async function fetchCommunityThreads(
 }
 
 /**
- * Fetch a single thread by its Lens feed address
- * @param lensFeedAddress - The Lens Protocol feed address
+ * Fetch a single thread by its id or root_post_id
+ * @param id - The thread's id
+ * @param rootPostId - The thread's root_post_id
  * @returns The thread record or null if not found
  */
-export async function fetchThread(id: string): Promise<CommunityThreadSupabase | null> {
+export async function fetchThread({
+  id,
+  rootPostId,
+}: {
+  id?: string;
+  rootPostId?: string;
+}): Promise<CommunityThreadSupabase | null> {
   const supabase = await supabaseClient();
 
-  const { data: thread, error } = await supabase
-    .from("community_threads")
-    .select("*, community:communities(*)")
-    .eq("id", id)
-    .single();
+  let query = supabase.from("community_threads").select("*, community:communities(*)");
+
+  if (id) {
+    query = query.eq("id", id);
+  }
+  if (rootPostId) {
+    query = query.eq("root_post_id", rootPostId);
+  }
+
+  const { data: thread, error } = await query.single();
 
   if (error) {
     if (error.code === "PGRST116") {

@@ -40,16 +40,16 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Avatar className="h-8 w-8 text-sm font-bold">
-            <AvatarImage src={thread.author.avatar || undefined} alt={thread.author.name} />
+            <AvatarImage src={thread.author.metadata?.picture || undefined} alt={thread.author.username?.value} />
             <AvatarFallback className="bg-gradient-to-br from-green-500 to-green-600 text-white">
-              {thread.author.name[0].toUpperCase()}
+              {thread.author.username?.localName[0].toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <Link
-            href={`/u/${thread.author.username.replace("lens/", "")}`}
+            href={`/u/${thread.author.username?.localName}`}
             className="block max-w-[8rem] truncate text-xs font-medium text-foreground"
           >
-            {thread.author.name}
+            {thread.author.username?.localName}
           </Link>
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">

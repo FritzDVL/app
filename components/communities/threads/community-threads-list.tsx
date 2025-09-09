@@ -70,7 +70,7 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
                   key={thread.id}
                   className="group w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800"
                   onClick={() => {
-                    router.push(`/thread/${thread.rootPost.slug}`);
+                    router.push(`/thread/${thread.rootPost.id}`);
                   }}
                 >
                   <CardContent className="p-4 sm:p-6">
@@ -111,17 +111,19 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
                             <div className="flex items-center space-x-4">
                               {thread.author && (
                                 <Link
-                                  href={`/u/${thread.author.username}`}
+                                  href={`/u/${thread.author.username?.localName}`}
                                   className="flex items-center hover:text-brand-600"
                                   onClick={e => {
                                     e.stopPropagation();
                                   }}
                                 >
                                   <Avatar className="mr-2 h-5 w-5">
-                                    <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                                    <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
+                                    <AvatarImage src={thread.author.metadata?.picture || "/placeholder.svg"} />
+                                    <AvatarFallback className="text-xs">
+                                      {thread.author.username?.localName[0]}
+                                    </AvatarFallback>
                                   </Avatar>
-                                  <span>{thread.author.name}</span>
+                                  <span>{thread.author.username?.localName}</span>
                                 </Link>
                               )}
                               <span>{getTimeAgo(new Date(thread.created_at))}</span>
@@ -140,17 +142,19 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
                         <div className="flex items-center space-x-4">
                           {thread.author && (
                             <Link
-                              href={`/u/${thread.author.username}`}
+                              href={`/u/${thread.author.username?.localName}`}
                               className="flex items-center hover:text-brand-600"
                               onClick={e => {
                                 e.stopPropagation();
                               }}
                             >
                               <Avatar className="mr-2 h-5 w-5">
-                                <AvatarImage src={thread.author.avatar || "/placeholder.svg"} />
-                                <AvatarFallback className="text-xs">{thread.author.name[0]}</AvatarFallback>
+                                <AvatarImage src={thread.author.metadata?.picture || "/placeholder.svg"} />
+                                <AvatarFallback className="text-xs">
+                                  {thread.author.username?.localName[0]}
+                                </AvatarFallback>
                               </Avatar>
-                              <span className="max-w-[100px] truncate">{thread.author.name}</span>
+                              <span className="max-w-[100px] truncate">{thread.author.username?.localName}</span>
                             </Link>
                           )}
                           <span>{getTimeAgo(new Date(thread.created_at))}</span>

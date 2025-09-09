@@ -6,7 +6,7 @@ import { fetchCommunityThreads } from "@/lib/external/supabase/threads";
 
 export interface ThreadsResult {
   success: boolean;
-  threads?: Thread[];
+  threads: Thread[];
   error?: string;
 }
 
@@ -29,8 +29,11 @@ export async function getCommunityThreads(
     // 2. Transform posts into threads
     const threads = await Promise.all(
       posts.map(async post => {
-        // Use the community object, post.author, and post
-        return adaptFeedToThread(post.author, post);
+        const dbThread = threadsDb.find(t => t.root_post_id === post.id);
+        if (!dbThread) {
+          return null;
+        }
+        return adaptFeedToThread(post.author, dbThread, post);
       }),
     );
 
@@ -42,6 +45,7 @@ export async function getCommunityThreads(
     console.error("Failed to fetch community threads:", error);
     return {
       success: false,
+      threads: [],
       error: error instanceof Error ? error.message : "Failed to fetch community threads",
     };
   }
