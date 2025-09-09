@@ -60,25 +60,18 @@ export async function createThread(
         error: "Root post is missing or not a valid Post",
       };
     }
-    const thread = await adaptFeedToThread(author, rootPost);
 
     // 4. Save thread in database
-    try {
-      const authorDb = author.username?.localName || author.address;
-      await persistCommunityThread(
-        community.group.address,
-        formData.title,
-        formData.summary,
-        authorDb,
-        articleResult.post?.id,
-      );
-    } catch (dbError) {
-      console.error("Failed to persist thread in database:", dbError);
-      return {
-        success: false,
-        error: `Failed to persist thread in database: ${dbError instanceof Error ? dbError.message : String(dbError)}`,
-      };
-    }
+    const authorDb = author.username?.localName || author.address;
+    const persistedThread = await persistCommunityThread(
+      community.group.address,
+      formData.title,
+      formData.summary,
+      authorDb,
+      articleResult.post?.id,
+    );
+
+    const thread = await adaptFeedToThread(author, persistedThread, rootPost);
 
     // 5. Revalidate paths
     await revalidateCommunityAndListPaths(community.group.address);
