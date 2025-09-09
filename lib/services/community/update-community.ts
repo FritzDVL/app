@@ -43,7 +43,7 @@ export async function updateCommunity(
     const newMetadata = group({
       name: groupName,
       description: data.description,
-      icon: iconUri ? iconUri : community.group.metadata?.icon.logo,
+      icon: iconUri ? iconUri : community.group.metadata?.icon,
     });
 
     // 4. Upload new metadata to Grove
