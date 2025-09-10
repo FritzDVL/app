@@ -27,7 +27,7 @@ interface ThreadReplyCardProps {
 export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardProps) {
   const content = getReplyContent(reply.post);
   const rootPostId = thread.rootPost?.id || "";
-  const threadAddress = thread.feed.address;
+  const threadAddress = thread.rootPost.feed.address;
 
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [replyContent, setReplyContent] = useState("");
