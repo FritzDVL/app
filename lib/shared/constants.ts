@@ -22,3 +22,5 @@ export const ADMIN_USER_ADDRESS: Address = isTestnet ? TESTNET_ADMIN_USER_ADDRES
 export const HEY_URL = "https://hey.xyz/";
 export const GROVE_API_URL = "https://api.grove.storage/";
 // Usage: import { APP_ADDRESS, BASE_FEED_ADDRESS, ADMIN_USER_ADDRESS } from '@/lib/constants';
+
+export const APP_NAME = "LensForum";

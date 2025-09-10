@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
+import { APP_NAME } from "@/lib/shared/constants";
 import { getTimeAgo } from "@/lib/shared/utils";
 import { postId } from "@lens-protocol/react";
 import { MessageCircle, Search } from "lucide-react";
@@ -68,7 +69,7 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
               return (
                 <Card
                   key={thread.id}
-                  className={`group w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800 ${thread.rootPost.app && thread.rootPost.app.metadata?.name !== "LensForumV1" ? "bg-orange-50 dark:bg-orange-900/10" : ""}`}
+                  className={`group w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800 ${thread.rootPost.app && thread.rootPost.app.metadata?.name !== APP_NAME ? "bg-orange-50 dark:bg-orange-900/10" : ""}`}
                   onClick={() => {
                     router.push(`/thread/${thread.rootPost.id}`);
                   }}
@@ -139,7 +140,7 @@ export function CommunityThreadsList({ threads }: { threads: Thread[] }) {
                                 <MessageCircle className="mr-1 h-4 w-4" />
                                 {thread.repliesCount} replies
                               </div>
-                              {thread.rootPost.app && thread.rootPost.app.metadata?.name !== "LensForumV1" && (
+                              {thread.rootPost.app && thread.rootPost.app.metadata?.name !== APP_NAME && (
                                 <span className="ml-2 text-xs text-muted-foreground">
                                   {thread.rootPost.app.metadata?.name && thread.rootPost.app.metadata.name.trim() !== ""
                                     ? thread.rootPost.app.metadata.name
