@@ -23,3 +23,20 @@ export const adaptFeedToThread = async (
     updatedAt: threadDb.updated_at,
   };
 };
+
+export const adaptExternalFeedToThread = async (rootPost: Post): Promise<Thread> => {
+  const { title, summary } = getThreadTitleAndSummary(rootPost);
+  return {
+    id: `external-` + rootPost.id,
+    community: rootPost.feed?.group?.address,
+    rootPost,
+    author: rootPost.author,
+    repliesCount: rootPost.stats?.comments || 0,
+    isVisible: true,
+    created_at: rootPost.timestamp ? new Date(rootPost.timestamp).toISOString() : new Date().toISOString(),
+    title,
+    summary,
+    updatedAt: rootPost.timestamp ? new Date(rootPost.timestamp).toISOString() : new Date().toISOString(),
+    app: rootPost.app?.metadata?.name || "Other app",
+  };
+};

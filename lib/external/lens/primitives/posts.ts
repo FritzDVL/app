@@ -2,7 +2,7 @@ import { client } from "@/lib/external/lens/protocol-client";
 import { APP_ADDRESS } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
 import type { AnyPost, Post as LensPost, Post, PostId, PublicClient, SessionClient } from "@lens-protocol/client";
-import { PostReferenceType, evmAddress } from "@lens-protocol/client";
+import { PageSize, PostReferenceType, evmAddress } from "@lens-protocol/client";
 import { fetchPost, fetchPostReferences, fetchPosts } from "@lens-protocol/client/actions";
 
 export interface PaginatedPostsResult {
@@ -39,12 +39,13 @@ export async function fetchPostsBatch(postIds: string[], sessionClient?: Session
 export async function fetchPostsByFeed(
   threadAddress: string,
   sessionClient?: SessionClient,
-  options?: { sort?: "asc" | "desc" },
+  options?: { sort?: "asc" | "desc"; limit?: number; offset?: number },
 ): Promise<PaginatedPostsResult> {
   const params: any = {
     filter: {
       feeds: [{ feed: evmAddress(threadAddress) }],
     },
+    pageSize: PageSize.Ten,
   };
 
   const lensClient = sessionClient ?? client;

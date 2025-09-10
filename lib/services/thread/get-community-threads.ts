@@ -1,4 +1,4 @@
-import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
+import { adaptExternalFeedToThread, adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchPostsBatch, fetchPostsByFeed } from "@/lib/external/lens/primitives/posts";
@@ -23,61 +23,24 @@ export async function getCommunityThreads(
 
     if (showAllPosts) {
       // 1. Fetch latest posts in Lens for this group
-      const lensResult = await fetchPostsByFeed(community.feed.address, undefined, { sort: "desc" });
+      const lensResult = await fetchPostsByFeed(community.feed.address, undefined, { sort: "desc", limit, offset });
       const lensPosts = lensResult.posts;
       // 2. Fetch threads in DB that match those posts
       const dbThreads = await Promise.all(lensPosts.map(post => fetchThread({ rootPostId: post.id })));
       // 3. Adapt and combine data
-      const threadPromises = lensPosts.map(async (post, idx) => {
-        const dbThread = dbThreads[idx];
-        if (!dbThread) {
-          // Placeholder for external Lens posts without DB record
-          let title = "External Lens Post";
-          let summary =
-            "This post was created in another Lens app and does not have all LensForum data. You can read and reply, but some advanced features may be unavailable.";
-          // Try to extract title/summary from known metadata types, or use first words of content
-          if (post.metadata?.__typename === "ArticleMetadata") {
-            if (post.metadata?.title) {
-              title = post.metadata.title;
-            } else if (post.metadata?.content) {
-              title = post.metadata.content.split(" ").slice(0, 8).join(" ") + "...";
+      const threadPromises = lensPosts
+        .filter(post => post.commentOn == undefined)
+        .map(async (post, idx) => {
+          const dbThread = dbThreads[idx];
+          if (!dbThread) {
+            // Use new adapter for external threads
+            if (post.__typename === "Post") {
+              return await adaptExternalFeedToThread(post as any);
             }
-            if (post.metadata?.content) {
-              summary = post.metadata.content.split(" ").slice(0, 20).join(" ") + "...";
-            }
-          } else if (post.metadata?.__typename === "TextOnlyMetadata") {
-            if (post.metadata?.content) {
-              title = post.metadata.content.split(" ").slice(0, 8).join(" ") + "...";
-              summary = post.metadata.content.split(" ").slice(0, 20).join(" ") + "...";
-            }
+            return null;
           }
-          // Pass placeholder DB thread to adaptFeedToThread
-          const placeholderDbThread = {
-            id: `external-${post.id}`,
-            community: {
-              id: community.id,
-              name: community.name ?? "",
-              feed: community.feed?.address ?? "",
-              lens_group_address: community.group?.address ?? community.id,
-              visible: true,
-              created_at: post.timestamp ? new Date(post.timestamp).toISOString() : new Date().toISOString(),
-              updated_at: post.timestamp ? new Date(post.timestamp).toISOString() : new Date().toISOString(),
-            },
-            lens_feed_address: community.feed?.address ?? "",
-            title,
-            summary,
-            root_post_id: post.id,
-            author: post.author?.address ?? "",
-            created_at: post.timestamp ? new Date(post.timestamp).toISOString() : new Date().toISOString(),
-            updated_at: post.timestamp ? new Date(post.timestamp).toISOString() : new Date().toISOString(),
-            visible: true,
-            replies_count: post.stats?.comments ?? 0,
-            app: post.app?.metadata?.name,
-          };
-          return await adaptFeedToThread(post.author, placeholderDbThread, post);
-        }
-        return await adaptFeedToThread(post.author, dbThread, post);
-      });
+          return await adaptFeedToThread(post.author, dbThread, post);
+        });
       const threads = (await Promise.all(threadPromises)).filter(Boolean) as Thread[];
 
       console.log("Fetched threads with showAllPosts:", threads);

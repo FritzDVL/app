@@ -22,7 +22,7 @@ export function CommunityThreads({
   community,
   threads: initialThreads,
   page: initialPage = 1,
-  limit = 10,
+  limit = 3,
 }: {
   community: Community;
   threads: Thread[];
@@ -39,9 +39,8 @@ export function CommunityThreads({
 
   const handlePageChange = async (newPage: number) => {
     setPage(newPage);
-    router.replace(`?page=${newPage}`);
     // Fetch threads client-side using the new function signature
-    const result = await getCommunityThreads(community, { limit, offset: (newPage - 1) * limit });
+    const result = await getCommunityThreads(community, { limit, offset: (newPage - 1) * limit, showAllPosts });
     setThreads(result.success ? (result.threads ?? []) : []);
   };
 
@@ -53,9 +52,6 @@ export function CommunityThreads({
     const result = await getCommunityThreads(community, { limit, offset: 0, showAllPosts: newValue });
     setThreads(result.success ? (result.threads ?? []) : []);
   };
-
-  const prevPageUrl = hasPrev ? `?page=${page - 1}` : undefined;
-  const nextPageUrl = hasNext ? `?page=${page + 1}` : undefined;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8">
@@ -70,7 +66,7 @@ export function CommunityThreads({
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    href={prevPageUrl}
+                    href={undefined}
                     className={!hasPrev ? "pointer-events-none opacity-50" : ""}
                     onClick={e => {
                       e.preventDefault();
@@ -80,7 +76,7 @@ export function CommunityThreads({
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext
-                    href={nextPageUrl}
+                    href={undefined}
                     className={!hasNext ? "pointer-events-none opacity-50" : ""}
                     onClick={e => {
                       e.preventDefault();

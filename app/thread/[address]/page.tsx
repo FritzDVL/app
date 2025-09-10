@@ -64,7 +64,7 @@ export default async function ThreadPage({ params }: { params: { address: string
   const threadAddress = params.address as Address;
 
   const thread = await getThread(threadAddress);
-  console.log("Thread fetch result:", thread.thread?.community);
+
   if (thread.error) {
     return (
       <div className="flex h-32 items-center justify-center">

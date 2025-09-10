@@ -1,4 +1,4 @@
-import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
+import { adaptExternalFeedToThread, adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchPostWithClient } from "@/lib/external/lens/primitives/posts";
 import { client } from "@/lib/external/lens/protocol-client";
@@ -19,16 +19,19 @@ export async function getThread(rootPostId: string, sessionClient?: SessionClien
   try {
     // 1. Fetch thread DB record
     const threadDb = await fetchThread({ rootPostId: rootPostId });
-    if (!threadDb) {
-      return { success: false, error: "Thread not found in database" };
-    }
-
-    // 1. Fetch post from Lens Protocol
     const lensClient = sessionClient || client;
     const rootPost = await fetchPostWithClient(rootPostId as string, lensClient);
 
-    // 2. Transform post into thread
-    const thread = await adaptFeedToThread(rootPost.author, threadDb, rootPost as Post);
+    let thread: Thread | undefined;
+    if (threadDb && rootPost) {
+      thread = await adaptFeedToThread(rootPost.author, threadDb, rootPost as Post);
+    } else if (!threadDb && rootPost && rootPost.__typename === "Post") {
+      thread = await adaptExternalFeedToThread(rootPost as Post);
+    }
+
+    if (!thread) {
+      return { success: false, error: "Thread not found" };
+    }
 
     return {
       success: true,
