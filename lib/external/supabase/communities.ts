@@ -43,17 +43,28 @@ export async function persistCommunity(group: Address, feed: Address, name: stri
 }
 
 /**
- * Fetches all communities from the database
+ * Fetches all communities from the database with pagination
+ * @param limit - Number of communities per page
+ * @param offset - Offset for pagination
  * @returns Array of community records with their Lens group addresses
  */
-export async function fetchAllCommunities(): Promise<CommunitySupabase[]> {
+export async function fetchCommunities(limit?: number, offset?: number): Promise<CommunitySupabase[]> {
   const supabase = await supabaseClient();
 
-  const { data: communities, error } = await supabase
+  let query = supabase
     .from("communities")
     .select("*, threads_count:community_threads(count)")
     .eq("visible", true)
     .order("created_at", { ascending: false });
+
+  if (typeof limit === "number") {
+    query = query.limit(limit);
+  }
+  if (typeof offset === "number" && typeof limit === "number") {
+    query = query.range(offset, offset + limit - 1);
+  }
+
+  const { data: communities, error } = await query;
 
   if (error) {
     throw new Error(`Failed to fetch communities: ${error.message}`);
