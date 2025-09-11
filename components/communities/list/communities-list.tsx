@@ -2,15 +2,9 @@
 
 import { useState } from "react";
 import { CommunityCard } from "@/components/communities/list/community-card";
+import { Pagination } from "@/components/shared/pagination";
 import { StatusBanner } from "@/components/shared/status-banner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { Community } from "@/lib/domain/communities/types";
 import { getCommunitiesPaginated } from "@/lib/services/community/get-communities-paginated";
 import { COMMUNITIES_PER_PAGE } from "@/lib/shared/constants";
@@ -131,32 +125,13 @@ export function CommunitiesList({ initialCommunities }: CommunitiesListProps) {
           )}
         </>
         {/* Pagination Controls */}
-        <div className="mt-8 flex justify-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href={undefined}
-                  className={`${!hasPrev || loadingPage ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    handlePrevPage();
-                  }}
-                />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext
-                  href={undefined}
-                  className={`${!hasNext || loadingPage ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    handleNextPage();
-                  }}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+        <Pagination
+          onPrev={handlePrevPage}
+          onNext={handleNextPage}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+          loading={loadingPage}
+        />
       </CardContent>
     </Card>
   );
