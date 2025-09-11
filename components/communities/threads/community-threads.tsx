@@ -21,9 +21,10 @@ import { THREADS_PER_PAGE } from "@/lib/shared/constants";
 
 export function CommunityThreads({ community, threads: initialThreads }: { community: Community; threads: Thread[] }) {
   const [threads, setThreads] = useState<Thread[]>(initialThreads);
-  const [page, setPage] = useState(1);
   const [showAllPosts, setShowAllPosts] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
+
+  const [page, setPage] = useState(1);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [prevCursor, setPrevCursor] = useState<string | null>(null);
 
