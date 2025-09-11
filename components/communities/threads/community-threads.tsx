@@ -6,14 +6,8 @@ import { CommunityNavActions } from "@/components/communities/display/community-
 import { CommunitySidebar } from "@/components/communities/display/community-sidebar";
 import { CommunityThreadsList } from "@/components/communities/threads/community-threads-list";
 import { CrosspostSwitch } from "@/components/communities/threads/crosspost-switch";
+import { Pagination } from "@/components/shared/pagination";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
@@ -97,36 +91,13 @@ export function CommunityThreads({ community, threads: initialThreads }: { commu
           ) : (
             <CommunityThreadsList threads={threads} />
           )}
-          <div className="mt-8 flex justify-center">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href={undefined}
-                    className={
-                      !hasPrev || loadingPage ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"
-                    }
-                    onClick={e => {
-                      e.preventDefault();
-                      if (hasPrev && !loadingPage) handlePageChange("prev");
-                    }}
-                  />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext
-                    href={undefined}
-                    className={
-                      !hasNext || loadingPage ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"
-                    }
-                    onClick={e => {
-                      e.preventDefault();
-                      if (hasNext && !loadingPage) handlePageChange("next");
-                    }}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+          <Pagination
+            onPrev={() => handlePageChange("prev")}
+            onNext={() => handlePageChange("next")}
+            hasPrev={hasPrev}
+            hasNext={hasNext}
+            loading={loadingPage}
+          />
         </div>
         <div className="space-y-8 lg:pt-[54px]">
           <CommunitySidebar community={community} />
