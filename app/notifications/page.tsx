@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { NotificationsError } from "@/components/notifications/notifications-error";
 import { NotificationsFilter } from "@/components/notifications/notifications-filter";
 import { NotificationsList } from "@/components/notifications/notifications-list";
+import { StatusBanner } from "@/components/shared/status-banner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useNotifications } from "@/hooks/notifications/use-notifications";
 
@@ -29,7 +29,7 @@ export default function NotificationsPage() {
       {loading ? (
         <LoadingSpinner text="Loading your notifications..." />
       ) : error ? (
-        <NotificationsError error={error} />
+        <StatusBanner type="error" title="Error loading notifications" message={error} />
       ) : (
         <NotificationsList filter={filter} notifications={notifications} />
       )}
