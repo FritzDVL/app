@@ -1,19 +1,16 @@
-/**
- * Create Reply Service
- * Creates a reply using existing logic from useReplyCreate hook
- */
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
-import { Reply, ReplyAuthor } from "@/lib/domain/replies/types";
+import { Reply } from "@/lib/domain/replies/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
 import { incrementThreadRepliesCount } from "@/lib/external/supabase/threads";
 import { Address } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
-import { Post, evmAddress, postId, uri } from "@lens-protocol/client";
+import { Post, SessionClient, evmAddress, postId, uri } from "@lens-protocol/client";
 import { fetchPost, post } from "@lens-protocol/client/actions";
 import { handleOperationWith } from "@lens-protocol/client/viem";
 import { textOnly } from "@lens-protocol/metadata";
+import { WalletClient } from "viem";
 
 export interface CreateReplyResult {
   success: boolean;
@@ -29,9 +26,8 @@ export async function createReply(
   content: string,
   threadAddress: Address,
   threadId: string,
-  sessionClient: any,
-  walletClient: any,
-  replyAuthor: ReplyAuthor,
+  sessionClient: SessionClient,
+  walletClient: WalletClient,
 ): Promise<CreateReplyResult> {
   try {
     if (!sessionClient) {

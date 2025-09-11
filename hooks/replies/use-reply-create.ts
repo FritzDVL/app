@@ -37,24 +37,8 @@ export function useReplyCreate() {
     let loadingToastId: string | number | undefined;
     try {
       loadingToastId = toast.loading("Uploading your reply...");
-      const replyAuthor = {
-        name: account.username?.localName || "",
-        username: account.username?.value || "",
-        avatar: account.metadata?.picture || "",
-        reputation: account.score || 0,
-        address: account.address,
-      };
 
-      const result = await createReply(
-        to,
-        content,
-        feedAddress,
-        threadId,
-        sessionClient.data,
-        walletClient.data,
-        replyAuthor,
-      );
-
+      const result = await createReply(to, content, feedAddress, threadId, sessionClient.data, walletClient.data);
       if (!result.success) {
         const errorMsg = result.error || "Failed to create reply";
         if (errorMsg.includes("Not all rules satisfied")) {
