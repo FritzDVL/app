@@ -2,15 +2,10 @@ import { CommunityThreads } from "@/components/communities/threads/community-thr
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { getCommunity } from "@/lib/services/community/get-community";
 import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
+import { THREADS_PER_PAGE } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
 
-export default async function CommunityPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ address: string }>;
-  searchParams?: { page?: string };
-}) {
+export default async function CommunityPage({ params }: { params: Promise<{ address: string }> }) {
   const { address: communityAddress } = await params;
 
   const communityResult = await getCommunity(communityAddress as Address);
@@ -20,18 +15,13 @@ export default async function CommunityPage({
     return <div className="text-center text-red-500">Community not found</div>;
   }
 
-  // Pagination logic
-  const page = searchParams?.page ? Number(searchParams.page) : 1;
-  const limit = 10;
-  const offset = (page - 1) * limit;
-
   // Fetch threads on the server with pagination
-  const threadsResult = await getCommunityThreads(community, { limit, offset });
+  const threadsResult = await getCommunityThreads(community, { limit: THREADS_PER_PAGE });
   const threads = threadsResult.success ? (threadsResult.threads ?? []) : [];
 
   return (
     <ProtectedRoute>
-      <CommunityThreads community={community} threads={threads} page={page} limit={limit} />
+      <CommunityThreads community={community} threads={threads} />
     </ProtectedRoute>
   );
 }

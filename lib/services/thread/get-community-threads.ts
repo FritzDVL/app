@@ -8,6 +8,8 @@ import { THREADS_PER_PAGE } from "@/lib/shared/constants";
 export interface ThreadsResult {
   success: boolean;
   threads: Thread[];
+  nextCursor?: string | null;
+  prevCursor?: string | null;
   error?: string;
 }
 
@@ -17,35 +19,34 @@ export interface ThreadsResult {
  */
 export async function getCommunityThreads(
   community: Community,
-  options?: { limit?: number; offset?: number; showAllPosts?: boolean },
+  options?: { limit?: number; offset?: number; showAllPosts?: boolean; cursor?: string },
 ): Promise<ThreadsResult> {
   try {
-    const { limit = THREADS_PER_PAGE, offset = 0, showAllPosts = false } = options || {};
+    const { limit = THREADS_PER_PAGE, offset = 0, showAllPosts = false, cursor = undefined } = options || {};
 
     if (showAllPosts) {
       // 1. Fetch latest posts in Lens for this group
-      const lensResult = await fetchPostsByFeed(community.feed.address, undefined, { sort: "desc", limit, offset });
+      const lensResult = await fetchPostsByFeed(community.feed.address, undefined, { sort: "desc", limit, cursor });
       const lensPosts = lensResult.posts;
       // 2. Fetch threads in DB that match those posts
       const dbThreads = await Promise.all(lensPosts.map(post => fetchThread({ rootPostId: post.id })));
       // 3. Adapt and combine data
-      const threadPromises = lensPosts
-        .filter(post => post.commentOn == undefined)
-        .map(async (post, idx) => {
-          const dbThread = dbThreads[idx];
-          if (!dbThread) {
-            // Use new adapter for external threads
-            if (post.__typename === "Post") {
-              return await adaptExternalFeedToThread(post as any);
-            }
-            return null;
-          }
-          return await adaptFeedToThread(post.author, dbThread, post);
-        });
+      const threadPromises = lensPosts.map(async (post, idx) => {
+        const dbThread = dbThreads[idx];
+        if (!dbThread) {
+          // Use new adapter for external threads
+          return adaptExternalFeedToThread(post as any);
+        }
+        return await adaptFeedToThread(post.author, dbThread, post);
+      });
       const threads = (await Promise.all(threadPromises)).filter(Boolean) as Thread[];
 
-      console.log("Fetched threads with showAllPosts:", threads);
-      return { success: true, threads };
+      return {
+        success: true,
+        threads,
+        nextCursor: lensResult.pageInfo?.next ?? null,
+        prevCursor: lensResult.pageInfo?.prev ?? null,
+      };
     } else {
       // 1. Fetch threads from DB
       const dbThreads = await fetchCommunityThreads(community.id, limit, offset);

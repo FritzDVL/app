@@ -24,7 +24,7 @@ export const adaptFeedToThread = async (
   };
 };
 
-export const adaptExternalFeedToThread = async (rootPost: Post): Promise<Thread> => {
+export const adaptExternalFeedToThread = (rootPost: Post): Thread => {
   const { title, summary } = getThreadTitleAndSummary(rootPost);
   return {
     id: `external-` + rootPost.id,

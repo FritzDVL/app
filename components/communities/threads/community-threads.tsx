@@ -17,31 +17,44 @@ import {
 import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
+import { THREADS_PER_PAGE } from "@/lib/shared/constants";
 
-export function CommunityThreads({
-  community,
-  threads: initialThreads,
-  page: initialPage = 1,
-  limit = 3,
-}: {
-  community: Community;
-  threads: Thread[];
-  page?: number;
-  limit?: number;
-}) {
+export function CommunityThreads({ community, threads: initialThreads }: { community: Community; threads: Thread[] }) {
   const [threads, setThreads] = useState<Thread[]>(initialThreads);
-  const [page, setPage] = useState(initialPage);
+  const [page, setPage] = useState(1);
   const [showAllPosts, setShowAllPosts] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [prevCursor, setPrevCursor] = useState<string | null>(null);
 
-  const hasPrev = page > 1;
-  const hasNext = threads.length === limit;
+  const hasPrev = showAllPosts ? !!prevCursor : page > 1;
+  const hasNext = showAllPosts ? !!nextCursor : threads.length === THREADS_PER_PAGE;
 
-  const handlePageChange = async (newPage: number) => {
+  const handlePageChange = async (direction: "next" | "prev") => {
     setLoadingPage(true);
-    setPage(newPage);
-    const result = await getCommunityThreads(community, { limit, offset: (newPage - 1) * limit, showAllPosts });
-    setThreads(result.success ? (result.threads ?? []) : []);
+    if (showAllPosts) {
+      // Cursor-based pagination for Lens
+      const cursorToUse = direction === "next" ? nextCursor : prevCursor;
+      if (!cursorToUse) return setLoadingPage(false);
+      const result = await getCommunityThreads(community, {
+        limit: THREADS_PER_PAGE,
+        showAllPosts: true,
+        cursor: cursorToUse,
+      });
+      setThreads(result.success ? (result.threads ?? []) : []);
+      setNextCursor(result.nextCursor ?? null);
+      setPrevCursor(result.prevCursor ?? null);
+    } else {
+      // Offset-based pagination for DB
+      const newPage = direction === "next" ? page + 1 : page - 1;
+      setPage(newPage);
+      const result = await getCommunityThreads(community, {
+        limit: THREADS_PER_PAGE,
+        offset: (newPage - 1) * THREADS_PER_PAGE,
+        showAllPosts: false,
+      });
+      setThreads(result.success ? (result.threads ?? []) : []);
+    }
     setLoadingPage(false);
   };
 
@@ -50,8 +63,17 @@ export function CommunityThreads({
     const newValue = !showAllPosts;
     setShowAllPosts(newValue);
     setPage(1);
-    const result = await getCommunityThreads(community, { limit, offset: 0, showAllPosts: newValue });
-    setThreads(result.success ? (result.threads ?? []) : []);
+    setNextCursor(null);
+    setPrevCursor(null);
+    if (newValue) {
+      const result = await getCommunityThreads(community, { limit: THREADS_PER_PAGE, showAllPosts: true });
+      setThreads(result.success ? (result.threads ?? []) : []);
+      setNextCursor(result.nextCursor ?? null);
+      setPrevCursor(result.prevCursor ?? null);
+    } else {
+      const result = await getCommunityThreads(community, { limit: THREADS_PER_PAGE, showAllPosts: false });
+      setThreads(result.success ? (result.threads ?? []) : []);
+    }
     setLoadingPage(false);
   };
 
@@ -80,7 +102,7 @@ export function CommunityThreads({
                     }
                     onClick={e => {
                       e.preventDefault();
-                      if (hasPrev && !loadingPage) handlePageChange(page - 1);
+                      if (hasPrev && !loadingPage) handlePageChange("prev");
                     }}
                   />
                 </PaginationItem>
@@ -92,7 +114,7 @@ export function CommunityThreads({
                     }
                     onClick={e => {
                       e.preventDefault();
-                      if (hasNext && !loadingPage) handlePageChange(page + 1);
+                      if (hasNext && !loadingPage) handlePageChange("next");
                     }}
                   />
                 </PaginationItem>
