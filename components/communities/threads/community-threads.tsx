@@ -24,41 +24,48 @@ export function CommunityThreads({ community, threads: initialThreads }: { commu
   const [showAllPosts, setShowAllPosts] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
 
-  const [page, setPage] = useState(1);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  // Unified pagination state
+  const [page, setPage] = useState(1); // DB pagination
+  const [nextCursor, setNextCursor] = useState<string | null>(null); // Lens pagination
   const [prevCursor, setPrevCursor] = useState<string | null>(null);
 
+  // Unified hasPrev/hasNext logic
   const hasPrev = showAllPosts ? !!prevCursor : page > 1;
   const hasNext = showAllPosts ? !!nextCursor : threads.length === THREADS_PER_PAGE;
 
+  // Unified page/cursor change handler
   const handlePageChange = async (direction: "next" | "prev") => {
     setLoadingPage(true);
+    let result;
     if (showAllPosts) {
-      // Cursor-based pagination for Lens
+      // Lens cursor-based pagination
       const cursorToUse = direction === "next" ? nextCursor : prevCursor;
-      if (!cursorToUse) return setLoadingPage(false);
-      const result = await getCommunityThreads(community, {
+      if (!cursorToUse) {
+        setLoadingPage(false);
+        return;
+      }
+      result = await getCommunityThreads(community, {
         limit: THREADS_PER_PAGE,
         showAllPosts: true,
         cursor: cursorToUse,
       });
-      setThreads(result.success ? (result.threads ?? []) : []);
       setNextCursor(result.nextCursor ?? null);
       setPrevCursor(result.prevCursor ?? null);
     } else {
-      // Offset-based pagination for DB
+      // DB offset-based pagination
       const newPage = direction === "next" ? page + 1 : page - 1;
       setPage(newPage);
-      const result = await getCommunityThreads(community, {
+      result = await getCommunityThreads(community, {
         limit: THREADS_PER_PAGE,
         offset: (newPage - 1) * THREADS_PER_PAGE,
         showAllPosts: false,
       });
-      setThreads(result.success ? (result.threads ?? []) : []);
     }
+    setThreads(result.success ? (result.threads ?? []) : []);
     setLoadingPage(false);
   };
 
+  // Toggle between Lens and DB threads
   const handleToggleShowAllPosts = async () => {
     setLoadingPage(true);
     const newValue = !showAllPosts;
@@ -66,15 +73,13 @@ export function CommunityThreads({ community, threads: initialThreads }: { commu
     setPage(1);
     setNextCursor(null);
     setPrevCursor(null);
-    if (newValue) {
-      const result = await getCommunityThreads(community, { limit: THREADS_PER_PAGE, showAllPosts: true });
-      setThreads(result.success ? (result.threads ?? []) : []);
-      setNextCursor(result.nextCursor ?? null);
-      setPrevCursor(result.prevCursor ?? null);
-    } else {
-      const result = await getCommunityThreads(community, { limit: THREADS_PER_PAGE, showAllPosts: false });
-      setThreads(result.success ? (result.threads ?? []) : []);
-    }
+    const result = await getCommunityThreads(community, {
+      limit: THREADS_PER_PAGE,
+      showAllPosts: newValue,
+    });
+    setThreads(result.success ? (result.threads ?? []) : []);
+    setNextCursor(result.nextCursor ?? null);
+    setPrevCursor(result.prevCursor ?? null);
     setLoadingPage(false);
   };
 
