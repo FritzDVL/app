@@ -3,6 +3,7 @@ import { Community } from "@/lib/domain/communities/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchPostsBatch, fetchPostsByFeed } from "@/lib/external/lens/primitives/posts";
 import { fetchCommunityThreads, fetchThread } from "@/lib/external/supabase/threads";
+import { THREADS_PER_PAGE } from "@/lib/shared/constants";
 
 export interface ThreadsResult {
   success: boolean;
@@ -19,7 +20,7 @@ export async function getCommunityThreads(
   options?: { limit?: number; offset?: number; showAllPosts?: boolean },
 ): Promise<ThreadsResult> {
   try {
-    const { limit = 10, offset = 0, showAllPosts = false } = options || {};
+    const { limit = THREADS_PER_PAGE, offset = 0, showAllPosts = false } = options || {};
 
     if (showAllPosts) {
       // 1. Fetch latest posts in Lens for this group

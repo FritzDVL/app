@@ -27,3 +27,4 @@ export const APP_NAME = isTestnet ? "LensForumV1" : "LensForum";
 
 // Paginations
 export const COMMUNITIES_PER_PAGE = 10;
+export const THREADS_PER_PAGE = 10;

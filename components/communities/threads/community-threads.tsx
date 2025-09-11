@@ -6,6 +6,7 @@ import { CommunityNavActions } from "@/components/communities/display/community-
 import { CommunitySidebar } from "@/components/communities/display/community-sidebar";
 import { CommunityThreadsList } from "@/components/communities/threads/community-threads-list";
 import { CrosspostSwitch } from "@/components/communities/threads/crosspost-switch";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import {
   Pagination,
   PaginationContent,
@@ -31,24 +32,27 @@ export function CommunityThreads({
   const [threads, setThreads] = useState<Thread[]>(initialThreads);
   const [page, setPage] = useState(initialPage);
   const [showAllPosts, setShowAllPosts] = useState(false);
+  const [loadingPage, setLoadingPage] = useState(false);
 
   const hasPrev = page > 1;
   const hasNext = threads.length === limit;
 
   const handlePageChange = async (newPage: number) => {
+    setLoadingPage(true);
     setPage(newPage);
-    // Fetch threads client-side using the new function signature
     const result = await getCommunityThreads(community, { limit, offset: (newPage - 1) * limit, showAllPosts });
     setThreads(result.success ? (result.threads ?? []) : []);
+    setLoadingPage(false);
   };
 
   const handleToggleShowAllPosts = async () => {
+    setLoadingPage(true);
     const newValue = !showAllPosts;
     setShowAllPosts(newValue);
-    // Reset to first page when toggling
     setPage(1);
     const result = await getCommunityThreads(community, { limit, offset: 0, showAllPosts: newValue });
     setThreads(result.success ? (result.threads ?? []) : []);
+    setLoadingPage(false);
   };
 
   return (
@@ -58,27 +62,37 @@ export function CommunityThreads({
           <CommunityNavActions community={community} />
           <CommunityHeader community={community} />
           <CrosspostSwitch checked={showAllPosts} onCheckedChange={handleToggleShowAllPosts} />
-          <CommunityThreadsList threads={threads} />
+          {loadingPage ? (
+            <div className="flex w-full items-center justify-center py-12">
+              <LoadingSpinner text="Loading threads..." />
+            </div>
+          ) : (
+            <CommunityThreadsList threads={threads} />
+          )}
           <div className="mt-8 flex justify-center">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
                     href={undefined}
-                    className={!hasPrev ? "pointer-events-none opacity-50" : ""}
+                    className={
+                      !hasPrev || loadingPage ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"
+                    }
                     onClick={e => {
                       e.preventDefault();
-                      if (hasPrev) handlePageChange(page - 1);
+                      if (hasPrev && !loadingPage) handlePageChange(page - 1);
                     }}
                   />
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext
                     href={undefined}
-                    className={!hasNext ? "pointer-events-none opacity-50" : ""}
+                    className={
+                      !hasNext || loadingPage ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"
+                    }
                     onClick={e => {
                       e.preventDefault();
-                      if (hasNext) handlePageChange(page + 1);
+                      if (hasNext && !loadingPage) handlePageChange(page + 1);
                     }}
                   />
                 </PaginationItem>
