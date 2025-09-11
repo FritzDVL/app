@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { CommunityHeader } from "@/components/communities/display/community-header";
 import { CommunityNavActions } from "@/components/communities/display/community-nav-actions";
 import { CommunitySidebar } from "@/components/communities/display/community-sidebar";
@@ -33,7 +32,6 @@ export function CommunityThreads({
   const [page, setPage] = useState(initialPage);
   const [showAllPosts, setShowAllPosts] = useState(false);
 
-  const router = useRouter();
   const hasPrev = page > 1;
   const hasNext = threads.length === limit;
 

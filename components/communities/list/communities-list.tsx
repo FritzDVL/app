@@ -1,13 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { CommunityRuleMessage } from "@/components/communities/rules/community-rule-message";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Community } from "@/lib/domain/communities/types";
+import { getCommunitiesPaginated } from "@/lib/services/community/get-communities-paginated";
+import { COMMUNITIES_PER_PAGE } from "@/lib/shared/constants";
 import { groveLensUrlToHttp } from "@/lib/shared/utils";
 import { GroupRuleType } from "@lens-protocol/client";
 import { MessageSquare, Search, Users } from "lucide-react";
@@ -22,24 +31,56 @@ interface CommunitiesListProps {
 export function CommunitiesList({ initialCommunities, isLoading, isError, error }: CommunitiesListProps) {
   // Client state for search
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [loadingPage, setLoadingPage] = useState(false);
+  const [communities, setCommunities] = useState<Community[]>(initialCommunities);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+  // const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
-  const filteredCommunities = useMemo(() => {
-    if (!debouncedSearchQuery.trim()) return initialCommunities;
-    const query = debouncedSearchQuery.toLowerCase().trim();
-    return initialCommunities.filter(
-      (community: Community) =>
-        community.name.toLowerCase().includes(query) ||
-        (community.group.metadata?.description && community.group.metadata.description.toLowerCase().includes(query)),
-    );
-  }, [initialCommunities, debouncedSearchQuery]);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setDebouncedSearchQuery(searchQuery);
+  //   }, 300);
+  //   return () => clearTimeout(timer);
+  // }, [searchQuery]);
+
+  // const filteredCommunities = useMemo(() => {
+  //   if (!debouncedSearchQuery.trim()) return initialCommunities;
+  //   const query = debouncedSearchQuery.toLowerCase().trim();
+  //   return initialCommunities.filter(
+  //     (community: Community) =>
+  //       community.name.toLowerCase().includes(query) ||
+  //       (community.group.metadata?.description && community.group.metadata.description.toLowerCase().includes(query)),
+  //   );
+  // }, [initialCommunities, debouncedSearchQuery]);
+
+  // Use paginated communities for rendering
+  const filteredCommunities = communities;
+
+  // Fetch communities for a given page
+  const fetchPage = async (newPage: number) => {
+    setLoadingPage(true);
+    const result = await getCommunitiesPaginated({
+      sort: { by: "memberCount", order: "desc" },
+      limit: COMMUNITIES_PER_PAGE,
+      offset: (newPage - 1) * COMMUNITIES_PER_PAGE,
+    });
+    setCommunities(result.success ? (result.communities ?? []) : []);
+    setPage(newPage);
+    setLoadingPage(false);
+  };
+
+  const handlePrevPage = () => {
+    if (page > 1) {
+      fetchPage(page - 1);
+    }
+  };
+  const handleNextPage = () => {
+    fetchPage(page + 1);
+  };
+
+  const hasPrev = page > 1;
+  const hasNext = communities.length === COMMUNITIES_PER_PAGE;
 
   return (
     <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
@@ -166,6 +207,33 @@ export function CommunitiesList({ initialCommunities, isLoading, isError, error 
             )}
           </>
         )}
+        {/* Pagination Controls */}
+        <div className="mt-8 flex justify-center">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href={undefined}
+                  className={`${!hasPrev || loadingPage ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                  onClick={e => {
+                    e.preventDefault();
+                    handlePrevPage();
+                  }}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href={undefined}
+                  className={`${!hasNext || loadingPage ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                  onClick={e => {
+                    e.preventDefault();
+                    handleNextPage();
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </CardContent>
     </Card>
   );

@@ -49,16 +49,42 @@ const PaginationLink = ({ className, isActive, size = "icon", ...props }: Pagina
 );
 PaginationLink.displayName = "PaginationLink";
 
-const PaginationPrevious = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to previous page" size="default" className={cn("gap-1 pl-2.5", className)} {...props}>
+const PaginationPrevious = ({
+  className,
+  disabled,
+  ...props
+}: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
+  <PaginationLink
+    aria-label="Go to previous page"
+    size="default"
+    className={cn(
+      "gap-1 pl-2.5",
+      className,
+      disabled ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer",
+    )}
+    {...props}
+  >
     <ChevronLeft className="h-4 w-4" />
     <span className="hidden sm:inline">Previous</span>
   </PaginationLink>
 );
 PaginationPrevious.displayName = "PaginationPrevious";
 
-const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to next page" size="default" className={cn("gap-1 pr-2.5", className)} {...props}>
+const PaginationNext = ({
+  className,
+  disabled,
+  ...props
+}: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
+  <PaginationLink
+    aria-label="Go to next page"
+    size="default"
+    className={cn(
+      "gap-1 pr-2.5",
+      className,
+      disabled ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer",
+    )}
+    {...props}
+  >
     <span className="hidden sm:inline">Next</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
