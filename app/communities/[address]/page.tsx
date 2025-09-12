@@ -30,18 +30,18 @@ export default async function CommunityPage({ params }: { params: Promise<{ addr
   // Read showAllPosts preference from cookie
   const COOKIE_KEY = `showAllPosts:${community.id}`;
   const cookieStore = cookies();
-  const showAllPostsCookie = cookieStore.get(COOKIE_KEY)?.value === "true";
+  const crosspostEnabledCookie = cookieStore.get(COOKIE_KEY)?.value === "true";
 
   // Fetch threads on the server with pagination, using cookie preference
   const threadsResult = await getCommunityThreads(community, {
     limit: THREADS_PER_PAGE,
-    showAllPosts: showAllPostsCookie,
+    showAllPosts: crosspostEnabledCookie,
   });
   const threads = threadsResult.success ? (threadsResult.threads ?? []) : [];
 
   return (
     <ProtectedRoute>
-      <CommunityThreads community={community} threads={threads} showAllPostsInitial={showAllPostsCookie} />
+      <CommunityThreads community={community} threads={threads} initialCrosspostEnabled={crosspostEnabledCookie} />
     </ProtectedRoute>
   );
 }
