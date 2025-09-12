@@ -4,17 +4,10 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getThreadTags, getThreadTitleAndSummary, stripThreadArticleFormatting } from "@/lib/domain/threads/content";
+import { getThreadContent, getThreadTags, getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo } from "@/lib/shared/utils";
-
-function getThreadContent(thread: Thread): string {
-  const metadata = thread.rootPost?.metadata;
-  if (metadata && typeof metadata === "object" && "content" in metadata) {
-    return metadata.content ?? "";
-  }
-  return "";
-}
+import { Clock } from "lucide-react";
 
 interface ThreadCardInfoProps {
   thread: Thread;
@@ -25,6 +18,9 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
 
   const isEdited = thread.rootPost?.isEdited;
   const { title, summary } = getThreadTitleAndSummary(thread.rootPost);
+
+  // Extract thread content and image
+  const { content, image } = getThreadContent(thread.rootPost);
 
   useEffect(() => {
     const doFetchTags = async () => {
@@ -60,20 +56,7 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
           )}
           {thread.rootPost?.timestamp && (
             <span className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-3 w-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <Clock className="h-3 w-3" />
               {getTimeAgo(new Date(thread.rootPost.timestamp))}
             </span>
           )}
@@ -89,9 +72,18 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
         )}
         <div className="mt-3 flex flex-col gap-2">
           <ContentRenderer
-            content={stripThreadArticleFormatting(getThreadContent(thread))}
+            content={content}
             className="rich-text-content rounded-2xl p-0 text-foreground dark:text-gray-100"
           />
+          {image && (
+            <div className="mt-4 flex justify-center">
+              <img
+                src={image.item}
+                alt={image.altTag}
+                className="max-h-96 rounded-xl border bg-gray-50 object-contain dark:bg-gray-900"
+              />
+            </div>
+          )}
         </div>
       </div>
       {/* Tags */}

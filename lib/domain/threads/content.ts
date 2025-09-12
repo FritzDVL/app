@@ -62,10 +62,17 @@ export const getThreadTitleAndSummary = (rootPost: Post): { title: string; summa
         summary: rootPost.metadata.content.split(" ").slice(0, 20).join(" ") + "...",
       };
     }
+  } else if (rootPost.metadata?.__typename === "ImageMetadata") {
+    if (rootPost.metadata?.content) {
+      return {
+        title: rootPost.metadata.content.split(" ").slice(0, 8).join(" ") + "...",
+        summary: rootPost.metadata.content.split(" ").slice(0, 20).join(" ") + "...",
+      };
+    }
   }
   return {
-    title: `Thread`,
-    summary: "No content available",
+    title: "",
+    summary: "",
   };
 };
 
@@ -77,16 +84,33 @@ export const getThreadAuthor = (author: Account) => ({
   address: author.address as Address,
 });
 
-export function getThreadContent(post: Post): string {
+export function getThreadContent(post: Post): { content: string; image?: any } {
   if (!post || !post.metadata) {
-    return "";
+    return { content: "" };
   }
   let content = "";
   if (post.metadata.__typename === "ArticleMetadata") {
-    content = post.metadata.content || "";
+    content = stripThreadArticleFormatting(post.metadata.content);
+    return { content };
   }
 
-  return stripThreadPrefixOnly(content);
+  if (post.metadata.__typename === "TextOnlyMetadata") {
+    content = post.metadata.content;
+    return { content };
+  }
+
+  if (post.metadata.__typename === "ImageMetadata") {
+    content = post.metadata.content;
+    // Return both text and image object for rendering
+    return {
+      content,
+      image: post.metadata.image,
+    };
+  }
+  return {
+    content: "",
+    image: undefined,
+  };
 }
 
 export const getThreadTags = async (post: Post): Promise<string[]> => {
