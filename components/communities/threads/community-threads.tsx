@@ -13,9 +13,19 @@ import { Thread } from "@/lib/domain/threads/types";
 import { getCommunityThreads } from "@/lib/services/thread/get-community-threads";
 import { THREADS_PER_PAGE } from "@/lib/shared/constants";
 
-export function CommunityThreads({ community, threads: initialThreads }: { community: Community; threads: Thread[] }) {
+interface CommunityThreadsProps {
+  community: Community;
+  threads: Thread[];
+  showAllPostsInitial?: boolean;
+}
+
+export function CommunityThreads({
+  community,
+  threads: initialThreads,
+  showAllPostsInitial = false,
+}: CommunityThreadsProps) {
   const [threads, setThreads] = useState<Thread[]>(initialThreads);
-  const [showAllPosts, setShowAllPosts] = useState(false);
+  const [showAllPosts, setShowAllPosts] = useState(showAllPostsInitial);
   const [loadingPage, setLoadingPage] = useState(false);
 
   // Unified pagination state
@@ -59,6 +69,8 @@ export function CommunityThreads({ community, threads: initialThreads }: { commu
     setLoadingPage(false);
   };
 
+  const COOKIE_KEY = `showAllPosts:${community.id}`;
+
   // Toggle between Lens and DB threads
   const handleToggleShowAllPosts = async () => {
     setLoadingPage(true);
@@ -67,6 +79,8 @@ export function CommunityThreads({ community, threads: initialThreads }: { commu
     setPage(1);
     setNextCursor(null);
     setPrevCursor(null);
+    // Update cookie for preference (expires in 1 year)
+    document.cookie = `${COOKIE_KEY}=${newValue}; path=/; max-age=31536000`;
     const result = await getCommunityThreads(community, {
       limit: THREADS_PER_PAGE,
       showAllPosts: newValue,

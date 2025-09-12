@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { CommunityThreads } from "@/components/communities/threads/community-threads";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { StatusBanner } from "@/components/shared/status-banner";
@@ -26,13 +27,21 @@ export default async function CommunityPage({ params }: { params: Promise<{ addr
     );
   }
 
-  // Fetch threads on the server with pagination
-  const threadsResult = await getCommunityThreads(community, { limit: THREADS_PER_PAGE });
+  // Read showAllPosts preference from cookie
+  const COOKIE_KEY = `showAllPosts:${community.id}`;
+  const cookieStore = cookies();
+  const showAllPostsCookie = cookieStore.get(COOKIE_KEY)?.value === "true";
+
+  // Fetch threads on the server with pagination, using cookie preference
+  const threadsResult = await getCommunityThreads(community, {
+    limit: THREADS_PER_PAGE,
+    showAllPosts: showAllPostsCookie,
+  });
   const threads = threadsResult.success ? (threadsResult.threads ?? []) : [];
 
   return (
     <ProtectedRoute>
-      <CommunityThreads community={community} threads={threads} />
+      <CommunityThreads community={community} threads={threads} showAllPostsInitial={showAllPostsCookie} />
     </ProtectedRoute>
   );
 }
