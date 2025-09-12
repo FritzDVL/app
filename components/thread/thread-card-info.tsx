@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,7 +21,7 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
   const { title, summary } = getThreadTitleAndSummary(thread.rootPost);
 
   // Extract thread content and image
-  const { content, image } = getThreadContent(thread.rootPost);
+  const { content, image, video } = getThreadContent(thread.rootPost);
 
   useEffect(() => {
     const doFetchTags = async () => {
@@ -77,9 +78,20 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
           />
           {image && (
             <div className="mt-4 flex justify-center">
-              <img
+              <Image
                 src={image.item}
-                alt={image.altTag}
+                alt={image.altTag || "Thread image"}
+                className="max-h-96 rounded-xl border bg-gray-50 object-contain dark:bg-gray-900"
+                width={image.width || 100}
+                height={image.height || 100}
+              />
+            </div>
+          )}
+          {video && (
+            <div className="mt-4 flex justify-center">
+              <video
+                src={video.item}
+                controls
                 className="max-h-96 rounded-xl border bg-gray-50 object-contain dark:bg-gray-900"
               />
             </div>

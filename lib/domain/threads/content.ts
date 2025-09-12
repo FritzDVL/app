@@ -1,6 +1,6 @@
 import { storageClient } from "@/lib/external/grove/client";
 import { Address } from "@/types/common";
-import { Account, Post } from "@lens-protocol/client";
+import { Account, MediaImage, MediaVideo, Post } from "@lens-protocol/client";
 
 export const THREAD_CONTENT_PREFIX = "LensForum Thread: ";
 
@@ -69,6 +69,13 @@ export const getThreadTitleAndSummary = (rootPost: Post): { title: string; summa
         summary: rootPost.metadata.content.split(" ").slice(0, 20).join(" ") + "...",
       };
     }
+  } else if (rootPost.metadata?.__typename === "VideoMetadata") {
+    if (rootPost.metadata?.content) {
+      return {
+        title: rootPost.metadata.content.split(" ").slice(0, 8).join(" ") + "...",
+        summary: rootPost.metadata.content.split(" ").slice(0, 20).join(" ") + "...",
+      };
+    }
   }
   return {
     title: "",
@@ -84,7 +91,7 @@ export const getThreadAuthor = (author: Account) => ({
   address: author.address as Address,
 });
 
-export function getThreadContent(post: Post): { content: string; image?: any } {
+export function getThreadContent(post: Post): { content: string; image?: MediaImage; video?: MediaVideo } {
   if (!post || !post.metadata) {
     return { content: "" };
   }
@@ -105,6 +112,15 @@ export function getThreadContent(post: Post): { content: string; image?: any } {
     return {
       content,
       image: post.metadata.image,
+    };
+  }
+
+  if (post.metadata.__typename === "VideoMetadata") {
+    content = post.metadata.content;
+
+    return {
+      content,
+      video: post.metadata.video,
     };
   }
   return {
