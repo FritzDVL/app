@@ -5,10 +5,10 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
+import { compactAddress } from "@/lib/shared/utils";
 import { Address } from "@/types/common";
 import { Account } from "@lens-protocol/client";
 import { User } from "lucide-react";
-import { compactAddress } from "@/lib/shared/utils";
 
 interface CommunityOwnerProps {
   owner: Address;
