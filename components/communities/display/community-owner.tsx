@@ -8,6 +8,7 @@ import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
 import { Address } from "@/types/common";
 import { Account } from "@lens-protocol/client";
 import { User } from "lucide-react";
+import { compactAddress } from "@/lib/shared/utils";
 
 interface CommunityOwnerProps {
   owner: Address;
@@ -32,8 +33,8 @@ export function CommunityOwner({ owner }: CommunityOwnerProps) {
     doFetchOwner();
   }, [owner]);
 
-  const displayName = account?.metadata?.name || "User";
-  const username = account?.username?.value;
+  const displayName = account?.metadata?.name || "Wallet";
+  const username = account?.username?.localName;
   const picture = account?.metadata?.picture;
 
   return (
@@ -68,9 +69,9 @@ export function CommunityOwner({ owner }: CommunityOwnerProps) {
               {loading ? (
                 <span className="inline-block h-3 w-16 animate-pulse rounded bg-gray-100 dark:bg-gray-800" />
               ) : username ? (
-                <Link href={`/u/${username.replace("lens/", "")}`}>@{username}</Link>
+                <Link href={`/u/${username}`}>@{username}</Link>
               ) : (
-                owner
+                compactAddress(owner)
               )}
             </span>
           </div>

@@ -48,3 +48,8 @@ export function getNotificationDate(n: any): string | undefined {
       return n.timestamp || n.id;
   }
 }
+
+export function compactAddress(address: string): string {
+  if (!address || address.length < 10) return address;
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
