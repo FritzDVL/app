@@ -16,7 +16,7 @@ import { getReplyContent } from "@/lib/domain/replies/content";
 import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { getRepliesByParentId } from "@/lib/services/reply/get-replies-by-parent-id";
-import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/shared/utils";
+import { getTimeAgo } from "@/lib/shared/utils";
 import { postId, useSessionClient } from "@lens-protocol/react";
 import { MessageCircle } from "lucide-react";
 
@@ -27,7 +27,7 @@ interface ThreadReplyCardProps {
 }
 
 export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardProps) {
-  const content = getReplyContent(reply.post);
+  const { content, image, video } = getReplyContent(reply.post);
   const threadAddress = thread.rootPost.feed.address;
 
   const [showReplyBox, setShowReplyBox] = useState(false);
@@ -108,7 +108,7 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
               </div>
 
               {/* Content */}
-              <ContentRenderer content={removeTrailingEmptyPTags(content)} className="rich-text-content mb-2" />
+              <ContentRenderer content={{ content, image, video }} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
               <div className="mt-3 flex flex-row items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
