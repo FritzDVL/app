@@ -2,15 +2,15 @@ import { RepliesResult } from "./get-latest-replies-by-author";
 import { adaptPostToReply } from "@/lib/adapters/reply-adapter";
 import { Reply } from "@/lib/domain/replies/types";
 import { fetchCommentsByPostId } from "@/lib/external/lens/primitives/posts";
-import { PostId } from "@lens-protocol/client";
+import { PostId, SessionClient } from "@lens-protocol/client";
 
 /**
  * Gets replies by parent ID using service approach
  */
-export async function getRepliesByParentId(parentId: PostId): Promise<RepliesResult> {
+export async function getRepliesByParentId(parentId: PostId, sessionClient?: SessionClient): Promise<RepliesResult> {
   try {
     // 1. Fetch all posts for the thread
-    const posts = await fetchCommentsByPostId(parentId);
+    const posts = await fetchCommentsByPostId(parentId, sessionClient);
     if (!posts.length) {
       return {
         success: true,
