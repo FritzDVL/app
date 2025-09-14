@@ -23,7 +23,7 @@ export interface PaginatedRepliesResult {
 export async function getThreadReplies(thread: Thread, sessionClient?: SessionClient): Promise<PaginatedRepliesResult> {
   try {
     // 1. Fetch posts with pagination
-    const posts = await fetchCommentsByPostId(thread.rootPost.id);
+    const posts = await fetchCommentsByPostId(thread.rootPost.id, sessionClient);
     // Assume fetchCommentsByPostId returns an object with pageInfo, otherwise set to null or {}
     const pageInfo = posts && (posts as any).pageInfo ? (posts as any).pageInfo : {};
 

@@ -17,6 +17,7 @@ import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/shared/utils";
 import { postId } from "@lens-protocol/react";
+import { MessageCircle } from "lucide-react";
 
 interface ThreadReplyCardProps {
   reply: Reply;
@@ -91,7 +92,14 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
               <ContentRenderer content={removeTrailingEmptyPTags(content)} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
               <div className="mt-3 flex flex-row items-center justify-between gap-2">
-                <div />
+                <div className="flex items-center gap-2">
+                  {reply.post.stats.comments > 0 && (
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <MessageCircle className="h-4 w-4" />
+                      <span>{reply.post.stats.comments}</span>
+                    </div>
+                  )}
+                </div>
                 <div className="flex w-full justify-end sm:w-auto">
                   <ThreadReplyActions
                     replyId={reply.id}

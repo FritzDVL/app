@@ -12,9 +12,9 @@ interface ThreadRepliesListProps {
 }
 
 export function ThreadRepliesList({ thread, community }: ThreadRepliesListProps) {
-  const { data: replies = [], isLoading } = useThreadReplies(thread);
+  const { data: replies = [], loading } = useThreadReplies(thread);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex justify-center py-8">
         <LoadingSpinner text="Loading replies..." />

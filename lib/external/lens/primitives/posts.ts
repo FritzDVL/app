@@ -90,8 +90,9 @@ export async function fetchPostsByFeed(
 /**
  * Fetch all posts for a thread (non-paginated)
  */
-export async function fetchCommentsByPostId(postId: PostId): Promise<LensPost[]> {
-  const result = await fetchPostReferences(client, {
+export async function fetchCommentsByPostId(postId: PostId, sessionClient?: SessionClient): Promise<LensPost[]> {
+  const lensClient = sessionClient ?? client;
+  const result = await fetchPostReferences(lensClient, {
     referencedPost: postId,
     referenceTypes: [PostReferenceType.CommentOn],
     // relevancyFilter: ReferenceRelevancyFilter.Relevant,

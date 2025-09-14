@@ -1,22 +1,41 @@
+import { useEffect, useState } from "react";
 import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { getThreadReplies } from "@/lib/services/reply/get-thread-replies";
 import { useSessionClient } from "@lens-protocol/react";
-import { useQuery } from "@tanstack/react-query";
 
 export function useThreadReplies(thread: Thread) {
+  const [replies, setReplies] = useState<Reply[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const sessionClient = useSessionClient();
-  const enabled = !!thread && !sessionClient.loading;
 
-  const sessionKey = sessionClient.data ? JSON.stringify(sessionClient.data.getAuthenticatedUser()) : "no-session";
+  useEffect(() => {
+    if (!thread || sessionClient.loading) return;
 
-  return useQuery<Reply[]>({
-    queryKey: ["thread-replies", thread.id, sessionKey],
-    queryFn: async () => {
-      const repliesResponse = await getThreadReplies(thread, sessionClient.data ?? undefined);
-      if (!repliesResponse.success) return [];
-      return repliesResponse.data?.replies ?? [];
-    },
-    enabled,
-  });
+    const fetchReplies = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const repliesResponse = await getThreadReplies(thread, sessionClient.data ?? undefined);
+        if (repliesResponse.success) {
+          setReplies(repliesResponse.data?.replies ?? []);
+        } else {
+          setReplies([]);
+          setError(repliesResponse.error || "Failed to fetch replies");
+        }
+      } catch {
+        setReplies([]);
+        setError("Failed to fetch replies");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReplies();
+  }, [thread.id, sessionClient.data, sessionClient.loading, thread]);
+
+  return { data: replies, loading, error };
 }
