@@ -1,10 +1,12 @@
 import React from "react";
+import Image from "next/image";
 import Mention from "@/components/editor/mention";
+import { MediaImage, MediaVideo } from "@lens-protocol/client";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 
 interface ContentRendererProps {
-  content: string;
+  content: string | { content: string; image?: MediaImage; video?: MediaVideo };
   className?: string;
 }
 
@@ -40,6 +42,11 @@ function renderParagraphWithMentions(children: React.ReactNode): React.ReactElem
 }
 
 export function ContentRenderer({ content, className }: ContentRendererProps) {
+  // Handle both string and object content types
+  const textContent = typeof content === "string" ? content : content.content;
+  const image = typeof content === "object" ? content.image : undefined;
+  const video = typeof content === "object" ? content.video : undefined;
+
   return (
     <div className={className}>
       <ReactMarkdown
@@ -48,8 +55,32 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
           p: ({ children }) => renderParagraphWithMentions(children),
         }}
       >
-        {content}
+        {textContent}
       </ReactMarkdown>
+
+      {/* Render image if present */}
+      {image && (
+        <div className="mt-4 flex justify-center">
+          <Image
+            src={image.item}
+            alt={image.altTag || "Content image"}
+            className="max-h-96 rounded-xl border bg-gray-50 object-contain dark:bg-gray-900"
+            width={image.width || 500}
+            height={image.height || 300}
+          />
+        </div>
+      )}
+
+      {/* Render video if present */}
+      {video && (
+        <div className="mt-4 flex justify-center">
+          <video
+            src={video.item}
+            controls
+            className="max-h-96 rounded-xl border bg-gray-50 object-contain dark:bg-gray-900"
+          />
+        </div>
+      )}
     </div>
   );
 }

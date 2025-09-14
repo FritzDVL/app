@@ -1,7 +1,7 @@
 "use server";
 
 import { supabaseClient } from "./client";
-import { ForumStats } from "@/lib/domain/communities/types";
+import { ForumStats } from "@/types/common";
 
 /**
  * Fetches forum-wide stats: total members, total threads, and total communities.
