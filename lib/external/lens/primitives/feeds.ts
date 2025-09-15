@@ -56,30 +56,22 @@ export async function fetchFeedsBatch(
   }
 }
 
-export interface FeedCreationData {
-  title: string;
-  description?: string;
-  communityAddress: string;
-}
-
-export interface FeedCreationResult {
-  success: boolean;
-  feed?: Feed;
-  error?: string;
-}
-
 /**
  * Creates a thread feed using admin clients
  */
-export async function createFeed(feedData: FeedCreationData): Promise<FeedCreationResult> {
+export async function createFeed(params: {
+  title: string;
+  description: string;
+  communityAddress: string;
+}): Promise<Feed | null> {
   try {
     // Get admin clients
     const adminSessionClient = await getAdminSessionClient();
     const adminWallet = await getAdminWallet();
     // 1. Build metadata for the thread feed
     const feedMetadata = feed({
-      name: feedData.title,
-      description: feedData.description || "",
+      name: params.title,
+      description: params.description || "",
     });
     const acl = immutable(lensChain.id);
 
@@ -94,7 +86,7 @@ export async function createFeed(feedData: FeedCreationData): Promise<FeedCreati
         required: [
           {
             groupGatedRule: {
-              group: evmAddress(feedData.communityAddress),
+              group: evmAddress(params.communityAddress),
             },
           },
         ],
@@ -106,29 +98,18 @@ export async function createFeed(feedData: FeedCreationData): Promise<FeedCreati
 
     if (feedCreationResult.isErr()) {
       console.error("[Feeds] Error creating feed:", feedCreationResult.error);
-      return {
-        success: false,
-        error: feedCreationResult.error instanceof Error ? feedCreationResult.error.message : "Failed to create feed",
-      };
+      return null;
     }
 
-    const createdFeed = feedCreationResult.value;
+    const createdFeed = feedCreationResult.value as Feed;
     if (!createdFeed) {
-      return {
-        success: false,
-        error: "Failed to create feed: No feed returned",
-      };
+      console.error("[Feeds] Feed creation returned no feed");
+      return null;
     }
 
-    return {
-      success: true,
-      feed: createdFeed,
-    };
+    return createdFeed;
   } catch (error) {
     console.error("Feed creation failed:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Failed to create feed",
-    };
+    return null;
   }
 }

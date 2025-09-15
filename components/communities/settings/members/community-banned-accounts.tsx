@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { CommunityMemberCard } from "@/components/communities/settings/members/community-user-card";
 import { UnbanMemberDialog } from "@/components/communities/settings/members/unban-member-dialog";
-import { CursorPagination } from "@/components/shared/cursor-pagination";
+import { Pagination } from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useCommunityBannedMembers } from "@/hooks/communities/use-community-banned-members";
@@ -97,7 +97,7 @@ export function CommunityBannedAccounts({ community }: CommunityBannedAccountsPr
           );
         })}
       </ul>
-      <CursorPagination
+      <Pagination
         hasPrev={bannedHasPrev}
         hasNext={bannedHasNext}
         loading={bannedLoading}

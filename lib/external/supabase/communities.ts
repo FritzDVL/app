@@ -1,27 +1,17 @@
 "use server";
 
-/**
- * Community Database Operations
- * External layer for community-related Supabase operations
- */
 import { supabaseClient } from "./client";
 import { Address } from "@/types/common";
 import { CommunitySupabase } from "@/types/supabase";
 
-/**
- * Persists a new community to the database
- * @param lensGroupAddress - The Lens Protocol group address
- * @param name - Community name
- * @returns The created community record
- */
-export async function persistCommunity(lensGroupAddress: string, name: string): Promise<CommunitySupabase> {
+export async function persistCommunity(group: Address, feed: Address, name: string): Promise<CommunitySupabase> {
   const supabase = await supabaseClient();
 
   // Check if community already exists
   const { data: existingCommunity, error: fetchError } = await supabase
     .from("communities")
     .select("*")
-    .eq("lens_group_address", lensGroupAddress)
+    .eq("lens_group_address", group)
     .single();
 
   if (fetchError && fetchError.code !== "PGRST116") {
@@ -29,7 +19,7 @@ export async function persistCommunity(lensGroupAddress: string, name: string): 
   }
 
   if (existingCommunity) {
-    console.log(`Community already exists in database: ${lensGroupAddress}`);
+    console.log(`Community already exists in database: ${group}`);
     return existingCommunity;
   }
 
@@ -37,8 +27,9 @@ export async function persistCommunity(lensGroupAddress: string, name: string): 
   const { data: newCommunity, error: insertError } = await supabase
     .from("communities")
     .insert({
-      lens_group_address: lensGroupAddress,
+      lens_group_address: group,
       name,
+      feed: feed,
     })
     .select()
     .single();
@@ -47,22 +38,33 @@ export async function persistCommunity(lensGroupAddress: string, name: string): 
     throw new Error(`Failed to create community: ${insertError.message}`);
   }
 
-  console.log(`Community persisted to database: ${lensGroupAddress}`);
+  console.log(`Community persisted to database: ${group}`);
   return newCommunity;
 }
 
 /**
- * Fetches all communities from the database
+ * Fetches all communities from the database with pagination
+ * @param limit - Number of communities per page
+ * @param offset - Offset for pagination
  * @returns Array of community records with their Lens group addresses
  */
-export async function fetchAllCommunities(): Promise<CommunitySupabase[]> {
+export async function fetchCommunities(limit?: number, offset?: number): Promise<CommunitySupabase[]> {
   const supabase = await supabaseClient();
 
-  const { data: communities, error } = await supabase
+  let query = supabase
     .from("communities")
     .select("*, threads_count:community_threads(count)")
     .eq("visible", true)
     .order("created_at", { ascending: false });
+
+  if (typeof limit === "number") {
+    query = query.limit(limit);
+  }
+  if (typeof offset === "number" && typeof limit === "number") {
+    query = query.range(offset, offset + limit - 1);
+  }
+
+  const { data: communities, error } = await query;
 
   if (error) {
     throw new Error(`Failed to fetch communities: ${error.message}`);
@@ -101,7 +103,7 @@ export async function fetchCommunity(lensGroupAddress: string): Promise<Communit
 
   // threads_count will be an array with a single object { count: number }
   if (community) {
-    return { ...community, threads_count: community.threads_count?.[0]?.count ?? 0 };
+    return { ...community, feed: community.feed, threads_count: community.threads_count?.[0]?.count ?? 0 };
   }
 
   return community;

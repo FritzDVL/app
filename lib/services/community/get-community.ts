@@ -1,7 +1,3 @@
-/**
- * Get Community Service
- * Gets a single community by address using service approach
- */
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import {

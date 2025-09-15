@@ -1,16 +1,18 @@
 import { Address } from "@/types/common";
-import { Feed, Post } from "@lens-protocol/client";
+import { Account, Post } from "@lens-protocol/client";
 
 export interface Thread {
   id: string;
-  feed: Feed;
   community: Address;
+  author: Account;
   rootPost: Post;
-  author: ThreadAuthor;
+  title: string;
+  summary: string;
   repliesCount: number;
-  timeAgo: string;
   isVisible: boolean;
   created_at: string;
+  updatedAt: string;
+  app?: string;
 }
 
 export interface CreateThreadFormData {
@@ -19,12 +21,4 @@ export interface CreateThreadFormData {
   content: string;
   tags?: string;
   author: Address;
-}
-
-interface ThreadAuthor {
-  name: string;
-  username: string;
-  avatar: string;
-  reputation: number;
-  address: Address;
 }

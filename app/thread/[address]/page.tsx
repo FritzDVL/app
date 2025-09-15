@@ -28,9 +28,8 @@ export async function generateMetadata({ params }: { params: { address: string }
     };
   }
   const rootPost = thread.thread.rootPost;
-  const feed = thread.thread.feed;
 
-  const t = getThreadTitleAndSummary(rootPost, feed);
+  const t = getThreadTitleAndSummary(rootPost);
   let title = t.title || "Thread on LensForum";
   let description = t.summary || "Join the discussion!";
 
@@ -65,6 +64,7 @@ export default async function ThreadPage({ params }: { params: { address: string
   const threadAddress = params.address as Address;
 
   const thread = await getThread(threadAddress);
+
   if (thread.error) {
     return (
       <div className="flex h-32 items-center justify-center">
@@ -80,7 +80,7 @@ export default async function ThreadPage({ params }: { params: { address: string
     );
   }
 
-  const community = thread ? await getCommunity(thread.thread?.community) : null;
+  const community = thread ? await getCommunity(thread.thread.community) : null;
   if (community?.error) {
     return (
       <div className="flex h-32 items-center justify-center">

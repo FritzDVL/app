@@ -13,7 +13,7 @@ function getThreadContent(thread: Thread): string {
 }
 
 export function ThreadSimpleMainCard({ thread }: { thread: Thread }) {
-  const { title } = getThreadTitleAndSummary(thread.rootPost, thread.feed);
+  const { title } = getThreadTitleAndSummary(thread.rootPost);
 
   return (
     <div>
@@ -59,7 +59,7 @@ export function ThreadSimpleMainCard({ thread }: { thread: Thread }) {
                     />
                   </svg>
                   <span>by</span>
-                  <span className="font-medium">{thread.author?.name || "Unknown"}</span>
+                  <span className="font-medium">{thread.author.username?.localName || "Unknown"}</span>
                 </div>
                 <>
                   <span>•</span>

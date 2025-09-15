@@ -1,6 +1,6 @@
 import { storageClient } from "@/lib/external/grove/client";
 import { Address } from "@/types/common";
-import { Account, Feed, Post } from "@lens-protocol/client";
+import { Account, MediaImage, MediaVideo, Post } from "@lens-protocol/client";
 
 export const THREAD_CONTENT_PREFIX = "LensForum Thread: ";
 
@@ -49,16 +49,37 @@ export const hasThreadContentPrefix = (content: string): boolean => {
   return content.startsWith(`*${THREAD_CONTENT_PREFIX}`) || content.startsWith(THREAD_CONTENT_PREFIX);
 };
 
-export const getThreadTitleAndSummary = (rootPost: Post, feed: Feed) => {
+export const getThreadTitleAndSummary = (rootPost: Post): { title: string; summary: string } => {
   if (rootPost.metadata.__typename === "ArticleMetadata") {
     return {
-      title: rootPost.metadata.title,
+      title: rootPost.metadata.title || "Untitled Thread",
       summary: rootPost.metadata.attributes.find(attr => attr.key === "subtitle")?.value || "",
     };
+  } else if (rootPost.metadata?.__typename === "TextOnlyMetadata") {
+    if (rootPost.metadata?.content) {
+      return {
+        title: rootPost.metadata.content.split(" ").slice(0, 8).join(" ") + "...",
+        summary: rootPost.metadata.content.split(" ").slice(0, 20).join(" ") + "...",
+      };
+    }
+  } else if (rootPost.metadata?.__typename === "ImageMetadata") {
+    if (rootPost.metadata?.content) {
+      return {
+        title: rootPost.metadata.content.split(" ").slice(0, 8).join(" ") + "...",
+        summary: rootPost.metadata.content.split(" ").slice(0, 20).join(" ") + "...",
+      };
+    }
+  } else if (rootPost.metadata?.__typename === "VideoMetadata") {
+    if (rootPost.metadata?.content) {
+      return {
+        title: rootPost.metadata.content.split(" ").slice(0, 8).join(" ") + "...",
+        summary: rootPost.metadata.content.split(" ").slice(0, 20).join(" ") + "...",
+      };
+    }
   }
   return {
-    title: feed.metadata?.name || `Thread ${feed.address.slice(-6)}`,
-    summary: feed.metadata?.description || "No content available",
+    title: "",
+    summary: "",
   };
 };
 
@@ -70,16 +91,42 @@ export const getThreadAuthor = (author: Account) => ({
   address: author.address as Address,
 });
 
-export function getThreadContent(post: Post): string {
+export function getThreadContent(post: Post): { content: string; image?: MediaImage; video?: MediaVideo } {
   if (!post || !post.metadata) {
-    return "";
+    return { content: "" };
   }
   let content = "";
   if (post.metadata.__typename === "ArticleMetadata") {
-    content = post.metadata.content || "";
+    content = stripThreadArticleFormatting(post.metadata.content);
+    return { content };
   }
 
-  return stripThreadPrefixOnly(content);
+  if (post.metadata.__typename === "TextOnlyMetadata") {
+    content = post.metadata.content;
+    return { content };
+  }
+
+  if (post.metadata.__typename === "ImageMetadata") {
+    content = post.metadata.content;
+    // Return both text and image object for rendering
+    return {
+      content,
+      image: post.metadata.image,
+    };
+  }
+
+  if (post.metadata.__typename === "VideoMetadata") {
+    content = post.metadata.content;
+
+    return {
+      content,
+      video: post.metadata.video,
+    };
+  }
+  return {
+    content: "",
+    image: undefined,
+  };
 }
 
 export const getThreadTags = async (post: Post): Promise<string[]> => {

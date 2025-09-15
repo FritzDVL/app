@@ -1,10 +1,5 @@
-/**
- * Get Latest Threads Service
- * Gets latest threads using optimized batch operations
- */
 import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Thread } from "@/lib/domain/threads/types";
-import { fetchFeedsBatch } from "@/lib/external/lens/primitives/feeds";
 import { fetchPostsBatch } from "@/lib/external/lens/primitives/posts";
 import { fetchLatestThreads as fetchLatestThreadsDb } from "@/lib/external/supabase/threads";
 
@@ -29,33 +24,26 @@ export async function getLatestThreads(limit: number = 5): Promise<ThreadsResult
     }
 
     // 2. Extract unique addresses for batching
-    const feedAddresses = threadRecords.map(record => record.lens_feed_address);
     const rootPostIds = threadRecords.map(record => record.root_post_id).filter((id): id is string => id !== null);
 
     // 3. Batch fetch all data in parallel
-    const [feedResults, rootPostResults] = await Promise.all([
-      fetchFeedsBatch(feedAddresses),
+    const [rootPostsResults] = await Promise.all([
       rootPostIds.length > 0 ? fetchPostsBatch(rootPostIds) : Promise.resolve([]),
     ]);
 
-    // 4. Create lookup maps for O(1) access
-    const feedMap = new Map();
-    feedResults.forEach(({ address, result }) => {
-      feedMap.set(address, result);
-    });
-
     const rootPostMap = new Map();
-    rootPostResults.forEach(post => {
+    rootPostsResults.forEach(post => {
       rootPostMap.set(post.id, post);
     });
 
     // 5. Transform threads using cached data
     const threadPromises = threadRecords.map(async threadRecord => {
-      const feed = feedMap.get(threadRecord.lens_feed_address);
       const rootPost = threadRecord.root_post_id ? rootPostMap.get(threadRecord.root_post_id) : null;
-      const author = rootPost?.author;
-      if (!feed || !author) return null;
-      return adaptFeedToThread(feed, threadRecord, author, rootPost);
+      const author = rootPost.author;
+      if (!author) {
+        return null;
+      }
+      return adaptFeedToThread(author, threadRecord, rootPost);
     });
 
     const threads = (await Promise.all(threadPromises)).filter(Boolean) as Thread[];

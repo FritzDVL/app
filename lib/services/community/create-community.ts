@@ -2,15 +2,13 @@ import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community, Moderator } from "@/lib/domain/communities/types";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
+import { createLensGroup } from "@/lib/external/lens/primitives/groups";
 import { client } from "@/lib/external/lens/protocol-client";
 import { persistCommunity } from "@/lib/external/supabase/communities";
-import { ADMIN_USER_ADDRESS } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
 import { immutable } from "@lens-chain/storage-client";
-import { Group, SessionClient, evmAddress } from "@lens-protocol/client";
-import { createGroup, fetchAdminsFor, fetchGroup } from "@lens-protocol/client/actions";
-import { handleOperationWith } from "@lens-protocol/client/viem";
-import { group } from "@lens-protocol/metadata";
+import { SessionClient, evmAddress } from "@lens-protocol/client";
+import { fetchAdminsFor } from "@lens-protocol/client/actions";
 import { WalletClient } from "viem";
 
 export interface CreateCommunityResult {
@@ -42,7 +40,7 @@ export async function createCommunity(
       parsedCommunityRule = rest;
     }
 
-    let iconUri;
+    let iconUri: string | undefined;
     if (logoFile) {
       const acl = immutable(lensChain.id);
       const { uri } = await storageClient.uploadFile(logoFile, { acl });
@@ -50,66 +48,33 @@ export async function createCommunity(
     }
 
     // 2. Get admin session client
-    // const adminSessionClient = await getAdminSessionClient();
-    const adminSessionClient = sessionClient;
+    const creatorSessionClient = sessionClient;
+    const creatorWalletClient = walletClient;
 
-    // 3. Get admin wallet
-    // const adminWallet = await getAdminWallet();
-    const adminWallet = walletClient;
-
-    // 4. Prepare group name for metadata (no spaces, max 20 chars)
-    const groupName = name.replace(/\s+/g, "-").slice(0, 20);
-
-    // 4. Build metadata for the group and upload it
-    const groupMetadata = group({
-      name: groupName,
-      description: description,
-      ...(iconUri ? { icon: iconUri } : {}),
+    // 5. Create the group on Lens Protocol using extracted function
+    const newGroup = await createLensGroup(creatorSessionClient, creatorWalletClient, {
+      name,
+      description,
+      adminAddress,
+      iconUri,
+      communityRule: parsedCommunityRule,
     });
-    const acl = immutable(lensChain.id);
-    const { uri } = await storageClient.uploadAsJson(groupMetadata, { acl });
 
-    // 5. Create the group on Lens Protocol with optional group rules
-    const createGroupParams: any = {
-      metadataUri: uri,
-      admins: [evmAddress(adminAddress), ADMIN_USER_ADDRESS],
-      owner: evmAddress(adminAddress),
-    };
-
-    // Add group rules if specified
-    if (parsedCommunityRule) {
-      createGroupParams.rules = {
-        required: [parsedCommunityRule],
-      };
-    }
-
-    const result = await createGroup(adminSessionClient, createGroupParams)
-      .andThen(handleOperationWith(adminWallet))
-      .andThen(adminSessionClient.waitForTransaction)
-      .andThen((txHash: unknown) => {
-        return fetchGroup(adminSessionClient, { txHash: txHash as string });
-      });
-
-    if (result.isErr() || !result.value) {
-      let errMsg = "Failed to create group";
-      if (result.isErr() && (result as any).error && typeof (result as any).error.message === "string") {
-        errMsg = (result as any).error.message;
-      }
-      console.error("[Service] Error creating group:", errMsg, result);
+    if (!newGroup) {
+      const errMsg = "Failed to create group";
+      console.error("[Service] Error creating group:", errMsg);
       return {
         success: false,
         error: errMsg,
       };
     }
 
-    const createdGroup = result.value as Group;
-
     // 6. Persist the community in Supabase
-    const persistedCommunity = await persistCommunity(createdGroup.address, name);
+    const persistedCommunity = await persistCommunity(newGroup.address, newGroup.feed?.address, name);
 
     // 7. Fetch moderators
     const adminsResult = await fetchAdminsFor(client, {
-      address: evmAddress(createdGroup.address),
+      address: evmAddress(newGroup.address),
     });
     let moderators: Moderator[] = [];
     if (adminsResult.isOk()) {
@@ -124,7 +89,7 @@ export async function createCommunity(
 
     // 8. Transform and return the new community
     const newCommunity = adaptGroupToCommunity(
-      createdGroup,
+      newGroup,
       {
         totalMembers: 0,
         __typename: "GroupStatsResponse",

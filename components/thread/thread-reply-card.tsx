@@ -6,17 +6,19 @@ import { ReplyVoting } from "../reply/reply-voting";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { ThreadReplyModeratorActions } from "./thread-reply-moderator-actions";
 import { ContentRenderer } from "@/components/shared/content-renderer";
-import { ThreadInReplyTo } from "@/components/thread/thread-in-reply-to";
 import { ThreadReplyActions } from "@/components/thread/thread-reply-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { Community } from "@/lib/domain/communities/types";
 import { getReplyContent } from "@/lib/domain/replies/content";
 import { Reply } from "@/lib/domain/replies/types";
 import { Thread } from "@/lib/domain/threads/types";
-import { getTimeAgo, removeTrailingEmptyPTags } from "@/lib/shared/utils";
-import { postId } from "@lens-protocol/react";
+import { getRepliesByParentId } from "@/lib/services/reply/get-replies-by-parent-id";
+import { getTimeAgo } from "@/lib/shared/utils";
+import { postId, useSessionClient } from "@lens-protocol/react";
+import { MessageCircle } from "lucide-react";
 
 interface ThreadReplyCardProps {
   reply: Reply;
@@ -25,14 +27,18 @@ interface ThreadReplyCardProps {
 }
 
 export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardProps) {
-  const content = getReplyContent(reply.post);
-  const rootPostId = thread.rootPost?.id || "";
-  const threadAddress = thread.feed.address;
+  const { content, image, video } = getReplyContent(reply.post);
+  const threadAddress = thread.rootPost.feed.address;
 
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [replyContent, setReplyContent] = useState("");
+  const [loadingReplies, setLoadingReplies] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
+  const [replies, setReplies] = useState<Reply[]>([]);
+  const [repliesError, setRepliesError] = useState<string | null>(null);
 
   const { createReply } = useReplyCreate();
+  const sessionClient = useSessionClient();
 
   const handleReply = async () => {
     if (!replyContent.trim()) return;
@@ -41,6 +47,27 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
       setReplyContent("");
       setShowReplyBox(false);
     } finally {
+    }
+  };
+
+  const handleLoadReplies = async () => {
+    if (loadingReplies) return;
+
+    setLoadingReplies(true);
+    setRepliesError(null);
+    try {
+      const result = await getRepliesByParentId(reply.post.id, sessionClient.data ?? undefined);
+      if (result.success) {
+        setReplies(result.replies ?? []);
+      } else {
+        setRepliesError(result.error || "Failed to load replies.");
+      }
+      setShowReplies(true);
+    } catch (error) {
+      setRepliesError("Failed to load replies.");
+      console.error("Failed to load replies:", error);
+    } finally {
+      setLoadingReplies(false);
     }
   };
 
@@ -80,18 +107,26 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
                 </div>
               </div>
 
-              {/* In-reply-to context chain: render below the author row (above content) */}
-              {reply.post.commentOn?.id && reply.post.commentOn.id !== rootPostId && (
-                <div className="mb-2">
-                  <ThreadInReplyTo parentId={reply.post.commentOn.id} rootPostId={rootPostId} />
-                </div>
-              )}
-
               {/* Content */}
-              <ContentRenderer content={removeTrailingEmptyPTags(content)} className="rich-text-content mb-2" />
+              <ContentRenderer content={{ content, image, video }} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
               <div className="mt-3 flex flex-row items-center justify-between gap-2">
-                <div />
+                <div className="flex items-center gap-2">
+                  {reply.post.stats.comments > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleLoadReplies}
+                      disabled={loadingReplies}
+                      className="h-auto p-1 text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      <MessageCircle className="mr-1 h-3 w-3" />
+                      {loadingReplies
+                        ? "Loading..."
+                        : `${reply.post.stats.comments} ${reply.post.stats.comments === 1 ? "reply" : "replies"}`}
+                    </Button>
+                  )}
+                </div>
                 <div className="flex w-full justify-end sm:w-auto">
                   <ThreadReplyActions
                     replyId={reply.id}
@@ -111,6 +146,17 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
                   onSubmit={handleReply}
                   onChange={setReplyContent}
                 />
+              )}
+              {showReplies && (
+                <div className="ml-6 mt-2 space-y-2">
+                  {repliesError && <div className="text-xs text-red-500">{repliesError}</div>}
+                  {replies.length === 0 && !repliesError && (
+                    <div className="text-xs text-muted-foreground">No replies yet.</div>
+                  )}
+                  {replies.map(nestedReply => (
+                    <ThreadReplyCard key={nestedReply.id} reply={nestedReply} thread={thread} community={community} />
+                  ))}
+                </div>
               )}
             </div>
           </div>

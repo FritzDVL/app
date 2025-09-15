@@ -6,17 +6,18 @@ import { Label } from "@/components/ui/label";
 import { TagsInput } from "@/components/ui/tags-input";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { useThreadCreateForm } from "@/hooks/forms/use-thread-create-form";
+import { Community } from "@/lib/domain/communities/types";
 import { useAuthStore } from "@/stores/auth-store";
 import { Send } from "lucide-react";
 
 interface ThreadCreateFormProps {
-  communityAddress: string;
+  community: Community;
 }
 
-export function ThreadCreateForm({ communityAddress }: ThreadCreateFormProps) {
+export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
   const { account } = useAuthStore();
   const { formData, setFormData, handleChange, handleSubmit, isCreating } = useThreadCreateForm({
-    communityAddress,
+    community,
     author: account?.address || "",
   });
   const { tags, tagInput, setTagInput, addTag, removeTag, handleTagInputKeyDown } = useTagsInput();

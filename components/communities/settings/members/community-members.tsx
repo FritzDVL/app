@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CommunityMemberCard } from "@/components/communities/settings/members/community-user-card";
 import { RemoveMemberDialog } from "@/components/communities/settings/members/remove-member-dialog";
-import { CursorPagination } from "@/components/shared/cursor-pagination";
+import { Pagination } from "@/components/shared/pagination";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useCommunityMembers } from "@/hooks/communities/use-community-members";
 import { useCommunityRemoveMember } from "@/hooks/communities/use-community-remove-member";
@@ -75,7 +75,7 @@ export function CommunityMembers({ community }: CommunityMembersProps) {
         onConfirm={handleRemove}
         isLoading={isLoading}
       />
-      <CursorPagination hasPrev={hasPrev} hasNext={hasNext} loading={loading} onPrev={previous} onNext={next} />
+      <Pagination hasPrev={hasPrev} hasNext={hasNext} loading={loading} onPrev={previous} onNext={next} />
     </>
   );
 }

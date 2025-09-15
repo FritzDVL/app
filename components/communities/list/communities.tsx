@@ -16,7 +16,7 @@ export function Communities({ communities }: CommunitiesProps) {
         <div className="lg:col-span-3">
           <CommunitiesHeader total={communities.length} />
           <Suspense fallback={<div className="h-32 w-full animate-pulse rounded-xl bg-muted" />}>
-            <CommunitiesList initialCommunities={communities} isLoading={false} isError={false} error={null} />
+            <CommunitiesList initialCommunities={communities} />
           </Suspense>
         </div>
         {/* Sidebar */}

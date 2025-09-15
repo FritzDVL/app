@@ -1,21 +1,27 @@
 import { adaptGroupToCommunity } from "@/lib/adapters/community-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import { fetchGroupAdminsBatch, fetchGroupStatsBatch, fetchGroupsBatch } from "@/lib/external/lens/primitives/groups";
-import { fetchAllCommunities } from "@/lib/external/supabase/communities";
+import { fetchCommunities } from "@/lib/external/supabase/communities";
 
 export interface CommunitiesResult {
   success: boolean;
-  communities?: Community[];
+  communities: Community[];
   error?: string;
 }
 
-export async function getAllCommunities(
-  sortBy: keyof Community | null = null,
-  sortOrder: "asc" | "desc" = "desc",
-): Promise<CommunitiesResult> {
+export interface GetCommunitiesOptions {
+  sort?: { by: keyof Community; order: "asc" | "desc" };
+  limit?: number;
+  offset?: number;
+}
+
+export async function getCommunitiesPaginated(options: GetCommunitiesOptions = {}): Promise<CommunitiesResult> {
+  const { sort, limit, offset } = options;
+  const sortBy = sort?.by ?? null;
+  const sortOrder = sort?.order ?? "desc";
   try {
-    // 1. Fetch all communities from database (single query)
-    const dbCommunities = await fetchAllCommunities();
+    // 1. Fetch communities from database with pagination
+    const dbCommunities = await fetchCommunities(limit, offset);
     if (!dbCommunities.length) {
       return {
         success: true,
@@ -96,6 +102,7 @@ export async function getAllCommunities(
     console.error("Failed to fetch communities:", error);
     return {
       success: false,
+      communities: [],
       error: error instanceof Error ? error.message : "Failed to fetch communities",
     };
   }

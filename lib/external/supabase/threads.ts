@@ -17,8 +17,10 @@ import { CommunitySupabase, CommunityThreadSupabase } from "@/types/supabase";
  */
 export async function persistCommunityThread(
   communityLensAddress: string,
-  lensFeedAddress: string,
+  title: string,
+  summary: string,
   author: Address,
+  rootPostId: string,
 ): Promise<CommunityThreadSupabase> {
   const supabase = await supabaseClient();
 
@@ -47,8 +49,11 @@ export async function persistCommunityThread(
     .from("community_threads")
     .insert({
       community_id: community.id,
-      lens_feed_address: lensFeedAddress,
-      author,
+      lens_feed_address: "0x0",
+      root_post_id: rootPostId,
+      title,
+      summary,
+      author: author,
     })
     .select("*, community:communities(*)")
     .single();
@@ -65,31 +70,27 @@ export async function persistCommunityThread(
  * @param communityLensAddress - The Lens Protocol group address
  * @returns Array of thread records with their Lens feed addresses
  */
-export async function fetchCommunityThreads(communityLensAddress: string): Promise<CommunityThreadSupabase[]> {
+export async function fetchCommunityThreads(
+  communityId: string,
+  limit?: number,
+  offset?: number,
+): Promise<CommunityThreadSupabase[]> {
   const supabase = await supabaseClient();
 
-  // First get the community
-  const { data: community, error: communityError } = await supabase
-    .from("communities")
-    .select("*")
-    .eq("lens_group_address", communityLensAddress)
-    .single();
-
-  if (communityError) {
-    if (communityError.code === "PGRST116") {
-      // Community not found, return empty array
-      return [];
-    }
-    throw new Error(`Failed to fetch community: ${communityError.message}`);
-  }
-
-  // Then get all threads for this community, joining the community object
-  const { data: threads, error: threadsError } = await supabase
+  let query = supabase
     .from("community_threads")
     .select("*, community:communities(*)")
-    .eq("community_id", community.id)
+    .eq("community_id", communityId)
     .eq("visible", true)
     .order("created_at", { ascending: false });
+
+  if (typeof limit === "number" && typeof offset === "number") {
+    query = query.range(offset, offset + limit - 1);
+  } else if (typeof limit === "number") {
+    query = query.range(0, limit - 1);
+  }
+
+  const { data: threads, error: threadsError } = await query;
 
   if (threadsError) {
     throw new Error(`Failed to fetch threads: ${threadsError.message}`);
@@ -99,18 +100,30 @@ export async function fetchCommunityThreads(communityLensAddress: string): Promi
 }
 
 /**
- * Fetch a single thread by its Lens feed address
- * @param lensFeedAddress - The Lens Protocol feed address
+ * Fetch a single thread by its id or root_post_id
+ * @param id - The thread's id
+ * @param rootPostId - The thread's root_post_id
  * @returns The thread record or null if not found
  */
-export async function fetchThread(lensFeedAddress: string): Promise<CommunityThreadSupabase | null> {
+export async function fetchThread({
+  id,
+  rootPostId,
+}: {
+  id?: string;
+  rootPostId?: string;
+}): Promise<CommunityThreadSupabase | null> {
   const supabase = await supabaseClient();
 
-  const { data: thread, error } = await supabase
-    .from("community_threads")
-    .select("*, community:communities(*)")
-    .eq("lens_feed_address", lensFeedAddress)
-    .single();
+  let query = supabase.from("community_threads").select("*, community:communities(*)");
+
+  if (id) {
+    query = query.eq("id", id);
+  }
+  if (rootPostId) {
+    query = query.eq("root_post_id", rootPostId);
+  }
+
+  const { data: thread, error } = await query.single();
 
   if (error) {
     if (error.code === "PGRST116") {
@@ -121,26 +134,6 @@ export async function fetchThread(lensFeedAddress: string): Promise<CommunityThr
   }
 
   return thread;
-}
-
-/**
- * Persists the root post address for a thread in the community_threads table
- * @param threadId - The thread's id (primary key)
- * @param rootPostId - The root post id to persist
- * @returns void
- */
-export async function persistRootPostId(threadId: string, rootPostId: string): Promise<void> {
-  const supabase = await supabaseClient();
-
-  const { error } = await supabase
-    .from("community_threads")
-    .update({ root_post_id: rootPostId })
-    .eq("id", threadId)
-    .single();
-
-  if (error) {
-    throw new Error(`Failed to update root_post_address: ${error.message}`);
-  }
 }
 
 /**
@@ -202,17 +195,15 @@ export async function incrementThreadRepliesCount(threadId: string): Promise<voi
   }
 }
 
-/**
- * Actualiza solo el campo updated_at de un thread en la tabla community_threads
- * @param threadId - The thread's id (primary key)
- * @returns void
- */
-export async function updateThread(threadId: string): Promise<void> {
+export async function updateThread(rootPostId: string, title: string, summary: string): Promise<void> {
   const supabase = await supabaseClient();
+
+  const currentTime = new Date().toISOString();
+
   const { error } = await supabase
     .from("community_threads")
-    .update({ updated_at: new Date().toISOString() })
-    .eq("id", threadId)
+    .update({ updated_at: currentTime, title, summary })
+    .eq("root_post_id", rootPostId)
     .single();
   if (error) {
     throw new Error(`Failed to update updated_at: ${error.message}`);

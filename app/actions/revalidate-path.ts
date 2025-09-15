@@ -15,7 +15,7 @@ export async function revalidateCommunityAndListPaths(address: Address) {
   await Promise.all([revalidateCommunityPath(address), revalidateCommunitiesPath()]);
 }
 
-export async function revalidateThreadPath(address: Address) {
+export async function revalidateThreadPath(address: string) {
   revalidatePath(`/thread/${address}`);
 }
 
@@ -23,6 +23,6 @@ export async function revalidateThreadsPath() {
   revalidatePath(`/thread`);
 }
 
-export async function revalidateThreadAndListPaths(address: Address) {
+export async function revalidateThreadAndListPaths(address: string) {
   await Promise.all([revalidateThreadPath(address), revalidateThreadsPath()]);
 }

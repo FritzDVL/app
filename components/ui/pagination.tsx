@@ -35,9 +35,13 @@ const PaginationLink = ({ className, isActive, size = "icon", ...props }: Pagina
     aria-current={isActive ? "page" : undefined}
     className={cn(
       buttonVariants({
-        variant: isActive ? "outline" : "ghost",
+        variant: isActive ? "default" : "ghost", // Use default for active, ghost for others
         size,
       }),
+      "rounded-full font-medium transition-colors duration-150",
+      isActive
+        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+        : "text-gray-700 hover:bg-accent dark:text-gray-300 dark:hover:bg-gray-800",
       className,
     )}
     {...props}
@@ -45,17 +49,43 @@ const PaginationLink = ({ className, isActive, size = "icon", ...props }: Pagina
 );
 PaginationLink.displayName = "PaginationLink";
 
-const PaginationPrevious = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to previous page" size="default" className={cn("gap-1 pl-2.5", className)} {...props}>
+const PaginationPrevious = ({
+  className,
+  disabled,
+  ...props
+}: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
+  <PaginationLink
+    aria-label="Go to previous page"
+    size="default"
+    className={cn(
+      "gap-1 pl-2.5",
+      className,
+      disabled ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer",
+    )}
+    {...props}
+  >
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
+    <span className="hidden sm:inline">Previous</span>
   </PaginationLink>
 );
 PaginationPrevious.displayName = "PaginationPrevious";
 
-const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to next page" size="default" className={cn("gap-1 pr-2.5", className)} {...props}>
-    <span>Next</span>
+const PaginationNext = ({
+  className,
+  disabled,
+  ...props
+}: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
+  <PaginationLink
+    aria-label="Go to next page"
+    size="default"
+    className={cn(
+      "gap-1 pr-2.5",
+      className,
+      disabled ? "pointer-events-none cursor-not-allowed opacity-50" : "cursor-pointer",
+    )}
+    {...props}
+  >
+    <span className="hidden sm:inline">Next</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
 );

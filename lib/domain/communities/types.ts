@@ -1,10 +1,11 @@
 import { Address } from "@/types/common";
-import { Group } from "@lens-protocol/client";
+import { Feed, Group } from "@lens-protocol/client";
 
 export interface Community {
   id: string;
   name: string;
   group: Group;
+  feed: Feed;
   moderators: Moderator[];
   postCount?: number;
   memberCount: number;
@@ -19,9 +20,3 @@ export interface Moderator {
   picture?: string;
   displayName: string;
 }
-
-export type ForumStats = {
-  members: number;
-  threads: number;
-  communities: number;
-};

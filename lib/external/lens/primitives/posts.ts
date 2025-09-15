@@ -1,8 +1,16 @@
 import { client } from "@/lib/external/lens/protocol-client";
 import { APP_ADDRESS } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
-import type { AnyPost, Post as LensPost, Post, PostId, PublicClient, SessionClient } from "@lens-protocol/client";
-import { PostReferenceType, ReferenceRelevancyFilter, evmAddress } from "@lens-protocol/client";
+import type {
+  AnyPost,
+  Post as LensPost,
+  Post,
+  PostId,
+  PostsRequest,
+  PublicClient,
+  SessionClient,
+} from "@lens-protocol/client";
+import { PageSize, PostReferenceType, PostType, evmAddress } from "@lens-protocol/client";
 import { fetchPost, fetchPostReferences, fetchPosts } from "@lens-protocol/client/actions";
 
 export interface PaginatedPostsResult {
@@ -34,16 +42,20 @@ export async function fetchPostsBatch(postIds: string[], sessionClient?: Session
 }
 
 /**
- * Fetch posts for a thread with pagination
+ * Fetch posts for a thread with cursor-based pagination
  */
 export async function fetchPostsByFeed(
   threadAddress: string,
   sessionClient?: SessionClient,
+  options?: { sort?: "asc" | "desc"; limit?: number; cursor?: string },
 ): Promise<PaginatedPostsResult> {
-  const params: any = {
+  const params: PostsRequest = {
     filter: {
       feeds: [{ feed: evmAddress(threadAddress) }],
+      postTypes: [PostType.Root],
     },
+    pageSize: PageSize.Ten,
+    cursor: options?.cursor,
   };
 
   const lensClient = sessionClient ?? client;
@@ -59,26 +71,31 @@ export async function fetchPostsByFeed(
     (item: any) => item && item.__typename === "Post" && item.author && item.author.address,
   ) as LensPost[];
 
+  const sortOrder = options?.sort ?? "asc";
   const sortedPosts = validPosts.toSorted((a, b) => {
     const aTime = a.timestamp ? new Date(a.timestamp).getTime() : 0;
     const bTime = b.timestamp ? new Date(b.timestamp).getTime() : 0;
-    return aTime - bTime;
+    return sortOrder === "desc" ? bTime - aTime : aTime - bTime;
   });
 
   return {
     posts: sortedPosts,
-    pageInfo: result.value.pageInfo,
+    pageInfo: {
+      next: result.value.pageInfo?.next ?? null,
+      prev: result.value.pageInfo?.prev ?? null,
+    },
   };
 }
 
 /**
  * Fetch all posts for a thread (non-paginated)
  */
-export async function fetchCommentsByPostId(postId: PostId): Promise<LensPost[]> {
-  const result = await fetchPostReferences(client, {
+export async function fetchCommentsByPostId(postId: PostId, sessionClient?: SessionClient): Promise<LensPost[]> {
+  const lensClient = sessionClient ?? client;
+  const result = await fetchPostReferences(lensClient, {
     referencedPost: postId,
     referenceTypes: [PostReferenceType.CommentOn],
-    relevancyFilter: ReferenceRelevancyFilter.Relevant,
+    // relevancyFilter: ReferenceRelevancyFilter.Relevant,
   });
 
   if (!result.isOk() || !result.value.items) return [];

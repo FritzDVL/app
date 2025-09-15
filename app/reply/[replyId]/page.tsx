@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { ProtectedRoute } from "@/components/pages/protected-route";
 import { ReplySharedCard } from "@/components/reply/reply-shared-card";
-import { Card, CardContent } from "@/components/ui/card";
+import { StatusBanner } from "@/components/shared/status-banner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useReply } from "@/hooks/queries/use-reply";
 
@@ -28,14 +28,11 @@ export default function ReplyPage() {
     return (
       <ProtectedRoute>
         <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
-          <Card className="rounded-lg bg-white shadow-sm dark:border-gray-700/60 dark:bg-gray-800">
-            <CardContent className="p-8 text-center">
-              <h1 className="mb-2 text-xl font-semibold text-foreground">Reply Not Found</h1>
-              <p className="text-muted-foreground">
-                The reply you&apos;re looking for doesn&apos;t exist or has been removed.
-              </p>
-            </CardContent>
-          </Card>
+          <StatusBanner
+            type="info"
+            title="Reply Not Found"
+            message="The reply you're looking for doesn't exist or has been removed."
+          />
         </div>
       </ProtectedRoute>
     );

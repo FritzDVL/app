@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { CursorPagination } from "@/components/shared/cursor-pagination";
+import { Pagination } from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { useCommunityMembershipManagement } from "@/hooks/communities/use-community-membership-management";
 import { Community } from "@/lib/domain/communities/types";
@@ -93,7 +93,7 @@ export function CommunityMembershipRequests({ community }: CommunityMembershipRe
         </div>
       )}
 
-      <CursorPagination
+      <Pagination
         hasPrev={!!(pageInfo && pageInfo.prev)}
         hasNext={!!(pageInfo && pageInfo.next)}
         loading={loading}

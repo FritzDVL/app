@@ -8,6 +8,7 @@ interface ThreadEditPageProps {
 
 export default async function ThreadEditPage({ params }: ThreadEditPageProps) {
   const thread = await getThread(params.address);
+
   if (thread.error || !thread.thread) {
     return (
       <div className="flex h-32 items-center justify-center">

@@ -12,11 +12,15 @@ export function adaptGroupToCommunity(
   moderators: Moderator[],
 ): Community {
   const createdAt = group.timestamp ? new Date(group.timestamp).toISOString() : new Date().toISOString();
+  if (!group.feed) {
+    throw new Error("Group feed is missing");
+  }
 
   return {
     id: dbCommunity.id,
     name: dbCommunity.name || group.metadata?.name || "",
     group,
+    feed: group.feed,
     moderators,
     memberCount: groupStats.totalMembers || 0,
     threadsCount: dbCommunity.threads_count || 0,

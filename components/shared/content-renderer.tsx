@@ -1,10 +1,12 @@
 import React from "react";
+import Image from "next/image";
 import Mention from "@/components/editor/mention";
+import { MediaImage, MediaVideo } from "@lens-protocol/client";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 
 interface ContentRendererProps {
-  content: string;
+  content: { content: string; image?: MediaImage; video?: MediaVideo };
   className?: string;
 }
 
@@ -48,8 +50,32 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
           p: ({ children }) => renderParagraphWithMentions(children),
         }}
       >
-        {content}
+        {content.content}
       </ReactMarkdown>
+
+      {/* Render image if present */}
+      {content.image && (
+        <div className="mt-4 flex justify-center">
+          <Image
+            src={content.image.item}
+            alt={content.image.altTag || "Content image"}
+            className="max-h-96 rounded-xl border bg-gray-50 object-contain dark:bg-gray-900"
+            width={content.image.width || 500}
+            height={content.image.height || 300}
+          />
+        </div>
+      )}
+
+      {/* Render video if present */}
+      {content.video && (
+        <div className="mt-4 flex justify-center">
+          <video
+            src={content.video.item}
+            controls
+            className="max-h-96 rounded-xl border bg-gray-50 object-contain dark:bg-gray-900"
+          />
+        </div>
+      )}
     </div>
   );
 }
