@@ -53,6 +53,7 @@ export function useThreadCreation() {
       throw error;
     } finally {
       setIsCreating(false);
+      toast.dismiss(loadingToastId);
     }
   };
 

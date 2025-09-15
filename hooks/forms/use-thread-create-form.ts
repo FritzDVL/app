@@ -64,12 +64,12 @@ export function useThreadCreateForm({ community, author }: UseThreadCreateFormPr
       toast.error("Validation Error", { description: firstError.message });
       return;
     }
+    const loadingToast = toast.loading("Creating thread...", { description: "Your thread is being created." });
     try {
       setIsCreating(true);
-      toast.loading("Creating thread...", { description: "Your thread is being created." });
       await createThreadService(community, formDataToUse, sessionClient.data, walletClient.data!);
       setIsCreating(false);
-      toast.success("Thread created!", { description: "Your thread was successfully created." });
+      toast.success("Thread created!", { description: "Your thread was successfully created.", id: loadingToast });
       // Reset form after successful submission
       setFormData({ title: "", summary: "", content: "", tags: "", author: account.address });
       setTags([]);
@@ -77,7 +77,10 @@ export function useThreadCreateForm({ community, author }: UseThreadCreateFormPr
       router.push(`/communities/${community.group.address}`);
     } catch (error) {
       setIsCreating(false);
-      toast.error("Failed to create thread", { description: "An error occurred while creating your thread." });
+      toast.error("Failed to create thread", {
+        description: "An error occurred while creating your thread.",
+        id: loadingToast,
+      });
       console.error("Error in handleSubmit:", error);
     }
   };
