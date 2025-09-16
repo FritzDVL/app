@@ -1,4 +1,4 @@
-import { revalidateCommunityAndListPaths } from "@/app/actions/revalidate-path";
+import { revalidateCommunityAndListPaths, revalidateHomePath } from "@/app/actions/revalidate-path";
 import { adaptFeedToThread } from "@/lib/adapters/thread-adapter";
 import { Community } from "@/lib/domain/communities/types";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
@@ -75,6 +75,7 @@ export async function createThread(
 
     // 5. Revalidate paths
     await revalidateCommunityAndListPaths(community.group.address);
+    await revalidateHomePath();
 
     return {
       success: true,
