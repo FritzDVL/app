@@ -13,34 +13,43 @@ export function ThreadListItem({ thread }: { thread: Thread }) {
   const community = communityResult?.community;
 
   return (
-    <div className="group w-full min-w-0 cursor-pointer rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg sm:p-6">
+    <Link
+      href={`/thread/${thread.rootPost.id}`}
+      className="group block w-full min-w-0 cursor-pointer rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:p-6"
+      tabIndex={0}
+      aria-label={title}
+    >
       <div className="flex w-full min-w-0 flex-col gap-4 sm:flex-row sm:gap-4">
         <div className="w-full min-w-0 flex-1 space-y-4">
           {/* Top row: title + community, author at right */}
           <div className="flex w-full items-start justify-between gap-2">
             {/* Title + community */}
-            <div className="min-w-0 flex-1">
-              <Link href={`/thread/${thread.rootPost.id}`} className="flex min-w-0 items-center gap-2">
-                <h3 className="line-clamp-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
-                  {title}
-                </h3>
-                {/* Minimalist community info next to title */}
-                {community && (
-                  <Link
-                    href={`/communities/${community.group.address}`}
-                    className="ml-2 inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-0.5 text-xs font-semibold text-brand-700 shadow-sm transition-colors hover:bg-brand-100 hover:text-brand-800 dark:border-brand-700/40 dark:bg-brand-900/30 dark:text-brand-300 dark:hover:bg-brand-900/60"
-                    style={{ lineHeight: "1.5" }}
-                  >
-                    {community.name}
-                  </Link>
-                )}
-              </Link>
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              <h3 className="line-clamp-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
+                {title}
+              </h3>
+              {/* Minimalist community info next to title */}
+              {community && (
+                <Link
+                  href={`/communities/${community.group.address}`}
+                  className="ml-2 inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-0.5 text-xs font-semibold text-brand-700 shadow-sm transition-colors hover:bg-brand-100 hover:text-brand-800 dark:border-brand-700/40 dark:bg-brand-900/30 dark:text-brand-300 dark:hover:bg-brand-900/60"
+                  style={{ lineHeight: "1.5" }}
+                  onClick={e => e.stopPropagation()}
+                  tabIndex={0}
+                  aria-label={community.name}
+                >
+                  {community.name}
+                </Link>
+              )}
             </div>
             {/* Author info top right */}
             <div className="ml-4 flex items-center gap-2">
               <Link
                 href={`/u/${thread.author.username?.localName}`}
                 className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                onClick={e => e.stopPropagation()}
+                tabIndex={0}
+                aria-label={thread.author.username?.localName}
               >
                 <Avatar className="h-6 w-6 shadow-sm">
                   <AvatarImage src={thread.author.metadata?.picture || undefined} />
@@ -72,6 +81,6 @@ export function ThreadListItem({ thread }: { thread: Thread }) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
