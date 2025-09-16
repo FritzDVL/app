@@ -39,27 +39,20 @@ export function Thread({ community, thread }: ThreadProps) {
   };
 
   return (
-    <>
-      <div className="mx-auto max-w-7xl space-y-8 px-4 py-8">
-        {/* ThreadActions in a row */}
-        <div className="mb-4 flex items-center justify-between">
+    <div className="mx-auto max-w-7xl px-4 py-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        <div className="lg:col-span-3">
+          {!isMember && !isLoading && (
+            <JoinCommunityAnnouncement isLoading={isJoinLoading} onJoinCommunity={handleJoin} />
+          )}
           <ThreadActions thread={thread} />
+          <ThreadCard thread={thread} community={community} />
+          <ThreadRepliesList thread={thread} community={community} />
         </div>
-
-        {/* ThreadCard and ThreadSidebar in the same row */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-          <div className="lg:col-span-3">
-            {!isMember && !isLoading && (
-              <JoinCommunityAnnouncement isLoading={isJoinLoading} onJoinCommunity={handleJoin} />
-            )}
-            <ThreadCard thread={thread} community={community} />
-            <ThreadRepliesList thread={thread} community={community} />
-          </div>
-          <div className="hidden lg:block">
-            <ThreadSidebar community={community} />
-          </div>
+        <div className="hidden lg:block lg:pt-[54px]">
+          <ThreadSidebar community={community} />
         </div>
       </div>
-    </>
+    </div>
   );
 }

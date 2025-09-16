@@ -53,9 +53,8 @@ export async function updateThread(
     if (!result.success) {
       return { success: false, error: result.error };
     }
-    console.log(thread.id, updateData.title, updateData.summary);
     // Update thread in Supabase with new title, summary, and postId if needed
-    await updateThreadDb(thread.id, updateData.title, updateData.summary);
+    await updateThreadDb(thread.rootPost.id, updateData.title, updateData.summary);
 
     return { success: true };
   } catch (error) {
