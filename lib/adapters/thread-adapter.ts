@@ -1,5 +1,6 @@
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
+import { Address } from "@/types/common";
 import { CommunityThreadSupabase } from "@/types/supabase";
 import { Account, Post } from "@lens-protocol/client";
 
@@ -12,7 +13,7 @@ export const adaptFeedToThread = async (
 
   return {
     id: threadDb.id,
-    community: rootPost.feed.group?.address,
+    community: threadDb.community.lens_group_address as Address,
     rootPost,
     author: rootPost.author,
     repliesCount: rootPost.stats.comments || 0,
