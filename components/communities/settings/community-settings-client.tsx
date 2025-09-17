@@ -7,6 +7,7 @@ import { CommunityEditForm } from "@/components/communities/settings/community-e
 import { CommunitySettingsTabPanel } from "@/components/communities/settings/community-settings-tab-panel";
 import { CommunityMembersManager } from "@/components/communities/settings/members/community-members-manager";
 import { CommunityModeratorsManager } from "@/components/communities/settings/moderators/community-moderators-manager";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useIsModerator } from "@/hooks/communities/use-is-moderator";
 import { Community } from "@/lib/domain/communities/types";
 import { BookOpen, Settings, Sword, Users } from "lucide-react";
@@ -17,9 +18,17 @@ interface CommunitySettingsClientProps {
 
 export function CommunitySettingsClient({ community }: CommunitySettingsClientProps) {
   const [activeTab, setActiveTab] = useState<"general" | "moderators" | "members" | "rules">("general");
-  const isModerator = useIsModerator(community);
+  const { isModerator, isLoading } = useIsModerator(community);
 
-  if (!isModerator) {
+  if (isLoading) {
+    return (
+      <div className="flex w-full justify-center py-12">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (!isModerator && !isLoading) {
     return <CommunityAccessDenied />;
   }
 

@@ -8,7 +8,8 @@ import { Community } from "@/lib/domain/communities/types";
 import { Edit } from "lucide-react";
 
 export function CommunityNavActions({ community }: { community: Community }) {
-  const isModerator = useIsModerator(community);
+  const { isModerator } = useIsModerator(community);
+
   return (
     <div className="mx-auto mb-4 flex max-w-7xl items-center justify-between px-4">
       <BackNavigationLink href="/communities">Back to Communities</BackNavigationLink>
