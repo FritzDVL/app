@@ -18,6 +18,7 @@ import { Thread } from "@/lib/domain/threads/types";
 import { getRepliesByParentId } from "@/lib/services/reply/get-replies-by-parent-id";
 import { getTimeAgo } from "@/lib/shared/utils";
 import { postId, useSessionClient } from "@lens-protocol/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
 
 interface ThreadReplyCardProps {
@@ -37,6 +38,7 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
   const [replies, setReplies] = useState<Reply[]>([]);
   const [repliesError, setRepliesError] = useState<string | null>(null);
   const [localReplyCount, setLocalReplyCount] = useState(reply.post.stats.comments);
+  const [showPlusOne, setShowPlusOne] = useState(false);
 
   useEffect(() => {
     setLocalReplyCount(reply.post.stats.comments);
@@ -52,6 +54,7 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
       setReplyContent("");
       setShowReplyBox(false);
       setLocalReplyCount(c => c + 1);
+      setShowPlusOne(true);
     } finally {
     }
   };
@@ -76,6 +79,13 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
       setLoadingReplies(false);
     }
   };
+
+  useEffect(() => {
+    if (showPlusOne) {
+      const timeout = setTimeout(() => setShowPlusOne(false), 900);
+      return () => clearTimeout(timeout);
+    }
+  }, [showPlusOne]);
 
   const canReply = reply.post.operations?.canComment.__typename === "PostOperationValidationPassed";
   const canTip = reply.post.operations?.canTip;
@@ -117,7 +127,21 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
               <ContentRenderer content={{ content, image, video }} className="rich-text-content mb-2" />
               {/* Reply button and tip button bottom */}
               <div className="mt-3 flex flex-row items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
+                <div className="relative flex items-center gap-2">
+                  <AnimatePresence>
+                    {showPlusOne && (
+                      <motion.span
+                        initial={{ opacity: 0, y: -16, scale: 0.8 }}
+                        animate={{ opacity: 1, y: 0, scale: 1.1 }}
+                        exit={{ opacity: 0, y: 24, scale: 0.8 }}
+                        transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+                        className="pointer-events-none absolute -top-4 left-1/2 -translate-x-1/2 text-xs font-bold text-green-500"
+                        style={{ zIndex: 10 }}
+                      >
+                        +1
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                   {localReplyCount > 0 && (
                     <Button
                       variant="ghost"
