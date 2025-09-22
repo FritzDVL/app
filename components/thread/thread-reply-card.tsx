@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ReplyVoting } from "../reply/reply-voting";
 import { ThreadReplyBox } from "./thread-reply-box";
@@ -36,6 +36,11 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
   const [showReplies, setShowReplies] = useState(false);
   const [replies, setReplies] = useState<Reply[]>([]);
   const [repliesError, setRepliesError] = useState<string | null>(null);
+  const [localReplyCount, setLocalReplyCount] = useState(reply.post.stats.comments);
+
+  useEffect(() => {
+    setLocalReplyCount(reply.post.stats.comments);
+  }, [reply.post.stats.comments]);
 
   const { createReply } = useReplyCreate();
   const sessionClient = useSessionClient();
@@ -46,6 +51,7 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
       await createReply(reply.id, replyContent, threadAddress, thread.id);
       setReplyContent("");
       setShowReplyBox(false);
+      setLocalReplyCount(c => c + 1);
     } finally {
     }
   };
@@ -112,7 +118,7 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
               {/* Reply button and tip button bottom */}
               <div className="mt-3 flex flex-row items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  {reply.post.stats.comments > 0 && (
+                  {localReplyCount > 0 && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -123,7 +129,7 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
                       <MessageCircle className="mr-1 h-3 w-3" />
                       {loadingReplies
                         ? "Loading..."
-                        : `${reply.post.stats.comments} ${reply.post.stats.comments === 1 ? "reply" : "replies"}`}
+                        : `${localReplyCount} ${localReplyCount === 1 ? "reply" : "replies"}`}
                     </Button>
                   )}
                 </div>
