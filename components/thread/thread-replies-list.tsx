@@ -23,7 +23,7 @@ export function ThreadRepliesList({ thread, community }: ThreadRepliesListProps)
   }
 
   return (
-    <div className="space-y-4">
+    <div className="mt-6 space-y-4">
       <h3 className="text-xl font-bold text-foreground">{replies.length} Replies</h3>
       {replies.map(reply => (
         <ThreadReplyCard key={reply.id} reply={reply} thread={thread} community={community} />
