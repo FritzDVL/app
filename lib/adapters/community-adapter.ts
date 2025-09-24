@@ -1,4 +1,5 @@
 import { Community, Moderator } from "@/lib/domain/communities/types";
+import { ADMIN_USER_ADDRESS, LENS_CONTRACT_GROUP_MANAGER } from "@/lib/shared/constants";
 import { CommunitySupabase } from "@/types/supabase";
 import { Group, GroupStatsResponse } from "@lens-protocol/client";
 
@@ -21,7 +22,9 @@ export function adaptGroupToCommunity(
     name: dbCommunity.name || group.metadata?.name || "",
     group,
     feed: group.feed,
-    moderators,
+    moderators: moderators.filter(
+      mod => mod.address !== ADMIN_USER_ADDRESS && mod.address !== LENS_CONTRACT_GROUP_MANAGER,
+    ),
     memberCount: groupStats.totalMembers || 0,
     threadsCount: dbCommunity.threads_count || 0,
     isVisible: dbCommunity.visible,
