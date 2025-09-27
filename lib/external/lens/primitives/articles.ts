@@ -131,7 +131,7 @@ export async function updateThreadArticle(
 ): Promise<ArticleUpdateResult> {
   try {
     // 1. Format content with thread prefix
-    const threadUrl = `https://lensforum.xyz/thread/${updateData.feedAddress}`;
+    const threadUrl = `https://lensforum.xyz/thread/${updateData.postId}`;
     const formattedContent = formatThreadArticleContent(
       updateData.content,
       threadUrl,
