@@ -23,7 +23,7 @@ export function CommunityThreadCard({ thread }: CommunityThreadCardProps) {
       key={thread.id}
       className={`group w-full min-w-0 cursor-pointer rounded-2xl border bg-white transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg dark:bg-gray-800 ${thread.rootPost.app && thread.rootPost.app.metadata?.name !== APP_NAME ? "bg-orange-50 dark:bg-orange-900/10" : ""}`}
       onClick={() => {
-        router.push(`/thread/${thread.rootPost.id}`);
+        router.push(`/thread/${thread.slug}`);
       }}
     >
       <CardContent className="p-4 sm:p-6">

@@ -21,6 +21,7 @@ export const adaptFeedToThread = async (
     created_at: threadDb.created_at,
     title,
     summary,
+    slug: threadDb.slug,
     updatedAt: threadDb.updated_at,
   };
 };
@@ -39,5 +40,6 @@ export const adaptExternalFeedToThread = (rootPost: Post): Thread => {
     summary,
     updatedAt: rootPost.timestamp ? new Date(rootPost.timestamp).toISOString() : new Date().toISOString(),
     app: rootPost.app?.metadata?.name || "Other app",
+    slug: rootPost.slug,
   };
 };
