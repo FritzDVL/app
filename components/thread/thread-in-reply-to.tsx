@@ -112,7 +112,7 @@ export function ThreadInReplyTo({ parentId, rootPostId }: ThreadInReplyToProps) 
                   </div>
                   <div
                     className="rich-text-content text-gray-700 dark:text-gray-300"
-                    dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(ctxContent) }}
+                    dangerouslySetInnerHTML={{ __html: removeTrailingEmptyPTags(ctxContent.content) }}
                   />
                 </div>
               </div>

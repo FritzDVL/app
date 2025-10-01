@@ -1,12 +1,13 @@
 import { fragments } from "@/fragments";
 import { Env, getCurrentEnv } from "@/lib/env";
+import { APP_URL } from "@/lib/shared/constants";
 import { PublicClient, mainnet, testnet } from "@lens-protocol/client";
 
 const storage = typeof window !== "undefined" ? window.localStorage : undefined;
 
 const lensMainnetClient = PublicClient.create({
   environment: mainnet,
-  origin: "https://lensforum.xyz/",
+  origin: `${APP_URL}/`,
   storage,
   fragments,
 });

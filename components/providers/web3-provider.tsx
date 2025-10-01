@@ -3,6 +3,7 @@
 import { ConnectProvider } from "@/components/providers/connect-provider";
 import { Env, getCurrentEnv } from "@/lib/env";
 import { client } from "@/lib/external/lens/protocol-client";
+import { APP_URL } from "@/lib/shared/constants";
 import { chains } from "@lens-chain/sdk/viem";
 import { LensProvider } from "@lens-protocol/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -35,8 +36,8 @@ const config = createConfig(
     appName: "LensForum",
 
     // Optional app information
-    appUrl: "https://lensforum.xyz/",
-    appIcon: "https://lensforum.xyz/logo.png",
+    appUrl: `${APP_URL}/`,
+    appIcon: `${APP_URL}/logo.png`,
   }),
 );
 

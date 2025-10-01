@@ -58,7 +58,7 @@ export function MentionNotificationItem({ notification }: { notification: Mentio
           {postContent && (
             <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 dark:border-gray-700 dark:bg-gray-800/30">
               <ContentRenderer
-                content={postContent.length > 150 ? postContent.slice(0, 150) + "..." : postContent}
+                content={{ content: postContent.length > 150 ? postContent.slice(0, 150) + "..." : postContent }}
                 className="text-sm leading-relaxed text-gray-700 dark:text-gray-300"
               />
             </div>

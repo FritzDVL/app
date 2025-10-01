@@ -30,7 +30,7 @@ export function ThreadSimpleMainCard({ thread }: { thread: Thread }) {
               {getThreadContent(thread) && (
                 <div className="line-clamp-3 text-sm text-muted-foreground">
                   <ContentRenderer
-                    content={stripThreadArticleFormatting(getThreadContent(thread))}
+                    content={{ content: stripThreadArticleFormatting(getThreadContent(thread)) }}
                     className="text-sm"
                   />
                 </div>

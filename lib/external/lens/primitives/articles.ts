@@ -2,6 +2,7 @@ import { formatThreadArticleContent } from "@/lib/domain/threads/content";
 import { storageClient } from "@/lib/external/grove/client";
 import { lensChain } from "@/lib/external/lens/chain";
 import { client } from "@/lib/external/lens/protocol-client";
+import { APP_URL } from "@/lib/shared/constants";
 import { immutable } from "@lens-chain/storage-client";
 import { Post, type SessionClient, evmAddress, uri } from "@lens-protocol/client";
 import { postId } from "@lens-protocol/client";
@@ -61,7 +62,7 @@ export async function createThreadArticle(
     attributes.push({ key: "subtitle", type: MetadataAttributeType.STRING, value: articleData.summary });
 
     // 2. Add thread content prefix with URL, title and summary
-    const threadUrl = `https://lensforum.xyz/thread/${articleData.slug}`;
+    const threadUrl = `${APP_URL}/thread/${articleData.slug}`;
     const contentWithPrefix = formatThreadArticleContent(
       articleData.content,
       threadUrl,
@@ -132,7 +133,7 @@ export async function updateThreadArticle(
 ): Promise<ArticleUpdateResult> {
   try {
     // 1. Format content with thread prefix
-    const threadUrl = `https://lensforum.xyz/thread/${updateData.postId}`;
+    const threadUrl = `${APP_URL}/thread/${updateData.postId}`;
     const formattedContent = formatThreadArticleContent(
       updateData.content,
       threadUrl,

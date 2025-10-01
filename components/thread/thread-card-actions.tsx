@@ -11,6 +11,7 @@ import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { Community } from "@/lib/domain/communities/types";
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
+import { APP_URL } from "@/lib/shared/constants";
 import { useAuthStore } from "@/stores/auth-store";
 import { fetchPost } from "@lens-protocol/client/actions";
 import { Post, postId, useSessionClient } from "@lens-protocol/react";
@@ -81,13 +82,13 @@ export function ThreadCardActions({ thread, community }: ThreadCardActionsProps)
     if (!thread) return;
 
     const { title } = getThreadTitleAndSummary(thread.rootPost);
-    const url = `https://lensforum.xyz/thread/${thread.rootPost.slug}`;
+    const url = `${APP_URL}/thread/${thread.rootPost.slug}`;
 
     const shareText = `Check out this thread on LensForum: "${title}"\n\n`;
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
 
-  const threadUrl = `https://lensforum.xyz/thread/${thread.rootPost.slug}`;
+  const threadUrl = `${APP_URL}/thread/${thread.rootPost.slug}`;
 
   return (
     <div>

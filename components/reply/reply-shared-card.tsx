@@ -4,11 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getReplyContent } from "@/lib/domain/replies/content";
 import { getThreadContent } from "@/lib/domain/threads/content";
 import { getTimeAgo } from "@/lib/shared/utils";
-import { Post } from "@lens-protocol/client";
+import { MediaImage, MediaVideo, Post } from "@lens-protocol/client";
 
 export function ReplySharedCard({ reply }: { reply: Post }) {
   const author = reply.author;
-  let content;
+  let content: { content: string; image?: MediaImage; video?: MediaVideo };
   switch (reply.metadata.__typename) {
     case "TextOnlyMetadata":
       content = getReplyContent(reply);
@@ -17,7 +17,7 @@ export function ReplySharedCard({ reply }: { reply: Post }) {
       content = getThreadContent(reply);
       break;
     default:
-      content = "";
+      content = { content: "" };
       break;
   }
   return (

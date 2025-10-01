@@ -62,7 +62,7 @@ export function ReplyNotificationItem({ notification }: { notification: CommentN
           {content && (
             <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 dark:border-gray-700 dark:bg-gray-800/30">
               <ContentRenderer
-                content={content.length > 150 ? content.slice(0, 150) + "..." : content}
+                content={{ content: content.length > 150 ? content.slice(0, 150) + "..." : content }}
                 className="text-sm leading-relaxed text-gray-700 dark:text-gray-300"
               />
             </div>

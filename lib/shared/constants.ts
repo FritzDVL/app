@@ -13,6 +13,10 @@ const TESTNET_BASE_FEED_ADDRESS: Address = "0x039dB35DC617b083ade172BCA13B957167
 const TESTNET_ADMIN_USER_ADDRESS: Address = "0xaa4C60b784E2b3E485035399bF1b1aBDeD66A60f";
 const TESTNET_LENS_CONTRACT_GROUP_MANAGER_ADDRESS: Address = "0xd12E1aD028d550F85F2a8d9130C46dB77A6A0a41";
 
+// URLs
+const MAINNET_APP_URL = "https://lensforum.xyz";
+const TESTNET_APP_URL = "https://testnet.lensforum.xyz";
+
 const env = getCurrentEnv();
 const isTestnet = env === Env.TESTNET;
 
@@ -22,6 +26,8 @@ export const ADMIN_USER_ADDRESS: Address = isTestnet ? TESTNET_ADMIN_USER_ADDRES
 export const LENS_CONTRACT_GROUP_MANAGER: Address = isTestnet
   ? TESTNET_LENS_CONTRACT_GROUP_MANAGER_ADDRESS
   : MAINNET_LENS_CONTRACT_GROUP_MANAGER_ADDRESS;
+
+export const APP_URL = isTestnet ? TESTNET_APP_URL : MAINNET_APP_URL;
 
 // Common URLs
 export const HEY_URL = "https://hey.xyz/";

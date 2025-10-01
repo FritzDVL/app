@@ -42,7 +42,7 @@ export function ProfileRecentActivity({ replies }: ProfileRecentActivityProps) {
             <div className="space-y-3">
               <div className="text-foreground">
                 <div className="mb-1 font-medium text-slate-500">{getActivityMessage(reply)}</div>
-                <ContentRenderer className="rich-text-content" content={getActivityContent(reply)} />
+                <ContentRenderer className="rich-text-content" content={{ content: getActivityContent(reply) }} />
               </div>
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-4 text-slate-500">
