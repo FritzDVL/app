@@ -11,41 +11,40 @@ export const formatThreadArticleContent = (
   title?: string,
   summary?: string,
 ): string => {
+  const prefixSection = `${THREAD_CONTENT_PREFIX}${threadUrl}\n\n`;
   const titleSection = title ? `# **${title}**\n\n` : "";
   const summarySection = summary ? `*${summary}*\n\n` : "";
-  const prefixSection = `${THREAD_CONTENT_PREFIX}${threadUrl}\n\n`;
   return `${prefixSection}${titleSection}${summarySection}${content}`;
 };
 
 export const stripThreadArticleFormatting = (content: string): string => {
   let result = content;
 
-  // Step 1: Remove the prefix line
+  // Step 1: Remove the prefix line (LensForum Thread: URL)
   const escapedUrl = APP_URL.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
   const prefixRegex = new RegExp(
-    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}${escapedUrl}/thread/[\\w\\d-]+\\s*\\n+`,
+    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}${escapedUrl}/thread/[\\w\\d-]+\\n\\n`,
   );
   result = result.replace(prefixRegex, "");
 
-  // Step 2: Remove H1 bold title if present
-  const titleRegex = /^# \*\*.*?\*\*\s*\n+/;
+  // Step 2: Remove H1 bold title if present (# **title**)
+  const titleRegex = /^# \*\*.*?\*\*\n\n/;
   result = result.replace(titleRegex, "");
 
-  // Step 3: Remove italic summary if present
-  const summaryRegex = /^\*.*?\*\s*\n+/;
+  // Step 3: Remove italic summary if present (*summary*)
+  const summaryRegex = /^\*.*?\*\n\n/;
   result = result.replace(summaryRegex, "");
 
-  return result;
+  // Only trim leading whitespace, preserve trailing and internal blank lines
+  return result.replace(/^\s+/, "");
 };
 
 export const stripThreadPrefixOnly = (content: string): string => {
-  let result = content;
   const escapedUrl = APP_URL.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
   const prefixRegex = new RegExp(
-    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}${escapedUrl}/thread/[\\w\\d-]+\\s*\\n+`,
+    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}${escapedUrl}/thread/[\\w\\d-]+\\n\\n`,
   );
-  result = result.replace(prefixRegex, "");
-  return result;
+  return content.replace(prefixRegex, "");
 };
 
 export const hasThreadContentPrefix = (content: string): boolean => {
