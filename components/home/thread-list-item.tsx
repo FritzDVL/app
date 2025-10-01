@@ -14,7 +14,7 @@ export function ThreadListItem({ thread }: { thread: Thread }) {
 
   return (
     <Link
-      href={`/thread/${thread.rootPost.id}`}
+      href={`/thread/${thread.slug}`}
       className="group block w-full min-w-0 cursor-pointer rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:p-6"
       tabIndex={0}
       aria-label={title}
