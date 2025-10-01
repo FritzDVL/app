@@ -51,7 +51,7 @@ export function ThreadEditForm({ thread }: ThreadEditFormProps) {
 
   return (
     <>
-      <BackNavigationLink href={`/thread/${thread.rootPost.id}`}>Back to Thread</BackNavigationLink>
+      <BackNavigationLink href={`/thread/${thread.slug}`}>Back to Thread</BackNavigationLink>
       <Card className="rounded-3xl bg-white backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
