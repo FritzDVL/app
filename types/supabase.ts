@@ -290,7 +290,7 @@ export interface CommunityThreadSupabase {
   lens_feed_address: string;
   title: string;
   summary: string;
-  root_post_id: string | null;
+  root_post_id: string;
   author: string;
   created_at: string;
   updated_at: string;

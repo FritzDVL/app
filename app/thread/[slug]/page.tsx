@@ -2,14 +2,14 @@ import { ProtectedRoute } from "@/components/pages/protected-route";
 import { Thread } from "@/components/thread/thread";
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { getCommunity } from "@/lib/services/community/get-community";
-import { getThread } from "@/lib/services/thread/get-thread";
+import { getThreadBySlug } from "@/lib/services/thread/get-thread";
 import { Address } from "@/types/common";
 
 const MAX_TITLE_LENGTH = 70;
 const MAX_DESCRIPTION_LENGTH = 160;
 
-export async function generateMetadata({ params }: { params: { address: string } }) {
-  const thread = await getThread(params.address);
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const thread = await getThreadBySlug(params.slug);
   if (thread.error || !thread.thread) {
     return {
       title: "Thread on LensForum",
@@ -60,10 +60,10 @@ export async function generateMetadata({ params }: { params: { address: string }
 }
 
 // Server Component
-export default async function ThreadPage({ params }: { params: { address: string } }) {
-  const threadAddress = params.address as Address;
+export default async function ThreadPage({ params }: { params: { slug: string } }) {
+  const slug = params.slug as Address;
 
-  const thread = await getThread(threadAddress);
+  const thread = await getThreadBySlug(slug);
 
   if (thread.error) {
     return (

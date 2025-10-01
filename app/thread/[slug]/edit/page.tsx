@@ -1,13 +1,13 @@
 import React from "react";
 import { ThreadEditForm } from "@/components/thread/edit/thread-edit-form";
-import { getThread } from "@/lib/services/thread/get-thread";
+import { getThreadBySlug } from "@/lib/services/thread/get-thread";
 
 interface ThreadEditPageProps {
-  params: { address: string };
+  params: { slug: string };
 }
 
 export default async function ThreadEditPage({ params }: ThreadEditPageProps) {
-  const thread = await getThread(params.address);
+  const thread = await getThreadBySlug(params.slug);
 
   if (thread.error || !thread.thread) {
     return (

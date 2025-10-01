@@ -114,9 +114,11 @@ export async function fetchCommunityThreads(
 export async function fetchThread({
   id,
   rootPostId,
+  slug,
 }: {
   id?: string;
   rootPostId?: string;
+  slug?: string;
 }): Promise<CommunityThreadSupabase | null> {
   const supabase = await supabaseClient();
 
@@ -127,6 +129,9 @@ export async function fetchThread({
   }
   if (rootPostId) {
     query = query.eq("root_post_id", rootPostId);
+  }
+  if (slug) {
+    query = query.eq("slug", slug);
   }
 
   const { data: thread, error } = await query.single();
