@@ -23,8 +23,10 @@ export async function createThread(
   walletClient: WalletClient,
 ): Promise<CreateThreadResult> {
   try {
-    // 1. Create the root post for the thread using article primitive
-    const slug = generateThreadSlug(formData.title);
+    // 1. Generate unique slug for the thread
+    const slug = await generateThreadSlug(formData.title);
+
+    // 2. Create the root post for the thread using article primitive
     const articleFormData = {
       title: formData.title,
       content: formData.content,
