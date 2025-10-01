@@ -15,7 +15,7 @@ const TESTNET_LENS_CONTRACT_GROUP_MANAGER_ADDRESS: Address = "0xd12E1aD028d550F8
 
 // URLs
 const MAINNET_APP_URL = "https://lensforum.xyz";
-const TESTNET_APP_URL = "https://testnet.lensforum.xyz";
+const TESTNET_APP_URL = "http://localhost:3000";
 
 const env = getCurrentEnv();
 const isTestnet = env === Env.TESTNET;

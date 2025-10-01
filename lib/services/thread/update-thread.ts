@@ -46,6 +46,7 @@ export async function updateThread(
         postId: thread.rootPost.id,
         feedAddress: "0x0",
         author: thread.author.address,
+        slug: thread.slug,
       },
       sessionClient,
       walletClient,

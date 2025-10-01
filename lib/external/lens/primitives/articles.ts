@@ -35,6 +35,7 @@ export interface ArticleUpdateData {
   postId: string;
   feedAddress: string;
   author: string;
+  slug: string;
 }
 
 export interface ArticleUpdateResult {
@@ -133,7 +134,7 @@ export async function updateThreadArticle(
 ): Promise<ArticleUpdateResult> {
   try {
     // 1. Format content with thread prefix
-    const threadUrl = `${APP_URL}/thread/${updateData.postId}`;
+    const threadUrl = `${APP_URL}/thread/${updateData.slug}`;
     const formattedContent = formatThreadArticleContent(
       updateData.content,
       threadUrl,

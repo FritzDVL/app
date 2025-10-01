@@ -1,4 +1,5 @@
 import { storageClient } from "@/lib/external/grove/client";
+import { APP_URL } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
 import { Account, MediaImage, MediaVideo, Post } from "@lens-protocol/client";
 
@@ -20,8 +21,9 @@ export const stripThreadArticleFormatting = (content: string): string => {
   let result = content;
 
   // Step 1: Remove the prefix line
+  const escapedUrl = APP_URL.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
   const prefixRegex = new RegExp(
-    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}https://lensforum\\.xyz/thread/[\\w\\d]+\\s*\\n+`,
+    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}${escapedUrl}/thread/[\\w\\d-]+\\s*\\n+`,
   );
   result = result.replace(prefixRegex, "");
 
@@ -38,8 +40,9 @@ export const stripThreadArticleFormatting = (content: string): string => {
 
 export const stripThreadPrefixOnly = (content: string): string => {
   let result = content;
+  const escapedUrl = APP_URL.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
   const prefixRegex = new RegExp(
-    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}https://lensforum\\.xyz/thread/[\\w\\d]+\\s*\\n+`,
+    `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}${escapedUrl}/thread/[\\w\\d-]+\\s*\\n+`,
   );
   result = result.replace(prefixRegex, "");
   return result;
