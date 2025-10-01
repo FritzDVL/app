@@ -17,32 +17,33 @@ export interface ThreadResult {
  * Handles the complete workflow for retrieving a thread
  */
 async function getThreadCommon(
-  threadDb: CommunityThreadSupabase,
-  rootPostId: string,
+  threadDb: CommunityThreadSupabase | null,
+  rootPostId: string | null,
   sessionClient?: SessionClient,
 ): Promise<ThreadResult> {
   try {
-    if (!threadDb && !rootPostId) {
-      return { success: false, error: "Thread not found" };
-    }
-
+    // Determine the post ID to fetch
     const postId = rootPostId || threadDb?.root_post_id;
     if (!postId) {
-      return { success: false, error: "Thread not found" };
+      return { success: false, error: "Thread not found - no post ID available" };
     }
 
+    // Fetch the post from Lens Protocol
     const lensClient = sessionClient || client;
-    const rootPost = await fetchPostWithClient(postId as string, lensClient);
+    const rootPost = await fetchPostWithClient(postId, lensClient);
 
-    let thread: Thread | undefined;
-    if (threadDb && rootPost) {
-      thread = await adaptFeedToThread(rootPost.author, threadDb, rootPost as Post);
-    } else if (!threadDb && rootPost && rootPost.__typename === "Post") {
-      thread = await adaptExternalFeedToThread(rootPost as Post);
+    if (!rootPost || rootPost.__typename !== "Post") {
+      return { success: false, error: "Thread post not found on Lens Protocol" };
     }
 
-    if (!thread) {
-      return { success: false, error: "Thread not found" };
+    // Adapt the thread based on whether we have DB data
+    let thread: Thread;
+    if (threadDb) {
+      // We have DB metadata, use it for the full thread adaptation
+      thread = await adaptFeedToThread(rootPost.author, threadDb, rootPost as Post);
+    } else {
+      // No DB metadata, create thread from Lens data only (external thread)
+      thread = await adaptExternalFeedToThread(rootPost as Post);
     }
 
     return {
@@ -64,9 +65,6 @@ async function getThreadCommon(
  */
 export async function getThread(rootPostId: string, sessionClient?: SessionClient): Promise<ThreadResult> {
   const threadDb = await fetchThread({ rootPostId: rootPostId });
-  if (!threadDb) {
-    throw new Error("Thread not found");
-  }
   return getThreadCommon(threadDb, rootPostId, sessionClient);
 }
 
@@ -76,8 +74,5 @@ export async function getThread(rootPostId: string, sessionClient?: SessionClien
  */
 export async function getThreadBySlug(slug: string, sessionClient?: SessionClient): Promise<ThreadResult> {
   const threadDb = await fetchThread({ slug });
-  if (!threadDb) {
-    throw new Error("Thread not found");
-  }
-  return getThreadCommon(threadDb, threadDb.root_post_id, sessionClient);
+  return getThreadCommon(threadDb, threadDb?.root_post_id || null, sessionClient);
 }

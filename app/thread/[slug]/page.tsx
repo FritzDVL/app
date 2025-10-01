@@ -2,7 +2,7 @@ import { ProtectedRoute } from "@/components/pages/protected-route";
 import { Thread } from "@/components/thread/thread";
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { getCommunity } from "@/lib/services/community/get-community";
-import { getThreadBySlug } from "@/lib/services/thread/get-thread";
+import { getThread, getThreadBySlug } from "@/lib/services/thread/get-thread";
 import { Address } from "@/types/common";
 
 const MAX_TITLE_LENGTH = 70;
@@ -63,42 +63,38 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function ThreadPage({ params }: { params: { slug: string } }) {
   const slug = params.slug as Address;
 
-  const thread = await getThreadBySlug(slug);
+  // Try fetching by slug first (new threads)
+  let threadResult = await getThreadBySlug(slug);
 
-  if (thread.error) {
-    return (
-      <div className="flex h-32 items-center justify-center">
-        <p className="text-center text-sm text-red-500">Error loading thread: {thread.error}</p>
-      </div>
-    );
-  }
-  if (!thread.thread) {
-    return (
-      <div className="flex h-32 items-center justify-center">
-        <p className="text-center text-sm text-muted-foreground">Thread not found</p>
-      </div>
-    );
+  // Fallback to fetching by rootPostId/feedAddress (old threads for retrocompatibility)
+  if (!threadResult.success || !threadResult.thread) {
+    threadResult = await getThread(slug);
   }
 
-  const community = thread ? await getCommunity(thread.thread.community) : null;
-  if (community?.error) {
+  // Handle errors
+  if (threadResult.error || !threadResult.thread) {
     return (
       <div className="flex h-32 items-center justify-center">
-        <p className="text-center text-sm text-red-500">Error loading community: {community.error}</p>
+        <p className="text-center text-sm text-red-500">{threadResult.error || "Thread not found"}</p>
       </div>
     );
   }
-  if (!community?.community) {
+
+  const thread = threadResult.thread;
+
+  // Fetch community
+  const community = await getCommunity(thread.community);
+  if (community?.error || !community?.community) {
     return (
       <div className="flex h-32 items-center justify-center">
-        <p className="text-center text-sm text-muted-foreground">Community not found</p>
+        <p className="text-center text-sm text-red-500">{community?.error || "Community not found"}</p>
       </div>
     );
   }
 
   return (
     <ProtectedRoute>
-      <Thread thread={thread.thread} community={community.community} />
+      <Thread thread={thread} community={community.community} />
     </ProtectedRoute>
   );
 }
