@@ -17,6 +17,7 @@ export interface ArticleCreationData {
   author: string;
   tags?: string;
   feedAddress: string;
+  slug: string;
 }
 
 export interface ArticleCreationResult {
@@ -60,7 +61,7 @@ export async function createThreadArticle(
     attributes.push({ key: "subtitle", type: MetadataAttributeType.STRING, value: articleData.summary });
 
     // 2. Add thread content prefix with URL, title and summary
-    const threadUrl = `https://lensforum.xyz/thread/${articleData.feedAddress}`;
+    const threadUrl = `https://lensforum.xyz/thread/${articleData.slug}`;
     const contentWithPrefix = formatThreadArticleContent(
       articleData.content,
       threadUrl,

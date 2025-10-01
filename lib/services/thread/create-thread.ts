@@ -5,6 +5,7 @@ import { CreateThreadFormData } from "@/lib/domain/threads/types";
 import { Thread } from "@/lib/domain/threads/types";
 import { fetchAccountFromLens } from "@/lib/external/lens/primitives/accounts";
 import { createThreadArticle } from "@/lib/external/lens/primitives/articles";
+import { generateThreadSlug } from "@/lib/external/slug/generate-slug";
 import { persistCommunityThread } from "@/lib/external/supabase/threads";
 import { SessionClient } from "@lens-protocol/client";
 import { WalletClient } from "viem";
@@ -23,6 +24,7 @@ export async function createThread(
 ): Promise<CreateThreadResult> {
   try {
     // 1. Create the root post for the thread using article primitive
+    const slug = generateThreadSlug(formData.title);
     const articleFormData = {
       title: formData.title,
       content: formData.content,
@@ -30,6 +32,7 @@ export async function createThread(
       summary: formData.summary,
       tags: formData.tags,
       feedAddress: community.feed.address,
+      slug,
     };
 
     const articleResult = await createThreadArticle(articleFormData, sessionClient, walletClient);
@@ -69,6 +72,7 @@ export async function createThread(
       formData.summary,
       authorDb,
       articleResult.post?.id,
+      slug,
     );
 
     const thread = await adaptFeedToThread(author, persistedThread, rootPost);

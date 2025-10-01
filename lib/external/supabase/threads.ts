@@ -13,6 +13,10 @@ import { CommunitySupabase, CommunityThreadSupabase } from "@/types/supabase";
  * @param communityLensAddress - The Lens Protocol group address
  * @param lensFeedAddress - The Lens Protocol feed address
  * @param author - Thread author address
+ * @param title - Thread title
+ * @param summary - Thread summary
+ * @param rootPostId - The root post ID of the thread
+ * @param slug - The generated slug for the thread
  * @returns The created thread record
  */
 export async function persistCommunityThread(
@@ -21,6 +25,7 @@ export async function persistCommunityThread(
   summary: string,
   author: Address,
   rootPostId: string,
+  slug: string,
 ): Promise<CommunityThreadSupabase> {
   const supabase = await supabaseClient();
 
@@ -54,6 +59,7 @@ export async function persistCommunityThread(
       title,
       summary,
       author: author,
+      slug,
     })
     .select("*, community:communities(*)")
     .single();
