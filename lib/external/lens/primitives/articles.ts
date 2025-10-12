@@ -54,7 +54,7 @@ export interface ArticleUpdateResult {
 export async function createThreadArticle(
   articleData: ArticleCreationData,
   sessionClient: SessionClient,
-  walletClient: any,
+  walletClient: WalletClient,
 ): Promise<ArticleCreationResult> {
   try {
     // 1. Build article attributes

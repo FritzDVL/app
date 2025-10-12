@@ -1,3 +1,5 @@
+"use client";
+
 import { TextEditor } from "@/components/editor/text-editor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
