@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { Community } from "@/lib/domain/communities/types";
 import { CreateThreadFormData } from "@/lib/domain/threads/types";
-import { validateCreateThreadForm } from "@/lib/domain/threads/validation";
 import { createThread as createThreadService } from "@/lib/services/thread/create-thread";
 import { useAuthStore } from "@/stores/auth-store";
 import { Address } from "@/types/common";
@@ -58,16 +57,33 @@ export function useThreadCreateForm({ community, author }: UseThreadCreateFormPr
       author: account.address,
       tags: tags.join(","),
     };
-    const validation = validateCreateThreadForm(formDataToUse);
-    if (!validation.isValid) {
-      const firstError = validation.errors[0];
-      toast.error("Validation Error", { description: firstError.message });
-      return;
-    }
+    // const validation = validateCreateThreadForm(formDataToUse);
+    // if (!validation.isValid) {
+    //   const firstError = validation.errors[0];
+    //   toast.error("Validation Error", { description: firstError.message });
+    //   return;
+    // }
     const loadingToast = toast.loading("Creating thread...", { description: "Your thread is being created." });
     try {
       setIsCreating(true);
-      await createThreadService(community, formDataToUse, sessionClient.data, walletClient.data!);
+
+      // Convert to FormData
+      const formDataToSubmit = new FormData();
+      formDataToSubmit.append("title", formDataToUse.title);
+      formDataToSubmit.append("summary", formDataToUse.summary);
+      formDataToSubmit.append("content", formDataToUse.content);
+      formDataToSubmit.append("author", formDataToUse.author);
+      if (formDataToUse.tags) {
+        formDataToSubmit.append("tags", formDataToUse.tags);
+      }
+
+      await createThreadService(
+        community.group.address,
+        community.feed.address,
+        formDataToSubmit,
+        sessionClient.data,
+        walletClient.data,
+      );
       setIsCreating(false);
       toast.success("Thread created!", { description: "Your thread was successfully created.", id: loadingToast });
       // Reset form after successful submission

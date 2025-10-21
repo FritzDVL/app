@@ -1,3 +1,5 @@
+"use server";
+
 import { supabaseClient } from "@/lib/external/supabase/client";
 import slugify from "slugify";
 
