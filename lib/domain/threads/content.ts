@@ -3,7 +3,7 @@ import { APP_URL } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
 import { Account, MediaImage, MediaVideo, Post } from "@lens-protocol/client";
 
-export const THREAD_CONTENT_PREFIX = "LensForum Thread: ";
+export const THREAD_CONTENT_PREFIX = "Society Protocol Thread: ";
 
 export const formatThreadArticleContent = (
   content: string,
@@ -20,7 +20,7 @@ export const formatThreadArticleContent = (
 export const stripThreadArticleFormatting = (content: string): string => {
   let result = content;
 
-  // Step 1: Remove the prefix line (LensForum Thread: URL)
+  // Step 1: Remove the prefix line (Society Protocol Thread: URL)
   const escapedUrl = APP_URL.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
   const prefixRegex = new RegExp(
     `^${THREAD_CONTENT_PREFIX.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}${escapedUrl}/thread/[\\w\\d-]+\\n\\n`,

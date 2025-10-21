@@ -98,24 +98,24 @@ export function LensAccountsDialog({
                   {lensAccounts.length} account{lensAccounts.length === 1 ? "" : "s"} found
                 </p>
                 <p className="text-xs text-slate-600 dark:text-gray-400">
-                  Choose an account to continue with LensForum
+                  Choose an account to continue with Society Protocol Forum
                 </p>
               </div>
-              <div className="max-h-[300px] space-y-2 overflow-y-auto">
+              <div className="max-h-[350px] space-y-2 overflow-y-auto">
                 {lensAccounts.map(lensAccount => (
                   <div
                     key={lensAccount.account.address}
-                    className="flex items-center justify-between rounded-lg border border-slate-200 bg-white/90 p-3 shadow-sm transition-all duration-200 hover:bg-white hover:shadow-md dark:border-gray-700/60 dark:bg-gray-800/90 dark:hover:bg-gray-800"
+                    className="group flex items-center justify-between rounded-lg border border-slate-200 bg-white/90 p-3 shadow-sm transition-all duration-200 hover:border-brand-200 hover:bg-white hover:shadow-md dark:border-gray-700/60 dark:bg-gray-800/90 dark:hover:border-brand-700/50 dark:hover:bg-gray-800"
                   >
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10 ring-2 ring-brand-200">
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                      <Avatar className="h-12 w-12 ring-2 ring-brand-200 transition-all group-hover:ring-brand-300">
                         {lensAccount.account.metadata?.picture ? (
                           <Image
                             src={lensAccount.account.metadata.picture}
                             alt={lensAccount.account.username?.value || "Lens Account"}
                             className="rounded-full object-cover"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                           />
                         ) : (
                           <span className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-r from-brand-200 to-brand-400 text-lg font-semibold text-white">
@@ -123,18 +123,23 @@ export function LensAccountsDialog({
                           </span>
                         )}
                       </Avatar>
-                      <div>
-                        <p className="font-medium text-slate-900 dark:text-gray-100">
-                          {lensAccount?.account?.metadata?.name}
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-slate-900 dark:text-gray-100">
+                          {lensAccount?.account?.metadata?.name || lensAccount.account.username?.value}
                         </p>
-                        <p className="text-sm text-slate-600 dark:text-gray-400">
+                        <p className="truncate text-sm text-slate-600 dark:text-gray-400">
                           @{lensAccount.account.username?.value}
                         </p>
+                        {lensAccount.account.metadata?.bio && (
+                          <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-gray-500">
+                            {lensAccount.account.metadata.bio}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <Button
                       size="sm"
-                      className="bg-gradient-to-r from-brand-500 to-brand-600 font-semibold text-white hover:from-brand-600 hover:to-brand-700"
+                      className="ml-3 shrink-0 bg-gradient-to-r from-brand-500 to-brand-600 font-semibold text-white hover:from-brand-600 hover:to-brand-700"
                       onClick={() => onAccountSelect(lensAccount)}
                       disabled={loadingAccount === lensAccount.account.address}
                     >

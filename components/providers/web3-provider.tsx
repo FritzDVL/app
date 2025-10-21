@@ -33,7 +33,7 @@ const config = createConfig(
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || "3a8170812b534d0ff9d794f19a901d64",
 
     // Required app information
-    appName: "LensForum",
+    appName: "Society Protocol Forum",
 
     // Optional app information
     appUrl: `${APP_URL}/`,

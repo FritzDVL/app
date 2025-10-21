@@ -84,7 +84,7 @@ export function ThreadCardActions({ thread, community }: ThreadCardActionsProps)
     const { title } = getThreadTitleAndSummary(thread.rootPost);
     const url = `${APP_URL}/thread/${thread.rootPost.slug}`;
 
-    const shareText = `Check out this thread on LensForum: "${title}"\n\n`;
+    const shareText = `Check out this thread on Society Protocol Forum: "${title}"\n\n`;
     window.open(`https://hey.xyz/?text=${shareText}&url=${url}`, "_blank");
   };
 

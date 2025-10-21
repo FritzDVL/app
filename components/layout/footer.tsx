@@ -36,7 +36,7 @@ export function Footer() {
           <HeyLogo size={16} />
         </a>
         <a
-          href="https://x.com/lensforum"
+          href="https://x.com/societyprotocol"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="X (Twitter)"

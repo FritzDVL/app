@@ -34,7 +34,7 @@ export const HEY_URL = "https://hey.xyz/";
 export const GROVE_API_URL = "https://api.grove.storage/";
 // Usage: import { APP_ADDRESS, BASE_FEED_ADDRESS, ADMIN_USER_ADDRESS } from '@/lib/constants';
 
-export const APP_NAME = isTestnet ? "LensForumV1" : "LensForum";
+export const APP_NAME = isTestnet ? "SocietyProtocolV1" : "Society Protocol Forum";
 
 // Paginations
 export const COMMUNITIES_PER_PAGE = 10;

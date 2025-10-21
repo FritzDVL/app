@@ -13,8 +13,8 @@ export function HeroSection() {
 
       <div className="mb-8 flex justify-center">
         <Image
-          src="/logo.png"
-          alt="LensForum Logo"
+          src="/Icon only Logo Black.png"
+          alt="Society Protocol Forum Logo"
           width={80}
           height={80}
           className="rounded-2xl border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800"
