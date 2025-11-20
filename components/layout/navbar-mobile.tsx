@@ -102,19 +102,6 @@ export function NavbarMobile() {
                   Home
                 </Button>
               </Link>
-              <Link href="/communities" className="block px-3">
-                <Button
-                  variant="ghost"
-                  className={`w-full justify-start rounded-full transition-all duration-300 ${
-                    pathname === "/communities"
-                      ? "bg-brand-600 text-white shadow-md hover:bg-brand-700"
-                      : "hover:bg-accent hover:text-accent-foreground"
-                  }`}
-                >
-                  <Users className="mr-2 h-4 w-4" />
-                  Communities
-                </Button>
-              </Link>
             </div>
 
             {/* User Profile Section */}

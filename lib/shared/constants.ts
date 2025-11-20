@@ -22,7 +22,11 @@ const isTestnet = env === Env.TESTNET;
 
 export const APP_ADDRESS: Address = isTestnet ? TESTNET_APP_ADDRESS : MAINNET_APP_ADDRESS;
 export const BASE_FEED_ADDRESS: Address = isTestnet ? TESTNET_BASE_FEED_ADDRESS : MAINNET_BASE_FEED_ADDRESS;
-export const ADMIN_USER_ADDRESS: Address = isTestnet ? TESTNET_ADMIN_USER_ADDRESS : MAINNET_ADMIN_USER_ADDRESS;
+export const ADMIN_USER_ADDRESS = "0x..."; // TODO: Update with real admin address if needed
+
+// The single group address for this forum instance
+export const TARGET_GROUP_ADDRESS =
+  process.env.NEXT_PUBLIC_TARGET_GROUP_ADDRESS || "0x461090932c2afd871c00F44679678E1C59008f59";
 export const LENS_CONTRACT_GROUP_MANAGER: Address = isTestnet
   ? TESTNET_LENS_CONTRACT_GROUP_MANAGER_ADDRESS
   : MAINNET_LENS_CONTRACT_GROUP_MANAGER_ADDRESS;

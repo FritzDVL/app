@@ -71,16 +71,7 @@ export function NavbarDesktop() {
               Home
             </Button>
           </Link>
-          <Link href="/communities">
-            <Button
-              variant={pathname === "/communities" ? "default" : "yellow"}
-              size="sm"
-              className="rounded-full px-4 py-2 transition-all duration-300"
-            >
-              <Users className="mr-2 h-4 w-4" />
-              Communities
-            </Button>
-          </Link>
+
           <div className="flex items-center gap-3">
             {account && (
               <Link href="/notifications">
