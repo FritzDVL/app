@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ReplyVoting } from "../reply/reply-voting";
 import { ThreadReplyBox } from "./thread-reply-box";
 import { ThreadReplyModeratorActions } from "./thread-reply-moderator-actions";
 import { ContentRenderer } from "@/components/shared/content-renderer";
+import { UserHoverCard } from "@/components/shared/user-hover-card";
+import { QuoteButton } from "@/components/thread/quote-button";
 import { ThreadReplyActions } from "@/components/thread/thread-reply-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -38,6 +40,7 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
   const [repliesError, setRepliesError] = useState<string | null>(null);
   const [localReplyCount, setLocalReplyCount] = useState(reply.post.stats.comments);
   const [showPlusOne, setShowPlusOne] = useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLocalReplyCount(reply.post.stats.comments);
@@ -45,6 +48,12 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
 
   const { createReply } = useReplyCreate();
   const sessionClient = useSessionClient();
+
+  const handleQuote = (text: string) => {
+    const formattedQuote = `> ${text}\n\n`;
+    setReplyContent(prev => prev + formattedQuote);
+    setShowReplyBox(true);
+  };
 
   const handleReply = async () => {
     if (!replyContent.trim()) return;
@@ -90,30 +99,39 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
   const canTip = reply.post.operations?.canTip;
 
   return (
-    <div className="group py-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-gray-800/30" id={reply.id}>
+    <div
+      ref={containerRef}
+      className="group relative py-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-gray-800/30"
+      id={reply.id}
+    >
+      <QuoteButton onQuote={handleQuote} containerRef={containerRef} />
       <div className="flex gap-3 sm:gap-4">
         {/* Left: Avatar */}
         <div className="flex-shrink-0 pt-1">
-          <Link href={`/u/${reply.post.author.username?.value}`}>
-            <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-              <AvatarImage src={reply.post.author.metadata?.picture} />
-              <AvatarFallback className="bg-muted text-xs text-muted-foreground">
-                {reply.post.author.metadata?.name?.toUpperCase() || "U"}
-              </AvatarFallback>
-            </Avatar>
-          </Link>
+          <UserHoverCard profile={reply.post.author}>
+            <Link href={`/u/${reply.post.author.username?.value}`}>
+              <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                <AvatarImage src={reply.post.author.metadata?.picture} />
+                <AvatarFallback className="bg-muted text-xs text-muted-foreground">
+                  {reply.post.author.metadata?.name?.toUpperCase() || "U"}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+          </UserHoverCard>
         </div>
 
         {/* Right: Content */}
         <div className="min-w-0 flex-1">
           {/* Header */}
           <div className="mb-1 flex items-center gap-2">
-            <Link
-              href={`/u/${reply.post.author.username?.value}`}
-              className="text-sm font-bold text-slate-900 hover:underline dark:text-gray-100"
-            >
-              {reply.post.author.metadata?.name || reply.post.author.username?.localName}
-            </Link>
+            <UserHoverCard profile={reply.post.author}>
+              <Link
+                href={`/u/${reply.post.author.username?.value}`}
+                className="text-sm font-bold text-slate-900 hover:underline dark:text-gray-100"
+              >
+                {reply.post.author.metadata?.name || reply.post.author.username?.localName}
+              </Link>
+            </UserHoverCard>
             <span className="text-xs text-slate-500 dark:text-gray-400">
               {getTimeAgo(new Date(reply.post.timestamp))}
             </span>

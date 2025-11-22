@@ -20,9 +20,16 @@ import { Coins, Reply as ReplyIcon, Share } from "lucide-react";
 interface ThreadCardActionsProps {
   thread: Thread;
   community: Community;
+  initialReplyContent?: string;
+  onReplyContentUsed?: () => void;
 }
 
-export function ThreadCardActions({ thread, community }: ThreadCardActionsProps) {
+export function ThreadCardActions({
+  thread,
+  community,
+  initialReplyContent,
+  onReplyContentUsed,
+}: ThreadCardActionsProps) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
   const [canTip, setCanTip] = useState<boolean>(false);
@@ -33,6 +40,17 @@ export function ThreadCardActions({ thread, community }: ThreadCardActionsProps)
   const { createReply } = useReplyCreate();
   const { isLoggedIn } = useAuthStore();
   const sessionClient = useSessionClient();
+
+  useEffect(() => {
+    if (initialReplyContent) {
+      setReplyingTo("main");
+      setReplyContent(prev => ({
+        ...prev,
+        main: (prev.main || "") + initialReplyContent,
+      }));
+      onReplyContentUsed?.();
+    }
+  }, [initialReplyContent, onReplyContentUsed]);
 
   useEffect(() => {
     const doFetchRootPostOps = async () => {
