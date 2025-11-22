@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { DevLoginButton } from "@/components/auth/dev-login-button";
 import { LoginConnectButton } from "@/components/auth/login-connect-button";
 import { LensAccountsDialog } from "@/components/auth/login-lens-accounts-dialog";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -158,7 +159,10 @@ export function NavbarDesktop() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <LoginConnectButton />
+              <>
+                <DevLoginButton />
+                <LoginConnectButton />
+              </>
             )}
           </div>
         </div>

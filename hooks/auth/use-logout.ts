@@ -11,7 +11,7 @@ export function useLogout() {
   const { disconnect } = useDisconnect();
   const { execute: logoutLens } = useLensLogout();
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     setIsLoading(true);
     try {
       // Disconnect wallet
@@ -19,7 +19,11 @@ export function useLogout() {
 
       // Logout from Lens if we have an account
       if (account) {
-        logoutLens();
+        try {
+          await logoutLens();
+        } catch (e) {
+          console.warn("Lens logout failed or skipped (expected in dev mode):", e);
+        }
       }
 
       // Reset auth state

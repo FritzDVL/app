@@ -12,11 +12,11 @@ interface LatestThreadsProps {
 
 export function ThreadsList({ threads, loadingThreads, error }: LatestThreadsProps) {
   return (
-    <div className="w-full max-w-none overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <div className="w-full max-w-none overflow-hidden border-t border-slate-200 bg-white dark:border-gray-800 dark:bg-gray-900">
       {/* Table Header */}
-      <div className="hidden border-b border-slate-200 bg-slate-50/50 px-4 py-3 text-xs font-medium uppercase tracking-wider text-slate-500 dark:border-gray-800 dark:bg-gray-800/50 dark:text-gray-400 sm:flex">
-        <div className="flex-1">Topic</div>
-        <div className="w-32 px-2">Posters</div>
+      <div className="hidden border-b border-slate-200 bg-white px-4 py-3 text-[13px] font-medium text-slate-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 sm:flex">
+        <div className="flex-1 pl-2">Topic</div>
+        <div className="w-32 px-2"></div> {/* Posters column header is usually empty or just spacing */}
         <div className="w-20 px-2 text-center">Replies</div>
         <div className="w-20 px-2 text-center">Views</div>
         <div className="w-24 pl-2 text-right">Activity</div>

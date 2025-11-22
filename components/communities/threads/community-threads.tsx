@@ -4,7 +4,6 @@ import { CommunityHeader } from "@/components/communities/display/community-head
 import { CommunityNavActions } from "@/components/communities/display/community-nav-actions";
 import { CommunitySidebar } from "@/components/communities/display/community-sidebar";
 import { CommunityThreadsList } from "@/components/communities/threads/community-threads-list";
-import { CrosspostSwitch } from "@/components/communities/threads/crosspost-switch";
 import { Pagination } from "@/components/shared/pagination";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useThreadsPaginated } from "@/hooks/threads/use-threads-paginated";
@@ -14,18 +13,12 @@ import { Thread } from "@/lib/domain/threads/types";
 interface CommunityThreadsProps {
   community: Community;
   threads: Thread[];
-  initialCrosspostEnabled: boolean;
 }
 
-export function CommunityThreads({
-  community,
-  threads: initialThreads,
-  initialCrosspostEnabled = false,
-}: CommunityThreadsProps) {
-  const { threads, loading, crosspostEnabled, toggleCrosspost, next, prev, hasNext, hasPrev } = useThreadsPaginated({
+export function CommunityThreads({ community, threads: initialThreads }: CommunityThreadsProps) {
+  const { threads, loading, next, prev, hasNext, hasPrev } = useThreadsPaginated({
     community,
     initialThreads,
-    initialCrosspostEnabled,
   });
 
   return (
@@ -34,7 +27,6 @@ export function CommunityThreads({
         <div className="lg:col-span-3">
           <CommunityNavActions community={community} />
           <CommunityHeader community={community} />
-          <CrosspostSwitch checked={crosspostEnabled} onCheckedChange={toggleCrosspost} />
           {loading ? (
             <div className="flex w-full items-center justify-center py-12">
               <LoadingSpinner text="Loading threads..." />

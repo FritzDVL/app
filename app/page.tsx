@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { CommunityThreads } from "@/components/communities/threads/community-threads";
 import { StatusBanner } from "@/components/shared/status-banner";
 import { getCommunity } from "@/lib/services/community/get-community";
@@ -26,21 +25,16 @@ export default async function HomePage() {
     );
   }
 
-  // Read showAllPosts preference from cookie
-  const COOKIE_KEY = `showAllPosts:${community.id}`;
-  const cookieStore = cookies();
-  const crosspostEnabledCookie = cookieStore.get(COOKIE_KEY)?.value === "true";
-
-  // Fetch threads on the server with pagination, using cookie preference
+  // Fetch threads on the server with pagination, defaulting to DB-only (private)
   const threadsResult = await getCommunityThreads(community, {
     limit: THREADS_PER_PAGE,
-    showAllPosts: crosspostEnabledCookie,
+    showAllPosts: false,
   });
   const threads = threadsResult.success ? (threadsResult.threads ?? []) : [];
 
   return (
     <div className="min-h-screen bg-background">
-      <CommunityThreads community={community} threads={threads} initialCrosspostEnabled={crosspostEnabledCookie} />
+      <CommunityThreads community={community} threads={threads} />
     </div>
   );
 }
