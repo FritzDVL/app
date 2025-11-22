@@ -45,8 +45,16 @@ export const COMMUNITIES_PER_PAGE = 10;
 export const THREADS_PER_PAGE = 10;
 
 export const CATEGORIES = [
-  { label: "General", tag: "general", color: "bg-slate-500", description: "General discussions" },
-  { label: "Research", tag: "research", color: "bg-blue-500", description: "In-depth research and analysis" },
-  { label: "Proposals", tag: "proposal", color: "bg-purple-500", description: "Governance and improvement proposals" },
-  { label: "Tech", tag: "tech", color: "bg-green-500", description: "Technical discussions and development" },
+  {
+    label: "Mechanism Design",
+    tag: "mechanism-design",
+    color: "bg-orange-500",
+    description: "Levels and mechanism design discussions",
+  },
+  { label: "Consensus", tag: "consensus", color: "bg-blue-500", description: "Technical discussions about Consensus" },
+  { label: "DA", tag: "da", color: "bg-blue-400", description: "Data Availability" },
+  { label: "AA", tag: "aa", color: "bg-blue-600", description: "Account Abstraction" },
+  { label: "Security", tag: "security", color: "bg-red-500", description: "Security audits and discussions" },
+  { label: "SPIP", tag: "spip", color: "bg-purple-500", description: "Society Protocol Improvement Proposals" },
+  { label: "Random", tag: "random", color: "bg-slate-500", description: "Off-topic and random discussions" },
 ];

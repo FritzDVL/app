@@ -1,13 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import ContentRenderer from "@/components/shared/content-renderer";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getThreadContent, getThreadTags, getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
-import { getTimeAgo } from "@/lib/shared/utils";
-import { Clock } from "lucide-react";
 
 interface ThreadCardInfoProps {
   thread: Thread;
@@ -16,7 +12,6 @@ interface ThreadCardInfoProps {
 export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
   const [tags, setTags] = useState<string[]>([]);
 
-  const isEdited = thread.rootPost?.isEdited;
   const { title, summary } = getThreadTitleAndSummary(thread.rootPost);
 
   // Extract thread content and image
@@ -32,38 +27,8 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
 
   return (
     <div className="space-y-3">
-      {/* Header row with avatar+name on left and timestamp on right */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Avatar className="h-8 w-8 text-sm font-bold">
-            <AvatarImage src={thread.author.metadata?.picture || undefined} alt={thread.author.username?.value} />
-            <AvatarFallback className="bg-gradient-to-br from-green-500 to-green-600 text-white">
-              {thread.author.username?.localName[0].toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <Link
-            href={`/u/${thread.author.username?.localName}`}
-            className="block max-w-[8rem] truncate text-xs font-medium text-foreground"
-          >
-            {thread.author.username?.localName}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          {isEdited && (
-            <span className="ml-2 rounded bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-200">
-              edited
-            </span>
-          )}
-          {thread.rootPost?.timestamp && (
-            <span className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
-              <Clock className="h-3 w-3" />
-              {getTimeAgo(new Date(thread.rootPost.timestamp))}
-            </span>
-          )}
-        </div>
-      </div>
       {/* Title, summary and content in one block */}
-      <div className="px-8">
+      <div className="px-0">
         <h1 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">{title}</h1>
         {summary && (
           <p className="mt-1 max-w-2xl text-base text-sm font-medium italic text-gray-500 dark:text-gray-400">

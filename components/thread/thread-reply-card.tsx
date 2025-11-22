@@ -9,7 +9,6 @@ import { ContentRenderer } from "@/components/shared/content-renderer";
 import { ThreadReplyActions } from "@/components/thread/thread-reply-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useReplyCreate } from "@/hooks/replies/use-reply-create";
 import { Community } from "@/lib/domain/communities/types";
 import { getReplyContent } from "@/lib/domain/replies/content";
@@ -91,107 +90,115 @@ export function ThreadReplyCard({ reply, thread, community }: ThreadReplyCardPro
   const canTip = reply.post.operations?.canTip;
 
   return (
-    <div className="space-y-2" id={reply.id}>
-      <Card className="rounded-lg bg-white shadow-sm dark:border-gray-700/60 dark:bg-gray-800">
-        <CardContent className="p-3 sm:p-4">
-          <div className="flex items-start gap-2 sm:gap-3">
-            <div className="flex flex-col items-center">
-              <ReplyVoting postid={postId(reply.id)} />
-            </div>
-            <div className="min-w-0 flex-1">
-              {/* Top row: author info and show context button at top right */}
-              <div className="relative mb-3 flex flex-col gap-1 sm:mb-6 sm:flex-row sm:items-center sm:gap-2">
-                <div className="flex w-full items-center justify-between gap-2">
-                  <Link
-                    href={`/u/${reply.post.author.username?.value}`}
-                    className="flex items-center gap-2 hover:text-gray-900"
+    <div className="group py-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-gray-800/30" id={reply.id}>
+      <div className="flex gap-3 sm:gap-4">
+        {/* Left: Avatar */}
+        <div className="flex-shrink-0 pt-1">
+          <Link href={`/u/${reply.post.author.username?.value}`}>
+            <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+              <AvatarImage src={reply.post.author.metadata?.picture} />
+              <AvatarFallback className="bg-muted text-xs text-muted-foreground">
+                {reply.post.author.metadata?.name?.toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
+          </Link>
+        </div>
+
+        {/* Right: Content */}
+        <div className="min-w-0 flex-1">
+          {/* Header */}
+          <div className="mb-1 flex items-center gap-2">
+            <Link
+              href={`/u/${reply.post.author.username?.value}`}
+              className="text-sm font-bold text-slate-900 hover:underline dark:text-gray-100"
+            >
+              {reply.post.author.metadata?.name || reply.post.author.username?.localName}
+            </Link>
+            <span className="text-xs text-slate-500 dark:text-gray-400">
+              {getTimeAgo(new Date(reply.post.timestamp))}
+            </span>
+            {community && <ThreadReplyModeratorActions reply={reply} community={community} />}
+          </div>
+
+          {/* Content */}
+          <div className="text-sm text-slate-800 dark:text-gray-200">
+            <ContentRenderer content={{ content, image, video }} className="rich-text-content mb-2" />
+          </div>
+
+          {/* Actions */}
+          <div className="mt-2 flex items-center gap-4">
+            <ReplyVoting postid={postId(reply.id)} />
+
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <AnimatePresence>
+                  {showPlusOne && (
+                    <motion.span
+                      initial={{ opacity: 0, y: -16, scale: 0.8 }}
+                      animate={{ opacity: 1, y: 0, scale: 1.1 }}
+                      exit={{ opacity: 0, y: 24, scale: 0.8 }}
+                      transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+                      className="pointer-events-none absolute -top-4 left-1/2 -translate-x-1/2 text-xs font-bold text-green-500"
+                      style={{ zIndex: 10 }}
+                    >
+                      +1
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+                {localReplyCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLoadReplies}
+                    disabled={loadingReplies}
+                    className="h-auto p-1 text-xs text-muted-foreground hover:text-foreground"
                   >
-                    <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
-                      <AvatarImage src={reply.post.author.metadata?.picture} />
-                      <AvatarFallback className="bg-muted text-xs text-muted-foreground">
-                        {reply.post.author.metadata?.name?.toUpperCase() || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm font-medium text-foreground">{reply.post.author.metadata?.name}</span>
-                  </Link>
-                  <div className="flex items-center gap-2">
-                    {community && <ThreadReplyModeratorActions reply={reply} community={community} />}
-                    <span className="text-xs text-muted-foreground sm:text-sm">
-                      {getTimeAgo(new Date(reply.post.timestamp))}
-                    </span>
-                  </div>
-                </div>
+                    <MessageCircle className="mr-1 h-3 w-3" />
+                    {loadingReplies
+                      ? "Loading..."
+                      : `${localReplyCount} ${localReplyCount === 1 ? "reply" : "replies"}`}
+                  </Button>
+                )}
               </div>
 
-              {/* Content */}
-              <ContentRenderer content={{ content, image, video }} className="rich-text-content mb-2" />
-              {/* Reply button and tip button bottom */}
-              <div className="mt-3 flex flex-row items-center justify-between gap-2">
-                <div className="relative flex items-center gap-2">
-                  <AnimatePresence>
-                    {showPlusOne && (
-                      <motion.span
-                        initial={{ opacity: 0, y: -16, scale: 0.8 }}
-                        animate={{ opacity: 1, y: 0, scale: 1.1 }}
-                        exit={{ opacity: 0, y: 24, scale: 0.8 }}
-                        transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-                        className="pointer-events-none absolute -top-4 left-1/2 -translate-x-1/2 text-xs font-bold text-green-500"
-                        style={{ zIndex: 10 }}
-                      >
-                        +1
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                  {localReplyCount > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleLoadReplies}
-                      disabled={loadingReplies}
-                      className="h-auto p-1 text-xs text-muted-foreground hover:text-foreground"
-                    >
-                      <MessageCircle className="mr-1 h-3 w-3" />
-                      {loadingReplies
-                        ? "Loading..."
-                        : `${localReplyCount} ${localReplyCount === 1 ? "reply" : "replies"}`}
-                    </Button>
-                  )}
-                </div>
-                <div className="flex w-full justify-end sm:w-auto">
-                  <ThreadReplyActions
-                    replyId={reply.id}
-                    setReplyingTo={() => setShowReplyBox(true)}
-                    canReply={canReply}
-                    canTip={!!canTip}
-                  />
-                </div>
-              </div>
-              {showReplyBox && (
-                <ThreadReplyBox
-                  value={replyContent}
-                  onCancel={() => {
-                    setShowReplyBox(false);
-                    setReplyContent("");
-                  }}
-                  onSubmit={handleReply}
-                  onChange={setReplyContent}
-                />
-              )}
-              {showReplies && (
-                <div className="ml-6 mt-2 space-y-2">
-                  {repliesError && <div className="text-xs text-red-500">{repliesError}</div>}
-                  {replies.length === 0 && !repliesError && (
-                    <div className="text-xs text-muted-foreground">No replies yet.</div>
-                  )}
-                  {replies.map(nestedReply => (
-                    <ThreadReplyCard key={nestedReply.id} reply={nestedReply} thread={thread} community={community} />
-                  ))}
-                </div>
-              )}
+              <ThreadReplyActions
+                replyId={reply.id}
+                setReplyingTo={() => setShowReplyBox(true)}
+                canReply={canReply}
+                canTip={!!canTip}
+              />
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Reply Editor */}
+          {showReplyBox && (
+            <div className="mt-4">
+              <ThreadReplyBox
+                value={replyContent}
+                onCancel={() => {
+                  setShowReplyBox(false);
+                  setReplyContent("");
+                }}
+                onSubmit={handleReply}
+                onChange={setReplyContent}
+              />
+            </div>
+          )}
+
+          {/* Nested Replies */}
+          {showReplies && (
+            <div className="mt-4 border-l-2 border-slate-100 pl-4 dark:border-gray-800">
+              {repliesError && <div className="text-xs text-red-500">{repliesError}</div>}
+              {replies.length === 0 && !repliesError && (
+                <div className="text-xs text-muted-foreground">No replies yet.</div>
+              )}
+              {replies.map(nestedReply => (
+                <ThreadReplyCard key={nestedReply.id} reply={nestedReply} thread={thread} community={community} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

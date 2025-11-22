@@ -1,6 +1,6 @@
-"use client";
-
+import React, { useState } from "react";
 import { TextEditor } from "@/components/editor/text-editor";
+import ContentRenderer from "@/components/shared/content-renderer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ interface ThreadCreateFormProps {
 
 export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
   const { account } = useAuthStore();
+  const [isPreview, setIsPreview] = useState(false);
   const { formData, setFormData, handleChange, handleSubmit, isCreating } = useThreadCreateForm({
     community,
     author: account?.address || "",
@@ -85,7 +86,37 @@ export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
               Content
             </Label>
             <div className="bg-white/50backdrop-blur-sm rounded-2xl border-brand-200/40 dark:bg-gray-800">
-              <TextEditor onChange={value => handleChange("content", value)} />
+              {/* Tabs */}
+              <div className="flex gap-4 border-b border-gray-200 px-4 pt-2 text-sm dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => setIsPreview(false)}
+                  className={`pb-2 font-medium ${!isPreview ? "border-b-2 border-brand-500 text-brand-600" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  Write
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPreview(true)}
+                  className={`pb-2 font-medium ${isPreview ? "border-b-2 border-brand-500 text-brand-600" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  Preview
+                </button>
+              </div>
+
+              <div className="p-0">
+                {isPreview ? (
+                  <div className="min-h-[200px] p-4">
+                    {formData.content ? (
+                      <ContentRenderer content={{ content: formData.content }} className="rich-text-content" />
+                    ) : (
+                      <p className="text-sm italic text-muted-foreground">Nothing to preview</p>
+                    )}
+                  </div>
+                ) : (
+                  <TextEditor onChange={value => handleChange("content", value)} initialValue={formData.content} />
+                )}
+              </div>
             </div>
           </div>
           {/* Tags Input */}
