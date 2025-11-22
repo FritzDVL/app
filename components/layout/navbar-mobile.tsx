@@ -10,8 +10,9 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useLogout } from "@/hooks/auth/use-logout";
 import { useSwitchAccount } from "@/hooks/auth/use-switch-account";
+import { CATEGORIES } from "@/lib/shared/constants";
 import { useAuthStore } from "@/stores/auth-store";
-import { Bell, Gift, Home, LogOut, Menu, RefreshCw, User, Users, X } from "lucide-react";
+import { Bell, Gift, Home, LogOut, Menu, RefreshCw, User, X } from "lucide-react";
 
 export function NavbarMobile() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -102,6 +103,24 @@ export function NavbarMobile() {
                   Home
                 </Button>
               </Link>
+            </div>
+
+            {/* Categories Section */}
+            <div className="border-b border-border pb-3">
+              <div className="mb-2 px-3">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Categories</h3>
+              </div>
+              {CATEGORIES.map(category => (
+                <Link key={category.tag} href={`/?category=${category.tag}`} className="mb-1 block px-3">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start rounded-full transition-all duration-300 hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <div className={`mr-2 h-2 w-2 rounded-full ${category.color}`} />
+                    {category.label}
+                  </Button>
+                </Link>
+              ))}
             </div>
 
             {/* User Profile Section */}

@@ -5,7 +5,7 @@ A decentralized forum application built on Lens Protocol V3 with Web3 authentica
 ## 🚀 Features
 
 - **Decentralized Authentication**: Web3 wallet connection with Lens Protocol integration
-- **Community Management**: Create and manage decentralized communities
+- **Single Community Focus**: Dedicated forum for a specific Lens Group
 - **Rich Text Editor**: Advanced text editing with TipTap
 - **Real-time Storage**: Supabase for metadata and thread indexing
 - **IPFS Integration**: Decentralized content storage via Grove
@@ -54,6 +54,9 @@ SUPABASE_ANON_KEY=your_supabase_anon_key_here
 # Lens Protocol Environment (testnet recommended for development)
 NEXT_PUBLIC_LENSFORUM_ENV=testnet
 
+# Target Lens Group Address (The community this forum is built for)
+NEXT_PUBLIC_TARGET_GROUP_ADDRESS=0x...
+
 # WalletConnect Project ID (get from https://cloud.walletconnect.com/)
 NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your_walletconnect_project_id_here
 
@@ -96,12 +99,13 @@ After wallet connection, users select from their available Lens Protocol account
 
 **Important**: You need a Lens account on the **testnet** to use the app in development mode.
 
-#### Create a Testnet Lens Account:
+#### Get Testnet Gas & Create Account:
 
-1. **Visit**: [testnet.hey.xyz](https://testnet.hey.xyz)
+1. **Visit**: [Lens Testnet Faucet](https://testnet.lenscan.io/faucet)
 2. **Connect** your development wallet
-3. **Create** a Lens profile on testnet (free)
-4. **Return** to your local app and authenticate
+3. **Get testnet gas** (free test tokens)
+4. **Create** a Lens profile on testnet (free)
+5. **Return** to your local app and authenticate
 
 #### Why Testnet?
 
@@ -143,7 +147,7 @@ The app will be available at `http://localhost:3000`.
 #### "No Lens accounts found"
 
 - **Cause**: No Lens account on the current network (testnet/mainnet)
-- **Solution**: Create a Lens account on [testnet.hey.xyz](https://testnet.hey.xyz) for development
+- **Solution**: Get testnet gas and create a Lens account at [Lens Testnet Faucet](https://testnet.lenscan.io/faucet)
 
 #### "WalletConnect connection failed"
 
@@ -201,7 +205,7 @@ The app automatically switches between networks based on `NEXT_PUBLIC_LENSFORUM_
 
 - **Network**: Lens Testnet
 - **RPC**: `https://rpc.testnet.lens.dev`
-- **Hey URL**: `https://testnet.hey.xyz`
+- **Faucet**: `https://testnet.lenscan.io/faucet`
 - **Costs**: Free (test tokens)
 
 ### Mainnet Configuration

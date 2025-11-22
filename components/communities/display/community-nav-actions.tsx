@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { BackNavigationLink } from "@/components/ui/back-navigation-link";
 import { Button } from "@/components/ui/button";
 import { useIsModerator } from "@/hooks/communities/use-is-moderator";
 import { Community } from "@/lib/domain/communities/types";
@@ -11,8 +10,7 @@ export function CommunityNavActions({ community }: { community: Community }) {
   const { isModerator } = useIsModerator(community);
 
   return (
-    <div className="mx-auto mb-4 flex max-w-7xl items-center justify-between px-4">
-      <BackNavigationLink href="/communities">Back to Communities</BackNavigationLink>
+    <div className="mx-auto mb-4 flex max-w-7xl items-center justify-end px-4">
       {isModerator && (
         <Button
           asChild

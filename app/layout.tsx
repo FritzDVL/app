@@ -4,6 +4,7 @@ import "./globals.css";
 import { Container } from "@/components/layout/container";
 import { AppProvider } from "@/components/providers/app-provider";
 import { Web3Provider } from "@/components/providers/web3-provider";
+import { TestnetBanner } from "@/components/shared/testnet-banner";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <Web3Provider>
             <AppProvider>
+              <TestnetBanner />
               <Container>{children}</Container>
             </AppProvider>
             <Toaster />

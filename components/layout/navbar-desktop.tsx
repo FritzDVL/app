@@ -18,8 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLogout } from "@/hooks/auth/use-logout";
 import { useSwitchAccount } from "@/hooks/auth/use-switch-account";
+import { CATEGORIES } from "@/lib/shared/constants";
 import { useAuthStore } from "@/stores/auth-store";
-import { Bell, Gift, Home, LogOut, RefreshCw, User, Users } from "lucide-react";
+import { Bell, Gift, Home, LogOut, RefreshCw, User } from "lucide-react";
 
 export function NavbarDesktop() {
   const [showLensDialog, setShowLensDialog] = useState(false);
@@ -71,6 +72,27 @@ export function NavbarDesktop() {
               Home
             </Button>
           </Link>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="rounded-full px-4 py-2 transition-all duration-300">
+                Categories
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              className="w-[200px] border border-border bg-white shadow-xl dark:bg-gray-800"
+            >
+              {CATEGORIES.map(category => (
+                <DropdownMenuItem key={category.tag} asChild className="cursor-pointer">
+                  <Link href={`/?category=${category.tag}`} className="flex items-center gap-2">
+                    <div className={`h-2 w-2 rounded-full ${category.color}`} />
+                    {category.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <div className="flex items-center gap-3">
             {account && (
