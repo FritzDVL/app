@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { TextEditor } from "@/components/editor/text-editor";
 import ContentRenderer from "@/components/shared/content-renderer";

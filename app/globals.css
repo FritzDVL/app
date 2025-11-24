@@ -38,25 +38,25 @@
   }
 
   .dark {
-    --background: 0 0% 3.9%; /* almost black */
-    --foreground: 0 0% 98%; /* almost white */
-    --card: 0 0% 3.9%; /* almost black */
-    --card-foreground: 0 0% 98%; /* almost white */
-    --popover: 0 0% 3.9%; /* almost black */
-    --popover-foreground: 0 0% 98%; /* almost white */
-    --primary: 142 76% 36%; /* brand green (#22c55e) */
-    --primary-foreground: 0 0% 98%; /* almost white */
-    --secondary: 0 0% 14.9%; /* dark gray */
-    --secondary-foreground: 0 0% 98%; /* almost white */
-    --muted: 0 0% 14.9%; /* dark gray */
-    --muted-foreground: 0 0% 63.9%; /* medium-light gray */
-    --accent: 0 0% 14.9%; /* dark gray */
-    --accent-foreground: 0 0% 98%; /* almost white */
-    --destructive: 0 62.8% 30.6%; /* dark red */
-    --destructive-foreground: 0 0% 98%; /* almost white */
-    --border: 0 0% 14.9%; /* dark gray */
-    --input: 0 0% 14.9%; /* dark gray */
-    --ring: 0 0% 83.1%; /* light gray */
+    --background: 0 0% 7%; /* #121212 - true dark background like Discourse */
+    --foreground: 0 0% 95%; /* #f2f2f2 - off-white text */
+    --card: 0 0% 10%; /* #1a1a1a - slightly lighter than background */
+    --card-foreground: 0 0% 95%; /* #f2f2f2 */
+    --popover: 0 0% 10%; /* #1a1a1a */
+    --popover-foreground: 0 0% 95%; /* #f2f2f2 */
+    --primary: 142 76% 36%; /* keep brand green */
+    --primary-foreground: 0 0% 100%; /* pure white */
+    --secondary: 0 0% 15%; /* #262626 - dark gray */
+    --secondary-foreground: 0 0% 95%; /* #f2f2f2 */
+    --muted: 0 0% 15%; /* #262626 */
+    --muted-foreground: 0 0% 60%; /* #999999 - medium gray */
+    --accent: 0 0% 15%; /* #262626 */
+    --accent-foreground: 0 0% 95%; /* #f2f2f2 */
+    --destructive: 0 62.8% 30.6%; /* keep red */
+    --destructive-foreground: 0 0% 100%; /* pure white */
+    --border: 0 0% 20%; /* #333333 - subtle border */
+    --input: 0 0% 15%; /* #262626 */
+    --ring: 0 0% 80%; /* #cccccc - light gray ring */
   }
 
   html {
