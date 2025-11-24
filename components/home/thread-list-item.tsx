@@ -4,9 +4,19 @@ import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { getCategoryFromTags } from "@/lib/shared/categories";
 import { getTimeAgo } from "@/lib/shared/utils";
-import { Pin, EyeOff } from "lucide-react";
+import { EyeOff, Pin } from "lucide-react";
 
-// ... inside component
+export function ThreadListItem({ thread }: { thread: Thread }) {
+  const { title } = getThreadTitleAndSummary(thread.rootPost);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tags = (thread.rootPost.metadata as any)?.tags || [];
+  const category = getCategoryFromTags(tags);
+
+  return (
+    <div className="group flex flex-col border-b border-slate-100 py-3 last:border-0 hover:bg-slate-50 dark:border-gray-800 dark:hover:bg-gray-800/50 sm:flex-row sm:items-center">
+      {/* Topic Column */}
+      <div className="min-w-0 flex-1 pr-4">
+        <div className="mb-1">
           <Link
             href={`/thread/${thread.slug}`}
             className={`text-[17px] font-semibold leading-snug text-slate-900 hover:text-brand-600 dark:text-gray-100 dark:hover:text-brand-400 ${!thread.isVisible ? "opacity-50" : ""}`}
@@ -21,10 +31,19 @@ import { Pin, EyeOff } from "lucide-react";
             <span className={`h-2.5 w-2.5 rounded-[2px] ${category.color}`} />
             <span className="font-bold text-slate-500 dark:text-gray-400">{category.label}</span>
           </span>
-          {/* Tags placeholder - could be real tags excluding the category tag */}
-          <span className="text-slate-400 dark:text-gray-500">
-            {tags.filter((t: string) => t !== category.hashtag).join(", ")}
-          </span>
+
+          {/* Additional Tags as Badges */}
+          {tags
+            .filter((t: string) => t !== category.hashtag && t.startsWith("#"))
+            .slice(0, 3)
+            .map((tag: string, idx: number) => (
+              <span
+                key={idx}
+                className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-gray-800 dark:text-gray-400"
+              >
+                {tag}
+              </span>
+            ))}
 
           {/* Mobile Stats (Visible only on mobile) */}
           <span className="ml-auto flex items-center gap-3 sm:hidden">

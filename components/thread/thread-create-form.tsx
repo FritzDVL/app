@@ -9,7 +9,7 @@ import { TagsInput } from "@/components/ui/tags-input";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { useThreadCreateForm } from "@/hooks/forms/use-thread-create-form";
 import { Community } from "@/lib/domain/communities/types";
-import { CATEGORIES, Category } from "@/lib/shared/categories";
+import { CATEGORIES, Category, TAGS } from "@/lib/shared/categories";
 import { useAuthStore } from "@/stores/auth-store";
 import { Send } from "lucide-react";
 
@@ -21,6 +21,7 @@ export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
   const { account } = useAuthStore();
   const [isPreview, setIsPreview] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category>(CATEGORIES[0]); // Default to General
+  const [selectedTags, setSelectedTags] = useState<string[]>([]); // Secondary tags
 
   const { formData, setFormData, handleChange, handleSubmit, isCreating } = useThreadCreateForm({
     community,
@@ -42,8 +43,8 @@ export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Combine selected category hashtag with other tags
-    const finalTags = [...tags];
+    // Combine selected category hashtag with secondary tags and custom tags
+    const finalTags = [...tags, ...selectedTags];
     if (!finalTags.includes(selectedCategory.hashtag)) {
       finalTags.push(selectedCategory.hashtag);
     }
@@ -51,6 +52,10 @@ export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
     const newFormData = { ...formData, tags: finalTags.join(",") };
     setFormData(newFormData);
     handleSubmit(e, newFormData);
+  };
+
+  const toggleSecondaryTag = (hashtag: string) => {
+    setSelectedTags(prev => (prev.includes(hashtag) ? prev.filter(t => t !== hashtag) : [...prev, hashtag]));
   };
 
   return (
@@ -78,6 +83,29 @@ export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
                 >
                   <span className={`h-2 w-2 rounded-full ${category.color}`} />
                   {category.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Secondary Tags */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-foreground">Tags (optional)</Label>
+            <p className="text-xs text-muted-foreground">Add tags for better discoverability</p>
+            <div className="flex flex-wrap gap-2">
+              {TAGS.map(tag => (
+                <button
+                  key={tag.id}
+                  type="button"
+                  onClick={() => toggleSecondaryTag(tag.hashtag)}
+                  className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                    selectedTags.includes(tag.hashtag)
+                      ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <span className={`h-1.5 w-1.5 rounded-full ${tag.color}`} />
+                  {tag.label}
                 </button>
               ))}
             </div>
