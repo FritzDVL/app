@@ -50,19 +50,19 @@ const config: Config = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        // Brand colors (main green theme)
+        // Brand colors (Discourse blue theme)
         brand: {
-          50: "#f0fdf4", // mint
-          100: "#dcfce7", // light mint
-          200: "#bbf7d0", // pale green
-          300: "#86efac", // light green
-          400: "#4ade80", // green
-          500: "#22c55e", // brand green (logo)
-          600: "#16a34a", // dark green
-          700: "#15803d", // darker green
-          800: "#166534", // deep green
-          900: "#14532d", // forest green
-          950: "#052e16", // almost black green
+          50: "#eff6ff", // very light blue
+          100: "#dbeafe", // light blue
+          200: "#bfdbfe", // pale blue
+          300: "#93c5fd", // light blue
+          400: "#60a5fa", // blue
+          500: "#0088cc", // Discourse blue (primary)
+          600: "#0077b3", // dark blue
+          700: "#006699", // darker blue
+          800: "#005580", // deep blue
+          900: "#004466", // navy blue
+          950: "#002233", // almost black blue
         },
       },
       borderRadius: {
