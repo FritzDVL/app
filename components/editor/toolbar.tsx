@@ -1,3 +1,4 @@
+import { EmojiPickerPopover } from "./emoji-picker-popover";
 import type { EditorExtension } from "./extension";
 import { ImageUploadPopover } from "./image-upload-popover";
 import Button from "./toolbar-button";
@@ -274,6 +275,8 @@ export default function Toolbar() {
       <ImageUploadPopover disabled={!items.insertImage.canExec} tooltip="Insert Image">
         <Image className="h-4 w-4" />
       </ImageUploadPopover>
+
+      <EmojiPickerPopover disabled={false} tooltip="Insert Emoji" />
     </div>
   );
 }

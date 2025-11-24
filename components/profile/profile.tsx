@@ -17,7 +17,7 @@ export function Profile({ account, stats, userReplies }: ProfileProps) {
       <ProfileHeader lensAccount={account as Account} username={account.username?.value} />
 
       {/* Stats Grid */}
-      <ProfileStats followers={stats.followers} posts={stats.posts} />
+      <ProfileStats posts={stats.posts} />
 
       {/* Main Content (Tabs) */}
       <div className="mt-8 rounded-lg bg-white shadow-sm dark:bg-gray-900">

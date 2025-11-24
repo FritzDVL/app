@@ -1,10 +1,10 @@
-import { uploadImage } from "@/lib/external/grove/upload-image";
+import { uploadImage } from "@/lib/services/upload-image";
 import { insertNode, union } from "prosekit/core";
 import { defineFileDropHandler, defineFilePasteHandler } from "prosekit/extensions/file";
 
 /**
  * Returns an extension that handles image file uploads when pasting or dropping
- * images into the editor. This is a scaffold for Grove uploads.
+ * images into the editor.
  */
 export function defineImageFileHandlers() {
   return union(
@@ -16,7 +16,7 @@ export function defineImageFileHandlers() {
         .then(url => {
           const command = insertNode({
             type: "image",
-            attrs: { src: url.gatewayUrl, width: 600, height: 400 },
+            attrs: { src: url, width: 600, height: 400 },
           });
           command(view.state, view.dispatch, view);
         })
@@ -29,11 +29,10 @@ export function defineImageFileHandlers() {
       if (!file.type.startsWith("image/")) {
         return false;
       }
-      // TODO: Pass file to uploadToGrove when implemented
       uploadImage(file).then(url => {
         const command = insertNode({
           type: "image",
-          attrs: { src: url.gatewayUrl, width: 600, height: 400 },
+          attrs: { src: url, width: 600, height: 400 },
           pos,
         });
         command(view.state, view.dispatch, view);

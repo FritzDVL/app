@@ -10,6 +10,7 @@ export interface Thread {
   summary: string;
   repliesCount: number;
   isVisible: boolean;
+  featured: boolean;
   slug: string;
   created_at: string;
   updatedAt: string;

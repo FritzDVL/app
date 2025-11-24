@@ -89,6 +89,7 @@ export async function fetchCommunityThreads(
     .select("*, community:communities(*)")
     .eq("community_id", communityId)
     .eq("visible", true)
+    .order("featured", { ascending: false })
     .order("created_at", { ascending: false });
 
   if (search) {
@@ -224,5 +225,34 @@ export async function updateThread(rootPostId: string, title: string, summary: s
     .single();
   if (error) {
     throw new Error(`Failed to update updated_at: ${error.message}`);
+  }
+}
+
+/**
+ * Pins or unpins a thread
+ * @param threadId - The thread's id
+ * @param isPinned - Whether the thread should be pinned
+ */
+export async function pinThread(threadId: string, isPinned: boolean): Promise<void> {
+  const supabase = await supabaseClient();
+
+  const { error } = await supabase.from("community_threads").update({ featured: isPinned }).eq("id", threadId);
+
+  if (error) {
+    throw new Error(`Failed to update thread pin status: ${error.message}`);
+  }
+}
+/**
+ * Sets the visibility of a thread
+ * @param threadId - The thread's id
+ * @param isVisible - Whether the thread should be visible
+ */
+export async function setThreadVisibility(threadId: string, isVisible: boolean): Promise<void> {
+  const supabase = await supabaseClient();
+
+  const { error } = await supabase.from("community_threads").update({ visible: isVisible }).eq("id", threadId);
+
+  if (error) {
+    throw new Error(`Failed to update thread visibility: ${error.message}`);
   }
 }

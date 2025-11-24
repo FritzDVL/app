@@ -45,7 +45,7 @@ export function Thread({ community, thread }: ThreadProps) {
           {!isMember && !isLoading && (
             <JoinCommunityAnnouncement isLoading={isJoinLoading} onJoinCommunity={handleJoin} />
           )}
-          <ThreadActions thread={thread} />
+          <ThreadActions thread={thread} community={community} />
           <ThreadCard thread={thread} community={community} />
           <ThreadRepliesList thread={thread} community={community} />
         </div>

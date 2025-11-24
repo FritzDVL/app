@@ -1,7 +1,7 @@
 import { type FC, type ReactNode, useState } from "react";
 import type { EditorExtension } from "./extension";
 import Button from "./toolbar-button";
-import { uploadImage } from "@/lib/external/grove/upload-image";
+import { uploadImage } from "@/lib/services/upload-image";
 import { useEditor } from "prosekit/react";
 import { PopoverContent, PopoverRoot, PopoverTrigger } from "prosekit/react/popover";
 

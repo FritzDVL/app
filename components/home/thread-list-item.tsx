@@ -4,23 +4,15 @@ import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
 import { getCategoryFromTags } from "@/lib/shared/categories";
 import { getTimeAgo } from "@/lib/shared/utils";
+import { Pin, EyeOff } from "lucide-react";
 
-export function ThreadListItem({ thread }: { thread: Thread }) {
-  const { title } = getThreadTitleAndSummary(thread.rootPost);
-  // Resolve category from tags (metadata.tags is an array of strings)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tags = (thread.rootPost.metadata as any)?.tags || [];
-  const category = getCategoryFromTags(tags);
-
-  return (
-    <div className="group flex flex-col border-b border-slate-100 py-3 last:border-0 hover:bg-slate-50 dark:border-gray-800 dark:hover:bg-gray-800/50 sm:flex-row sm:items-center">
-      {/* Topic Column */}
-      <div className="min-w-0 flex-1 pr-4">
-        <div className="mb-1">
+// ... inside component
           <Link
             href={`/thread/${thread.slug}`}
-            className="text-[17px] font-semibold leading-snug text-slate-900 hover:text-brand-600 dark:text-gray-100 dark:hover:text-brand-400"
+            className={`text-[17px] font-semibold leading-snug text-slate-900 hover:text-brand-600 dark:text-gray-100 dark:hover:text-brand-400 ${!thread.isVisible ? "opacity-50" : ""}`}
           >
+            {thread.featured && <Pin className="mr-2 inline-block h-4 w-4 text-slate-500" />}
+            {!thread.isVisible && <EyeOff className="mr-2 inline-block h-4 w-4 text-red-500" />}
             {title}
           </Link>
         </div>
