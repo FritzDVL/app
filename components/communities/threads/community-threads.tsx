@@ -1,6 +1,5 @@
 "use client";
 
-import { CommunityHeader } from "@/components/communities/display/community-header";
 import { CommunityNavActions } from "@/components/communities/display/community-nav-actions";
 import { CommunitySidebar } from "@/components/communities/display/community-sidebar";
 import { CommunityThreadsList } from "@/components/communities/threads/community-threads-list";
@@ -26,7 +25,6 @@ export function CommunityThreads({ community, threads: initialThreads }: Communi
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
         <div className="lg:col-span-3">
           <CommunityNavActions community={community} />
-          <CommunityHeader community={community} />
           {loading ? (
             <div className="flex w-full items-center justify-center py-12">
               <LoadingSpinner text="Loading threads..." />

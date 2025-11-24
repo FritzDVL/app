@@ -1,3 +1,4 @@
+import { CommunityHeader } from "@/components/communities/display/community-header";
 import { CommunityThreads } from "@/components/communities/threads/community-threads";
 import { StatusBanner } from "@/components/shared/status-banner";
 import { getCommunity } from "@/lib/services/community/get-community";
@@ -38,6 +39,7 @@ export default async function HomePage({ searchParams }: { searchParams: { categ
 
   return (
     <div className="min-h-screen bg-background">
+      <CommunityHeader community={community} />
       <CommunityThreads community={community} threads={threads} />
     </div>
   );
