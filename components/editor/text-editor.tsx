@@ -19,8 +19,9 @@ interface TextEditorProps {
 }
 
 export function TextEditor({ onChange, initialValue }: TextEditorProps) {
-  let defaultContent: NodeJSON | undefined;
   const editor = useMemo(() => {
+    let defaultContent: NodeJSON | undefined;
+
     if (initialValue) {
       const html = htmlFromMarkdown(initialValue);
       const extension = defineExtension();
@@ -36,7 +37,8 @@ export function TextEditor({ onChange, initialValue }: TextEditorProps) {
       extension,
       defaultContent,
     });
-  }, [initialValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - only create editor once
 
   useDocChange(
     () => {

@@ -21,8 +21,8 @@
     --card-foreground: 0 0% 3.9%; /* almost black */
     --popover: 0 0% 100%; /* white */
     --popover-foreground: 0 0% 3.9%; /* almost black */
-    --primary: 142 76% 36%; /* brand green (#22c55e) */
-    --primary-foreground: 0 0% 98%; /* almost white */
+    --primary: 206 100% 40%; /* Discourse blue (#0088cc) */
+    --primary-foreground: 0 0% 100%; /* pure white */
     --secondary: 0 0% 96.1%; /* light gray */
     --secondary-foreground: 0 0% 9%; /* dark gray */
     --muted: 0 0% 96.1%; /* light gray */
@@ -33,7 +33,7 @@
     --destructive-foreground: 0 0% 98%; /* almost white */
     --border: 0 0% 89.8%; /* very light gray */
     --input: 0 0% 89.8%; /* very light gray */
-    --ring: 0 0% 3.9%; /* almost black */
+    --ring: 206 100% 40%; /* Discourse blue ring */
     --radius: 0.5rem;
   }
 
@@ -44,7 +44,7 @@
     --card-foreground: 0 0% 95%; /* #f2f2f2 */
     --popover: 0 0% 10%; /* #1a1a1a */
     --popover-foreground: 0 0% 95%; /* #f2f2f2 */
-    --primary: 142 76% 36%; /* keep brand green */
+    --primary: 206 100% 50%; /* Discourse blue, slightly lighter for dark mode */
     --primary-foreground: 0 0% 100%; /* pure white */
     --secondary: 0 0% 15%; /* #262626 - dark gray */
     --secondary-foreground: 0 0% 95%; /* #f2f2f2 */
@@ -56,7 +56,7 @@
     --destructive-foreground: 0 0% 100%; /* pure white */
     --border: 0 0% 20%; /* #333333 - subtle border */
     --input: 0 0% 15%; /* #262626 */
-    --ring: 0 0% 80%; /* #cccccc - light gray ring */
+    --ring: 206 100% 50%; /* Discourse blue ring */
   }
 
   html {
