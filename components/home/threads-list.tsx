@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ThreadListItem } from "@/components/home/thread-list-item";
 import { StatusBanner } from "@/components/shared/status-banner";
 import { Button } from "@/components/ui/button";
@@ -45,10 +46,12 @@ export function ThreadsList({ threads, loadingThreads, error }: LatestThreadsPro
               Be the first to start a conversation in this category.
             </p>
             <div className="mt-6">
-              <Button className="rounded-full bg-brand-600 px-6 text-white hover:bg-brand-700">
-                <Edit3 className="mr-2 h-4 w-4" />
-                Create Thread
-              </Button>
+              <Link href="/thread/create">
+                <Button className="rounded-full bg-brand-600 px-6 text-white hover:bg-brand-700">
+                  <Edit3 className="mr-2 h-4 w-4" />
+                  Create Thread
+                </Button>
+              </Link>
             </div>
           </div>
         ) : (

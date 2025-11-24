@@ -2,7 +2,6 @@ import { Profile } from "@/components/profile/profile";
 import { StatusBanner } from "@/components/shared/status-banner";
 import { getAccountByUsername } from "@/lib/services/account/get-account-by-username";
 import { getAccountStats } from "@/lib/services/account/get-account-stats";
-import { getCommunitiesJoined } from "@/lib/services/community/get-communities-joined";
 import { getLatestRepliesByAuthor } from "@/lib/services/reply/get-latest-replies-by-author";
 import { Account } from "@lens-protocol/client";
 
@@ -21,9 +20,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   const repliesResult = await getLatestRepliesByAuthor(lensAccount?.address, 10);
   const userReplies = repliesResult.success && repliesResult.replies ? repliesResult.replies : [];
-  const joinedCommunitiesResult = await getCommunitiesJoined(lensAccount?.address);
-  const joinedCommunities =
-    joinedCommunitiesResult.success && joinedCommunitiesResult.communities ? joinedCommunitiesResult.communities : [];
 
   if (!lensAccount || !lensAccountStats) {
     return (
@@ -39,12 +35,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <>
-      <Profile
-        account={lensAccount}
-        stats={lensAccountStats}
-        userReplies={userReplies}
-        joinedCommunities={joinedCommunities}
-      />
+      <Profile account={lensAccount} stats={lensAccountStats} userReplies={userReplies} />
     </>
   );
 }

@@ -80,6 +80,7 @@ export async function fetchCommunityThreads(
   communityId: string,
   limit?: number,
   offset?: number,
+  search?: string,
 ): Promise<CommunityThreadSupabase[]> {
   const supabase = await supabaseClient();
 
@@ -89,6 +90,11 @@ export async function fetchCommunityThreads(
     .eq("community_id", communityId)
     .eq("visible", true)
     .order("created_at", { ascending: false });
+
+  if (search) {
+    // Simple search on title or summary
+    query = query.or(`title.ilike.%${search}%,summary.ilike.%${search}%`);
+  }
 
   if (typeof limit === "number" && typeof offset === "number") {
     query = query.range(offset, offset + limit - 1);

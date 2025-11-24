@@ -9,6 +9,7 @@ import { TagsInput } from "@/components/ui/tags-input";
 import { useTagsInput } from "@/hooks/forms/use-tags-input";
 import { useThreadCreateForm } from "@/hooks/forms/use-thread-create-form";
 import { Community } from "@/lib/domain/communities/types";
+import { CATEGORIES, Category } from "@/lib/shared/categories";
 import { useAuthStore } from "@/stores/auth-store";
 import { Send } from "lucide-react";
 
@@ -19,6 +20,8 @@ interface ThreadCreateFormProps {
 export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
   const { account } = useAuthStore();
   const [isPreview, setIsPreview] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category>(CATEGORIES[0]); // Default to General
+
   const { formData, setFormData, handleChange, handleSubmit, isCreating } = useThreadCreateForm({
     community,
     author: account?.address || "",
@@ -34,14 +37,18 @@ export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
     "tutorial",
     "feedback",
     "showcase",
-    "governance",
-    "research",
   ];
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newFormData = { ...formData, tags: tags.join(",") };
+    // Combine selected category hashtag with other tags
+    const finalTags = [...tags];
+    if (!finalTags.includes(selectedCategory.hashtag)) {
+      finalTags.push(selectedCategory.hashtag);
+    }
+
+    const newFormData = { ...formData, tags: finalTags.join(",") };
     setFormData(newFormData);
     handleSubmit(e, newFormData);
   };
@@ -54,6 +61,28 @@ export function ThreadCreateForm({ community }: ThreadCreateFormProps) {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleFormSubmit} className="space-y-6">
+          {/* Category Selection */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-foreground">Category</Label>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map(category => (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(category)}
+                  className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                    selectedCategory.id === category.id
+                      ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <span className={`h-2 w-2 rounded-full ${category.color}`} />
+                  {category.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title" className="text-sm font-medium text-foreground">

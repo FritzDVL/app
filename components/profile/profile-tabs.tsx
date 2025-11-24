@@ -4,30 +4,27 @@ interface ProfileTabsProps {
 }
 
 export function ProfileTabs({ activeTab, setActiveTab }: ProfileTabsProps) {
+  const tabs = [
+    { id: "summary", label: "Summary" },
+    { id: "activity", label: "Activity" },
+    { id: "badges", label: "Badges" },
+  ];
+
   return (
-    <div className="flex items-center justify-center">
-      <div className="flex items-center space-x-1 rounded-xl bg-white p-1 shadow-sm dark:border-gray-700/60 dark:bg-gray-800 sm:rounded-2xl">
+    <div className="flex items-center gap-6 border-b border-slate-200 px-4 dark:border-gray-800 sm:px-8">
+      {tabs.map(tab => (
         <button
-          onClick={() => setActiveTab("recent")}
-          className={`rounded-lg px-3 py-2 text-xs font-medium transition-all sm:rounded-xl sm:px-6 sm:py-3 sm:text-sm ${
-            activeTab === "recent" ? "bg-primary text-foreground shadow-sm" : "text-slate-600 hover:text-foreground"
+          key={tab.id}
+          onClick={() => setActiveTab(tab.id)}
+          className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+            activeTab === tab.id
+              ? "border-brand-500 text-slate-900 dark:text-white"
+              : "border-transparent text-slate-500 hover:text-slate-700 dark:text-gray-400 dark:hover:text-gray-300"
           }`}
         >
-          <span className="sm:hidden">Recent Activity</span>
-          <span className="hidden sm:inline">Recent Activity</span>
+          {tab.label}
         </button>
-        <button
-          onClick={() => setActiveTab("forums")}
-          className={`rounded-lg px-3 py-2 text-xs font-medium transition-all sm:rounded-xl sm:px-6 sm:py-3 sm:text-sm ${
-            activeTab === "forums"
-              ? "bg-primary text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <span className="sm:hidden">Communities</span>
-          <span className="hidden sm:inline">Communities</span>
-        </button>
-      </div>
+      ))}
     </div>
   );
 }

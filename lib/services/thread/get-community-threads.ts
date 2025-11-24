@@ -19,13 +19,15 @@ export interface ThreadsResult {
  */
 export async function getCommunityThreads(
   community: Community,
-  options?: { limit?: number; offset?: number; showAllPosts?: boolean; cursor?: string },
+  options?: { limit?: number; offset?: number; showAllPosts?: boolean; cursor?: string; tag?: string; search?: string },
 ): Promise<ThreadsResult> {
   try {
     const { limit = THREADS_PER_PAGE, offset = 0, showAllPosts = false, cursor = undefined } = options || {};
 
     if (showAllPosts) {
       // 1. Fetch latest posts in Lens for this group
+      // Note: Lens API supports filtering by metadata tags, but we are using feed fetch here.
+      // For now, we filter in memory if tag is provided.
       const lensResult = await fetchPostsByFeed(community.feed.address, undefined, { sort: "desc", limit, cursor });
       const lensPosts = lensResult.posts;
       // 2. Fetch threads in DB that match those posts
@@ -39,7 +41,16 @@ export async function getCommunityThreads(
         }
         return await adaptFeedToThread(post.author, dbThread, post);
       });
-      const threads = (await Promise.all(threadPromises)).filter(Boolean) as Thread[];
+      let threads = (await Promise.all(threadPromises)).filter(Boolean) as Thread[];
+
+      // Filter by tag if provided
+      if (options?.tag) {
+        threads = threads.filter(thread => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const tags = (thread.rootPost.metadata as any)?.tags || [];
+          return tags.includes(options.tag);
+        });
+      }
 
       return {
         success: true,
@@ -49,10 +60,14 @@ export async function getCommunityThreads(
       };
     } else {
       // 1. Fetch threads from DB
-      const dbThreads = await fetchCommunityThreads(community.id, limit, offset);
+      // If filtering by tag, we fetch more to increase chance of matches since we filter in memory
+      const fetchLimit = options?.tag ? 50 : limit;
+      const dbThreads = await fetchCommunityThreads(community.id, fetchLimit, offset, options?.search);
+
       // 2. Fetch posts in Lens for those threads
       const rootPostIds = dbThreads.map(t => t.root_post_id).filter((id): id is string => !!id);
       const lensPosts = await fetchPostsBatch(rootPostIds);
+
       // 3. Adapt and combine data
       const rootPostMap = new Map();
       lensPosts.forEach(post => {
@@ -63,7 +78,17 @@ export async function getCommunityThreads(
         if (!rootPost || !rootPost.author) return null;
         return await adaptFeedToThread(rootPost.author, threadRecord, rootPost);
       });
-      const threads = (await Promise.all(threadPromises)).filter(Boolean) as Thread[];
+      let threads = (await Promise.all(threadPromises)).filter(Boolean) as Thread[];
+
+      // Filter by tag if provided
+      if (options?.tag) {
+        threads = threads.filter(thread => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const tags = (thread.rootPost.metadata as any)?.tags || [];
+          return tags.includes(options.tag);
+        });
+      }
+
       return { success: true, threads };
     }
   } catch (error) {

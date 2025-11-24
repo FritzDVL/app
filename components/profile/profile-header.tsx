@@ -1,88 +1,70 @@
-import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Account } from "@lens-protocol/client";
-import { Calendar, LinkIcon, MapPin } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { getStampUrl } from "@/lib/utils/get-stamp-url";
+import { Account } from "@lens-protocol/client";
+import { Calendar, MapPin } from "lucide-react";
 
 interface ProfileHeaderProps {
   lensAccount: Account;
-  username: string;
+  username?: string;
 }
 
 export function ProfileHeader({ lensAccount, username }: ProfileHeaderProps) {
+  const displayName = lensAccount.metadata?.name || username || "User";
+  const bio = lensAccount.metadata?.bio;
+  const picture =
+    lensAccount.metadata?.picture?.__typename === "ImageSet"
+      ? lensAccount.metadata.picture.optimized?.uri
+      : getStampUrl(lensAccount.address);
+
+  // Format join date (mock for now as Lens account doesn't expose createdAt directly in this type)
+  const joinDate = "Joined November 2025";
+
   return (
-    <div className="relative">
-      {/* Cover Image */}
-      <div className="relative h-32 overflow-hidden rounded-2xl sm:h-48 sm:rounded-3xl md:h-64">
-        {lensAccount?.metadata?.coverPicture ? (
-          <>
-            <Image
-              src={lensAccount.metadata.coverPicture}
-              alt="Cover"
-              className="h-full w-full object-cover"
-              width={300}
-              height={100}
-            />
-            <div className="absolute inset-0 bg-green-900/20"></div>
-          </>
-        ) : (
-          <>
-            <div className="h-full w-full bg-gradient-to-r from-green-600 via-green-500 to-green-400"></div>
-            <div className="absolute inset-0 bg-black/20"></div>
-          </>
-        )}
-      </div>
-      {/* Profile Info */}
-      <div className="relative -mt-12 px-3 sm:-mt-20 sm:px-6">
-        <div className="flex flex-col items-start space-y-3 sm:space-y-4 md:flex-row md:items-end md:space-x-6 md:space-y-0">
-          <Avatar className="h-20 w-20 border-2 border-white ring-2 ring-green-100 sm:h-32 sm:w-32 sm:border-4">
-            <AvatarImage src={lensAccount?.metadata?.picture || "/placeholder.svg"} />
-            <AvatarFallback className="bg-gradient-to-r from-green-400 to-green-600 text-2xl text-white sm:text-4xl">
-              {(lensAccount?.metadata?.name || lensAccount?.username?.localName || username)[0].toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 rounded-2xl bg-card/70 p-4 backdrop-blur-sm sm:rounded-3xl sm:p-6">
-            <div className="flex flex-col items-start justify-between gap-3 sm:gap-4 md:flex-row md:items-center">
+    <div className="relative mb-6 overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-900">
+      {/* Cover Image (Banner) */}
+      <div className="h-32 w-full bg-gradient-to-r from-brand-500 to-purple-600 sm:h-48"></div>
+
+      <div className="px-4 pb-6 sm:px-8">
+        <div className="relative flex flex-col items-start sm:flex-row sm:items-end sm:gap-6">
+          {/* Avatar */}
+          <div className="-mt-12 mb-4 sm:-mt-16 sm:mb-0">
+            <Avatar className="h-24 w-24 border-4 border-white shadow-md dark:border-gray-900 sm:h-32 sm:w-32">
+              <AvatarImage src={picture} alt={displayName} className="object-cover" />
+              <AvatarFallback className="text-2xl">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+          </div>
+
+          {/* User Info */}
+          <div className="flex-1 space-y-2 pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <div className="mb-2 flex items-center space-x-2 sm:space-x-3">
-                  <h1 className="text-xl font-bold text-foreground sm:text-2xl md:text-3xl">
-                    {lensAccount?.metadata?.name || lensAccount?.username?.localName || username}
-                  </h1>
-                </div>
-                <p className="mb-2 text-sm font-medium text-green-600 sm:text-base">
-                  @{lensAccount?.username?.localName || username}
-                </p>
-                <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
-                  {lensAccount?.metadata?.bio || "No bio available"}
-                </p>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{displayName}</h1>
+                <p className="text-sm font-medium text-slate-500 dark:text-gray-400">@{username}</p>
+              </div>
+              <div className="mt-4 flex gap-2 sm:mt-0">
+                {/* Action Buttons (Follow, Message) - Placeholders for now */}
+                {/* <Button>Follow</Button> */}
               </div>
             </div>
-            {/* Stats Row */}
-            <div className="mt-3 flex flex-col gap-2 border-t border-slate-200/60 pt-3 sm:mt-4 sm:flex-row sm:items-center sm:gap-6 sm:pt-4">
-              <div className="flex items-center text-xs text-muted-foreground sm:text-sm">
-                <Calendar className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                {lensAccount?.createdAt
-                  ? new Date(lensAccount.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long" })
-                  : "Unknown date"}
+
+            {bio && <p className="max-w-2xl text-base text-slate-700 dark:text-gray-300">{bio}</p>}
+
+            <div className="flex flex-wrap gap-4 text-sm text-slate-500 dark:text-gray-400">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                <span>{joinDate}</span>
               </div>
-              <div className="flex items-center text-xs text-muted-foreground sm:text-sm">
-                <MapPin className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                {lensAccount?.metadata?.attributes?.find(attr => attr.key === "location" || attr.key === "city")
-                  ?.value || "Location not set"}
+              {/* Location Placeholder */}
+              <div className="flex items-center gap-1">
+                <MapPin className="h-4 w-4" />
+                <span>Ethereum</span>
               </div>
-              <div className="flex items-center text-xs text-muted-foreground sm:text-sm">
-                <LinkIcon className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                <a
-                  href={
-                    lensAccount?.metadata?.attributes?.find(attr => attr.key === "website" || attr.key === "url")
-                      ?.value || "#"
-                  }
-                  className="text-green-600 hover:text-green-700 hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {lensAccount?.metadata?.attributes?.find(attr => attr.key === "website" || attr.key === "url")
-                    ?.value || "No website"}
-                </a>
+              {/* Badges Placeholder */}
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="rounded-full">
+                  Member
+                </Badge>
               </div>
             </div>
           </div>

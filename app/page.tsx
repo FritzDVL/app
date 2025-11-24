@@ -5,7 +5,7 @@ import { getCommunityThreads } from "@/lib/services/thread/get-community-threads
 import { TARGET_GROUP_ADDRESS, THREADS_PER_PAGE } from "@/lib/shared/constants";
 import { Address } from "@/types/common";
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams: { category?: string; q?: string } }) {
   const communityAddress = TARGET_GROUP_ADDRESS as Address;
 
   const communityResult = await getCommunity(communityAddress);
@@ -26,9 +26,13 @@ export default async function HomePage() {
   }
 
   // Fetch threads on the server with pagination, defaulting to DB-only (private)
+  // If category is provided, filter by tag
+  // If search is provided, filter by title/summary
   const threadsResult = await getCommunityThreads(community, {
     limit: THREADS_PER_PAGE,
     showAllPosts: false,
+    tag: searchParams.category,
+    search: searchParams.q,
   });
   const threads = threadsResult.success ? (threadsResult.threads ?? []) : [];
 

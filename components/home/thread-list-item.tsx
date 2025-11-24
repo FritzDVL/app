@@ -2,15 +2,18 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getThreadTitleAndSummary } from "@/lib/domain/threads/content";
 import { Thread } from "@/lib/domain/threads/types";
+import { getCategoryFromTags } from "@/lib/shared/categories";
 import { getTimeAgo } from "@/lib/shared/utils";
 
 export function ThreadListItem({ thread }: { thread: Thread }) {
   const { title } = getThreadTitleAndSummary(thread.rootPost);
-  // Mock category for now based on title or random
-  const category = { label: "General", color: "bg-slate-500" };
+  // Resolve category from tags (metadata.tags is an array of strings)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tags = (thread.rootPost.metadata as any)?.tags || [];
+  const category = getCategoryFromTags(tags);
 
   return (
-    <div className="group flex items-center border-b border-slate-100 py-3 last:border-0 hover:bg-slate-50 dark:border-gray-800 dark:hover:bg-gray-800/50">
+    <div className="group flex flex-col border-b border-slate-100 py-3 last:border-0 hover:bg-slate-50 dark:border-gray-800 dark:hover:bg-gray-800/50 sm:flex-row sm:items-center">
       {/* Topic Column */}
       <div className="min-w-0 flex-1 pr-4">
         <div className="mb-1">
@@ -26,8 +29,20 @@ export function ThreadListItem({ thread }: { thread: Thread }) {
             <span className={`h-2.5 w-2.5 rounded-[2px] ${category.color}`} />
             <span className="font-bold text-slate-500 dark:text-gray-400">{category.label}</span>
           </span>
-          {/* Tags placeholder */}
-          <span className="text-slate-400 dark:text-gray-500">tag1, tag2</span>
+          {/* Tags placeholder - could be real tags excluding the category tag */}
+          <span className="text-slate-400 dark:text-gray-500">
+            {tags.filter((t: string) => t !== category.hashtag).join(", ")}
+          </span>
+
+          {/* Mobile Stats (Visible only on mobile) */}
+          <span className="ml-auto flex items-center gap-3 sm:hidden">
+            <span className="text-slate-500 dark:text-gray-400">{getTimeAgo(new Date(thread.created_at))}</span>
+            <span
+              className={`font-medium ${thread.repliesCount > 0 ? "text-orange-600 dark:text-orange-500" : "text-slate-400 dark:text-gray-500"}`}
+            >
+              {thread.repliesCount || 0} replies
+            </span>
+          </span>
         </div>
       </div>
 
@@ -50,7 +65,9 @@ export function ThreadListItem({ thread }: { thread: Thread }) {
 
       {/* Replies Column */}
       <div className="hidden w-20 px-2 text-center sm:block">
-        <span className={`text-[15px] font-medium ${thread.repliesCount > 0 ? "text-orange-600 dark:text-orange-500" : "text-slate-400 dark:text-gray-500"}`}>
+        <span
+          className={`text-[15px] font-medium ${thread.repliesCount > 0 ? "text-orange-600 dark:text-orange-500" : "text-slate-400 dark:text-gray-500"}`}
+        >
           {thread.repliesCount || 0}
         </span>
       </div>
@@ -62,9 +79,7 @@ export function ThreadListItem({ thread }: { thread: Thread }) {
 
       {/* Activity Column */}
       <div className="hidden w-24 pl-2 text-right sm:block">
-        <span className="text-[15px] text-slate-500 dark:text-gray-400">
-          {getTimeAgo(new Date(thread.created_at))}
-        </span>
+        <span className="text-[15px] text-slate-500 dark:text-gray-400">{getTimeAgo(new Date(thread.created_at))}</span>
       </div>
     </div>
   );

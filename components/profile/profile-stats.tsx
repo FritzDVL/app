@@ -1,62 +1,88 @@
-import React from "react";
-import { LensReputationLogo } from "../assets/lensreputation-logo";
-import { FileText, UserPlus, Users } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Clock, Eye, Heart, MessageSquare, ThumbsUp, Users } from "lucide-react";
 
 interface ProfileStatsProps {
   followers: number;
-  following: number;
   posts: number;
-  reputation: number;
 }
 
-export function ProfileStats({ followers, following, posts, reputation }: ProfileStatsProps) {
+export function ProfileStats({ followers, posts }: ProfileStatsProps) {
+  // Mock data for now to match Discourse style
   const stats = [
     {
+      label: "Days Visited",
+      value: "14",
+      icon: CalendarIcon,
+    },
+    {
+      label: "Read Time",
+      value: "2h",
+      icon: Clock,
+    },
+    {
+      label: "Recent Read Time",
+      value: "30m",
+      icon: Eye,
+    },
+    {
+      label: "Topics Created",
+      value: Math.floor(posts / 5).toString(), // Mock ratio
+      icon: MessageSquare,
+    },
+    {
+      label: "Posts Created",
+      value: posts.toString(),
+      icon: MessageSquare,
+    },
+    {
+      label: "Likes Given",
+      value: "12",
+      icon: Heart,
+    },
+    {
+      label: "Likes Received",
+      value: "45",
+      icon: ThumbsUp,
+    },
+    {
       label: "Followers",
-      value: followers,
-      icon: <Users className="h-4 w-4 text-brand-500" />,
-    },
-    {
-      label: "Following",
-      value: following,
-      icon: <UserPlus className="h-4 w-4 text-brand-500" />,
-    },
-    {
-      label: "Posts",
-      value: posts,
-      icon: <FileText className="h-4 w-4 text-brand-500" />,
-    },
-    {
-      label: "Reputation",
-      value: reputation,
-      icon: <LensReputationLogo size={16} />,
+      value: followers.toString(),
+      icon: Users,
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4">
-      {stats.map(stat => (
-        <div
-          key={stat.label}
-          className="rounded-xl border border-slate-300/60 bg-white p-2 backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-800 sm:rounded-2xl sm:p-3"
-        >
-          <div className="flex flex-col items-center text-center">
-            <div className="mb-1 flex items-center justify-center">
-              {stat.label === "Reputation" ? (
-                <span className="mr-1 sm:mr-2">
-                  <LensReputationLogo size={20} />
-                </span>
-              ) : (
-                <span className="mr-1 sm:mr-2">
-                  {React.cloneElement(stat.icon, { className: "h-5 w-5 text-brand-500 sm:h-7 sm:w-7" })}
-                </span>
-              )}
-              <span className="text-lg font-extrabold text-foreground sm:text-2xl">{stat.value}</span>
-            </div>
-            <div className="mt-0.5 text-xs text-muted-foreground">{stat.label}</div>
-          </div>
-        </div>
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
+      {stats.map((stat, index) => (
+        <Card key={index} className="border-slate-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+            <span className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</span>
+            <span className="mt-1 text-xs font-medium text-slate-500 dark:text-gray-400">{stat.label}</span>
+          </CardContent>
+        </Card>
       ))}
     </div>
+  );
+}
+
+function CalendarIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
   );
 }
