@@ -16,8 +16,8 @@ const customFont = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "LensForum - Decentralized Communities",
-  description: "Join the future of community discussions on Lens Protocol",
+  title: "Society Protocol Forum",
+  description: "The official forum for Society Protocol",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

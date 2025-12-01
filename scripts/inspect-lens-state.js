@@ -18,14 +18,15 @@ async function inspectState() {
     // 2. Fetch groups (communities)
     console.log("📋 Fetching Groups...");
     const { fetchGroups } = await import("@lens-protocol/client/actions");
+    const { PageSize } = require("@lens-protocol/client");
     const groupsResult = await fetchGroups(client, {
-      limit: 10,
+      pageSize: PageSize.Fifty,
     });
 
     if (groupsResult.isOk()) {
       console.log(`Found ${groupsResult.value.items.length} groups:`);
       groupsResult.value.items.forEach((group, i) => {
-        console.log(`  ${i + 1}. ${group.metadata?.name || "Unnamed"} (${group.address})`);
+        console.log(`  ${i + 1}. ${group.metadata?.name || "Unnamed"} (${group.address}) - Owner: ${group.owner}`);
       });
     }
 

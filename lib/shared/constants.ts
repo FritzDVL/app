@@ -22,11 +22,11 @@ const isTestnet = env === Env.TESTNET;
 
 export const APP_ADDRESS: Address = isTestnet ? TESTNET_APP_ADDRESS : MAINNET_APP_ADDRESS;
 export const BASE_FEED_ADDRESS: Address = isTestnet ? TESTNET_BASE_FEED_ADDRESS : MAINNET_BASE_FEED_ADDRESS;
-export const ADMIN_USER_ADDRESS = "0x..."; // TODO: Update with real admin address if needed
+export const ADMIN_USER_ADDRESS = "0xC93947eD78d87bdeB232D9c29C07Fd0E8cf0A43E"; // Your Confirmed Wallet Address
 
 // The single group address for this forum instance
 export const TARGET_GROUP_ADDRESS =
-  process.env.NEXT_PUBLIC_TARGET_GROUP_ADDRESS || "0xC3DA95f23230F6bE3b8Bf1B22a0dfCE1A628A6d3";
+  process.env.NEXT_PUBLIC_TARGET_GROUP_ADDRESS || "0xa9Dd68cA2Bd21140354a95E8ce4CbDa80BC4f775";
 export const LENS_CONTRACT_GROUP_MANAGER: Address = isTestnet
   ? TESTNET_LENS_CONTRACT_GROUP_MANAGER_ADDRESS
   : MAINNET_LENS_CONTRACT_GROUP_MANAGER_ADDRESS;

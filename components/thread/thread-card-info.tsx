@@ -26,30 +26,26 @@ export function ThreadCardInfo({ thread }: ThreadCardInfoProps) {
   }, [thread.rootPost]);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       {/* Title, summary and content in one block */}
       <div className="px-0">
-        <h1 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">{title}</h1>
-        {summary && (
-          <p className="mt-1 max-w-2xl text-base text-sm font-medium italic text-gray-500 dark:text-gray-400">
-            {summary}
-          </p>
-        )}
-        <div className="mt-3 flex flex-col gap-2">
+        <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-foreground lg:text-4xl">{title}</h1>
+        {summary && <p className="mb-8 text-xl leading-relaxed text-gray-500 dark:text-gray-400">{summary}</p>}
+        <div className="mt-8 flex flex-col gap-2">
           <ContentRenderer
             content={{ content, image, video }}
-            className="rich-text-content rounded-2xl p-0 text-foreground dark:text-gray-100"
+            className="prose prose-lg max-w-none text-foreground dark:prose-invert dark:text-gray-100"
           />
         </div>
       </div>
       {/* Tags */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 pt-4">
         {tags && tags.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1">
+          <div className="flex flex-wrap items-center gap-2">
             {tags.map((tag: string) => (
               <span
                 key={tag}
-                className="inline-block rounded-full border border-gray-200 bg-transparent px-2 py-0.5 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400"
+                className="inline-block rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400"
               >
                 #{tag}
               </span>
